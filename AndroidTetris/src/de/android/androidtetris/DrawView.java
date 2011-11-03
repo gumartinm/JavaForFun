@@ -19,7 +19,7 @@ import android.widget.TextView;
  * @author gusarapo
  *
  */
-public class DrawView extends View implements SurfaceHolder.Callback{
+public class DrawView extends SurfaceView implements SurfaceHolder.Callback{
 	Paint paint = new Paint();
 	private int width;
 	private int height;
@@ -34,11 +34,19 @@ public class DrawView extends View implements SurfaceHolder.Callback{
 	
 	private AndroidTetrisThread thread;
 	
+	/** Handle to the surface manager object we interact with */
+    private SurfaceHolder mSurfaceHolder;
+	
 	class AndroidTetrisThread extends Thread {
 		
 		
+		public AndroidTetrisThread(SurfaceHolder surfaceHolder)
+		{
+			mSurfaceHolder = surfaceHolder;
+		}
+		
 		public void doStart() {
-			
+		
 		}
 		
         /**
@@ -55,9 +63,32 @@ public class DrawView extends View implements SurfaceHolder.Callback{
 		
 		@Override
 	    public void run() {
-			while (mRun) {
+			//while (mRun) {
+				Canvas canvas = null;
+				canvas = mSurfaceHolder.lockCanvas(null);
 				
-			}
+				int[] colors = new int[STRIDE * HEIGHT];
+		        for (int y = 0; y < HEIGHT; y++) {
+		            for (int x = 0; x < WIDTH; x++) {
+		                int r = x * 255 / (WIDTH - 1);
+		                int g = y * 255 / (HEIGHT - 1);
+		                int b = 255 - Math.min(r, g);
+		                int a = Math.max(r, g);
+		                colors[y * STRIDE + x] = (a << 24) | (r << 16) | (g << 8) | b;
+		            }
+		        }
+			//Resources r = this.getContext().getResources();
+			Bitmap bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+			bitmap.setPixels(colors, 0, STRIDE, 0, 0, WIDTH, HEIGHT);
+			Bitmap bitmapnew = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+			bitmapnew.setPixels(colors, 0, STRIDE, 0, 0, WIDTH, HEIGHT);
+			//Canvas canvasnew = new Canvas(bitmap);
+			//Drawable tile = r.getDrawable(R.drawable.greenstar);
+			//tile.setBounds(1000, 1000, 1000, 1000);
+			//tile.draw(canvasnew);
+			canvas.drawBitmap(bitmap, 150, 150, paint);
+			canvas.drawBitmap(bitmapnew, 300, 300, paint);
+			//}
 		}
 	}
 	
@@ -75,8 +106,12 @@ public class DrawView extends View implements SurfaceHolder.Callback{
 		super(context);
 		paint.setColor(Color.RED);
 		paint.setAntiAlias(true);
+		
+		// register our interest in hearing about changes to our surface
+        SurfaceHolder holder = getHolder();
+        holder.addCallback(this);
 	
-		thread = new AndroidTetrisThread ();
+		thread = new AndroidTetrisThread (holder);
 	
 	}
 	
