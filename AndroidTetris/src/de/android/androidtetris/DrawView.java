@@ -4,31 +4,80 @@
 package de.android.androidtetris;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.widget.TextView;
 
 /**
- * @author gustavo
+ * @author gusarapo
  *
  */
-public class DrawView extends View {
+public class DrawView extends View implements SurfaceHolder.Callback{
 	Paint paint = new Paint();
 	private int width;
 	private int height;
 	private static final int WIDTH = 50;
 	private static final int HEIGHT = 50;
-	private static final int STRIDE = 64;   //
+	private static final int STRIDE = 64;  
+	
+	/** Pointer to the text view to display "Paused.." etc. */
+    private TextView mStatusText;
+    /** Indicate whether the surface has been created & is ready to draw */
+    private boolean mRun = false;
+	
+	private AndroidTetrisThread thread;
+	
+	class AndroidTetrisThread extends Thread {
+		
+		
+		public void doStart() {
+			
+		}
+		
+        /**
+         * Used to signal the thread whether it should be running or not.
+         * Passing true allows the thread to run; passing false will shut it
+         * down if it's already running. Calling start() after this was most
+         * recently called with false will result in an immediate shutdown.
+         *
+         * @param b true to run, false to shut down
+         */
+        public void setRunning(boolean b) {
+            mRun = b;
+        }
+		
+		@Override
+	    public void run() {
+			while (mRun) {
+				
+			}
+		}
+	}
+	
+	 /**
+     * Fetches the animation thread corresponding to this LunarView.
+     *
+     * @return the animation thread
+     */
+    public AndroidTetrisThread getThread() {
+        return thread;
+    }
 	
 	DrawView(Context context)
 	{
 		super(context);
 		paint.setColor(Color.RED);
 		paint.setAntiAlias(true);
+	
+		thread = new AndroidTetrisThread ();
+	
 	}
 	
 	@Override
@@ -63,5 +112,31 @@ public class DrawView extends View {
 	{
 		this.width = width;
 		this.height = height;
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+    /*
+     * Callback invoked when the Surface has been created and is ready to be
+     * used.
+     */
+	@Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        // start the thread here so that we don't busy-wait in run()
+        // waiting for the surface to be created
+        thread.setRunning(true);
+        thread.start();
+    }
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		
 	}
 }
