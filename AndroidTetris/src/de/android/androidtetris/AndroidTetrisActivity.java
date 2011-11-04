@@ -15,7 +15,7 @@ public class AndroidTetrisActivity extends Activity {
         
         setContentView(R.layout.main);
         drawView = new DrawView(this);
-        drawView.setDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        //drawView.setDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
         this.setContentView(drawView);
         drawView.requestFocus();
     }
