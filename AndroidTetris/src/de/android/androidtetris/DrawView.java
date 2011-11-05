@@ -4,11 +4,11 @@
 package de.android.androidtetris;
 
 import java.util.Random;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -17,17 +17,23 @@ import android.view.SurfaceView;
  *
  */
 public class DrawView extends SurfaceView {
-	Paint paint = new Paint();
-	private int width;
-	private int height;
-	private static final int WIDTH = 50;
-	private static final int HEIGHT = 50;
-	private static final int STRIDE = 64;  
 	private Random random = new Random();;
 	int position = 150;
 	private SurfaceHolder holder;
     private AndroidTetrisThread gameLoopThread;
     private int x = 0; 
+    
+    private static final int TILESIZE=16;
+    //now for the map...
+    private static final int MAPWIDTH=10;
+    private static final int MAPHEIGHT=30;
+    private static final int GREY=8;
+
+    private enum TileColor
+    {
+    	TILENODRAW,TILEBLACK,TILEGREY,TILEBLUE,TILERED,
+    	TILEGREEN,TILEYELLOW,TILEWHITE,TILESTEEL,TILEPURPLE;
+    }
 	
     /** Indicate whether the surface has been created & is ready to draw */
     private boolean mRun = false;
@@ -36,6 +42,8 @@ public class DrawView extends SurfaceView {
 	
 	/** Handle to the surface manager object we interact with */
     private SurfaceHolder mSurfaceHolder;
+    
+    Bitmap[] tileArray;
 	
 	class AndroidTetrisThread extends Thread {
 		private DrawView view;
@@ -82,8 +90,15 @@ public class DrawView extends SurfaceView {
     public DrawView(Context context) 
     {
     	super(context);
-        paint.setColor(Color.RED);
-        paint.setAntiAlias(true);
+        this.resetTiles(8);
+        this.loadTile(0, Color.RED);
+        this.loadTile(1, Color.BLUE);
+        this.loadTile(2, Color.CYAN);
+        this.loadTile(3, Color.GREEN);
+        this.loadTile(4, Color.YELLOW);
+        this.loadTile(5, Color.WHITE);
+        this.loadTile(6, Color.MAGENTA);
+        this.loadTile(7, Color.GRAY);
      		
      		// register our interest in hearing about changes to our surface
              //SurfaceHolder holder = getHolder();
@@ -120,31 +135,37 @@ public class DrawView extends SurfaceView {
              });
        }
     
-       @Override
-       protected void onDraw(Canvas canvas) {
-  		 int[] colors = new int[STRIDE * HEIGHT];
-	        for (int y = 0; y < HEIGHT; y++) {
-	            for (int x = 0; x < WIDTH; x++) {
-                int r = x * 255 / (WIDTH - 1);
-	                int g = y * 255 / (HEIGHT - 1);
-	                int b = 255 - Math.min(r, g);
-	                int a = Math.max(r, g);
-	                colors[y * STRIDE + x] = (a << 24) | (r << 16) | (g << 8) | b;
-	            }
-	        }
-	        Bitmap bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
-	        bitmap.setPixels(colors, 0, STRIDE, 0, 0, WIDTH, HEIGHT);
-	        
-             canvas.drawColor(Color.BLACK);
-
-             
-             if (x < this.getHeight() - bitmap.getHeight()) {
-                    x++;
-             }
-             else
-            	 x = 0;
-
-             //canvas.drawBitmap(bmp, x, 10, null);
-             canvas.drawBitmap(bitmap, 10, x, this.paint);
-       }
+    public void resetTiles(int tilecount) {
+    	tileArray = new Bitmap[tilecount];
+    }
+    
+    public void loadTile(int key, int color)
+    {
+    	
+	    Bitmap bitmap = Bitmap.createBitmap(TILESIZE, TILESIZE, Bitmap.Config.ARGB_8888);
+	    for (int x = 0; x < TILESIZE; x++) {
+    		for (int y=0; y< TILESIZE; y++) {
+    			bitmap.setPixel(x, y, color);
+    		}
+    	}
+	    tileArray[key] = bitmap;
+    }
+    
+    @Override
+    protected void onDraw(Canvas canvas) {
+    	canvas.drawColor(Color.BLACK);
+    	int aux = 10;
+    	
+    	for (Bitmap bitmap : tileArray)
+    	{
+    		if (x < this.getHeight() - bitmap.getHeight()) 
+    		{
+    			x++;
+    		}
+    		else
+    			x = 0;
+    		canvas.drawBitmap(bitmap, aux, x, null);
+    		aux = aux + 20;
+    	}
+    }
 }
