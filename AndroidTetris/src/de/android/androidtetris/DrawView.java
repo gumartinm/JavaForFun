@@ -91,18 +91,14 @@ public class DrawView extends SurfaceView {
     {
     	super(context);
         this.resetTiles(8);
-        this.loadTile(0, Color.RED);
-        this.loadTile(1, Color.BLUE);
-        this.loadTile(2, Color.CYAN);
-        this.loadTile(3, Color.GREEN);
-        this.loadTile(4, Color.YELLOW);
-        this.loadTile(5, Color.WHITE);
-        this.loadTile(6, Color.MAGENTA);
-        this.loadTile(7, Color.GRAY);
-     		
-     		// register our interest in hearing about changes to our surface
-             //SurfaceHolder holder = getHolder();
-             //holder.addCallback(this);
+        for (Tile color : Tile.values() )
+        {
+        	this.loadTile(color.getColor(), color.getColorRGBA());
+        }
+     	
+     	// register our interest in hearing about changes to our surface
+        //SurfaceHolder holder = getHolder();
+        //holder.addCallback(this);
              gameLoopThread = new AndroidTetrisThread(this);
              holder = getHolder();
              holder.addCallback(new SurfaceHolder.Callback() {
