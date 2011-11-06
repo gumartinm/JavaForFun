@@ -82,11 +82,13 @@ public enum Piece {
 		}
 	};
 	
-	private static Tile[][] size = new Tile[4][4];
+	private static final int WIDTH = 4;
+	private static final int HEIGHT = 4;
+	public Tile[][] size = new Tile[WIDTH][HEIGHT];
 	//Store the x coordinate (the position of this piece on the grid)
-	private int x;
+	public int x;
 	//Store the y coordinate (the position of this piece on the grid)
-	private int y;
+	public int y;
 	private final int pieceNumber;
 	private static final Map<Integer, Piece> pieceMap = new HashMap<Integer, Piece>();
 	
@@ -100,6 +102,15 @@ public enum Piece {
 	private Piece (int pieceNumber)
 	{
 		this.pieceNumber = pieceNumber;
+		this.y = 10;
+		this.x = 10;
+		
+		//Pre-Initialization of size matrix
+		for (int i=0; i< WIDTH; i++)
+			for (int j=0; j< WIDTH; j++)
+				size[i][j]= Tile.NOCOLOR;
+		
+		this.refill();
 	}
 	
 	public Piece getPiece (int pieceNumber)

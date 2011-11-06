@@ -21,19 +21,13 @@ public class DrawView extends SurfaceView {
 	int position = 150;
 	private SurfaceHolder holder;
     private AndroidTetrisThread gameLoopThread;
-    private int x = 0; 
+    private int y = 0; 
     
     private static final int TILESIZE=16;
     //now for the map...
     private static final int MAPWIDTH=10;
     private static final int MAPHEIGHT=30;
     private static final int GREY=8;
-
-    private enum TileColor
-    {
-    	TILENODRAW,TILEBLACK,TILEGREY,TILEBLUE,TILERED,
-    	TILEGREEN,TILEYELLOW,TILEWHITE,TILESTEEL,TILEPURPLE;
-    }
 	
     /** Indicate whether the surface has been created & is ready to draw */
     private boolean mRun = false;
@@ -77,7 +71,7 @@ public class DrawView extends SurfaceView {
 	       }
 	}
 	
-	 /**
+	/**
      * Fetches the animation thread corresponding to this LunarView.
      *
      * @return the animation thread
@@ -90,7 +84,7 @@ public class DrawView extends SurfaceView {
     public DrawView(Context context) 
     {
     	super(context);
-        this.resetTiles(8);
+        this.resetTiles(9);
         for (Tile color : Tile.values() )
         {
         	this.loadTile(color.getColor(), color.getColorRGBA());
@@ -150,18 +144,31 @@ public class DrawView extends SurfaceView {
     @Override
     protected void onDraw(Canvas canvas) {
     	canvas.drawColor(Color.BLACK);
-    	int aux = 10;
+    	int aux = 0;
     	
-    	for (Bitmap bitmap : tileArray)
+    	//for (Bitmap bitmap : tileArray)
+    	//{
+    	//	if (y < this.getHeight() - bitmap.getHeight()) 
+    	//	{
+    	//		y++;
+    	//	}
+    	//	else
+    	//		y = 0;
+    	//	canvas.drawBitmap(bitmap, aux, y, null);
+    	//	aux = aux + 20;
+    	//}
+    
+    	//draw moving block
+    	for (Piece piece : Piece.values())
     	{
-    		if (x < this.getHeight() - bitmap.getHeight()) 
-    		{
-    			x++;
-    		}
-    		else
-    			x = 0;
-    		canvas.drawBitmap(bitmap, aux, x, null);
-    		aux = aux + 20;
+    		for(int xmy=0; xmy<4; xmy++)
+        		for(int ymx=0; ymx<4; ymx++)
+        			if(piece.size[xmy][ymx] != Tile.NOCOLOR)
+        				canvas.drawBitmap(tileArray[piece.size[xmy][ymx].getColor()], 
+        						piece.x+(xmy*TILESIZE), piece.y+aux+(ymx*TILESIZE), null);
+    		aux = aux + 64;
     	}
+    	
+
     }
 }
