@@ -4,7 +4,6 @@
 package de.android.androidtetris;
 
 import java.util.Random;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -20,7 +19,6 @@ public class DrawView extends SurfaceView {
 	int position = 150;
 	private SurfaceHolder holder;
     private AndroidTetrisThread gameLoopThread;
-    private int y = 0; 
     
     private static final int TILESIZE=16;
     //now for the map...
@@ -28,13 +26,8 @@ public class DrawView extends SurfaceView {
     private static final int MAPHEIGHT=30;
     private static final int GREY=8;
 	
-    /** Indicate whether the surface has been created & is ready to draw */
-    private boolean mRun = false;
 	
 	private AndroidTetrisThread thread;
-	
-	/** Handle to the surface manager object we interact with */
-    private SurfaceHolder mSurfaceHolder;
     
     Bitmap[] tileArray;
     Tile[][] mapMatrix;
@@ -62,8 +55,9 @@ public class DrawView extends SurfaceView {
 	                    try {
 	                           c = view.getHolder().lockCanvas();
 	                           synchronized (view.getHolder()) {
-	                        	      view.DrawMap(c);
-	                                  //view.onDraw(c);
+	                        	   view.move(0, 1);
+	                        	   view.drawMap(c);
+	                        	   //view.onDraw(c);
 	                           }
 	                    } finally {
 	                           if (c != null) {
@@ -170,7 +164,6 @@ public class DrawView extends SurfaceView {
     	prePiece = Piece.getPiece(random.nextInt(7)%7);
     	prePiece.x=MAPWIDTH+2;
     	prePiece.y=GREY/4;
-
     }
     
     protected void drawTile(Canvas canvas, int color, int x, int y)
@@ -178,7 +171,7 @@ public class DrawView extends SurfaceView {
     	canvas.drawBitmap(tileArray[color], x*TILESIZE, y*TILESIZE, null);
     }
     
-    protected void DrawMap(Canvas canvas)
+    protected void drawMap(Canvas canvas)
     {
     	canvas.drawColor(Color.WHITE);
     	
@@ -203,9 +196,42 @@ public class DrawView extends SurfaceView {
     		for(int y=0; y<4; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
     				drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x+x, currentPiece.y +y);
-
+    }
+    
+    protected void move (int x, int y)
+    {
+    	if (this.collisionTest(x, y))
+    	{
+    		this.newBlock();
+    	}
+    	else
+    	{
+    		currentPiece.x += x;
+    		currentPiece.y += y;
+    	}
+    }
+    
+    protected boolean collisionTest(int cx, int cy)
+    {
+    	int newx = currentPiece.x + cx;
+    	int newy = currentPiece.y + cy;
+    			
+    	//Check boundaries
+    	for(int x=0; x<4; x++)
+    		for(int y=0; y<4; y++)
+    			if(currentPiece.size[x][y] != Tile.NOCOLOR)
+    				if (newy + y > MAPHEIGHT)
+    					return true;
     	
-    	
+    	//Check collisions
+    	for(int x=0; x< MAPWIDTH; x++)
+    		for(int y=0; y< MAPHEIGHT; y++)
+    			if(x >= newx && x < newx + 4)
+    				if(y >= newy && y < newy +4)
+    					if(mapMatrix[x][y] != Tile.BLACK)
+    						if(currentPiece.size[x - newx][y - newy] != Tile.NOCOLOR)
+    							return true;
+    	return false;
     }
     
     @Override
@@ -223,7 +249,5 @@ public class DrawView extends SurfaceView {
         						piece.x+(xmy*TILESIZE), piece.y+aux+(ymx*TILESIZE), null);
     		aux = aux + 64;
     	}
-    	
-
     }
 }
