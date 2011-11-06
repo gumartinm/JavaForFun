@@ -17,7 +17,6 @@ import android.view.SurfaceView;
  *
  */
 public class DrawView extends SurfaceView {
-	private Random random = new Random();;
 	int position = 150;
 	private SurfaceHolder holder;
     private AndroidTetrisThread gameLoopThread;
@@ -38,6 +37,9 @@ public class DrawView extends SurfaceView {
     private SurfaceHolder mSurfaceHolder;
     
     Bitmap[] tileArray;
+    Tile[][] mapMatrix;
+    Piece prePiece;
+    Piece currentPiece;
 	
 	class AndroidTetrisThread extends Thread {
 		private DrawView view;
@@ -60,7 +62,8 @@ public class DrawView extends SurfaceView {
 	                    try {
 	                           c = view.getHolder().lockCanvas();
 	                           synchronized (view.getHolder()) {
-	                                  view.onDraw(c);
+	                        	      view.DrawMap(c);
+	                                  //view.onDraw(c);
 	                           }
 	                    } finally {
 	                           if (c != null) {
@@ -84,11 +87,14 @@ public class DrawView extends SurfaceView {
     public DrawView(Context context) 
     {
     	super(context);
-        this.resetTiles(9);
+        this.resetTiles(10);
         for (Tile color : Tile.values() )
         {
         	this.loadTile(color.getColor(), color.getColorRGBA());
         }
+        mapMatrix = new Tile[MAPWIDTH][MAPHEIGHT+1];
+        this.NewGame();
+        this.newBlock();
      	
      	// register our interest in hearing about changes to our surface
         //SurfaceHolder holder = getHolder();
@@ -141,22 +147,71 @@ public class DrawView extends SurfaceView {
 	    tileArray[key] = bitmap;
     }
     
+    protected void NewGame()
+    {
+    	//start out the map
+    	for(int x=0;x< MAPWIDTH;x++)
+    	{
+    		for(int y=0;y< MAPHEIGHT+1;y++)
+    		{
+    			mapMatrix[x][y]=Tile.BLACK;
+    		}
+    	}
+    }
+    
+    protected void newBlock()
+    {
+    	Random random = new Random();
+    		
+    	currentPiece = Piece.getPiece(random.nextInt(7)%7);
+    	currentPiece.x = MAPWIDTH/2-2;
+    	currentPiece.y = -1;
+    	
+    	prePiece = Piece.getPiece(random.nextInt(7)%7);
+    	prePiece.x=MAPWIDTH+2;
+    	prePiece.y=GREY/4;
+
+    }
+    
+    protected void drawTile(Canvas canvas, int color, int x, int y)
+    {
+    	canvas.drawBitmap(tileArray[color], x*TILESIZE, y*TILESIZE, null);
+    }
+    
+    protected void DrawMap(Canvas canvas)
+    {
+    	canvas.drawColor(Color.WHITE);
+    	
+    	//draw the left bar (with scores, and next pieces
+    	for(int x=MAPWIDTH; x< MAPWIDTH+GREY; x++)
+    		for(int y=0; y< MAPHEIGHT; y++)
+    			drawTile(canvas, Tile.GRAY.getColor(), x, y);
+    	
+    	//draw the pre-piece
+    	for(int x=0; x<4; x++)
+    		for(int y=0; y<4; y++)
+    			if(prePiece.size[x][y] != Tile.NOCOLOR)
+    				drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x+x, prePiece.y +y);
+    	
+    	//draw grid
+    	for(int x=0; x< MAPWIDTH; x++)
+    		for(int y=0; y< MAPHEIGHT; y++)
+    			drawTile(canvas, mapMatrix[x][y].getColor(), x, y);
+
+    	//draw the current block
+    	for(int x=0; x<4; x++)
+    		for(int y=0; y<4; y++)
+    			if(currentPiece.size[x][y] != Tile.NOCOLOR)
+    				drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x+x, currentPiece.y +y);
+
+    	
+    	
+    }
+    
     @Override
     protected void onDraw(Canvas canvas) {
     	canvas.drawColor(Color.BLACK);
     	int aux = 0;
-    	
-    	//for (Bitmap bitmap : tileArray)
-    	//{
-    	//	if (y < this.getHeight() - bitmap.getHeight()) 
-    	//	{
-    	//		y++;
-    	//	}
-    	//	else
-    	//		y = 0;
-    	//	canvas.drawBitmap(bitmap, aux, y, null);
-    	//	aux = aux + 20;
-    	//}
     
     	//draw moving block
     	for (Piece piece : Piece.values())

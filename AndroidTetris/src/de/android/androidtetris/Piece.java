@@ -105,7 +105,7 @@ public enum Piece {
 		this.y = 10;
 		this.x = 10;
 		
-		//Pre-Initialization of size matrix
+		//Pre-Initialization of matrix size
 		for (int i=0; i< WIDTH; i++)
 			for (int j=0; j< WIDTH; j++)
 				size[i][j]= Tile.NOCOLOR;
@@ -113,7 +113,7 @@ public enum Piece {
 		this.refill();
 	}
 	
-	public Piece getPiece (int pieceNumber)
+	public static final Piece getPiece (int pieceNumber)
 	{
 		return pieceMap.get(pieceNumber);
 	}

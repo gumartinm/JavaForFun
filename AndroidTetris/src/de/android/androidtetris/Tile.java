@@ -55,7 +55,13 @@ public enum Tile {
 			return Color.GRAY;
 		}
 	},
-	NOCOLOR(8) {
+	BLACK(8) {
+		@Override
+		int getColorRGBA() {
+			return Color.BLACK;
+		}
+	},
+	NOCOLOR(9) {
 		@Override
 		int getColorRGBA() {
 			return Color.TRANSPARENT;
