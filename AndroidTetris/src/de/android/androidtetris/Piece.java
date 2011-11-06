@@ -90,7 +90,7 @@ public enum Piece {
 	//Every piece is contained in a square. This is the square's height.
 	private static final int HEIGHT = 4;
 	//Every piece is contained in a square.
-	public Tile[][] size = new Tile[WIDTH][HEIGHT];
+	public final Tile[][] size = new Tile[WIDTH][HEIGHT];
 	//Stores the x coordinate (the position of this piece on the grid)
 	public int x = 0;
 	//Stores the y coordinate (the position of this piece on the grid)

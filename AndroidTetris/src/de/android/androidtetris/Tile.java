@@ -82,7 +82,7 @@ public enum Tile {
 	
 	
 	//Stores the argument of the enum constant (passed to the constructor) JLS§8.9.1
-	private int color;
+	private final int color;
 	
 	
 	/**
@@ -91,7 +91,7 @@ public enum Tile {
 	 * 
 	 * @param color It is the argument of the enum constant
 	 */
-	Tile (int color)
+	Tile (final int color)
 	{
 		this.color = color;
 	}
