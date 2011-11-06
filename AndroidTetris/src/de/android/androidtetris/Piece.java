@@ -85,9 +85,9 @@ public enum Piece {
 	};
 	
 	
-	//Every is contained in a square. This is the square's width.
+	//Every piece is contained in a square. This is the square's width.
 	private static final int WIDTH = 4;
-	//Every is contained in a square. This is the square's height.
+	//Every piece is contained in a square. This is the square's height.
 	private static final int HEIGHT = 4;
 	//Every piece is contained in a square.
 	public Tile[][] size = new Tile[WIDTH][HEIGHT];

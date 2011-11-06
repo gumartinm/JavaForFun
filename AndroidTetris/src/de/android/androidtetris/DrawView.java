@@ -34,38 +34,43 @@ public class DrawView extends SurfaceView {
     Piece prePiece;
     Piece currentPiece;
 	
-	class AndroidTetrisThread extends Thread {
+	class AndroidTetrisThread extends Thread 
+	{
 		private DrawView view;
 
-	       private boolean running = false;
-
-	       public AndroidTetrisThread(DrawView view) {
-	             this.view = view;
-	       }
-
-	       public void setRunning(boolean run) {
-	             running = run;
-	       }
+	    private boolean running = false;
 
 	 
-	       @Override
-	       public void run() {
-	             while (running) {
-	                    Canvas c = null;
-	                    try {
-	                           c = view.getHolder().lockCanvas();
-	                           synchronized (view.getHolder()) {
-	                        	   view.move(0, 1);
-	                        	   view.drawMap(c);
-	                        	   //view.onDraw(c);
-	                           }
-	                    } finally {
-	                           if (c != null) {
-	                                  view.getHolder().unlockCanvasAndPost(c);
-	                           }
-	                    }
-	             }
-	       }
+	    public AndroidTetrisThread(DrawView view) {
+	    	this.view = view;
+	    }
+
+	    
+	    public void setRunning(boolean run) {
+	    	running = run;
+	    }
+
+	    
+	    @Override
+	    public void run() 
+	    {
+	    	while (running) 
+	    	{
+	    		Canvas c = null;
+	            try {
+	            	c = view.getHolder().lockCanvas();
+	                synchronized (view.getHolder()) 
+	                {
+	                	view.move(0, 1);
+	                    view.drawMap(c);
+	                    //view.onDraw(c);
+	                }
+	            }finally {
+	            	if (c != null) 
+	            		view.getHolder().unlockCanvasAndPost(c);
+	            }
+	         }
+	    }
 	}
 	
 	/**
