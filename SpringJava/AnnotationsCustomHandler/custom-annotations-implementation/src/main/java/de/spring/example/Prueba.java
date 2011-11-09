@@ -1,5 +1,7 @@
 package de.spring.example;
 
+import es.dia.pos.n2a.aspectj.annotations.TransactionalN2A;
+
 
 public class Prueba {
   public void bar(){

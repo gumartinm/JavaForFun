@@ -1,5 +1,6 @@
 package de.spring.example;
 
+
 public class SpringStart {
 
 	/**
