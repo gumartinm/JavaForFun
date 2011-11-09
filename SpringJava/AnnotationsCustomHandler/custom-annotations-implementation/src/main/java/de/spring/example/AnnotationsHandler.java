@@ -6,6 +6,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.generic.GenericBeanFactoryAccessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import de.spring.example.annotation.CustomTransactional;
 
 
 public class AnnotationsHandler implements ApplicationContextAware, InitializingBean {
@@ -15,12 +16,12 @@ public class AnnotationsHandler implements ApplicationContextAware, Initializing
 	  public void afterPropertiesSet() {
 		  GenericBeanFactoryAccessor genericBeanFactoryAccessor = new GenericBeanFactoryAccessor(applicationContext);
 		  
-		  final Map<String, Object> transactionalClass = genericBeanFactoryAccessor.getBeansWithAnnotation(TransactionalN2A.class);
+		  final Map<String, Object> transactionalClass = genericBeanFactoryAccessor.getBeansWithAnnotation(CustomTransactional.class);
 
 		  for (final Object myFoo : transactionalClass.values()) {
 			  final Class<? extends Object> fooClass = myFoo.getClass();
-			  final TransactionalN2A annotation = fooClass.getAnnotation(TransactionalN2A.class);
-			  System.out.println("Found 1 foo class: " + fooClass + ", with tags: ");
+			  final CustomTransactional annotation = fooClass.getAnnotation(CustomTransactional.class);
+			  System.out.println("Found foo class: " + fooClass + ", with tags: ");
 		  }
 	  }
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.spring.example;
+package de.spring.example.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,6 +9,5 @@ import org.springframework.stereotype.Component;
 
 
 @Retention(RetentionPolicy.RUNTIME)
-@Component
-public @interface TransactionalN2A {
+public @interface CustomTransactional {
 }

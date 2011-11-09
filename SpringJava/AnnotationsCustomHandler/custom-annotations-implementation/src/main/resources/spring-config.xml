@@ -2,75 +2,47 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" 
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
   						   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-  						   http://www.springframework.org/schema/aop 
- 		 				   http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
   						   http://www.springframework.org/schema/context 
-  						   http://www.springframework.org/schema/context/spring-context-2.5.xsd
-  						   http://www.springframework.org/schema/tx 
-  						   http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-  
-     <aop:aspectj-autoproxy proxy-target-class="true"/>
-  
- 	 <context:load-time-weaver
-		weaver-class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"
-		aspectj-weaving="on"/>
+  						   http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
+	<!-- 	This would be useful in case of not using a xml file for the beans declaration
+		(we can use @Bean with @Configuration annotation instead of xml files) Not sure
+		if this is useful in case of searching custom annotations. Apparently this code does not
+		need it, so I will no use it.
+	<context:annotation-config/>
+	-->
 
-    <context:component-scan base-package="es.dia">
+	<!-- 
+		     Spring makes the nasty work for us (it searches the annotations) 
+		See: http://static.springsource.org/spring/docs/3.1.0.RC1/spring-framework-reference/html/beans.html#beans-annotation-config
+		 
+		     With filters we can narrow down the targets and hopefully improve the 
+		performance while searching annotations in the Spring context. 
+		Besides we disable automatic detection of classes annotated with 
+		@Component, @Repository, @Service, or @Controller because we do not
+		need here that feature.
+	-->
+    <context:component-scan base-package="de.spring.example" use-default-filters="false">
     	<context:include-filter 
     	type="annotation" 
-    	expression="es.dia.pos.n2a.aspectj.annotations.TransactionalN2A" />
+    	expression="de.spring.example.annotation.CustomTransactional" />
 	</context:component-scan>
 
 
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-                <property name="user" value="root"/>
-                <property name="password" value=""/>
-                <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-                <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/n2a?autoReconnect=true"/>
-                <property name="initialPoolSize" value="5"/>
-                <property name="maxPoolSize" value="20"/>
-                <property name="minPoolSize" value="10"/>
-                <property name="acquireIncrement" value="1"/>
-                <property name="acquireRetryAttempts" value="5"/>
-                <property name="acquireRetryDelay" value="1000"/>
-                <property name="automaticTestTable" value="con_test"/>
-                <property name="checkoutTimeout" value="5000"/>
-	</bean>
-	
-	<bean id="annotationsHandler" class="es.dia.pos.n2a.aspectj.annotations.AnnotationsHandler" >
+	<!-- Our annotations handler -->	
+	<bean id="annotationsHandler" class="de.spring.example.AnnotationsHandler" >
 	
 	</bean>
 	
-	<!--  
-	<bean class="org.springframework.transaction.aspectj.AnnotationTransactionAspect" factory-method="aspectOf">
-        <property name="transactionManagerN2A" ref="transactionManagerN2A"/>
-    </bean>	
+    <!-- 
+    		In order to find annotations in inner classes we have to create Spring 
+    	beans of them.
     -->
-    
-    <bean id="pruebaOuter" class="es.dia.pos.n2a.aspectj.annotations.Prueba"/>
-    <bean id="pruebaInner" class="es.dia.pos.n2a.aspectj.annotations.Prueba$InnerService">
-        <constructor-arg ref="pruebaOuter"/>
-    </bean>
-	
-	<!--
-		I do not care about the N2A default configuration, so I use here the scope singleton and lazy-init false.
-	-->
-	<bean id="transactionManagerN2A" 
-	       class="es.dia.pos.n2a.aspectj.annotations.TransactionManagerN2A"
-	       factory-method="getInstance"
-	       scope="singleton"
-	       lazy-init="false" >
-        <property name="transactionManager">
-            <ref bean="transactionManager" />
-        </property>
-    </bean>
-    
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    	<property name="dataSource" ref="dataSource"/>
+    <bean id="testOuter" class="de.spring.example.Test"/>
+    <bean id="testInner" class="de.spring.example.Test$InnerService">
+        <constructor-arg ref="testOuter"/>
     </bean>
 
 </beans>

@@ -5,12 +5,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 /**
- * Localizador de beans para de los dispositivos
  *
- * @author rvp001es
  */
 public final class SpringContextLocator {
-
 
 	// Singleton Pattern
 	private static SpringContextLocator instance;
@@ -18,9 +15,8 @@ public final class SpringContextLocator {
 	// Spring ApplicationContext
 	private static ApplicationContext context;
 
-	// Dispositivos logicos
+	// Spring Context
 	private static final String SPRING_CONFIG_CONTEXT="spring-config.xml";
-	//private static final String DATABASE_CONFIG="database-config.xml";
 
 	
 	/**
@@ -35,12 +31,12 @@ public final class SpringContextLocator {
 		
 		SpringContextLocator.context = new ClassPathXmlApplicationContext(factoryFiles);
 
-		System.out.println("The N2A devices context and test " +
-										"context has been loaded successfully!! ");
+		System.out.println("The context has been loaded successfully!! ");
 	}
 
 	/**
-	 * Singleton pattern. GetInstance()
+	 * Singleton pattern not thread safety. To use SingletoHolder pattern as the best approximation 
+	 * otherwise to use an Enum class (see Effective Java Second Edition and ) if we need serialization.
 	 */
 	public synchronized static SpringContextLocator getInstance() {
 		if (SpringContextLocator.instance == null) {
@@ -50,7 +46,7 @@ public final class SpringContextLocator {
 	}
 
 	/**
-	 * Return a bean in application context.
+	 * Return bean from application context.
 	 */
 	public Object getBean(final String name) {
 		return SpringContextLocator.context.getBean(name);
