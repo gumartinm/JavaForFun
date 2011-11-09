@@ -10,11 +10,14 @@ import java.lang.annotation.Target;
 
 /**
  * 
- * Spring will search this annotation.
+ * We us this annotation to show how to invoke methods with annotations
+ * using Java reflection.
+ * This annotation will not be searched by Spring.
  *
  */
 
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CustomTransactional {
+public @interface TestAnnotation {
+
 }

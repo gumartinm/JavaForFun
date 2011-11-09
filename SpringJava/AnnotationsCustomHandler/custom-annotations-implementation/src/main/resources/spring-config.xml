@@ -10,7 +10,7 @@
 	<!-- 	This would be useful in case of not using a xml file for the beans declaration
 		(we can use @Bean with @Configuration annotation instead of xml files) Not sure
 		if this is useful in case of searching custom annotations. Apparently this code does not
-		need it, so I will no use it.
+		need it, so I will not use it.
 	<context:annotation-config/>
 	-->
 
