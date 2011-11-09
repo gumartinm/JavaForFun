@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>spring-aspectj</artifactId>
+	        <groupId>de.spring.example</groupId>
+	        <version>2.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>de.spring.example</groupId>
+	<artifactId>spring-aspectj-example</artifactId>
+	<version>2.0-SNAPSHOT</version>
+	<name>spring-aspectj-example</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+	
+		<!-- Assembly version info -->
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-model</artifactId>
+			<version>2.2.1</version>	
+		</dependency>
+
+		<!--  
+		<dependency>
+    			<groupId>org.springframework</groupId>
+    			<artifactId>spring-aspects</artifactId>
+    			<version>2.5.6</version>
+		</dependency>
+		-->
+
+		<dependency>
+            <groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		<version>2.5.6</version>
+        	</dependency>
+
+		<dependency>
+             <groupId>org.springframework</groupId>
+             <artifactId>spring-jdbc</artifactId>
+		<version>2.5.6</version>
+        	</dependency>	
+
+		<dependency>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+		<version>0.9.1.2</version>
+        </dependency>
+                
+        <dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>1.6.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.6.12</version>
+		</dependency>
+                
+         <!--  
+         <dependency>
+    			<groupId>org.springframework</groupId>
+    			<artifactId>spring-agent</artifactId>
+    			<version>2.5.6</version>
+		 </dependency>
+		-->
+
+	</dependencies>
+
+</project>

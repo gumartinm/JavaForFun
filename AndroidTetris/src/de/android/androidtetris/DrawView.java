@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -16,28 +17,21 @@ import android.view.SurfaceView;
  *
  */
 public class DrawView extends SurfaceView {
-	int position = 150;
 	private SurfaceHolder holder;
     private AndroidTetrisThread gameLoopThread;
-    
     private static final int TILESIZE=16;
-    //now for the map...
     private static final int MAPWIDTH=10;
     private static final int MAPHEIGHT=30;
     private static final int GREY=8;
-	
-	
 	private AndroidTetrisThread thread;
-    
-    Bitmap[] tileArray;
-    Tile[][] mapMatrix;
-    Piece prePiece;
-    Piece currentPiece;
+    private Bitmap[] tileArray;
+    private Tile[][] mapMatrix;
+    private Piece prePiece;
+    private Piece currentPiece;
 	
 	class AndroidTetrisThread extends Thread 
 	{
 		private DrawView view;
-
 	    private boolean running = false;
 
 	 
@@ -56,20 +50,15 @@ public class DrawView extends SurfaceView {
 	    {
 	    	while (running) 
 	    	{
-	    		Canvas c = null;
-	            try {
-	            	c = view.getHolder().lockCanvas();
-	                synchronized (view.getHolder()) 
-	                {
-	                	view.move(0, 1);
-	                    view.drawMap(c);
-	                    //view.onDraw(c);
-	                }
-	            }finally {
-	            	if (c != null) 
-	            		view.getHolder().unlockCanvasAndPost(c);
-	            }
-	         }
+	    		Canvas c = view.getHolder().lockCanvas();
+	    		synchronized (view.getHolder())
+	    		{
+	    			view.move(0, 1);
+	    			view.drawMap(c);
+	    			//view.onDraw(c);
+	    		}
+	    		view.getHolder().unlockCanvasAndPost(c);
+	    	}
 	    }
 	}
 	
@@ -86,53 +75,53 @@ public class DrawView extends SurfaceView {
     public DrawView(Context context) 
     {
     	super(context);
-        this.resetTiles(10);
-        for (Tile color : Tile.values() )
-        {
-        	this.loadTile(color.getColor(), color.getColorRGBA());
-        }
-        mapMatrix = new Tile[MAPWIDTH][MAPHEIGHT+1];
-        this.NewGame();
-        this.newBlock();
-     	
+       
+        this.newGame();
+        currentPiece = newBlock();
+        currentPiece.x = MAPWIDTH/2-2;
+    	currentPiece.y = -1;
+    	prePiece = newBlock();
+    	prePiece.x=MAPWIDTH+2;
+    	prePiece.y=GREY/4;
+    	
      	// register our interest in hearing about changes to our surface
         //SurfaceHolder holder = getHolder();
         //holder.addCallback(this);
-             gameLoopThread = new AndroidTetrisThread(this);
-             holder = getHolder();
-             holder.addCallback(new SurfaceHolder.Callback() {
-            	 @Override
-            	 public void surfaceDestroyed(SurfaceHolder holder) {
-                           boolean retry = true;
-                           gameLoopThread.setRunning(false);
-                           while (retry) {
-                                  try {
-                                        gameLoopThread.join();
-                                        retry = false;
-                                  } catch (InterruptedException e) {
+        gameLoopThread = new AndroidTetrisThread(this);
+        holder = getHolder();
+        holder.addCallback(new SurfaceHolder.Callback() {
+        		@Override
+        		public void surfaceDestroyed(SurfaceHolder holder) {
+        			boolean retry = true;
+        			gameLoopThread.setRunning(false);
+        			while (retry) {
+        				try {
+        					gameLoopThread.join();
+        					retry = false;
+        				} catch (InterruptedException e) {
+        				
+        				}
+        			}
+        		}
+        
+        		@Override
+        		public void surfaceCreated(SurfaceHolder holder) {
+        			gameLoopThread.setRunning(true);
+        			gameLoopThread.start();
+        		}
+        
+        		@Override
+        		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        	
+        		}
+        });      
+    }
 
-                                  }
-                           }
-                    }
-
-                    @Override
-                    public void surfaceCreated(SurfaceHolder holder) {
-                           gameLoopThread.setRunning(true);
-                           gameLoopThread.start();
-                    }
-
-                    @Override
-                    public void surfaceChanged(SurfaceHolder holder, int format,
-                                	int width, int height) {
-
-                    }
-
-             });
-       }
     
     public void resetTiles(int tilecount) {
     	tileArray = new Bitmap[tilecount];
     }
+
     
     public void loadTile(int key, int color)
     {
@@ -145,9 +134,17 @@ public class DrawView extends SurfaceView {
     	}
 	    tileArray[key] = bitmap;
     }
+
     
-    protected void NewGame()
+    protected void newGame()
     {
+    	 this.resetTiles(10);
+         for (Tile color : Tile.values() )
+         {
+         	this.loadTile(color.getColor(), color.getColorRGBA());
+         }
+         mapMatrix = new Tile[MAPWIDTH][MAPHEIGHT+1];
+    	
     	//start out the map
     	for(int x=0;x< MAPWIDTH;x++)
     	{
@@ -158,17 +155,13 @@ public class DrawView extends SurfaceView {
     	}
     }
     
-    protected void newBlock()
+    protected Piece newBlock()
     {
     	Random random = new Random();
     		
-    	currentPiece = Piece.getPiece(random.nextInt(7)%7);
-    	currentPiece.x = MAPWIDTH/2-2;
-    	currentPiece.y = -1;
+    	Piece piece = Piece.getPiece(random.nextInt(7)%7);
     	
-    	prePiece = Piece.getPiece(random.nextInt(7)%7);
-    	prePiece.x=MAPWIDTH+2;
-    	prePiece.y=GREY/4;
+    	return piece;
     }
     
     protected void drawTile(Canvas canvas, int color, int x, int y)
@@ -207,7 +200,12 @@ public class DrawView extends SurfaceView {
     {
     	if (this.collisionTest(x, y))
     	{
-    		this.newBlock();
+    		currentPiece = prePiece;
+            currentPiece.x = MAPWIDTH/2-2;
+        	currentPiece.y = -1;
+        	prePiece = newBlock();
+        	prePiece.x=MAPWIDTH+2;
+        	prePiece.y=GREY/4;
     	}
     	else
     	{
@@ -238,6 +236,30 @@ public class DrawView extends SurfaceView {
     							return true;
     	return false;
     }
+    
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent msg) {
+    	if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+    		try {
+				AndroidTetrisThread.sleep(1000000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		 Canvas c =null;
+    		 c = this.getHolder().lockCanvas();
+    		 synchronized (this.getHolder()) 
+             {
+             	this.move(1, 0);
+                this.drawMap(c);
+                //view.onDraw(c);
+             }
+             return true;
+        }
+    	return false;
+    }
+    
     
     @Override
     protected void onDraw(Canvas canvas) {

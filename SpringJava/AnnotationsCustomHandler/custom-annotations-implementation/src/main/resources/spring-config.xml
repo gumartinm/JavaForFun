@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  						   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  						   http://www.springframework.org/schema/aop 
+ 		 				   http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+  						   http://www.springframework.org/schema/context 
+  						   http://www.springframework.org/schema/context/spring-context-2.5.xsd
+  						   http://www.springframework.org/schema/tx 
+  						   http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+  
+     <aop:aspectj-autoproxy proxy-target-class="true"/>
+  
+ 	 <context:load-time-weaver
+		weaver-class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"
+		aspectj-weaving="on"/>
+
+
+    <context:component-scan base-package="es.dia">
+    	<context:include-filter 
+    	type="annotation" 
+    	expression="es.dia.pos.n2a.aspectj.annotations.TransactionalN2A" />
+	</context:component-scan>
+
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+                <property name="user" value="root"/>
+                <property name="password" value=""/>
+                <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+                <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/n2a?autoReconnect=true"/>
+                <property name="initialPoolSize" value="5"/>
+                <property name="maxPoolSize" value="20"/>
+                <property name="minPoolSize" value="10"/>
+                <property name="acquireIncrement" value="1"/>
+                <property name="acquireRetryAttempts" value="5"/>
+                <property name="acquireRetryDelay" value="1000"/>
+                <property name="automaticTestTable" value="con_test"/>
+                <property name="checkoutTimeout" value="5000"/>
+	</bean>
+	
+	<bean id="annotationsHandler" class="es.dia.pos.n2a.aspectj.annotations.AnnotationsHandler" >
+	
+	</bean>
+	
+	<!--  
+	<bean class="org.springframework.transaction.aspectj.AnnotationTransactionAspect" factory-method="aspectOf">
+        <property name="transactionManagerN2A" ref="transactionManagerN2A"/>
+    </bean>	
+    -->
+    
+    <bean id="pruebaOuter" class="es.dia.pos.n2a.aspectj.annotations.Prueba"/>
+    <bean id="pruebaInner" class="es.dia.pos.n2a.aspectj.annotations.Prueba$InnerService">
+        <constructor-arg ref="pruebaOuter"/>
+    </bean>
+	
+	<!--
+		I do not care about the N2A default configuration, so I use here the scope singleton and lazy-init false.
+	-->
+	<bean id="transactionManagerN2A" 
+	       class="es.dia.pos.n2a.aspectj.annotations.TransactionManagerN2A"
+	       factory-method="getInstance"
+	       scope="singleton"
+	       lazy-init="false" >
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+    </bean>
+    
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    	<property name="dataSource" ref="dataSource"/>
+    </bean>
+
+</beans>
