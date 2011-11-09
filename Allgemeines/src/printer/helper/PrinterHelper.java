@@ -38,7 +38,7 @@ import java.util.ListIterator;
  * </p>
  * <p>
  *      So this Helper is intended to store methods which do not fit into the Logical layer because
- * they make this layer not just JPOS dependent but completely device-dependent. All of this bacuse
+ * they make this layer not just JPOS dependent but completely device-dependent. All of this because
  * of the wrapper classes lack the required methods for these kinds of operations.
  * </p>
  * <p>
@@ -268,7 +268,6 @@ public final class PrinterHelper {
 		try {
 			for (String line : contents )
 			{
-				//FileWriter always assumes default encoding is OK!
 				output.println(line);
 			}
 		}
