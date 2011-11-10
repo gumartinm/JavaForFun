@@ -9,7 +9,7 @@ import de.spring.example.TransactionManagerN2A;
 public class MyAdvice {
 	
 	
-	@Before("@annotation(es.dia.pos.n2a.spring.example.annotation.initTransactionalN2A)")
+	@Before("@annotation(de.spring.example.annotation.initTransactionalN2A)")
 	public void initTransactionalN2A()
 	{
 		System.out.println("I am the Advice initTransaction.");
@@ -17,7 +17,7 @@ public class MyAdvice {
 	}
 	
 
-	@After("@annotation(es.dia.pos.n2a.spring.example.annotation.commitTransactionalN2A)")
+	@After("@annotation(de.spring.example.annotation.commitTransactionalN2A)")
 	public void commitTransactionalN2A() {
 		System.out.println("I am the Advice commitTransaction.");
 		TransactionManagerN2A.getInstance().commitTransaction();	

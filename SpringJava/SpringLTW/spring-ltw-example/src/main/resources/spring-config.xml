@@ -20,7 +20,7 @@
     						   aspectj-weaving="autodetect"/>
     
 	
-	<bean id="myAdvice" class="es.dia.pos.n2a.spring.example.MyAdvice">
+	<bean id="myAdvice" class="de.spring.example.MyAdvice">
     	
     </bean>
 
@@ -44,7 +44,7 @@
 	</bean>
 	
 	<bean id="transactionManagerN2A" 
-	       class="es.dia.pos.n2a.spring.example.TransactionManagerN2A"
+	       class="de.spring.example.TransactionManagerN2A"
 	       factory-method="getInstance">
         <property name="transactionManager">
             <ref bean="transactionManager" />
@@ -55,8 +55,8 @@
     		In order to find annotations in inner classes we have to create Spring 
     	beans of them.
     -->
-    <bean id="testOuter" class="es.dia.pos.n2a.spring.example.web.Test"/> 
-    <bean id="testInner" class="es.dia.pos.n2a.spring.example.web.Test$InnerTest">
+    <bean id="testOuter" class="de.spring.example.web.Test"/> 
+    <bean id="testInner" class="de.spring.example.web.Test$InnerTest">
         <constructor-arg ref="testOuter"/>
     
     </bean>
