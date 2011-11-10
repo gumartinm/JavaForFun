@@ -11,66 +11,49 @@
   						   http://www.springframework.org/schema/context/spring-context-2.5.xsd
   						   http://www.springframework.org/schema/tx 
   						   http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
-  
-     <aop:aspectj-autoproxy proxy-target-class="true"/>
-  
- 	 <context:load-time-weaver
-		weaver-class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"
-		aspectj-weaving="on"/>
-
-
-    <context:component-scan base-package="es.dia">
-    	<context:include-filter 
-    	type="annotation" 
-    	expression="es.dia.pos.n2a.aspectj.annotations.TransactionalN2A" />
-	</context:component-scan>
-
-
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-                <property name="user" value="root"/>
-                <property name="password" value=""/>
-                <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-                <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/n2a?autoReconnect=true"/>
-                <property name="initialPoolSize" value="5"/>
-                <property name="maxPoolSize" value="20"/>
-                <property name="minPoolSize" value="10"/>
-                <property name="acquireIncrement" value="1"/>
-                <property name="acquireRetryAttempts" value="5"/>
-                <property name="acquireRetryDelay" value="1000"/>
-                <property name="automaticTestTable" value="con_test"/>
-                <property name="checkoutTimeout" value="5000"/>
-	</bean>
 	
-	<bean id="annotationsHandler" class="es.dia.pos.n2a.aspectj.annotations.AnnotationsHandler" >
-	
-	</bean>
-	
-	<!--  
-	<bean class="org.springframework.transaction.aspectj.AnnotationTransactionAspect" factory-method="aspectOf">
-        <property name="transactionManagerN2A" ref="transactionManagerN2A"/>
-    </bean>	
-    -->
-    
-    <bean id="pruebaOuter" class="es.dia.pos.n2a.aspectj.annotations.Prueba"/>
-    <bean id="pruebaInner" class="es.dia.pos.n2a.aspectj.annotations.Prueba$InnerService">
-        <constructor-arg ref="pruebaOuter"/>
-    </bean>
-	
-	<!--
-		I do not care about the N2A default configuration, so I use here the scope singleton and lazy-init false.
+	<!-- 
+			         ************* WE HAVE TO ENABLE THE ASPECTJ SUPPORT!!!!!! ************* 
+			Otherwise the @Aspect annotation (defines @AspectJ aspects) will not work
+			It relies on the Java 5 specific AspectJ reflection APIs. You can not use it on
+			JDK 1.4 and below.
+			
+			
+			We could force here the use of CGLIB.
+			See: http://static.springsource.org/spring/docs/3.1.0.RC1/spring-framework-reference/html/aop.html#aop-proxying
+			Spring detects if the bean has an interface implementation. If it has one, Spring will use J2SE 
+			(J2SE needs classes with interfaces) in other case it will use CGLIB. 
+			In this example the "test" bean does not have an interface so Spring
+			will use CGLIB. We could force the use of CGLIB in classes with interfaces.
 	-->
-	<bean id="transactionManagerN2A" 
-	       class="es.dia.pos.n2a.aspectj.annotations.TransactionManagerN2A"
-	       factory-method="getInstance"
-	       scope="singleton"
-	       lazy-init="false" >
-        <property name="transactionManager">
-            <ref bean="transactionManager" />
-        </property>
+	<aop:aspectj-autoproxy/>
+	
+	<!-- 
+		We can mix aspect types. Without this AOP declaration this project would be SPRING ASPECTJ
+		but, because of this, we have a Spring Advice declaration so this project will be a SPRING AOP project
+		(or at least it is not just SPRING ASPECTJ based)
+		Besides we are using AOP support used in Spring 1.2 :/
+	 -->
+	<aop:config proxy-target-class="true">
+     	<aop:advisor pointcut="de.spring.example.SystemArchitecture.pointCutMethod()"
+     				 advice-ref="springAdvice" />
+    </aop:config>
+	
+	
+	<bean id="test" class="de.spring.example.web.Test">
+    	
+    </bean>
+	
+	<bean id="myAdvice" class="de.spring.example.MyAdvice">
+    	
     </bean>
     
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-    	<property name="dataSource" ref="dataSource"/>
+    <bean id="systemArchitecture" class="de.spring.example.SystemArchitecture">
+    	
     </bean>
-
+    
+    <bean id="springAdvice" class="de.spring.example.SpringAdvice">
+    	
+    </bean>
+	
 </beans>

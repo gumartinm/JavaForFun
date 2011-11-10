@@ -24,7 +24,7 @@ public final class SpringContextLocator {
 	 */
 	private SpringContextLocator() {
 		String[] factoryFiles = null;
-		System.out.println("Loading files context " + 
+		System.out.println("Loading context filex " + 
 										SpringContextLocator.SPRING_CONFIG_CONTEXT);
 
 		factoryFiles = new String[] { SPRING_CONFIG_CONTEXT };
@@ -38,7 +38,7 @@ public final class SpringContextLocator {
 	 * Singleton pattern not thread safety. To use SingletoHolder pattern as the best approximation 
 	 * otherwise to use an Enum class (see Effective Java Second Edition and ) if we need serialization.
 	 */
-	public synchronized static SpringContextLocator getInstance() {
+	public static SpringContextLocator getInstance() {
 		if (SpringContextLocator.instance == null) {
 			SpringContextLocator.instance = new SpringContextLocator();
 		}
