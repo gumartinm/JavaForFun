@@ -1,0 +1,21 @@
+<!DOCTYPE aspectj PUBLIC
+        "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+
+<aspectj>
+	<!--
+		With or without logs
+		<weaver options="-verbose -showWeaveInfo">
+	-->	
+	<weaver>
+        	<!-- only weave classes in our application-specific packages -->
+       		<include within="de.spring..*"/>
+		<!--
+			Dump all types within the "somepack" package before they are woven
+			to the "./_ajdump" folder on disk
+		<dump within="de.spring..*"/>
+		-->
+    	</weaver>
+    	<aspects>
+        	<aspect name="de.spring.example.MyAdvice"/>        
+    	</aspects>
+</aspectj>
