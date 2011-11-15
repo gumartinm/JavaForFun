@@ -53,6 +53,12 @@ public class DrawView extends SurfaceView {
 	    		Canvas c = view.getHolder().lockCanvas();
 	    		synchronized (view.getHolder())
 	    		{
+	    			try {
+	    				AndroidTetrisThread.sleep(1000);
+	    			} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	    			view.move(0, 1);
 	    			view.drawMap(c);
 	    			//view.onDraw(c);
@@ -75,8 +81,16 @@ public class DrawView extends SurfaceView {
     public DrawView(Context context) 
     {
     	super(context);
-       
-        this.newGame();
+    	
+    	//I have so much to learn...
+    	//The OnKeyListener for a specific View will only be called if the key is pressed 
+    	//while that View has focus. For a generic SurfaceView to be focused it first needs to be focusable
+    	//http://stackoverflow.com/questions/975918/processing-events-in-surfaceview
+    	setFocusableInTouchMode(true);
+    	setFocusable(true);
+    	
+    	
+    	this.newGame();
         currentPiece = newBlock();
         currentPiece.x = MAPWIDTH/2-2;
     	currentPiece.y = -1;
@@ -236,27 +250,28 @@ public class DrawView extends SurfaceView {
     							return true;
     	return false;
     }
-    
+
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
+    	super.onKeyDown(keyCode, msg);
+    	
+    	if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+    		move(-1,0);
+    		return(true);
+    	}
     	if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-    		try {
-				AndroidTetrisThread.sleep(1000000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    		 Canvas c =null;
-    		 c = this.getHolder().lockCanvas();
-    		 synchronized (this.getHolder()) 
-             {
-             	this.move(1, 0);
-                this.drawMap(c);
-                //view.onDraw(c);
-             }
-             return true;
-        }
+    		this.move(1, 0);
+    		return(true);
+    	}
+    	if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+    		move(0,1);
+    		return(true);
+    	}
+    	if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+    		return(true);
+    	}
+    	
     	return false;
     }
     

@@ -122,7 +122,7 @@ public enum Piece {
 		
 		//Pre-Initialization of matrix size
 		for (int i=0; i< WIDTH; i++)
-			for (int j=0; j< WIDTH; j++)
+			for (int j=0; j< HEIGHT; j++)
 				size[i][j]= Tile.NOCOLOR;
 		
 		//It depends on what kind of piece, we have to fill the square in the right way.

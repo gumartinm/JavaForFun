@@ -7,7 +7,7 @@
 
     <application android:label="My AndroidTetris">
         <activity android:name=".AndroidTetrisActivity"
-                  android:theme="@android:style/Theme.NoTitleBar">
+                  android:theme="@android:style/Theme.NoTitleBar" android:configChanges="keyboard" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
