@@ -132,7 +132,7 @@ public class DrawView extends SurfaceView {
     }
 
     
-    public void resetTiles(int tilecount) {
+    protected void resetTiles(int tilecount) {
     	tileArray = new Bitmap[tilecount];
     }
 
@@ -214,12 +214,15 @@ public class DrawView extends SurfaceView {
     {
     	if (this.collisionTest(x, y))
     	{
-    		currentPiece = prePiece;
-            currentPiece.x = MAPWIDTH/2-2;
-        	currentPiece.y = -1;
-        	prePiece = newBlock();
-        	prePiece.x=MAPWIDTH+2;
-        	prePiece.y=GREY/4;
+    		if (y == 1)
+    		{
+    			currentPiece = prePiece;
+                currentPiece.x = MAPWIDTH/2-2;
+            	currentPiece.y = -1;
+            	prePiece = newBlock();
+            	prePiece.x=MAPWIDTH+2;
+            	prePiece.y=GREY/4;
+    		}
     	}
     	else
     	{
@@ -233,14 +236,14 @@ public class DrawView extends SurfaceView {
     	int newx = currentPiece.x + cx;
     	int newy = currentPiece.y + cy;
     			
-    	//Check boundaries
+    	//Check grid boundaries
     	for(int x=0; x<4; x++)
     		for(int y=0; y<4; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-    				if (newy + y == MAPHEIGHT)
+    				if ((newy + y == MAPHEIGHT) || (newy + y < 0) || (newx + x == MAPWIDTH) || (newx + x < 0))
     					return true;
     	
-    	//Check collisions
+    	//Check collisions with other blocks
     	for(int x=0; x< MAPWIDTH; x++)
     		for(int y=0; y< MAPHEIGHT; y++)
     			if(x >= newx && x < newx + 4)
@@ -294,23 +297,5 @@ public class DrawView extends SurfaceView {
     	}
     	
     	return false;
-    }
-    
-    
-    @Override
-    protected void onDraw(Canvas canvas) {
-    	canvas.drawColor(Color.BLACK);
-    	int aux = 0;
-    
-    	//draw moving block
-    	for (Piece piece : Piece.values())
-    	{
-    		for(int xmy=0; xmy<4; xmy++)
-        		for(int ymx=0; ymx<4; ymx++)
-        			if(piece.size[xmy][ymx] != Tile.NOCOLOR)
-        				canvas.drawBitmap(tileArray[piece.size[xmy][ymx].getColor()], 
-        						piece.x+(xmy*TILESIZE), piece.y+aux+(ymx*TILESIZE), null);
-    		aux = aux + 64;
-    	}
     }
 }
