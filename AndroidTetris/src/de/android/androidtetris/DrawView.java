@@ -50,20 +50,20 @@ public class DrawView extends SurfaceView {
 	    {
 	    	while (running) 
 	    	{
-	    		Canvas c = view.getHolder().lockCanvas();
+	    		try {
+    				AndroidTetrisThread.sleep(1000);
+    			} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	    		synchronized (view.getHolder())
 	    		{
-	    			try {
-	    				AndroidTetrisThread.sleep(1000);
-	    			} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+	    			Canvas c = view.getHolder().lockCanvas();	
 	    			view.move(0, 1);
 	    			view.drawMap(c);
 	    			//view.onDraw(c);
-	    		}
-	    		view.getHolder().unlockCanvasAndPost(c);
+	    			view.getHolder().unlockCanvasAndPost(c);
+	    		}		
 	    	}
 	    }
 	}
@@ -257,15 +257,36 @@ public class DrawView extends SurfaceView {
     	super.onKeyDown(keyCode, msg);
     	
     	if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-    		move(-1,0);
+    		synchronized (this.getHolder())
+    		{
+    			Canvas c = this.getHolder().lockCanvas();
+    			this.move(-1, 0);
+    			this.drawMap(c);
+    			//view.onDraw(c);
+    			this.getHolder().unlockCanvasAndPost(c);
+    		}
     		return(true);
     	}
     	if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-    		this.move(1, 0);
+    		synchronized (this.getHolder())
+    		{
+    			Canvas c = this.getHolder().lockCanvas();
+    			this.move(1, 0);
+    			this.drawMap(c);
+    			//view.onDraw(c);
+    			this.getHolder().unlockCanvasAndPost(c);
+    		}
     		return(true);
     	}
-    	if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-    		move(0,1);
+    	if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {	
+    		synchronized (this.getHolder())
+    		{
+    			Canvas c = this.getHolder().lockCanvas();
+    			this.move(0,1);
+    			this.drawMap(c);
+    			//view.onDraw(c);
+    			this.getHolder().unlockCanvasAndPost(c);
+    		}
     		return(true);
     	}
     	if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {

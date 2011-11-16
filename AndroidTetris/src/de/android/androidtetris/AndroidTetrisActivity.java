@@ -3,7 +3,6 @@ package de.android.androidtetris;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.KeyEvent;
 
 public class AndroidTetrisActivity extends Activity {
 	DrawView drawView;
