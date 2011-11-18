@@ -26,8 +26,8 @@ public class DrawView extends SurfaceView {
 	private AndroidTetrisThread thread;
     private Bitmap[] tileArray;
     private Tile[][] mapMatrix;
-    private Piece prePiece;
-    private Piece currentPiece;
+    private PrePiece prePiece;
+    private CurrentPiece currentPiece;
 	
 	class AndroidTetrisThread extends Thread 
 	{
@@ -91,12 +91,12 @@ public class DrawView extends SurfaceView {
     	
     	
     	this.newGame();
-        currentPiece = newBlock();
+        currentPiece = newCurrentBlock();
         currentPiece.x = MAPWIDTH/2-2;
-    	currentPiece.y = -1;
-    	prePiece = newBlock();
-    	prePiece.x=MAPWIDTH+2;
-    	prePiece.y=GREY/4;
+        currentPiece.y = -1;
+    	prePiece = newPreBlock();
+    	prePiece.x = MAPWIDTH+2;
+    	prePiece.y = GREY/4;
     	
      	// register our interest in hearing about changes to our surface
         //SurfaceHolder holder = getHolder();
@@ -162,20 +162,26 @@ public class DrawView extends SurfaceView {
     	//start out the map
     	for(int x=0;x< MAPWIDTH;x++)
     	{
-    		for(int y=0;y< MAPHEIGHT+1;y++)
+    		for(int y=0; y<= MAPHEIGHT;y++)
     		{
     			mapMatrix[x][y]=Tile.BLACK;
     		}
     	}
     }
     
-    protected Piece newBlock()
+    private CurrentPiece newCurrentBlock()
     {
     	Random random = new Random();
-    		
-    	Piece piece = Piece.getPiece(random.nextInt(7)%7);
     	
-    	return piece;
+    	return CurrentPiece.getPiece(random.nextInt(7)%7);
+    }
+    
+    
+    private PrePiece newPreBlock()
+    {
+    	Random random = new Random();
+    	
+    	return PrePiece.getPiece(random.nextInt(7)%7);
     }
     
     protected void drawTile(Canvas canvas, int color, int x, int y)
@@ -193,21 +199,21 @@ public class DrawView extends SurfaceView {
     			drawTile(canvas, Tile.GRAY.getColor(), x, y);
     	
     	//draw the pre-piece
-    	for(int x=0; x<4; x++)
-    		for(int y=0; y<4; y++)
+    	for(int x=0; x < PrePiece.WIDTH; x++)
+    		for(int y=0; y< PrePiece.HEIGHT; y++)
     			if(prePiece.size[x][y] != Tile.NOCOLOR)
-    				drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x+x, prePiece.y +y);
+    				drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x, prePiece.y +y);
     	
     	//draw grid
-    	for(int x=0; x< MAPWIDTH; x++)
-    		for(int y=0; y< MAPHEIGHT; y++)
+    	for(int x=0; x < MAPWIDTH; x++)
+    		for(int y=0; y < MAPHEIGHT; y++)
     			drawTile(canvas, mapMatrix[x][y].getColor(), x, y);
 
     	//draw the current block
-    	for(int x=0; x<4; x++)
-    		for(int y=0; y<4; y++)
+    	for(int x=0; x < CurrentPiece.WIDTH; x++)
+    		for(int y=0; y < CurrentPiece.HEIGHT; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-    				drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x+x, currentPiece.y +y);
+    				drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x, currentPiece.y +y);
     }
     
     protected void move (int x, int y)
@@ -216,12 +222,54 @@ public class DrawView extends SurfaceView {
     	{
     		if (y == 1)
     		{
-    			currentPiece = prePiece;
-                currentPiece.x = MAPWIDTH/2-2;
-            	currentPiece.y = -1;
-            	prePiece = newBlock();
-            	prePiece.x=MAPWIDTH+2;
-            	prePiece.y=GREY/4;
+    			if (currentPiece.y == -1)
+                {
+                    //GAMEOVER
+    				//start out the map
+    		    	for(int xx=0;xx< MAPWIDTH;xx++)
+    		    	{
+    		    		for(int yy=0; yy<= MAPHEIGHT;yy++)
+    		    		{
+    		    			mapMatrix[xx][yy]=Tile.BLACK;
+    		    		}
+    		    	}
+                    currentPiece = newCurrentBlock();
+                    currentPiece.x = MAPWIDTH/2-2;
+                    currentPiece.y = -1;
+                    prePiece = newPreBlock();
+                    prePiece.x = MAPWIDTH+2;
+                    prePiece.y = GREY/4; 
+                }
+                else
+                {
+                    //Add block to Grid
+                    for(int i=0; i<CurrentPiece.WIDTH; i++)
+                        for(int j=0; j<CurrentPiece.HEIGHT; j++)
+                            if(currentPiece.size[i][j] != Tile.NOCOLOR)
+                                mapMatrix[currentPiece.x+i][currentPiece.y+j] = currentPiece.size[i][j];
+
+                  //check for cleared row!
+
+    				for(int j=0; j< MAPHEIGHT; j++)
+    				{
+    					boolean filled=true;
+    					for(int i=0; i< MAPWIDTH; i++)
+    						if(mapMatrix[i][j] == Tile.BLACK)
+    							filled=false;
+
+    					if(filled)
+    					{
+    						removeRow(j);
+    					}
+    				}
+    				
+                    currentPiece = CurrentPiece.getPiece(prePiece.pieceNumber);
+                    currentPiece.x = MAPWIDTH/2-2;
+                    currentPiece.y = -1;
+                    prePiece = newPreBlock();
+                    prePiece.x = MAPWIDTH+2;
+                    prePiece.y = GREY/4;
+                }            
     		}
     	}
     	else
@@ -231,29 +279,72 @@ public class DrawView extends SurfaceView {
     	}
     }
     
-    protected boolean collisionTest(int cx, int cy)
+    
+    private void removeRow(int row) {
+
+    	for(int x=0; x< MAPWIDTH; x++)
+    		for(int y=row; y>0; y--)
+    			mapMatrix[x][y]=mapMatrix[x][y-1];
+    }
+    
+    
+    private boolean collisionTest(int cx, int cy)
     {
     	int newx = currentPiece.x + cx;
     	int newy = currentPiece.y + cy;
     			
     	//Check grid boundaries
-    	for(int x=0; x<4; x++)
-    		for(int y=0; y<4; y++)
+    	for(int x=0; x<CurrentPiece.WIDTH; x++)
+    		for(int y=0; y<CurrentPiece.HEIGHT; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-    				if ((newy + y == MAPHEIGHT) || (newy + y < 0) || (newx + x == MAPWIDTH) || (newx + x < 0))
+    				if ((newy + y >= MAPHEIGHT) || (newy + y < 0) || (newx + x >= MAPWIDTH) || (newx + x < 0))
     					return true;
     	
     	//Check collisions with other blocks
     	for(int x=0; x< MAPWIDTH; x++)
     		for(int y=0; y< MAPHEIGHT; y++)
-    			if(x >= newx && x < newx + 4)
-    				if(y >= newy && y < newy +4)
+    			if(x >= newx && x < newx + CurrentPiece.WIDTH)
+    				if(y >= newy && y < newy + CurrentPiece.HEIGHT)
     					if(mapMatrix[x][y] != Tile.BLACK)
     						if(currentPiece.size[x - newx][y - newy] != Tile.NOCOLOR)
     							return true;
     	return false;
     }
 
+    /**
+     * TODO: reuse the collisionTest method for this one (the are the same thing with just a few changes)
+     * Sorry I am too tired to rewrite the methods right now.
+     */
+    private void rotateBlock() {
+    	Tile[][] temporal = new Tile[CurrentPiece.WIDTH][CurrentPiece.HEIGHT];
+    	
+    	//Copy and rotate current piece to the temporary array
+    	for(int x=0; x<CurrentPiece.WIDTH; x++)
+    		for(int y=0; y<CurrentPiece.HEIGHT; y++)
+    			temporal[3-y][ x ]=currentPiece.size[ x ][y];
+    	
+    	//Check grid boundaries
+    	for(int x=0; x<CurrentPiece.WIDTH; x++)
+    		for(int y=0; y<CurrentPiece.HEIGHT; y++)
+    			if(temporal[x][y] != Tile.NOCOLOR)
+    				if ((currentPiece.y + y >= MAPHEIGHT) || (currentPiece.y + y < 0) || 
+    						(currentPiece.x + x >= MAPWIDTH) || (currentPiece.x + x < 0))
+    					return;
+    	
+    	//Check collisions with other blocks
+    	for(int x=0; x< MAPWIDTH; x++)
+    		for(int y=0; y< MAPHEIGHT; y++)
+    			if(x >= currentPiece.x && x < currentPiece.x + CurrentPiece.WIDTH)
+    				if(y >= currentPiece.y && y < currentPiece.y + CurrentPiece.HEIGHT)
+    					if(mapMatrix[x][y] != Tile.BLACK)
+    						if(temporal[x - currentPiece.x][y - currentPiece.y] != Tile.NOCOLOR)
+    							return;
+    	
+    	//Rotate is allowed
+    	for(int x=0; x<CurrentPiece.WIDTH; x++)
+    		for(int y=0; y<CurrentPiece.HEIGHT; y++)
+    			currentPiece.size[x][y]=temporal[x][y];   	
+    }
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
@@ -268,7 +359,7 @@ public class DrawView extends SurfaceView {
     			//view.onDraw(c);
     			this.getHolder().unlockCanvasAndPost(c);
     		}
-    		return(true);
+    		return true;
     	}
     	if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
     		synchronized (this.getHolder())
@@ -279,7 +370,7 @@ public class DrawView extends SurfaceView {
     			//view.onDraw(c);
     			this.getHolder().unlockCanvasAndPost(c);
     		}
-    		return(true);
+    		return true;
     	}
     	if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {	
     		synchronized (this.getHolder())
@@ -290,10 +381,18 @@ public class DrawView extends SurfaceView {
     			//view.onDraw(c);
     			this.getHolder().unlockCanvasAndPost(c);
     		}
-    		return(true);
+    		return true;
     	}
     	if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-    		return(true);
+    		synchronized (this.getHolder())
+    		{
+    			Canvas c = this.getHolder().lockCanvas();
+    			this.rotateBlock();
+    			this.drawMap(c);
+    			//view.onDraw(c);
+    			this.getHolder().unlockCanvasAndPost(c);
+    		}
+    		return true;
     	}
     	
     	return false;

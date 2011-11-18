@@ -12,7 +12,7 @@ import java.util.Map;
  * @author gusarapo
  *
  */
-public enum Piece {
+public enum CurrentPiece {
 	/*The tower piece*/
 	I(0) {
 		@Override
@@ -86,24 +86,24 @@ public enum Piece {
 	
 	
 	//Every piece is contained in a square. This is the square's width.
-	private static final int WIDTH = 4;
+	public static final int WIDTH = 4;
 	//Every piece is contained in a square. This is the square's height.
-	private static final int HEIGHT = 4;
+	public static final int HEIGHT = 4;
+	//Stores the x coordinate (the position of this piece on the grid)
+	public int x;
+	//Stores the y coordinate (the position of this piece on the grid)
+	public int y;
 	//Every piece is contained in a square.
 	public final Tile[][] size = new Tile[WIDTH][HEIGHT];
-	//Stores the x coordinate (the position of this piece on the grid)
-	public int x = 0;
-	//Stores the y coordinate (the position of this piece on the grid)
-	public int y = 0;
 	//Stores the argument of the enum constant (passed to the constructor) JLS§8.9.1
-	private final int pieceNumber;
+	public final int pieceNumber;
 	//Map with every enum constant. Class variable initializer. JLS§12.4.2 Executed in textual order.
-	private static final Map<Integer, Piece> pieceMap = new HashMap<Integer, Piece>();
+	private static final Map<Integer, CurrentPiece> pieceMap = new HashMap<Integer, CurrentPiece>();
 	
 	
 	//Static initializer. JLS§12.4.2 Executed in textual order.
 	static {
-		for (Piece piece : Piece.values())
+		for (CurrentPiece piece : CurrentPiece.values())
 		{
 			pieceMap.put(piece.pieceNumber, piece);
 		}
@@ -116,7 +116,7 @@ public enum Piece {
 	 * 
 	 * @param pieceNumber It is the argument of the enum constant
 	 */
-	private Piece (final int pieceNumber)
+	private CurrentPiece (final int pieceNumber)
 	{
 		this.pieceNumber = pieceNumber;
 		
@@ -125,6 +125,8 @@ public enum Piece {
 			for (int j=0; j< HEIGHT; j++)
 				size[i][j]= Tile.NOCOLOR;
 		
+		this.x = 0;
+		this.y = 0;
 		//It depends on what kind of piece, we have to fill the square in the right way.
 		this.fill();
 	}
@@ -136,7 +138,7 @@ public enum Piece {
 	 * @param pieceNumber The piece number is associated to the argument of the enum constant.
 	 * @return the enum whose argument of the enum constant matches the pieceNumber.
 	 */
-	public static final Piece getPiece (final int pieceNumber)
+	public static final CurrentPiece getPiece (final int pieceNumber)
 	{
 		return pieceMap.get(pieceNumber);
 	}
