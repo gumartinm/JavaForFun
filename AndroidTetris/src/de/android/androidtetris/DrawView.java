@@ -4,6 +4,10 @@
 package de.android.androidtetris;
 
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -18,39 +22,33 @@ import android.view.SurfaceView;
  */
 public class DrawView extends SurfaceView {
 	private SurfaceHolder holder;
-    private AndroidTetrisThread mainLoopThread;
+    private final MainLoop mainLoop;
     private static final int TILESIZE=16;
     private static final int MAPWIDTH=10;
-    private static final int MAPHEIGHT=30;
+    private static final int MAPHEIGHT=20;
     private static final int GREY=8;
     private Bitmap[] tileArray;
     private Tile[][] mapMatrix;
     private PrePiece prePiece;
     private CurrentPiece currentPiece;
+    private final ExecutorService exec;
 	
-    private class AndroidTetrisThread extends Thread 
+    private class MainLoop implements Runnable 
 	{
-		private DrawView view;
-	    private boolean running = false;
-
+		private final DrawView view;
 	 
-	    public AndroidTetrisThread(DrawView view) {
+	    public MainLoop(final DrawView view) {
 	    	this.view = view;
-	    }
-
-	    
-	    public void setRunning(boolean run) {
-	    	running = run;
 	    }
 
 	    
 	    @Override
 	    public void run() 
 	    {
-	    	while (running) 
+	    	while (true) 
 	    	{
 	    		try {
-    				AndroidTetrisThread.sleep(1000);
+    				Thread.sleep(1000);
     			} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -67,8 +65,8 @@ public class DrawView extends SurfaceView {
 	    }
 	}
     
-
-    public DrawView(Context context) 
+    	 
+    public DrawView(final Context context) 
     {
     	super(context);
     	
@@ -82,35 +80,30 @@ public class DrawView extends SurfaceView {
     	
     	this.newGame();
     	
-     	// register our interest in hearing about changes to our surface
-        //SurfaceHolder holder = getHolder();
-        //holder.addCallback(this);
-        mainLoopThread = new AndroidTetrisThread(this);
-        mainLoopThread.setName("Thread: Main Loop");
+     	//Our main loop.
+    	mainLoop = new MainLoop(this);
+        exec = Executors.newSingleThreadExecutor();
+
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
         		@Override
-        		public void surfaceDestroyed(SurfaceHolder holder) {
-        			boolean retry = true;
-        			mainLoopThread.setRunning(false);
-        			while (retry) {
-        				try {
-        					mainLoopThread.join();
-        					retry = false;
-        				} catch (InterruptedException e) {
-        				
-        				}
-        			}
+        		public void surfaceDestroyed(final SurfaceHolder holder) {
+        			exec.shutdown();
+        			try {
+						exec.awaitTermination(20L, TimeUnit.SECONDS);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
         		}
         
         		@Override
-        		public void surfaceCreated(SurfaceHolder holder) {
-        			mainLoopThread.setRunning(true);
-        			mainLoopThread.start();
+        		public void surfaceCreated(final SurfaceHolder holder) {
+        			exec.execute(mainLoop);
         		}
         
         		@Override
-        		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        		public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height) {
         	
         		}
         });      
@@ -125,7 +118,7 @@ public class DrawView extends SurfaceView {
     private void loadTile(int key, int color)
     {
     	
-	    Bitmap bitmap = Bitmap.createBitmap(TILESIZE, TILESIZE, Bitmap.Config.ARGB_8888);
+	    final Bitmap bitmap = Bitmap.createBitmap(TILESIZE, TILESIZE, Bitmap.Config.ARGB_8888);
 	    for (int x = 0; x < TILESIZE; x++) {
     		for (int y=0; y< TILESIZE; y++) {
     			bitmap.setPixel(x, y, color);
@@ -150,7 +143,7 @@ public class DrawView extends SurfaceView {
     
     private CurrentPiece newCurrentBlock()
     {
-    	Random random = new Random();
+    	final Random random = new Random();
     	
     	return CurrentPiece.getPiece(random.nextInt(7)%7);
     }
@@ -158,7 +151,7 @@ public class DrawView extends SurfaceView {
     
     private PrePiece newPreBlock()
     {
-    	Random random = new Random();
+    	final Random random = new Random();
     	
     	return PrePiece.getPiece(random.nextInt(7)%7);
     }
@@ -175,7 +168,7 @@ public class DrawView extends SurfaceView {
     	//canvas.getWidth() <----------------- retrieve the screen width
     	//canvas.getWidth()/TILESIZE <-------- the tile size is 16, so we have to count on it when finding the center
     	//((canvas.getWidth()/TILESIZE))/2 <-- this is the middle of our screen, it depends on the tile size.
-    	int initX = (((canvas.getWidth()/TILESIZE)/2) - MAPWIDTH);
+    	final int initX = (((canvas.getWidth()/TILESIZE)/2) - MAPWIDTH);
     	
     	
     	//draw the left bar (with scores, and next pieces
