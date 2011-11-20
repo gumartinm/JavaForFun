@@ -18,18 +18,17 @@ import android.view.SurfaceView;
  */
 public class DrawView extends SurfaceView {
 	private SurfaceHolder holder;
-    private AndroidTetrisThread gameLoopThread;
+    private AndroidTetrisThread mainLoopThread;
     private static final int TILESIZE=16;
     private static final int MAPWIDTH=10;
     private static final int MAPHEIGHT=30;
     private static final int GREY=8;
-	private AndroidTetrisThread thread;
     private Bitmap[] tileArray;
     private Tile[][] mapMatrix;
     private PrePiece prePiece;
     private CurrentPiece currentPiece;
 	
-	class AndroidTetrisThread extends Thread 
+    private class AndroidTetrisThread extends Thread 
 	{
 		private DrawView view;
 	    private boolean running = false;
@@ -67,15 +66,6 @@ public class DrawView extends SurfaceView {
 	    	}
 	    }
 	}
-	
-	/**
-     * Fetches the animation thread corresponding to this LunarView.
-     *
-     * @return the animation thread
-     */
-    public AndroidTetrisThread getThread() {
-        return thread;
-    }
     
 
     public DrawView(Context context) 
@@ -91,26 +81,21 @@ public class DrawView extends SurfaceView {
     	
     	
     	this.newGame();
-        currentPiece = newCurrentBlock();
-        currentPiece.x = MAPWIDTH/2-2;
-        currentPiece.y = -1;
-    	prePiece = newPreBlock();
-    	prePiece.x = MAPWIDTH+2;
-    	prePiece.y = GREY/4;
     	
      	// register our interest in hearing about changes to our surface
         //SurfaceHolder holder = getHolder();
         //holder.addCallback(this);
-        gameLoopThread = new AndroidTetrisThread(this);
+        mainLoopThread = new AndroidTetrisThread(this);
+        mainLoopThread.setName("Thread: Main Loop");
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
         		@Override
         		public void surfaceDestroyed(SurfaceHolder holder) {
         			boolean retry = true;
-        			gameLoopThread.setRunning(false);
+        			mainLoopThread.setRunning(false);
         			while (retry) {
         				try {
-        					gameLoopThread.join();
+        					mainLoopThread.join();
         					retry = false;
         				} catch (InterruptedException e) {
         				
@@ -120,8 +105,8 @@ public class DrawView extends SurfaceView {
         
         		@Override
         		public void surfaceCreated(SurfaceHolder holder) {
-        			gameLoopThread.setRunning(true);
-        			gameLoopThread.start();
+        			mainLoopThread.setRunning(true);
+        			mainLoopThread.start();
         		}
         
         		@Override
@@ -132,12 +117,12 @@ public class DrawView extends SurfaceView {
     }
 
     
-    protected void resetTiles(int tilecount) {
+    private void resetTiles(int tilecount) {
     	tileArray = new Bitmap[tilecount];
     }
 
     
-    public void loadTile(int key, int color)
+    private void loadTile(int key, int color)
     {
     	
 	    Bitmap bitmap = Bitmap.createBitmap(TILESIZE, TILESIZE, Bitmap.Config.ARGB_8888);
@@ -150,7 +135,7 @@ public class DrawView extends SurfaceView {
     }
 
     
-    protected void newGame()
+    private void newGame()
     {
     	 this.resetTiles(10);
          for (Tile color : Tile.values() )
@@ -159,14 +144,8 @@ public class DrawView extends SurfaceView {
          }
          mapMatrix = new Tile[MAPWIDTH][MAPHEIGHT+1];
     	
-    	//start out the map
-    	for(int x=0;x< MAPWIDTH;x++)
-    	{
-    		for(int y=0; y<= MAPHEIGHT;y++)
-    		{
-    			mapMatrix[x][y]=Tile.BLACK;
-    		}
-    	}
+    	 //Start Map
+         this.startMap();
     }
     
     private CurrentPiece newCurrentBlock()
@@ -184,39 +163,63 @@ public class DrawView extends SurfaceView {
     	return PrePiece.getPiece(random.nextInt(7)%7);
     }
     
-    protected void drawTile(Canvas canvas, int color, int x, int y)
+    private void drawTile(Canvas canvas, int color, int x, int y)
     {
     	canvas.drawBitmap(tileArray[color], x*TILESIZE, y*TILESIZE, null);
     }
     
-    protected void drawMap(Canvas canvas)
+    private void drawMap(Canvas canvas)
     {
     	canvas.drawColor(Color.WHITE);
+    	//We have to center the grid in the middle of our canvas.
+    	//canvas.getWidth() <----------------- retrieve the screen width
+    	//canvas.getWidth()/TILESIZE <-------- the tile size is 16, so we have to count on it when finding the center
+    	//((canvas.getWidth()/TILESIZE))/2 <-- this is the middle of our screen, it depends on the tile size.
+    	int initX = (((canvas.getWidth()/TILESIZE)/2) - MAPWIDTH);
+    	
     	
     	//draw the left bar (with scores, and next pieces
-    	for(int x=MAPWIDTH; x< MAPWIDTH+GREY; x++)
+    	for(int x=MAPWIDTH; x< MAPWIDTH + GREY; x++)
     		for(int y=0; y< MAPHEIGHT; y++)
-    			drawTile(canvas, Tile.GRAY.getColor(), x, y);
+    			drawTile(canvas, Tile.GRAY.getColor(), x + initX, y);
     	
     	//draw the pre-piece
     	for(int x=0; x < PrePiece.WIDTH; x++)
     		for(int y=0; y< PrePiece.HEIGHT; y++)
     			if(prePiece.size[x][y] != Tile.NOCOLOR)
-    				drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x, prePiece.y +y);
+    				drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x + initX, prePiece.y +y);
     	
     	//draw grid
     	for(int x=0; x < MAPWIDTH; x++)
     		for(int y=0; y < MAPHEIGHT; y++)
-    			drawTile(canvas, mapMatrix[x][y].getColor(), x, y);
+    			drawTile(canvas, mapMatrix[x][y].getColor(), x + initX, y);
 
     	//draw the current block
     	for(int x=0; x < CurrentPiece.WIDTH; x++)
     		for(int y=0; y < CurrentPiece.HEIGHT; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-    				drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x, currentPiece.y +y);
+    				drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x + initX, currentPiece.y +y);
     }
     
-    protected void move (int x, int y)
+    
+    private void startMap() {
+    	for(int x=0;x< MAPWIDTH;x++)
+    	{
+    		for(int y=0; y<= MAPHEIGHT;y++)
+    		{
+    			mapMatrix[x][y]=Tile.BLACK;
+    		}
+    	}
+        currentPiece = newCurrentBlock();
+        currentPiece.x = MAPWIDTH/2-2;
+        currentPiece.y = -1;
+        prePiece = newPreBlock();
+        prePiece.x = MAPWIDTH+2;
+        prePiece.y = GREY/4; 
+    }
+    
+    
+    private void move (int x, int y)
     {
     	if (this.collisionTest(x, y))
     	{
@@ -225,31 +228,18 @@ public class DrawView extends SurfaceView {
     			if (currentPiece.y == -1)
                 {
                     //GAMEOVER
-    				//start out the map
-    		    	for(int xx=0;xx< MAPWIDTH;xx++)
-    		    	{
-    		    		for(int yy=0; yy<= MAPHEIGHT;yy++)
-    		    		{
-    		    			mapMatrix[xx][yy]=Tile.BLACK;
-    		    		}
-    		    	}
-                    currentPiece = newCurrentBlock();
-                    currentPiece.x = MAPWIDTH/2-2;
-                    currentPiece.y = -1;
-                    prePiece = newPreBlock();
-                    prePiece.x = MAPWIDTH+2;
-                    prePiece.y = GREY/4; 
+    				startMap();	
                 }
                 else
                 {
-                    //Add block to Grid
+                    //Adding block to Grid
                     for(int i=0; i<CurrentPiece.WIDTH; i++)
                         for(int j=0; j<CurrentPiece.HEIGHT; j++)
                             if(currentPiece.size[i][j] != Tile.NOCOLOR)
                                 mapMatrix[currentPiece.x+i][currentPiece.y+j] = currentPiece.size[i][j];
 
-                  //check for cleared row!
-
+                  
+                    //Check row. Is it cleared?
     				for(int j=0; j< MAPHEIGHT; j++)
     				{
     					boolean filled=true;
@@ -293,28 +283,30 @@ public class DrawView extends SurfaceView {
     	int newx = currentPiece.x + cx;
     	int newy = currentPiece.y + cy;
     			
+    	return this.checkCollision(currentPiece.size, newx, newy);
+    }
+
+    
+    private boolean checkCollision(Tile[][] tiles, int xposition, int yposition) {
     	//Check grid boundaries
     	for(int x=0; x<CurrentPiece.WIDTH; x++)
     		for(int y=0; y<CurrentPiece.HEIGHT; y++)
-    			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-    				if ((newy + y >= MAPHEIGHT) || (newy + y < 0) || (newx + x >= MAPWIDTH) || (newx + x < 0))
+    			if(tiles[x][y] != Tile.NOCOLOR)
+    				if ((yposition + y >= MAPHEIGHT) || (yposition + y < 0) || (xposition + x >= MAPWIDTH) || (xposition + x < 0))
     					return true;
     	
     	//Check collisions with other blocks
     	for(int x=0; x< MAPWIDTH; x++)
     		for(int y=0; y< MAPHEIGHT; y++)
-    			if(x >= newx && x < newx + CurrentPiece.WIDTH)
-    				if(y >= newy && y < newy + CurrentPiece.HEIGHT)
+    			if(x >= xposition && x < xposition + CurrentPiece.WIDTH)
+    				if(y >= yposition && y < yposition + CurrentPiece.HEIGHT)
     					if(mapMatrix[x][y] != Tile.BLACK)
-    						if(currentPiece.size[x - newx][y - newy] != Tile.NOCOLOR)
+    						if(tiles[x - xposition][y - yposition] != Tile.NOCOLOR)
     							return true;
     	return false;
     }
-
-    /**
-     * TODO: reuse the collisionTest method for this one (the are the same thing with just a few changes)
-     * Sorry I am too tired to rewrite the methods right now.
-     */
+    
+    
     private void rotateBlock() {
     	Tile[][] temporal = new Tile[CurrentPiece.WIDTH][CurrentPiece.HEIGHT];
     	
@@ -323,23 +315,12 @@ public class DrawView extends SurfaceView {
     		for(int y=0; y<CurrentPiece.HEIGHT; y++)
     			temporal[3-y][ x ]=currentPiece.size[ x ][y];
     	
-    	//Check grid boundaries
-    	for(int x=0; x<CurrentPiece.WIDTH; x++)
-    		for(int y=0; y<CurrentPiece.HEIGHT; y++)
-    			if(temporal[x][y] != Tile.NOCOLOR)
-    				if ((currentPiece.y + y >= MAPHEIGHT) || (currentPiece.y + y < 0) || 
-    						(currentPiece.x + x >= MAPWIDTH) || (currentPiece.x + x < 0))
-    					return;
-    	
-    	//Check collisions with other blocks
-    	for(int x=0; x< MAPWIDTH; x++)
-    		for(int y=0; y< MAPHEIGHT; y++)
-    			if(x >= currentPiece.x && x < currentPiece.x + CurrentPiece.WIDTH)
-    				if(y >= currentPiece.y && y < currentPiece.y + CurrentPiece.HEIGHT)
-    					if(mapMatrix[x][y] != Tile.BLACK)
-    						if(temporal[x - currentPiece.x][y - currentPiece.y] != Tile.NOCOLOR)
-    							return;
-    	
+    	if (this.checkCollision(temporal, currentPiece.x, currentPiece.y))
+    	{
+    		//If there are collisions, rotate is forbidden.
+    		return;
+    	}
+  	
     	//Rotate is allowed
     	for(int x=0; x<CurrentPiece.WIDTH; x++)
     		for(int y=0; y<CurrentPiece.HEIGHT; y++)
