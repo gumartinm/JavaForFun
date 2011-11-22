@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
