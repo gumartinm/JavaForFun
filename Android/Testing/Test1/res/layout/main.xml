@@ -1,21 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
     android:gravity="right"
-    android:orientation="vertical" >
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
-
-    <Button
-        android:id="@+id/ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:onClick="onClickOk"
-        android:text="@string/button_ok" />
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent" 
+    android:orientation="vertical" 
+    android:weightSum="1">
+    
+    <FrameLayout 
+    	android:id="@+id/frameLayout1" 
+    	android:layout_width="match_parent" android:layout_height="70dp">
+    </FrameLayout>
+	    
+	<EditText
+		android:id="@+id/username"
+		android:singleLine="true"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" android:text="@string/username"/>
+	<TextView
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Password:"
+	    />
+	<EditText
+		android:id="@+id/password"
+		android:password="true"
+		android:singleLine="true"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+		android:text="@string/password"/>
+	<FrameLayout 
+		android:layout_width="match_parent" 
+		android:id="@+id/frameLayout2" 
+		android:layout_height="30dp">
+	</FrameLayout>
+	<Button
+		android:id="@+id/login_button"
+		android:onClick="onClickLogin"
+	    android:layout_height="wrap_content" 
+	    android:text="@string/button_login" 
+	    android:layout_width="match_parent" 
+	    android:layout_gravity="center"/>
+	<Button
+		android:id="@+id/cancel_button"
+		android:onClick="onClickCancel"
+		android:gravity="right" 
+	    android:layout_height="wrap_content" 
+	    android:layout_width="wrap_content" 
+	    android:layout_gravity="right" 
+	    android:text="@string/button_cancel"/>
+        
     
 </LinearLayout>
