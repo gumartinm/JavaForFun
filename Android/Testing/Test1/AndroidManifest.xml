@@ -5,6 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk android:minSdkVersion="13" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -15,7 +16,7 @@
             android:screenOrientation="portrait" 
             android:configChanges="touchscreen|keyboard"
             android:theme="@android:style/Theme.Black" 
-            android:permission="android.permission.ACCESS_FINE_LOCATION" 
+            android:permission="android.permission.INTERNET" 
             android:launchMode="standard">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
