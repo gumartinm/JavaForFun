@@ -17,7 +17,8 @@
             android:configChanges="touchscreen|keyboard"
             android:theme="@android:style/Theme.Black" 
             android:permission="android.permission.INTERNET" 
-            android:launchMode="standard">
+            android:launchMode="standard"
+            android:noHistory="true">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
