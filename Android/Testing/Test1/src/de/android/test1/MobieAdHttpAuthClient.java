@@ -90,8 +90,7 @@ public class MobieAdHttpAuthClient extends AsyncTask<URL, Integer, HttpResponse>
 					CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
 					CookieSyncManager.getInstance().sync();
 					//OK GO TO THE NEXT ACTIVITY
-					Intent i = new Intent(this.context, NextActivity.class);
-			    	this.context.startActivity(i);
+			    	this.context.startActivity(new Intent(Intent.ACTION_RUN));
 					break;
 				case HttpStatus.SC_UNAUTHORIZED:
 					//ERROR IN USERNAME OR PASSWORD

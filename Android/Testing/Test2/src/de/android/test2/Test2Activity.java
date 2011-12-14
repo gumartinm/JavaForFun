@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.widget.EditText;
 
 public class Test2Activity extends Activity {
 	private static final String TAG = "Test2Activity";
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,9 +41,8 @@ public class Test2Activity extends Activity {
     	final String URLAuth = "http://192.168.1.34/userfront.php/api/login/auth.json";
     	final EditText password = (EditText) findViewById(R.id.password);
     	final EditText username = (EditText) findViewById(R.id.username);
-
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost(URLAuth);
+    	final HttpClient httpClient = new DefaultHttpClient();
+		final HttpPost httpPost = new HttpPost(URLAuth);
 		HttpEntity httpEntity = null;
 		HttpResponse httpResponse = null;
 		final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -52,17 +53,17 @@ public class Test2Activity extends Activity {
         try {
 			httpEntity = new UrlEncodedFormEntity(nameValuePairs);
 		} catch (UnsupportedEncodingException e) {
-			Log.e(TAG, "Error while encoding POST parameters." + e);
+			Log.e(TAG, "Error while encoding POST parameters.", e);
 		}
         httpPost.setEntity(httpEntity);
         httpPost.setHeader("User-Agent", "MobieAds/1.0");
         
         try {
  			httpResponse = httpClient.execute(httpPost);
- 		} catch (ClientProtocolException e1) {
- 			Log.e(TAG, "Error while executing HTTP client connection.");
- 		} catch (IOException e1) {
- 			Log.e(TAG, "Error while executing HTTP client connection.");
+ 		} catch (ClientProtocolException e) {
+ 			Log.e(TAG, "Error while executing HTTP client connection.", e);
+ 		} catch (IOException e) {
+ 			Log.e(TAG, "Error while executing HTTP client connection.", e);
  		}
         
         if (httpResponse != null)
@@ -72,7 +73,8 @@ public class Test2Activity extends Activity {
 					String cookie = httpResponse.getLastHeader("Set-Cookie").getValue();
 					CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
 					CookieSyncManager.getInstance().sync();
-					//OK GO TO THE NEXT ACTIVITY
+					//OK GO TO THE MAIN ACTIVITY
+			    	this.startActivity(new Intent(Intent.ACTION_RUN));
 					break;
 				case HttpStatus.SC_UNAUTHORIZED:
 					//ERROR IN USERNAME OR PASSWORD
@@ -84,10 +86,7 @@ public class Test2Activity extends Activity {
 					Log.e(TAG, "Error while retrieving the HTTP status line.");
 					break;
 			}
-		}
-        String myCookie = CookieManager.getInstance().getCookie("192.168.1.34/userfront.php");
-		Log.e("hola", "Error while retrieving the HTTP status line." + myCookie);
-        
+		}     
     }
     
     public void onClickCancel(View v) {

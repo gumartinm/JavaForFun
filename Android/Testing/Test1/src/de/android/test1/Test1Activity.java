@@ -1,33 +1,23 @@
 package de.android.test1;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.http.HttpEntity;
+import java.util.concurrent.ExecutionException;
+
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.EditText;
 
 public class Test1Activity extends Activity {
-	
+	private static final String TAG = "Test1Activity";
 	
     /** Called when the activity is first created. */
     @Override
@@ -55,7 +45,7 @@ public class Test1Activity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		new MobieAdHttpAuthClient(username.getText().toString(), password.getText().toString(), this).execute(url);
+		new MobieAdHttpAuthClient(username.getText().toString(), password.getText().toString(), this).execute(url);		
     }
     
     public void onClickCancel(View v) {
