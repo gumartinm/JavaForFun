@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+	<string name="alert_dialog_cancel">
+        Do you really want to close the application?
+    </string>
+    <string name="error_dialog_connection_error">
+        Connection error. Check your network interface.
+    </string>
+    <string name="error_dialog_userpwd_error">
+        The username or password you entered is incorrect.
+    </string>
     <string name="hello">Hello World, Test2Activity!</string>
     <string name="app_name">Test2</string>
     <string name="username">Username</string>

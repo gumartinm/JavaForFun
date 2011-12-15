@@ -15,6 +15,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -26,13 +30,14 @@ import android.widget.EditText;
 
 public class Test2Activity extends Activity {
 	private static final String TAG = "Test2Activity";
+	private StrictMode.ThreadPolicy currentPolicy;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CookieSyncManager.createInstance(this);
-        StrictMode.ThreadPolicy currentPolicy = StrictMode.getThreadPolicy();
+        currentPolicy = StrictMode.getThreadPolicy();
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
         setContentView(R.layout.main);
     }
@@ -62,8 +67,10 @@ public class Test2Activity extends Activity {
  			httpResponse = httpClient.execute(httpPost);
  		} catch (ClientProtocolException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
+ 			createErrorDialog(R.string.error_dialog_connection_error);
  		} catch (IOException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
+ 			createErrorDialog(R.string.error_dialog_connection_error);
  		}
         
         if (httpResponse != null)
@@ -73,23 +80,114 @@ public class Test2Activity extends Activity {
 					String cookie = httpResponse.getLastHeader("Set-Cookie").getValue();
 					CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
 					CookieSyncManager.getInstance().sync();
-					//OK GO TO THE MAIN ACTIVITY
+					//Go to the main activity
 			    	this.startActivity(new Intent(Intent.ACTION_RUN));
 					break;
 				case HttpStatus.SC_UNAUTHORIZED:
-					//ERROR IN USERNAME OR PASSWORD
+				    //Username or password are incorrect
+					createErrorDialog(R.string.error_dialog_userpwd_error);
 					break;
 				case HttpStatus.SC_BAD_REQUEST:
-					//WHAT THE HECK ARE YOU DOING?
+					//What the heck are you doing?
+					createErrorDialog(R.string.error_dialog_userpwd_error);
 					break;
 				default:
 					Log.e(TAG, "Error while retrieving the HTTP status line.");
+					createErrorDialog(R.string.error_dialog_userpwd_error);
 					break;
 			}
 		}     
     }
     
     public void onClickCancel(View v) {
+    	createAlertDialog(R.string.alert_dialog_cancel);
+    }
+    
+    void createAlertDialog(int title) {
+        DialogFragment newFragment = AlertDialogFragment.newInstance(title);
+        newFragment.show(getFragmentManager(), "alertDialog");
+    }
+
+    void createErrorDialog(int title) {
+        DialogFragment newFragment = ErrorDialogFragment.newInstance(title);
+        newFragment.show(getFragmentManager(), "errorDialog");
+    }
+    
+    public void doPositiveClick() {
+    	StrictMode.setThreadPolicy(currentPolicy);
     	finish();
     }
+
+    public void doNegativeClick() {
+
+    }
+    
+    
+    public static class AlertDialogFragment extends DialogFragment {
+    	
+    	 public static AlertDialogFragment newInstance(int title) {
+    		 AlertDialogFragment frag = new AlertDialogFragment();
+    	     Bundle args = new Bundle();
+    	        
+    	     args.putInt("title", title);
+    	     frag.setArguments(args);
+    	     
+    	     return frag;
+    	 }
+
+    	 @Override
+    	 public Dialog onCreateDialog(Bundle savedInstanceState) {
+    		 int title = getArguments().getInt("title");
+
+    	     return new AlertDialog.Builder(getActivity())
+    	                .setIcon(R.drawable.alert_dialog_icon)
+    	                .setTitle(title)
+    	                .setPositiveButton(R.string.button_ok,
+    	                    new DialogInterface.OnClickListener() {
+    	                        public void onClick(DialogInterface dialog, int whichButton) {
+    	                            ((Test2Activity)getActivity()).doPositiveClick();
+    	                        }
+    	                    }
+    	                )
+    	                .setNegativeButton(R.string.button_cancel,
+    	                    new DialogInterface.OnClickListener() {
+    	                        public void onClick(DialogInterface dialog, int whichButton) {
+    	                            ((Test2Activity)getActivity()).doNegativeClick();
+    	                        }
+    	                    }
+    	                )
+    	                .create();
+    	    }
+    }
+    
+    
+    public static class ErrorDialogFragment extends DialogFragment {
+    	
+    	public static ErrorDialogFragment newInstance(int title) {
+    		ErrorDialogFragment frag = new ErrorDialogFragment();
+   	     	Bundle args = new Bundle();
+   	        
+   	     	args.putInt("title", title);
+   	     	frag.setArguments(args);
+   	     
+   	     	return frag;
+   	 	}
+
+   	 	@Override
+   	 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+   	 		int title = getArguments().getInt("title");
+
+   	 		return new AlertDialog.Builder(getActivity())
+   	 					.setIcon(R.drawable.alert_dialog_icon)
+   	 					.setTitle(title)
+   	 					.setPositiveButton(R.string.button_ok,
+   	 							new DialogInterface.OnClickListener() {
+   	 								public void onClick(DialogInterface dialog, int whichButton) {
+   	 									
+   	 								}
+   	 							}
+   	 					)
+   	 					.create();
+   	    }
+   }
 }
