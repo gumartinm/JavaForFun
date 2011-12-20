@@ -59,6 +59,7 @@ public class Test2Activity extends Activity {
 			httpEntity = new UrlEncodedFormEntity(nameValuePairs);
 		} catch (UnsupportedEncodingException e) {
 			Log.e(TAG, "Error while encoding POST parameters.", e);
+			return;
 		}
         httpPost.setEntity(httpEntity);
         httpPost.setHeader("User-Agent", "MobieAds/1.0");
@@ -68,34 +69,34 @@ public class Test2Activity extends Activity {
  		} catch (ClientProtocolException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
  			createErrorDialog(R.string.error_dialog_connection_error);
+			return;
  		} catch (IOException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
  			createErrorDialog(R.string.error_dialog_connection_error);
+			return;
  		}
         
-        if (httpResponse != null)
-		{
-			switch (httpResponse.getStatusLine().getStatusCode()) {
-				case HttpStatus.SC_OK:
-					String cookie = httpResponse.getLastHeader("Set-Cookie").getValue();
-					CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
-					CookieSyncManager.getInstance().sync();
-					//Go to the main activity
-			    	this.startActivity(new Intent(Intent.ACTION_RUN));
-					break;
-				case HttpStatus.SC_UNAUTHORIZED:
-				    //Username or password are incorrect
-					createErrorDialog(R.string.error_dialog_userpwd_error);
-					break;
-				case HttpStatus.SC_BAD_REQUEST:
-					//What the heck are you doing?
-					createErrorDialog(R.string.error_dialog_userpwd_error);
-					break;
-				default:
-					Log.e(TAG, "Error while retrieving the HTTP status line.");
-					createErrorDialog(R.string.error_dialog_userpwd_error);
-					break;
-			}
+        switch (httpResponse.getStatusLine().getStatusCode()) {
+        	case HttpStatus.SC_OK:
+        		String cookie = httpResponse.getLastHeader("Set-Cookie").getValue();
+				CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
+				CookieSyncManager.getInstance().sync();
+				//Go to the main activity
+				StrictMode.setThreadPolicy(currentPolicy);
+			    this.startActivity(new Intent(Intent.ACTION_RUN));
+				break;
+			case HttpStatus.SC_UNAUTHORIZED:
+				//Username or password are incorrect
+				createErrorDialog(R.string.error_dialog_userpwd_error);
+				break;
+			case HttpStatus.SC_BAD_REQUEST:
+				//What the heck are you doing?
+				createErrorDialog(R.string.error_dialog_userpwd_error);
+				break;
+			default:
+				Log.e(TAG, "Error while retrieving the HTTP status line.");
+				createErrorDialog(R.string.error_dialog_userpwd_error);
+				break;
 		}     
     }
     
