@@ -1,0 +1,14 @@
+INDEX:
+
+1. Test1: Login UI with AsyncTask. The connection to the RESTful Web Service is made by an AsyncTask.
+
+2. Test2: Sequential login UI. The connection to the RESTful Web Service is made in the UI thread.
+          With an AsyncTask to treat updates from LocationManager.
+          DialogFragment API for popups/dialogs.
+          Method to determine whether one Location reading is better than the current Location from: 
+            http://developer.android.com/guide/topics/location/obtaining-user-location.html
+            It is useful when you can use a window to improve the results retrieved from the LocationManager
+
+3. Test3: Sequential login UI.
+          Using Java Concurrent to treat updates from LocationManager.
+          DialogFragment API for popups/dialogs.
