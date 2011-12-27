@@ -1,12 +1,16 @@
 package de.android.test3;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.http.HttpResponse;
@@ -15,6 +19,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import android.app.Activity;
@@ -30,6 +35,7 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
 public class NextActivity extends Activity {
+	private static final String TAG = "NextActivity";
 	private String myCookie;
 	
 	 /** Called when the activity is first created. */
@@ -101,8 +107,7 @@ public class NextActivity extends Activity {
 			//RESTful WebService
 			url = new URL(URLAuth);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(TAG, "Error while creating a URL", e);
 		}
 		webServiceConnection = new MobieAdHttpClient(this.myCookie, url);
 		exec.execute(webServiceConnection);
@@ -111,9 +116,12 @@ public class NextActivity extends Activity {
    
    private class MobieAdHttpClient implements Runnable 
    {
+	   private static final String USERAGENT ="MobieAds/1.0";
+	   private static final String VALIDCHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	   private final String cookie;
 	   private static final String TAG = "MobieAdHttpClient";
-	   private AndroidHttpClient httpClient;
+	   private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance(USERAGENT);
+	   private final Random random = new Random();
 	   private final URL url;
 	 
 	   public MobieAdHttpClient(final String cookie, final URL url) {
@@ -124,7 +132,7 @@ public class NextActivity extends Activity {
 	   @Override
 	   public void run()
 	   {
-		   final String USERAGENT ="MobieAds/1.0";
+		   
 		   final HttpGet httpGet = new HttpGet();
 		   HttpResponse httpResponse = null;
 		   
@@ -134,7 +142,6 @@ public class NextActivity extends Activity {
 		   } catch (URISyntaxException e) {
 			   Log.e(TAG, "Error while creating URI from URL.", e);  
 		   }
-		   this.httpClient = AndroidHttpClient.newInstance(USERAGENT);
 		   try {
 			   httpResponse = httpClient.execute(httpGet);  
 		   } catch (ClientProtocolException e) {
@@ -145,8 +152,7 @@ public class NextActivity extends Activity {
 		   
 		   this.httpClient.close();
 			//It should not be null anyway this check is not harmful
-			if (httpResponse != null)
-			{
+			if (httpResponse != null) {
 				switch (httpResponse.getStatusLine().getStatusCode()) {
 					case HttpStatus.SC_OK:
 						//OK
@@ -155,6 +161,7 @@ public class NextActivity extends Activity {
 									new InputStreamReader(httpResponse.getEntity().getContent(), "UTF-8"));
 							StringBuilder builder = new StringBuilder();
 							String currentLine = null;
+							
 							currentLine = reader.readLine();
 							while (currentLine != null) {
 								builder.append(currentLine).append("\n");
@@ -162,6 +169,10 @@ public class NextActivity extends Activity {
 							}
 							JSONTokener tokener = new JSONTokener(builder.toString());
 							JSONArray finalResult = new JSONArray(tokener);
+							for (int i = 0; i < finalResult.length(); i++) {
+								JSONObject objects = finalResult.getJSONObject(i);
+								downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));
+							}
 						} catch (UnsupportedEncodingException e) {
 							Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
 						} catch (IllegalStateException e) {
@@ -183,6 +194,47 @@ public class NextActivity extends Activity {
 						break;
 				}
 			}	
+	   }
+	   
+	   public void downloadAds(Integer id, String domain, String link) throws IOException {
+		   final HttpGet httpGet = new HttpGet();
+		   final String URLAd = "http://" + domain + "/" + link;
+		   HttpResponse httpResponse = null;
+		   URL url = null;
+		   final OutputStream outputStream = new FileOutputStream(generateName(this.random, 10));
+		   
+		   try {
+			   url = new URL(URLAd);
+		   } catch (MalformedURLException e) {
+			   Log.e(TAG, "Error while creating a URL", e);
+		   }  
+		   try {
+			   httpGet.setURI(url.toURI());   
+		   } catch (URISyntaxException e) {
+			   Log.e(TAG, "Error while creating URI from URL.", e);  
+		   }
+		   try {
+			   httpResponse = httpClient.execute(httpGet);  
+		   } catch (ClientProtocolException e) {
+			   Log.e(TAG, "Error while executing HTTP client connection.", e);
+		   } catch (IOException e) {
+			   Log.e(TAG, "Error while executing HTTP client connection.", e);
+		   }
+		   
+		   this.httpClient.close();
+		   
+		   if (httpResponse != null) {
+			   httpResponse.getEntity().writeTo(outputStream);
+		   }
+	   }
+	   
+	   public String generateName (Random random, int length) {
+		   char[] chars = new char[length];
+	       for (int i=0; i < length; i++)
+	       {
+	            chars[i] = VALIDCHARS.charAt(random.nextInt(VALIDCHARS.length()));
+	       }
+	       return new String(chars);
 	   }
 	}
 }
