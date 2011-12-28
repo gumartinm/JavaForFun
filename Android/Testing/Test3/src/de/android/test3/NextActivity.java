@@ -1,7 +1,6 @@
 package de.android.test3;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
@@ -37,6 +35,10 @@ import android.webkit.CookieSyncManager;
 public class NextActivity extends Activity {
 	private static final String TAG = "NextActivity";
 	private String myCookie;
+	private static final int tasksMax = 10;
+	//There will never be more than 10 threads at the same moment. New tasks will wait in a queue
+	//for available threads in this pool in case of more than tasksMax tasks at the same moment.
+	private final ExecutorService exec = Executors.newFixedThreadPool(tasksMax);
 	
 	 /** Called when the activity is first created. */
     @Override
@@ -94,7 +96,6 @@ public class NextActivity extends Activity {
     
     public void makeUseOfNewLocation(Location location) {
     	final MobieAdHttpClient webServiceConnection;
-    	final ExecutorService exec = Executors.newSingleThreadExecutor();
     	
     	String latitude = Double.toString(location.getLatitude());
     	String longitude = Double.toString(location.getLongitude());
@@ -110,7 +111,7 @@ public class NextActivity extends Activity {
 			Log.e(TAG, "Error while creating a URL", e);
 		}
 		webServiceConnection = new MobieAdHttpClient(this.myCookie, url);
-		exec.execute(webServiceConnection);
+		this.exec.execute(webServiceConnection);
     }
    
    
