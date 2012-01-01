@@ -9,4 +9,11 @@ public class Test {
 		//This value will be caught by the Advice with the @AfterReturning annotation.
 		return 666;
 	}
+	
+	public int anotherExample()
+	{
+		System.out.println("The Advice should be run before and after.");
+		return 666;
+		
+	}
 }

@@ -13,5 +13,6 @@ public class SpringStart {
 		
 		Test test = (Test) SpringContextLocator.getInstance().getBean("test");
 		test.myMethod();
+		test.anotherExample();
 	}
 }
