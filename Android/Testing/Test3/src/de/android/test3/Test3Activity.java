@@ -68,10 +68,12 @@ public class Test3Activity extends Activity {
  			httpResponse = httpClient.execute(httpPost);
  		} catch (ClientProtocolException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
+ 			httpClient.getConnectionManager().shutdown();
  			createErrorDialog(R.string.error_dialog_connection_error);
 			return;
  		} catch (IOException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
+ 			httpClient.getConnectionManager().shutdown();
  			createErrorDialog(R.string.error_dialog_connection_error);
 			return;
  		}
@@ -82,6 +84,7 @@ public class Test3Activity extends Activity {
 				CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
 				CookieSyncManager.getInstance().sync();
 				//Go to the next activity
+				httpClient.getConnectionManager().shutdown();
 				StrictMode.setThreadPolicy(currentPolicy);
 			    this.startActivity(new Intent(Intent.ACTION_RUN));
 				break;

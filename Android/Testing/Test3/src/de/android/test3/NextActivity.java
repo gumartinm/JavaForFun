@@ -1,6 +1,7 @@
 package de.android.test3;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +13,8 @@ import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -39,6 +42,9 @@ public class NextActivity extends Activity {
 	//There will never be more than 10 threads at the same moment. New tasks will wait in a queue
 	//for available threads in this pool in case of more than tasksMax tasks at the same moment.
 	private final ExecutorService exec = Executors.newFixedThreadPool(tasksMax);
+	private final String USERAGENT ="MobieAds/1.0";
+	private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance(USERAGENT);
+
 	
 	 /** Called when the activity is first created. */
     @Override
@@ -117,11 +123,9 @@ public class NextActivity extends Activity {
    
    private class MobieAdHttpClient implements Runnable 
    {
-	   private static final String USERAGENT ="MobieAds/1.0";
 	   private static final String VALIDCHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	   private final String cookie;
 	   private static final String TAG = "MobieAdHttpClient";
-	   private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance(USERAGENT);
 	   private final Random random = new Random();
 	   private final URL url;
 	 
@@ -132,101 +136,117 @@ public class NextActivity extends Activity {
 	   
 	   @Override
 	   public void run()
-	   {
-		   
-		   final HttpGet httpGet = new HttpGet();
-		   HttpResponse httpResponse = null;
-		   
-		   httpGet.setHeader("Cookie", this.cookie);
+	   {  
 		   try {
-			   httpGet.setURI(url.toURI());   
-		   } catch (URISyntaxException e) {
-			   Log.e(TAG, "Error while creating URI from URL.", e);  
-		   }
-		   try {
-			   httpResponse = httpClient.execute(httpGet);  
-		   } catch (ClientProtocolException e) {
-			   Log.e(TAG, "Error while executing HTTP client connection.", e);
-		   } catch (IOException e) {
-			   Log.e(TAG, "Error while executing HTTP client connection.", e);
-		   }
+			   final HttpGet httpGet = new HttpGet();
+			   HttpResponse httpResponse = null;
 		   
-		   this.httpClient.close();
-			//It should not be null anyway this check is not harmful
-			if (httpResponse != null) {
-				switch (httpResponse.getStatusLine().getStatusCode()) {
-					case HttpStatus.SC_OK:
-						//OK
-						try {
-							BufferedReader reader = new BufferedReader(
-									new InputStreamReader(httpResponse.getEntity().getContent(), "UTF-8"));
-							StringBuilder builder = new StringBuilder();
-							String currentLine = null;
-							
-							currentLine = reader.readLine();
-							while (currentLine != null) {
-								builder.append(currentLine).append("\n");
-								currentLine = reader.readLine();
-							}
-							JSONTokener tokener = new JSONTokener(builder.toString());
-							JSONArray finalResult = new JSONArray(tokener);
-							for (int i = 0; i < finalResult.length(); i++) {
-								JSONObject objects = finalResult.getJSONObject(i);
-								downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));
-							}
-						} catch (UnsupportedEncodingException e) {
-							Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-						} catch (IllegalStateException e) {
-							Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-						} catch (IOException e) {
-							Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-						} catch (JSONException e) {
-							Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-						}
-						break;
-					case HttpStatus.SC_UNAUTHORIZED:
-						//ERROR IN USERNAME OR PASSWORD
-						break;
-					case HttpStatus.SC_BAD_REQUEST:
-						//WHAT THE HECK ARE YOU DOING?
-						break;
-					default:
-						Log.e(TAG, "Error while retrieving the HTTP status line.");
-						break;
-				}
-			}	
+			   httpGet.setHeader("Cookie", this.cookie);
+			   try {
+				   httpGet.setURI(url.toURI()); 
+				   httpResponse = httpClient.execute(httpGet);
+				   httpResponse = httpClient.
+				   sortResponse(httpResponse);
+			   } catch (URISyntaxException e) {
+				   Log.e(TAG, "Error while creating URI from URL.", e);  
+			   } catch (ClientProtocolException e) {
+				   Log.e(TAG, "Error while executing HTTP client connection.", e);
+			   } catch (IOException e) {
+				   Log.e(TAG, "Error while executing HTTP client connection.", e);
+			   } finally {
+				   //Always release the resources whatever happens. Even when there is an 
+				   //unchecked exception which (by the way) is not expected. Be ready for the worse.
+				   NextActivity.this.httpClient.close();
+			   }   
+		   } catch (RuntimeException e) {
+			   Log.e(TAG, "RunTimeException, something went wrong", e);
+		   }
 	   }
 	   
-	   public void downloadAds(Integer id, String domain, String link) throws IOException {
+	   public void sortResponse(HttpResponse httpResponse) {
+			switch (httpResponse.getStatusLine().getStatusCode()) {
+			case HttpStatus.SC_OK:
+				//OK
+				HttpEntity entity = httpResponse.getEntity();
+				if (entity != null) {
+					InputStream instream = entity.getContent();
+					InputStreamReader instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
+					BufferedReader reader = new BufferedReader(instream);
+					try {				
+						StringBuilder builder = new StringBuilder();
+						String currentLine = null;
+						currentLine = reader.readLine();
+						while (currentLine != null) {
+							builder.append(currentLine).append("\n");
+							currentLine = reader.readLine();
+						}
+						JSONTokener tokener = new JSONTokener(builder.toString());
+						JSONArray finalResult = new JSONArray(tokener);
+						for (int i = 0; i < finalResult.length(); i++) {
+							JSONObject objects = finalResult.getJSONObject(i);
+							downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));
+						}
+					} catch (UnsupportedEncodingException e) {
+						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
+					} catch (IllegalStateException e) {
+						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
+					} catch (IOException e) {
+						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
+					} catch (JSONException e) {
+						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
+					}
+				}
+				break;
+			case HttpStatus.SC_UNAUTHORIZED:
+				//ERROR IN USERNAME OR PASSWORD
+				break;
+			case HttpStatus.SC_BAD_REQUEST:
+				//WHAT THE HECK ARE YOU DOING?
+				break;
+			default:
+				Log.e(TAG, "Error while retrieving the HTTP status line.");
+				break;
+		}
+	   }
+	   
+	   public void downloadAds(Integer id, String domain, String link) {
+		   //if the id is not on the data base, download the ad, otherwise do nothing. USE synchronize
+		   
 		   final HttpGet httpGet = new HttpGet();
 		   final String URLAd = "http://" + domain + "/" + link;
 		   HttpResponse httpResponse = null;
 		   URL url = null;
-		   final OutputStream outputStream = new FileOutputStream(generateName(this.random, 10));
+		   OutputStream outputStream = null;
 		   
 		   try {
 			   url = new URL(URLAd);
+			   httpGet.setURI(url.toURI());  
+			   httpResponse = NextActivity.this.httpClient.execute(httpGet);
+			   outputStream = new FileOutputStream(generateName(this.random, 10));
+			   switch (httpResponse.getStatusLine().getStatusCode()) {
+			   case HttpStatus.SC_OK:
+				   try {
+					   httpResponse.getEntity().writeTo(outputStream);
+				   } catch (IOException e) {
+					   Log.e(TAG, "Error while writing to file the received ad.", e);
+				   }
+				   break;
+			   default:
+				   Log.e(TAG, "Error while retrieving the HTTP status line in downloadAds method.");
+				   break;
+			   }
 		   } catch (MalformedURLException e) {
 			   Log.e(TAG, "Error while creating a URL", e);
-		   }  
-		   try {
-			   httpGet.setURI(url.toURI());   
 		   } catch (URISyntaxException e) {
 			   Log.e(TAG, "Error while creating URI from URL.", e);  
-		   }
-		   try {
-			   httpResponse = httpClient.execute(httpGet);  
 		   } catch (ClientProtocolException e) {
 			   Log.e(TAG, "Error while executing HTTP client connection.", e);
+		   } catch (FileNotFoundException e) {
+			   Log.e(TAG, "Error while creating new file.", e);
 		   } catch (IOException e) {
 			   Log.e(TAG, "Error while executing HTTP client connection.", e);
 		   }
-		   
-		   this.httpClient.close();
-		   
-		   if (httpResponse != null) {
-			   httpResponse.getEntity().writeTo(outputStream);
-		   }
+		   //if any error, remove from data base the id and the file stored or the chunk stored successfully before the error. USE synchronize
 	   }
 	   
 	   public String generateName (Random random, int length) {
