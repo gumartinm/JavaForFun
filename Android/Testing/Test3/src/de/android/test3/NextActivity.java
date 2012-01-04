@@ -18,6 +18,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -136,24 +137,33 @@ public class NextActivity extends Activity {
 	   
 	   @Override
 	   public void run()
-	   {  
+	   {
+		   ResponseHandler<StringBuilder> handler = new ResponseHandler<StringBuilder>() {
+			    public StringBuilder handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+			    	return sortResponse(response);
+			    }
+			};
 		   try {
 			   final HttpGet httpGet = new HttpGet();
 			   HttpResponse httpResponse = null;
-		   
+			   
+			   
 			   httpGet.setHeader("Cookie", this.cookie);
 			   try {
 				   httpGet.setURI(url.toURI()); 
-				   httpResponse = httpClient.execute(httpGet);
-				   httpResponse = httpClient.
-				   sortResponse(httpResponse);
+				   StringBuilder builder = httpClient.execute(httpGet, handler);
+				   retrieveResponse(builder);
 			   } catch (URISyntaxException e) {
 				   Log.e(TAG, "Error while creating URI from URL.", e);  
 			   } catch (ClientProtocolException e) {
 				   Log.e(TAG, "Error while executing HTTP client connection.", e);
+			   } catch (UnsupportedEncodingException e)  {
+				   Log.e(TAG, "Error  InputStreamReader.", e);
 			   } catch (IOException e) {
 				   Log.e(TAG, "Error while executing HTTP client connection.", e);
-			   } finally {
+			   } catch (JSONException e) {
+				   Log.e(TAG, "Error while parsing JSON response.", e);
+			} finally {
 				   //Always release the resources whatever happens. Even when there is an 
 				   //unchecked exception which (by the way) is not expected. Be ready for the worse.
 				   NextActivity.this.httpClient.close();
@@ -163,50 +173,57 @@ public class NextActivity extends Activity {
 		   }
 	   }
 	   
-	   public void sortResponse(HttpResponse httpResponse) {
-			switch (httpResponse.getStatusLine().getStatusCode()) {
-			case HttpStatus.SC_OK:
+	   public StringBuilder sortResponse(HttpResponse httpResponse) throws UnsupportedEncodingException, IllegalStateException, IOException {
+		   StringBuilder builder = null;
+		   
+		   switch (httpResponse.getStatusLine().getStatusCode()) {
+		   case HttpStatus.SC_OK:
 				//OK
 				HttpEntity entity = httpResponse.getEntity();
 				if (entity != null) {
-					InputStream instream = entity.getContent();
-					InputStreamReader instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
-					BufferedReader reader = new BufferedReader(instream);
-					try {				
-						StringBuilder builder = new StringBuilder();
+					InputStreamReader instream = null;
+					try {
+						instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
+						BufferedReader reader = new BufferedReader(instream);				
+						builder = new StringBuilder();
 						String currentLine = null;
 						currentLine = reader.readLine();
 						while (currentLine != null) {
 							builder.append(currentLine).append("\n");
 							currentLine = reader.readLine();
 						}
-						JSONTokener tokener = new JSONTokener(builder.toString());
-						JSONArray finalResult = new JSONArray(tokener);
-						for (int i = 0; i < finalResult.length(); i++) {
-							JSONObject objects = finalResult.getJSONObject(i);
-							downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));
-						}
-					} catch (UnsupportedEncodingException e) {
-						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-					} catch (IllegalStateException e) {
-						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-					} catch (IOException e) {
-						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-					} catch (JSONException e) {
-						Log.e(TAG, "Error while parsing the JSON response from the RESTful Web Service.", e);
-					}
+					} finally {
+						if (instream != null) {
+							try {
+								instream.close();
+							} catch (IOException e) {
+								Log.e(TAG, "Error while closing InputStream.", e);
+							}
+						}	
+					}				
 				}
-				break;
-			case HttpStatus.SC_UNAUTHORIZED:
+				break;				
+		   case HttpStatus.SC_UNAUTHORIZED:
 				//ERROR IN USERNAME OR PASSWORD
-				break;
-			case HttpStatus.SC_BAD_REQUEST:
+				break;				
+		   case HttpStatus.SC_BAD_REQUEST:
 				//WHAT THE HECK ARE YOU DOING?
-				break;
-			default:
+				break;				
+		   default:
 				Log.e(TAG, "Error while retrieving the HTTP status line.");
-				break;
-		}
+				break;	
+		   }
+		   
+		   return builder;
+	   }
+	   
+	   public void retrieveResponse(StringBuilder builder) throws JSONException {
+		   JSONTokener tokener = new JSONTokener(builder.toString());
+		   JSONArray finalResult = new JSONArray(tokener);
+		   for (int i = 0; i < finalResult.length(); i++) {
+			   JSONObject objects = finalResult.getJSONObject(i);
+			   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
+		   }				
 	   }
 	   
 	   public void downloadAds(Integer id, String domain, String link) {

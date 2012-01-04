@@ -30,6 +30,11 @@ import android.widget.EditText;
 
 public class Test3Activity extends Activity {
 	private static final String TAG = "Test3Activity";
+	private static final String ENCODED = "UTF-8";
+	private static final String USERAGENTFIELD = "User-Agent";
+	private static final String USERAGENTVALUE = "MobieAds/1.0";
+	private static final String URLWEBSERVICE = "http://192.168.1.34/userfront.php/api/login/auth.json";
+	private static final String SETCOOKIEFIELD = "Set-Cookie";
 	private StrictMode.ThreadPolicy currentPolicy;
 	
     /** Called when the activity is first created. */
@@ -43,50 +48,48 @@ public class Test3Activity extends Activity {
     }
     
     public void onClickLogin(View v) {
-    	final String URLAuth = "http://192.168.1.34/userfront.php/api/login/auth.json";
     	final EditText password = (EditText) findViewById(R.id.password);
     	final EditText username = (EditText) findViewById(R.id.username);
     	final HttpClient httpClient = new DefaultHttpClient();
-		final HttpPost httpPost = new HttpPost(URLAuth);
+		final HttpPost httpPost = new HttpPost(URLWEBSERVICE);
 		HttpEntity httpEntity = null;
 		HttpResponse httpResponse = null;
-		final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+		final List<NameValuePair> formParams = new ArrayList<NameValuePair>(2);
+
 		
 		//TODO: RESTful Web Service must use JSON instead of signin array :(
-        nameValuePairs.add(new BasicNameValuePair("signin[username]", username.getText().toString()));
-        nameValuePairs.add(new BasicNameValuePair("signin[password]", password.getText().toString()));
+		formParams.add(new BasicNameValuePair("signin[username]", username.getText().toString()));
+		formParams.add(new BasicNameValuePair("signin[password]", password.getText().toString()));
         try {
-			httpEntity = new UrlEncodedFormEntity(nameValuePairs);
+			httpEntity = new UrlEncodedFormEntity(formParams, ENCODED);
+			httpPost.setEntity(httpEntity);
+	        httpPost.setHeader(USERAGENTFIELD, USERAGENTVALUE);
+	        httpResponse = httpClient.execute(httpPost);
 		} catch (UnsupportedEncodingException e) {
 			Log.e(TAG, "Error while encoding POST parameters.", e);
-			return;
-		}
-        httpPost.setEntity(httpEntity);
-        httpPost.setHeader("User-Agent", "MobieAds/1.0");
-        
-        try {
- 			httpResponse = httpClient.execute(httpPost);
- 		} catch (ClientProtocolException e) {
+		} catch (ClientProtocolException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
- 			httpClient.getConnectionManager().shutdown();
  			createErrorDialog(R.string.error_dialog_connection_error);
-			return;
  		} catch (IOException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
- 			httpClient.getConnectionManager().shutdown();
  			createErrorDialog(R.string.error_dialog_connection_error);
-			return;
+ 		} finally {
+ 			httpClient.getConnectionManager().shutdown();
  		}
         
-        switch (httpResponse.getStatusLine().getStatusCode()) {
+        if (httpResponse != null) {
+            switch (httpResponse.getStatusLine().getStatusCode()) {
         	case HttpStatus.SC_OK:
-        		String cookie = httpResponse.getLastHeader("Set-Cookie").getValue();
-				CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
-				CookieSyncManager.getInstance().sync();
-				//Go to the next activity
-				httpClient.getConnectionManager().shutdown();
-				StrictMode.setThreadPolicy(currentPolicy);
-			    this.startActivity(new Intent(Intent.ACTION_RUN));
+        		String cookie = httpResponse.getLastHeader(SETCOOKIEFIELD).getValue();
+        		if (cookie != null) {
+        			CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
+					CookieSyncManager.getInstance().sync();
+					//Go to the next activity
+					StrictMode.setThreadPolicy(currentPolicy);
+					this.startActivity(new Intent(Intent.ACTION_RUN));
+        		} else {
+        			Log.e(TAG, "There must be a weird issue with the server because... There is not cookie!!!!");
+        		}
 				break;
 			case HttpStatus.SC_UNAUTHORIZED:
 				//Username or password are incorrect
@@ -100,7 +103,8 @@ public class Test3Activity extends Activity {
 				Log.e(TAG, "Error while retrieving the HTTP status line.");
 				createErrorDialog(R.string.error_dialog_userpwd_error);
 				break;
-		}     
+            }         	
+        } 
     }
     
     public void onClickCancel(View v) {
