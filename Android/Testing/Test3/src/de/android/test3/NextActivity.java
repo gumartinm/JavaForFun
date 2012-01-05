@@ -17,9 +17,11 @@ import java.util.concurrent.Executors;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.params.CoreProtocolPNames;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +45,8 @@ public class NextActivity extends Activity {
 	//There will never be more than 10 threads at the same moment. New tasks will wait in a queue
 	//for available threads in this pool in case of more than tasksMax tasks at the same moment.
 	private final ExecutorService exec = Executors.newFixedThreadPool(tasksMax);
-	private final String USERAGENT ="MobieAds/1.0";
+	private static final String USERAGENT ="MobieAds/1.0";
+	private static final String ENCODED = "UTF-8";
 	private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance(USERAGENT);
 
 	
@@ -54,6 +57,10 @@ public class NextActivity extends Activity {
         CookieSyncManager.createInstance(this);
         myCookie = CookieManager.getInstance().getCookie("192.168.1.34/userfront.php");
         setContentView(R.layout.nextactivity);
+        
+        
+        httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, ENCODED);
+		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
         
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -139,20 +146,29 @@ public class NextActivity extends Activity {
 	   public void run()
 	   {
 		   ResponseHandler<StringBuilder> handler = new ResponseHandler<StringBuilder>() {
-			    public StringBuilder handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+			    public StringBuilder handleResponse(HttpResponse response) 
+			    		throws ClientProtocolException, UnsupportedEncodingException, IllegalStateException, IOException {
+			    	//There could be a null as return value in case of not receiving any data from the server, 
+			    	//although the HTTP connection was OK.
 			    	return sortResponse(response);
 			    }
 			};
+			
 		   try {
-			   final HttpGet httpGet = new HttpGet();
-			   HttpResponse httpResponse = null;
-			   
+			   final HttpGet httpGet = new HttpGet();			   
 			   
 			   httpGet.setHeader("Cookie", this.cookie);
 			   try {
 				   httpGet.setURI(url.toURI()); 
 				   StringBuilder builder = httpClient.execute(httpGet, handler);
-				   retrieveResponse(builder);
+				   if (builder != null) {
+					   JSONTokener tokener = new JSONTokener(builder.toString());
+					   JSONArray finalResult = new JSONArray(tokener);
+					   for (int i = 0; i < finalResult.length(); i++) {
+						   JSONObject objects = finalResult.getJSONObject(i);
+						   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
+					   }	
+				   }  
 			   } catch (URISyntaxException e) {
 				   Log.e(TAG, "Error while creating URI from URL.", e);  
 			   } catch (ClientProtocolException e) {
@@ -162,8 +178,8 @@ public class NextActivity extends Activity {
 			   } catch (IOException e) {
 				   Log.e(TAG, "Error while executing HTTP client connection.", e);
 			   } catch (JSONException e) {
-				   Log.e(TAG, "Error while parsing JSON response.", e);
-			} finally {
+				   Log.e(TAG, "Error while parsing JSON response.", e); 
+			   } finally {
 				   //Always release the resources whatever happens. Even when there is an 
 				   //unchecked exception which (by the way) is not expected. Be ready for the worse.
 				   NextActivity.this.httpClient.close();
@@ -181,9 +197,10 @@ public class NextActivity extends Activity {
 				//OK
 				HttpEntity entity = httpResponse.getEntity();
 				if (entity != null) {
-					InputStreamReader instream = null;
+					//outside try/catch block. 
+					//In case of exception it is thrown, otherwise instream will not be null and we get into the try/catch block.
+					InputStreamReader instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
 					try {
-						instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
 						BufferedReader reader = new BufferedReader(instream);				
 						builder = new StringBuilder();
 						String currentLine = null;
@@ -193,13 +210,9 @@ public class NextActivity extends Activity {
 							currentLine = reader.readLine();
 						}
 					} finally {
-						if (instream != null) {
-							try {
-								instream.close();
-							} catch (IOException e) {
-								Log.e(TAG, "Error while closing InputStream.", e);
-							}
-						}	
+						//instream will never be null in case of reaching this code, cause it was initialized outside try/catch block.
+						//In case of exception here, it is thrown to the superior layer.
+						instream.close();	
 					}				
 				}
 				break;				
@@ -215,15 +228,6 @@ public class NextActivity extends Activity {
 		   }
 		   
 		   return builder;
-	   }
-	   
-	   public void retrieveResponse(StringBuilder builder) throws JSONException {
-		   JSONTokener tokener = new JSONTokener(builder.toString());
-		   JSONArray finalResult = new JSONArray(tokener);
-		   for (int i = 0; i < finalResult.length(); i++) {
-			   JSONObject objects = finalResult.getJSONObject(i);
-			   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
-		   }				
 	   }
 	   
 	   public void downloadAds(Integer id, String domain, String link) {
