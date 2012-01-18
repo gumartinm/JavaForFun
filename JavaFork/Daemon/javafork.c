@@ -17,11 +17,21 @@
 #include <sys/wait.h>
 #include <sys/poll.h>
 #include <string.h>
+#include <signal.h>
 #include "javafork.h"
+
+pid_t currentPID;
+int sockfd;
 
 
 int main (int argc, char *argv[]) {
     pid_t pid;
+
+	if (signal(SIGTERM, sigterm_handler) == SIG_ERR) 
+	{
+		perror ("\nerror signal handler");
+		return -1;
+	}
 
 	if ((pid = fork()) == -1) {
 		perror("fork: ");
@@ -30,6 +40,7 @@ int main (int argc, char *argv[]) {
 	else {
 		if (pid == 0) {
 			/*child process*/
+			currentPID = getpid();
 			main_child(argc, argv);
 		}
 	}
@@ -42,7 +53,6 @@ int main_child (int argc, char *argv[]) {
 	struct protoent *protocol;
 	struct sockaddr_in addr_server;
 	struct sockaddr_in  addr_client;
-	int sockfd;
     int sockclient;
     pthread_t idThread;
 	int clilen;
@@ -137,6 +147,7 @@ void *serverThread (void * arg) {
   	}
 
 	close(sockclient);
+	/*FIXME: dunno why, but after finishing connection from client we have TIME_WAIT in this socket*/
 	
 	pthread_exit(0);
 }
@@ -344,4 +355,21 @@ int fork_system(int socket, char *command) {
 	}
 
 	return 0;
+}
+
+
+void sigterm_handler(int sig)
+{
+	if (currentPID != getpid()) {
+		//Do nothing
+		return;
+	}
+	if (signal (SIGTERM, SIG_IGN) == SIG_ERR)
+	{
+		syslog (LOG_ERR, "signal desactivation failed");
+	}
+
+	close (sockfd);
+	/*TODO: kill child processes and release allocate memory*/
+	exit (0);
 }

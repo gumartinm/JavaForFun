@@ -21,7 +21,7 @@ public class MainJavaFork  {
 		
 		final ByteArrayOutputStream stdoutByteOut = new ByteArrayOutputStream();
 		final PrintStream stdout = new PrintStream(stdoutByteOut);
-		final String command = "ls -lah; ls -lah bbb aaa ccc; ls -lah";
+		final String command = "/home/gustavo/github/JavaForFun/JavaFork/Daemon/script.sh";
 		final ByteArrayOutputStream stderrByteOut = new ByteArrayOutputStream();
 		final PrintStream stderr = new PrintStream(stderrByteOut);
 		int result;
