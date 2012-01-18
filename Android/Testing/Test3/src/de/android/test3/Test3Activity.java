@@ -108,6 +108,9 @@ public class Test3Activity extends Activity {
 				break;
             }         	
         } 
+        else {
+        	Log.e(TAG, "No response? This should never have happened.");
+        }
     }
     
     public void onClickCancel(View v) {

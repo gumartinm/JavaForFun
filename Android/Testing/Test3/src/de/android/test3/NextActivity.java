@@ -192,39 +192,41 @@ public class NextActivity extends Activity {
 	   public StringBuilder sortResponse(HttpResponse httpResponse) throws UnsupportedEncodingException, IllegalStateException, IOException {
 		   StringBuilder builder = null;
 		   
-		   switch (httpResponse.getStatusLine().getStatusCode()) {
-		   case HttpStatus.SC_OK:
-				//OK
-				HttpEntity entity = httpResponse.getEntity();
-				if (entity != null) {
-					//outside try/catch block. 
-					//In case of exception it is thrown, otherwise instream will not be null and we get into the try/catch block.
-					InputStreamReader instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
-					try {
-						BufferedReader reader = new BufferedReader(instream);				
-						builder = new StringBuilder();
-						String currentLine = null;
-						currentLine = reader.readLine();
-						while (currentLine != null) {
-							builder.append(currentLine).append("\n");
-							currentLine = reader.readLine();
-						}
-					} finally {
-						//instream will never be null in case of reaching this code, cause it was initialized outside try/catch block.
-						//In case of exception here, it is thrown to the superior layer.
-						instream.close();	
-					}				
-				}
-				break;				
-		   case HttpStatus.SC_UNAUTHORIZED:
-				//ERROR IN USERNAME OR PASSWORD
-				break;				
-		   case HttpStatus.SC_BAD_REQUEST:
-				//WHAT THE HECK ARE YOU DOING?
-				break;				
-		   default:
-				Log.e(TAG, "Error while retrieving the HTTP status line.");
-				break;	
+		   if (httpResponse != null) {
+			   switch (httpResponse.getStatusLine().getStatusCode()) {
+			   case HttpStatus.SC_OK:
+				   //OK
+				   HttpEntity entity = httpResponse.getEntity();
+				   if (entity != null) {
+					   //outside try/catch block. 
+					   //In case of exception it is thrown, otherwise instream will not be null and we get into the try/catch block.
+					   InputStreamReader instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
+					   try {
+						   BufferedReader reader = new BufferedReader(instream);				
+						   builder = new StringBuilder();
+						   String currentLine = null;
+						   currentLine = reader.readLine();
+						   while (currentLine != null) {
+							   builder.append(currentLine).append("\n");
+							   currentLine = reader.readLine();
+						   }
+					   } finally {
+						   //instream will never be null in case of reaching this code, cause it was initialized outside try/catch block.
+						   //In case of exception here, it is thrown to the superior layer.
+						   instream.close();	
+					   }				
+				   }
+				   break;				
+			   case HttpStatus.SC_UNAUTHORIZED:
+				   //ERROR IN USERNAME OR PASSWORD
+				   break;				
+			   case HttpStatus.SC_BAD_REQUEST:
+				   //WHAT THE HECK ARE YOU DOING?
+				   break;				
+			   default:
+				   Log.e(TAG, "Error while retrieving the HTTP status line.");
+				   break;	
+			   }   
 		   }
 		   
 		   return builder;
