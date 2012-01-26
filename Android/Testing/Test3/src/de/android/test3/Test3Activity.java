@@ -35,7 +35,7 @@ public class Test3Activity extends Activity {
 	private static final String TAG = "Test3Activity";
 	private static final String ENCODED = "UTF-8";
 	private static final String USERAGENT = "MobieAds/1.0";
-	private static final String URLWEBSERVICE = "http://192.168.1.34/userfront.php/api/login/auth.json";
+	private static final String URLWEBSERVICE = "http://users.mobiads.gumartinm.name/userfront.php/api/login/auth.json";
 	private static final String SETCOOKIEFIELD = "Set-Cookie";
 	private StrictMode.ThreadPolicy currentPolicy;
 	
@@ -85,7 +85,7 @@ public class Test3Activity extends Activity {
         	case HttpStatus.SC_OK:
         		String cookie = httpResponse.getLastHeader(SETCOOKIEFIELD).getValue();
         		if (cookie != null) {
-        			CookieManager.getInstance().setCookie("192.168.1.34/userfront.php",cookie);
+        			CookieManager.getInstance().setCookie("users.mobiads.gumartinm.name",cookie);
 					CookieSyncManager.getInstance().sync();
 					//Go to the next activity
 					StrictMode.setThreadPolicy(currentPolicy);

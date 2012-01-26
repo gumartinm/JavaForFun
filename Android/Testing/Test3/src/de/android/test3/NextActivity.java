@@ -41,12 +41,31 @@ import android.webkit.CookieSyncManager;
 public class NextActivity extends Activity {
 	private static final String TAG = "NextActivity";
 	private String myCookie;
-	private static final int tasksMax = 10;
-	//There will never be more than 10 threads at the same moment. New tasks will wait in a queue
+	private static final int tasksMax = 3;
+	//There will never be more than 3 threads at the same moment. New tasks will wait in a queue
 	//for available threads in this pool in case of more than tasksMax tasks at the same moment.
+	//We choose this number because of the ThreadSafeClientConnManager Android implementation where
+	//there are just 2 concurrent connections per given route. :S
 	private final ExecutorService exec = Executors.newFixedThreadPool(tasksMax);
 	private static final String USERAGENT ="MobieAds/1.0";
 	private static final String ENCODED = "UTF-8";
+	
+	
+//	2.8.4. Pooling connection manager
+//
+//	ThreadSafeClientConnManager is a more complex implementation that manages a 
+//	pool of client connections and is able to service connection requests from
+//	multiple execution threads. Connections are pooled on a per route basis. A request for a 
+//	route for which the manager already has a persistent connection available in the pool 
+//	will be serviced by leasing a connection from the pool rather than creating a brand new connection.
+//
+//	ThreadSafeClientConnManager maintains a maximum limit of connections on a per route basis 
+//	and in total. Per default this implementation will create no more than 2 concurrent 
+//	connections per given route and no more 20 connections in total. For many real-world 
+//	applications these limits may prove too constraining, especially if they use HTTP as 
+//	a transport protocol for their services. Connection limits can be adjusted using the 
+//	appropriate HTTP parameters.
+//	WITH THE ANDROID IMPLEMENTATION WE CAN NOT CHANGE THOSE VALUES!!!! :(
 	private final AndroidHttpClient httpClient = AndroidHttpClient.newInstance(USERAGENT);
 
 	
@@ -55,13 +74,14 @@ public class NextActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CookieSyncManager.createInstance(this);
-        myCookie = CookieManager.getInstance().getCookie("192.168.1.34/userfront.php");
+        myCookie = CookieManager.getInstance().getCookie("users.mobiads.gumartinm.name");
         setContentView(R.layout.nextactivity);
         
         
         httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, ENCODED);
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-        
+
+		
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(false);
@@ -86,7 +106,7 @@ public class NextActivity extends Activity {
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
-            	//1. Fin out the provider state. (see Copilot.java code GPSLocationListener)
+            	//1. Find out the provider state. (see Copilot.java code GPSLocationListener)
             	//2. If it is TEMPORARILY_UNAVAILABLE:
             	//2.1. locationManager.removeUpdates(locationListener); <--- Stop wasting GPS or GSM connections
             	//2.2. Launch Timer with TimerTask 30 or 60 seconds before to enable the locationManager to find out if the provider status changed.
@@ -108,6 +128,7 @@ public class NextActivity extends Activity {
         locationManager.requestLocationUpdates(0, 10, criteria, locationListener, null);
     }
     
+    
     public void makeUseOfNewLocation(Location location) {
     	final MobieAdHttpClient webServiceConnection;
     	
@@ -115,7 +136,7 @@ public class NextActivity extends Activity {
     	String longitude = Double.toString(location.getLongitude());
     	String latitudeReplace = latitude.replace(".", ",");
     	String longitudeReplace = longitude.replace(".", ",");
-    	final String URLAuth = "http://192.168.1.34/userfront.php/api/" + latitudeReplace + "/" + longitudeReplace + "/gpsads.json";
+    	final String URLAuth = "http://users.mobiads.gumartinm.name/userfront.php/api/" + latitudeReplace + "/" + longitudeReplace + "/gpsads.json";
     	URL url = null;
     	
 		try {
@@ -123,6 +144,7 @@ public class NextActivity extends Activity {
 			url = new URL(URLAuth);
 		} catch (MalformedURLException e) {
 			Log.e(TAG, "Error while creating a URL", e);
+			return;
 		}
 		webServiceConnection = new MobieAdHttpClient(this.myCookie, url);
 		this.exec.execute(webServiceConnection);
@@ -160,13 +182,25 @@ public class NextActivity extends Activity {
 			   httpGet.setHeader("Cookie", this.cookie);
 			   try {
 				   httpGet.setURI(url.toURI()); 
+//				   http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html
+//				   2.9. Multithreaded request execution
+//				   When equipped with a pooling connection manager such as ThreadSafeClientConnManager, 
+//				   HttpClient can be used to execute multiple requests simultaneously using multiple threads of execution.
+//				   The ThreadSafeClientConnManager will allocate connections based on its configuration. 
+//				   If all connections for a given route have already been leased, a request for a connection 
+//				   will block until a connection is released back to the pool. One can ensure the connection manager does 
+//				   not block indefinitely in the connection request operation by setting 'http.conn-manager.timeout' to a 
+//				   positive value. If the connection request cannot be serviced within the given time period 
+//				   ConnectionPoolTimeoutException will be thrown.
+				   Log.e(TAG, "Entrada" + Thread.currentThread().getId() + " " + Thread.currentThread().getName());
 				   StringBuilder builder = httpClient.execute(httpGet, handler);
+				   Log.e(TAG, "Salida" + Thread.currentThread().getId() + " " + Thread.currentThread().getName());
 				   if (builder != null) {
 					   JSONTokener tokener = new JSONTokener(builder.toString());
 					   JSONArray finalResult = new JSONArray(tokener);
 					   for (int i = 0; i < finalResult.length(); i++) {
-						   JSONObject objects = finalResult.getJSONObject(i);
-						   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
+						   //JSONObject objects = finalResult.getJSONObject(i);
+						   //downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
 					   }	
 				   }  
 			   } catch (URISyntaxException e) {
@@ -182,10 +216,10 @@ public class NextActivity extends Activity {
 			   } finally {
 				   //Always release the resources whatever happens. Even when there is an 
 				   //unchecked exception which (by the way) is not expected. Be ready for the worse.
-				   NextActivity.this.httpClient.close();
+				   //NextActivity.this.httpClient.close();
 			   }   
-		   } catch (RuntimeException e) {
-			   Log.e(TAG, "RunTimeException, something went wrong", e);
+		   } catch (Throwable e) {
+			   Log.e(TAG, "Caught exception, something went wrong", e);
 		   }
 	   }
 	   
@@ -200,7 +234,7 @@ public class NextActivity extends Activity {
 				   if (entity != null) {
 					   //outside try/catch block. 
 					   //In case of exception it is thrown, otherwise instream will not be null and we get into the try/catch block.
-					   InputStreamReader instream = new InputStreamReader(entity.getContent(), entity.getContentEncoding().getValue());
+					   InputStreamReader instream = new InputStreamReader(entity.getContent()/*, entity.getContentEncoding().getValue()*/);
 					   try {
 						   BufferedReader reader = new BufferedReader(instream);				
 						   builder = new StringBuilder();
