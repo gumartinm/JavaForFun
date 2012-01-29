@@ -37,7 +37,7 @@ int daemonize(const char *pname, int facility, int option);
 * INPUT PARAMETER: socket file descriptor                                               *
 * RETURNS: int	                                                                        *
 ****************************************************************************************/
-int main_child (char *address, int port, int queue);
+int main_daemon (char *address, int port, int queue);
 
 
 
