@@ -271,7 +271,7 @@ void *serverThread (void * arg)
 
 
 
-	/*COMMAND LENGTH*/
+	/*1. COMMAND LENGTH*/
 	/*First of all we receive the command size as a Java integer (4 bytes primitive type)*/	
 	if ((commandLength = (uint32_t *) malloc(sizeof(uint32_t))) == NULL) {
 		syslog (LOG_ERR, "commandLength malloc failed: %m");
@@ -292,7 +292,7 @@ void *serverThread (void * arg)
 
 
 		
-	/*COMMAND*/
+	/*2. COMMAND*/
 	/*Reserving commandLength + 1 because of the string end character*/
 	if ((command = (char *) malloc(*commandLength + 1)) == NULL) {
 		syslog (LOG_ERR, "command malloc failed: %m");
@@ -307,14 +307,13 @@ void *serverThread (void * arg)
 
 
 
-
-	/*RESULTS*/	
+	/*3. RESULTS*/	
 	pre_fork_system(socket, command);	
 
 
 
 
-	/*CLOSE CONNECTION AND FINISH*/
+	/*4. CLOSE CONNECTION AND FINISH*/
 
 err:
 	free(command);
@@ -449,27 +448,27 @@ int pre_fork_system(int socket, char *command)
     keysemaphore=ftok("/bin/ls", SHAREMEMSEM);  /*the /bin/ls must exist otherwise this does not work... */
     if (keysemaphore == -1) {
         syslog (LOG_ERR, "ftok failed: %m");
-        goto End;
+        goto end;
     }
 
     /*Attach shared memory*/
     if ((idsemaphore = shmget(keysemaphore,sizeof(sem_t), 0660 | IPC_CREAT)) < 0) {
         syslog (LOG_ERR, "semaphore initialization failed: %m");
-        goto EndandReleaseSem;
+        goto end_release_sem;
     }
 
     if ((semaphore = (sem_t *)shmat(idsemaphore, (void *)0, 0)) < 0) {
-        goto EndandReleaseSem;
+        goto end_release_sem;
     }
 
     if (sem_init(semaphore, 1, 1) < 0) {
         syslog (LOG_ERR, "semaphore initialization failed: %m");
-        goto EndandDestroySem;
+        goto end_destroy_sem;
     }
 
-    if (sem_wait(semaphore) < 0) {
+    if (TEMP_FAILURE_RETRY(sem_wait(semaphore)) < 0) {
         syslog (LOG_ERR, "semaphore wait failed: %m");
-        goto EndandDestroySem;
+        goto end_destroy_sem;
     }
 	
 	
@@ -485,19 +484,19 @@ int pre_fork_system(int socket, char *command)
     keyvalue=ftok("/bin/ls", SHAREMEMKEY);  /*the /bin/ls must exist otherwise this does not work... */
     if (keyvalue == -1) {
         syslog (LOG_ERR, "ftok failed: %m");
-        goto EndandDestroySem;
+        goto end_destroy_sem;
     }
 
     /*Attach shared memory*/
     if ((idreturnstatus=shmget(keyvalue,sizeof(int), 0660 | IPC_CREAT)) < 0) {
         syslog (LOG_ERR, "shmget failed: %m");
-        goto EndandReleaseMem;
+        goto end_release_mem;
     }
 
     returnstatus = (int *)shmat(idreturnstatus, (void *)0, 0);
     if ((*returnstatus)== -1) {
         syslog (LOG_ERR, "shmat failed: %m");
-        goto EndandReleaseMem;
+        goto end_release_mem;
     } 
 
 
@@ -506,7 +505,7 @@ int pre_fork_system(int socket, char *command)
 	returnValue = fork_system(socket, command, semaphore, returnstatus);
 
 
-EndandReleaseMem:
+end_release_mem:
     if (returnstatus != NULL) {
         /*detach memory*/
         if (shmdt ((int *)returnstatus) < 0)
@@ -516,10 +515,10 @@ EndandReleaseMem:
     /*Mark the segment to be destroyed.*/
     if (shmctl (idreturnstatus, IPC_RMID, (struct shmid_ds *)NULL) < 0 )
         syslog (LOG_ERR, "returnstatus shared variable shmctl failed: %m");
-EndandDestroySem:
+end_destroy_sem:
     if (sem_destroy(semaphore) <0)
          syslog (LOG_ERR, "semaphore destroy failed: %m");
-EndandReleaseSem:
+end_release_sem:
     /*after sem_destroy-> input/output parameter NULL?*/
     if (semaphore != NULL) {
         /*detach memory*/
@@ -530,7 +529,7 @@ EndandReleaseSem:
     /*Mark the segment to be destroyed.*/
     if (shmctl (idsemaphore, IPC_RMID, (struct shmid_ds *)NULL) < 0 )
         syslog (LOG_ERR, "semaphore shmctl failed: %m");
-End:
+end:
     return returnValue;
 }
 
@@ -546,7 +545,7 @@ int fork_system(int socket, char *command, sem_t *semaphore, int *returnstatus) 
 	struct pollfd polls[2];
 	int n;
 	int childreturnstatus;
-	int returnValue = -1;   /*eturn value from this function can be caught by upper layers, NOK by default*/
+	int returnValue = 0;   /*eturn value from this function can be caught by upper layers, OK by default*/
 
 
 	/*Value by default*/
@@ -559,24 +558,24 @@ int fork_system(int socket, char *command, sem_t *semaphore, int *returnstatus) 
 	/*Creating the pipes, they will be attached to the stderr and stdout streams*/	
 	if (pipe(out) < 0 || pipe(err) < 0) {
 	    syslog (LOG_ERR, "pipe failed: %m");
-		goto EndandClosePipes;
+		goto err;
     }
 	
 	
 	if ((pid=fork()) == -1) {
 		syslog (LOG_ERR, "fork failed: %m");
-		goto EndandClosePipes;
+		goto err;
 	}
 	
 	if (pid == 0) {
 		/*Child process*/
 		/*It has to launch another one using system or execve*/
-		if ((dup2(out[1],1) < 0) || (dup2(err[1],2) < 0)) {	
+		if ((TEMP_FAILURE_RETRY(dup2(out[1],1)) < 0) || (TEMP_FAILURE_RETRY(dup2(err[1],2)) < 0)) {	
 			syslog (LOG_ERR, "child dup2 failed: %m");
             /*Going to zombie state, hopefully waitpid will catch it*/	
 			exit(-1);
 		}
-		if (sem_wait(semaphore) < 0) {
+		if (TEMP_FAILURE_RETRY(sem_wait(semaphore)) < 0) {
 			syslog (LOG_ERR, "child semaphore wait failed: %m");
             /*Going to zombie state, hopefully waitpid will catch it*/
 			exit(-1);
@@ -610,7 +609,7 @@ int fork_system(int socket, char *command, sem_t *semaphore, int *returnstatus) 
             /*      Should I implement a SIGCHILD handler?*/
             /*TODO: Should I have a SIGTERM handler in the child process?*/
 			kill(pid, SIGTERM);
-			goto EndandClosePipes;
+			goto err;
 		}
 
 		while(1) {
@@ -670,16 +669,15 @@ int fork_system(int socket, char *command, sem_t *semaphore, int *returnstatus) 
 
 	/*Stuff just done by the Parent process. The child process ends with exit*/
 	
-	returnValue = 0; /*if everything went OK*/
 
-
-EndandClosePipes:
+end:
     closeSafely (out[0]);
     closeSafely (out[1]);
     closeSafely (err[0]);
     closeSafely (err[1]);
-
-	return returnValue;
+err:
+    returnValue = -1;
+	goto end;
 }
 
 
