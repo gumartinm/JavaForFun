@@ -9,7 +9,6 @@
 
 
 
-
 /****************************************************************************************
 * This method is used by pthread_create                                                 *
 * 																					    *
@@ -74,4 +73,5 @@ void sigint_handler();
 
 
 int required_sock_options (int socket);
-int receive_from_socket (int socket, char *store, int *Left, struct timeval *ptime);
+int receive_from_socket (int socket, char *data, int len, long timeout, long utimeout);
+int readable_timeout (int fd, long timeout, long utimeout);

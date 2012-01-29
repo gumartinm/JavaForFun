@@ -144,12 +144,6 @@ public class TCPForkDaemon {
 			inputSource.setEncoding("UTF-8");
 			parser.setStream(socket.getInputStream());
 			
-			DataInputStream receiveData = new DataInputStream(socket.getInputStream());
-
-			
-			// 2. ACK
-			int ack = receiveData.readInt();
-			
 			// 4. SERVER CLOSED CONNECTION
 		}
 		finally {

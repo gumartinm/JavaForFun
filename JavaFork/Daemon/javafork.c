@@ -215,7 +215,7 @@ int daemonize(const char *pname, int facility, int option)
 		return -1;
 	}
 	
-	if((fd = TEMP_FAILURE_RETRY(open( "/dev/null", O_RDWR, 0))) == -1) {
+	if ((fd = TEMP_FAILURE_RETRY(open( "/dev/null", O_RDWR, 0))) == -1) {
 		closeSafely(fd);
 		return -1;
 	}
@@ -237,8 +237,8 @@ int daemonize(const char *pname, int facility, int option)
 void *serverThread (void * arg)
 {
 	int socket = -1;                    /*Open socket by the Java client*/
-	struct timeval ptime;               /*Variable used by the select function, timeout control*/
-	int nLeft;				            /*Control parameter used while receiving data from the client*/
+	long timeout, utimeout;             /*Timeout for reading data from client: secs and usecs respectively*/
+	int len;				            /*Control parameter used while receiving data from the client*/
 	char buffer[1025];		            /*This buffer is intended to store the data received from the client*/
 	char *command = NULL;		        /*The command sent by the client, to be executed by this process*/	
 	uint32_t *commandLength = NULL;     /*Store the command length*/
@@ -265,6 +265,11 @@ void *serverThread (void * arg)
 	/*																									        */
 	/************************************************************************************************************/
 
+    /*Wait max 2 seconds for data coming from client, otherwise exits with error.*/
+    timeout = 2;
+    utimeout = 0;
+
+
 
 	/*COMMAND LENGTH*/
 	/*First of all we receive the command size as a Java integer (4 bytes primitive type)*/	
@@ -274,20 +279,16 @@ void *serverThread (void * arg)
 	}
 
 	bzero(buffer, sizeof(buffer));
-	nLeft = sizeof(uint32_t);
-	/*Wait max 2 seconds for data coming from client, otherwise exits with error.*/
-	ptime.tv_sec=2;
-	ptime.tv_usec=0;
-    if (receive_from_socket (socket, buffer, &nLeft, &ptime) < 0)
-        goto err;
+	len = sizeof(uint32_t);
 
-    if (nLeft < 0)
-		syslog (LOG_INFO, "command length excessive data received, expected: 4, received: %d", (-nLeft + sizeof(uint32_t)) );
+    if (receive_from_socket (socket, buffer, len, timeout, utimeout) < 0)
+        goto err;
 
 	/*Retrieve integer (4 bytes) from buffer*/
 	memcpy (commandLength, buffer, sizeof(uint32_t));
 	/*Java sends the primitive integer using big-endian order (it is the same as network order)*/
 	*commandLength = be32toh (*commandLength);
+
 
 
 		
@@ -299,19 +300,18 @@ void *serverThread (void * arg)
 	} 
 
 	bzero(command, ((*commandLength) + 1));
-    nLeft = *commandLength;
+    len = *commandLength;
 	/*Wait max 2 seconds for data coming from client, otherwise exits with error.*/
-	ptime.tv_sec=2;
-	ptime.tv_usec=0;
-	if (receive_from_socket (socket, command, &nLeft, &ptime) < 0)
+	if (receive_from_socket (socket, command, len, timeout, utimeout) < 0)
         goto err;
 
-	if (nLeft < 0)
-        syslog (LOG_INFO, "execessive command length, expected: %d, received: %d", *commandLength, (-nLeft + *commandLength));
+
 
 
 	/*RESULTS*/	
 	pre_fork_system(socket, command);	
+
+
 
 
 	/*CLOSE CONNECTION AND FINISH*/
@@ -324,6 +324,8 @@ err:
 	pthread_exit(0);
 }
 
+
+
 int required_sock_options (int socket)
 {
     int optval, flags;
@@ -335,7 +337,7 @@ int required_sock_options (int socket)
         return -1;
     }
 
-    if(TEMP_FAILURE_RETRY(fcntl(socket, F_SETFL, O_NONBLOCK|flags)) < 0){
+    if (TEMP_FAILURE_RETRY(fcntl(socket, F_SETFL, O_NONBLOCK|flags)) < 0){
         syslog (LOG_ERR, "set socket status flags failed: %m");
         return -1;
     }
@@ -343,14 +345,14 @@ int required_sock_options (int socket)
     /*Portable programs should not rely on inheritance or noninheritance of file status flags and */
     /*always explicitly set all required flags*/
     optval = 1;
-    if(setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0) {
+    if (setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0) {
         syslog (LOG_ERR, "setsockopt SO_REUSEADDR failed: %m");
         return -1;
     }
 
     /*Enable keepalive for this socket*/
     optval = 1;
-    if(setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) < 0) {
+    if (setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval)) < 0) {
         syslog (LOG_ERR, "setsockopt SO_KEEPALIVE failed: %m");
         return -1;
     }
@@ -359,51 +361,64 @@ int required_sock_options (int socket)
     /*      apparently it just works while the handshake phase. See:                            */
     /*      http://stackoverflow.com/questions/4345415/socket-detect-connection-is-lost         */
     /*      I have to implement an echo/ping messages protocol (application layer)              */
-    /*      In the meanwhile this application should just be used in the localhost interface :( */
 
     return 0;
 }
 
 
-int timeout (int fd, long timeout)
+
+int readable_timeout (int fd, long timeout, long utimeout)
 {
-    struct timeval ptime;
-    fd_set fd_read;
+    struct timeval ptime;   /*Timeout, secs and usecs*/
+    fd_set fd_read;         /*Values for select function.*/
 
     ptime.tv_sec = timeout;
-    ptime.tv_usec = 0;
-    for (;;) {
-        
-    }    
+    ptime.tv_usec = utimeout;
+    FD_ZERO(&fd_read);
+    FD_SET(fd, &fd_read);
+  
+    return TEMP_FAILURE_RETRY(select(fd+1, &fd_read, NULL, NULL, &ptime)); 
 }
 
-int receive_from_socket (int socket, char *store, int *nLeft, struct timeval *ptime)
+
+
+int receive_from_socket (int socket, char *data, int len, long timeout, long utimeout)
 {
     int nData, iPos;	/*Control variables.*/
 	int ret;			/*Store return value from select.*/
-	fd_set fd_read;		/*Values for select function.*/
 
 	nData = iPos = 0;
-
 	do {
-	    FD_ZERO(&fd_read);
-		FD_SET(socket, &fd_read);
-		ret = select(socket+1, &fd_read, NULL, NULL, ptime);
-		if(ret == 0) {
-			syslog(LOG_INFO, "receiving timeout error");
-			return -1;
-		}
-		if(ret == -1) {
-			syslog(LOG_ERR, "receiving select error: %m");
-			return -1;
-		}
-		if((nData = recv(socket, &store[iPos], *nLeft, 0)) <= 0) {
-			syslog (LOG_ERR, "read TCP socket failed: %m");
-			return -1;
-		}
-		*nLeft -= nData;
+        ret = readable_timeout(socket, timeout, utimeout);
+
+        if (ret == 0) {
+            syslog(LOG_INFO, "receiving timeout error");
+            return -1;
+        } else if (ret == -1) {
+            syslog(LOG_ERR, "receiving error: %m");
+            return -1;
+        }
+
+        nData = TEMP_FAILURE_RETRY(recv(socket, &data[iPos], len, 0));
+
+        if (nData < 0) {
+            if ((errno != EAGAIN) && (errno != EWOULDBLOCK)) {
+                syslog (LOG_ERR, "read TCP socket failed: %m");
+                return -1;
+            } else {
+                /*see spurious readiness man select(2) BUGS section*/
+                nData = 0;
+                syslog (LOG_INFO, "read TCP socket spurious readiness");
+            }
+        } else if (nData == 0) {
+            /*if nData is 0, client closed connection but we wanted to receive more data, this is an error */
+            syslog (LOG_ERR, "expected more data from client");
+            return -1;
+        }
+
+		len -= nData;
 		iPos += nData;
-    } while (*nLeft > 0);
+    } while (len > 0);
 
     return 0;
 }
