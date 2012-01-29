@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -94,12 +95,10 @@ public class TCPForkDaemon {
 	/******************************************************************************************/
 	/*          Just over 1 TCP connection                                                    */
 	/*          COMMAND_LENGTH: Java integer 4 bytes, BIG-ENDIAN (the same as network order)  */
-	/*          ACK: integer 4 bytes big-endian (for Java) with the sent comand length 	  	  */
-	/*          COMMAND: TPV locale character set encoding                                    */
-	/*          RESULTS: TPV locale character set encoding                                    */
+	/*          COMMAND: remote locale character set encoding                                 */
+	/*          RESULTS: remote locale character set encoding                                 */
 	/*                                                                                        */
 	/*              JAVA CLIENT: ------------ COMMAND_LENGTH -------> :SERVER                 */
-	/*              JAVA CLIENT: <---------------- ACK -------------- :SERVER                 */
 	/*              JAVA CLIENT: -------------- COMMAND ------------> :SERVER                 */
 	/*              JAVA CLIENT: <-------------- RESULTS ------------ :SERVER                 */
 	/*              JAVA CLIENT: <---------- CLOSE CONNECTION ------- :SERVER                 */
@@ -110,35 +109,48 @@ public class TCPForkDaemon {
 		
 		socket = new Socket(InetAddress.getByName(host), port);
 		try {
-			/*Must be used the remote charset :S*/
+			//By default in UNIX systems the keepalive message is sent after 20hours 
+			//with Java we can not use the TCP_KEEPCNT, TCP_KEEPIDLE and TCP_KEEPINTVL options by session.
+			//It is up to the server administrator and client user to configure them.
+			//I guess it is because Solaris does not implement those options...
+			//see: Net.c openjdk 6 and net_util_md.c openjdk 7
+			//So in Java applications the only way to find out if the connection is broken (one router down)
+			//is sending ping messages or something similar from the application layer. Java is a toy language...
+			//Anyway I think the keepalive messages just work during the handshake phase, just after sending some
+			//data over the link the keepalive does not work.
+			// See: http://stackoverflow.com/questions/4345415/socket-detect-connection-is-lost
+			socket.setKeepAlive(true);
+			
+			//It must be used the remote locale character set encoding
 			byte [] commandEncoded = command.getBytes("UTF-8"); 
 			
 			DataOutputStream sendData = new DataOutputStream(socket.getOutputStream());
-			DataInputStream receiveData = new DataInputStream(socket.getInputStream());
 						
 			// 1. COMMAND_LENGTH
 			sendData.writeInt(commandEncoded.length);
-
-			// 2. ACK
-			// TODO: if the server close the connection we could stay here probably
-			// until TCP keepalive is sent (20 hours by default in Linux)
-			int ack = receiveData.readInt();
-			if (ack != commandEncoded.length) 
-				throw new IOException("invalid ACK, something went wrong " +
-					"with the TCPForkDaemon. Check the /var/log/messages file in the TPV");
-			
-			
-			// 3. COMMAND
+				
+			// 2. COMMAND
 			sendData.write(commandEncoded);
 			
-			
-			// 4. RESULTS
-			// TODO: if the server closes the connection we could stay here probably
-			// until TCP keepalive is sent (20 hours by default in Linux)
+			// 3. RESULTS
+			// TODO: When the network infrastructure (between client and server) fails in this point 
+			// (broken router for example) Could we stay here until TCP keepalive is sent?
+			// (20 hours by default in Linux)
+			// Impossible to use a timeout, because we do not know how much time is going to long the command :/
+			// the only way to fix this issue in Java is sending ping messages (Could we fix it using custom settings in the OS
+			// of the client and server machines? for example in Linux see /proc/sys/net/ipv4/)
+			InputSource inputSource = new InputSource(socket.getInputStream());
+			//Must be used the remote locale character set encoding?
+			inputSource.setEncoding("UTF-8");
 			parser.setStream(socket.getInputStream());
 			
+			DataInputStream receiveData = new DataInputStream(socket.getInputStream());
+
 			
-			// 5. SERVER CLOSES CONNECTION
+			// 2. ACK
+			int ack = receiveData.readInt();
+			
+			// 4. SERVER CLOSED CONNECTION
 		}
 		finally {
 			if (out != null) {

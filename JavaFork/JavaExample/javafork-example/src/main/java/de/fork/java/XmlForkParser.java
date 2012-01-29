@@ -15,7 +15,7 @@ import org.xml.sax.ext.DefaultHandler2;
  * <p>
  * Class intended to parse the XML stream received from the daemon which is
  * waiting to run commands. These commands are sent by the method 
- * {@link es.dia.pos.n2a.util.os.unix.TCPForkDaemon#exec(String, String, int)} 
+ * {@link de.fork.java.TCPForkDaemon#exec(String, String, int)} 
  * </p>
  * <p>
  * After processing one command the daemon sends a XML stream with the stderr,

@@ -22,12 +22,12 @@ public class RemoteForkMain  {
 		
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final PrintStream stdout = new PrintStream(baos);
-		final String command = "ls -lah";
+		final String command = "ls -lah ~/.ssh; ls -lah * bbbb aaa";
 		final ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
 		final PrintStream stderr = new PrintStream(baos2);
 		int result;
 		
-		result = LauncherProcessesDiaFork.exec(command,stdout, stderr, "127.0.0.1", 5193);
+		result = LauncherProcesses.exec(command,stdout, stderr, "gumartinm.name", 5193);
 		System.out.println(result);
 		System.out.println("Stdout: " +  baos.toString());
 		System.out.println("Stderr: " +  baos2.toString());
