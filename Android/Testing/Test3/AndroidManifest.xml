@@ -39,6 +39,30 @@
             </intent-filter>
 		</activity>
 		
+		<provider 
+		    android:authorities="de.android.test3.provider"
+          	android:enabled="true"
+          	android:exported="false"
+          	android:grantUriPermissions="false"
+          	android:icon="@drawable/ic_launcher"
+          	android:initOrder="1"
+         	android:label="@string/app_name"
+          	android:multiprocess="false"
+          	android:name=".IndexerProvider"
+          	android:permission="android.permission.MOBIADS"
+          	android:readPermission="android.permission.READ_MOBIADS"
+          	android:syncable="false"
+          	android:writePermission="android.permission.WRITE_MOBIADS" >
+            <grant-uri-permission 
+                android:path="string"
+                android:pathPattern="string"
+                android:pathPrefix="string" />
+		</provider>
+		<!--
+		<provider 
+			android:process="string" When having my service, here I should write the service process name 
+		</provider>-->
+       
     </application>
 
 </manifest>

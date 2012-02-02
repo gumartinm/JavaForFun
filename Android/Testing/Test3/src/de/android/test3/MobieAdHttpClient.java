@@ -89,7 +89,7 @@ public class MobieAdHttpClient implements Runnable
 					   JSONArray finalResult = new JSONArray(tokener);
 					   for (int i = 0; i < finalResult.length(); i++) {
 						   JSONObject objects = finalResult.getJSONObject(i);
-						   //Find out if that id is in the SQLITE database.
+						   //Find out if that id is in the SQLite database.
 						   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
 					   }	
 				   }  
@@ -136,7 +136,7 @@ public class MobieAdHttpClient implements Runnable
 						   }
 					   } finally {
 						   //instream will never be null in case of reaching this code, cause it was initialized outside try/catch block.
-						   //In case of exception here, it is thrown to the superior layer.
+						   //In case of exception here, it is thrown to the upper layer.
 						   instream.close();	
 					   }				
 				   }
