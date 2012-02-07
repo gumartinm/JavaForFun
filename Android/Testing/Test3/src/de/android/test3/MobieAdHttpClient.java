@@ -84,15 +84,13 @@ public class MobieAdHttpClient implements Runnable
 				   //So AndroidHttpClient infinite timeout
 				   //and the connection can be kept forever.
 				   StringBuilder builder = httpClient.execute(httpGet, handler);
-				   if (builder != null) {
-					   JSONTokener tokener = new JSONTokener(builder.toString());
-					   JSONArray finalResult = new JSONArray(tokener);
-					   for (int i = 0; i < finalResult.length(); i++) {
-						   JSONObject objects = finalResult.getJSONObject(i);
-						   //Find out if that id is in the SQLite database.
-						   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
-					   }	
-				   }  
+				   JSONTokener tokener = new JSONTokener(builder.toString());
+				   JSONArray finalResult = new JSONArray(tokener);
+				   for (int i = 0; i < finalResult.length(); i++) {
+					   JSONObject objects = finalResult.getJSONObject(i);
+					   //Find out if that id is in the SQLite database.
+					   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
+				   }	
 			   } catch (URISyntaxException e) {
 				   Log.e(TAG, "Error while creating URI from URL.", e);  
 			   } catch (ClientProtocolException e) {
@@ -109,6 +107,7 @@ public class MobieAdHttpClient implements Runnable
 				   //NextActivity.this.httpClient.close();
 			   }   
 		   } catch (Throwable e) {
+			   //Not sure if it is "legal" to catch Throwable...
 			   Log.e(TAG, "Caught exception, something went wrong", e);
 		   }
 	   }
@@ -143,13 +142,12 @@ public class MobieAdHttpClient implements Runnable
 				   break;				
 			   case HttpStatus.SC_UNAUTHORIZED:
 				   //ERROR IN USERNAME OR PASSWORD
-				   break;				
+				   throw new SecurityException("Unauthorized access: error in username or password.");
 			   case HttpStatus.SC_BAD_REQUEST:
 				   //WHAT THE HECK ARE YOU DOING?
-				   break;				
+				   throw new IllegalArgumentException("Bad request.");			
 			   default:
-				   Log.e(TAG, "Error while retrieving the HTTP status line.");
-				   break;	
+	               throw new IllegalArgumentException("Error while retrieving the HTTP status line.");
 			   }   
 		   }
 		   

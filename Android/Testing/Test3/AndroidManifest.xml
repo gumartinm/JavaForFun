@@ -53,10 +53,7 @@
           	android:readPermission="android.permission.READ_MOBIADS"
           	android:syncable="false"
           	android:writePermission="android.permission.WRITE_MOBIADS" >
-            <grant-uri-permission 
-                android:path="string"
-                android:pathPattern="string"
-                android:pathPrefix="string" />
+            <grant-uri-permission android:pathPattern=".*" />
 		</provider>
 		<!--
 		<provider 
