@@ -9,17 +9,12 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
 	// Used for debugging and logging
     private static final String TAG = "IndexerOpenHelper";
 	
-	private static final String DBNAME = "mobiads";
+	private static final String DATABASE_NAME = "mobiads.db";
 	private static final int DATABASE_VERSION = 1;
-    private static final String TABLE_NAME = "indexer";
-    private static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME + 
-    													"(_ID INTEGER NOT NULL, " +
-    													"PATH TEXT(15) NOT NULL, " + 
-    													"PRIMARY KEY (_ID), " +
-    													"UNIQUE (PATH), " + ")";
+
 
     IndexerOpenHelper(Context context) {
-        super(context, DBNAME, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
 
@@ -30,7 +25,11 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
      */
     @Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(TABLE_CREATE);
+		db.execSQL("CREATE TABLE " + Indexer.Index.TABLE_NAME + " ("
+				+ Indexer.Index._ID + "  INTEGER PRIMARY KEY, "
+				+ Indexer.Index.COLUMN_NAME_ID_AD + " REAL" + " UNIQUE" + "NOT NULL"
+				+ Indexer.Index.COLUMN_NAME_PATH + " TEXT(15)" + " UNIQUE" + " NOT NULL"
+				+ ");");
 	}
 
 
@@ -48,7 +47,7 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
                 + newVersion + ", which will destroy all old data");
 
         // Kills the table and existing data
-        db.execSQL("DROP TABLE IF EXISTS indexer");
+        db.execSQL("DROP TABLE IF EXISTS " + Indexer.Index.TABLE_NAME);
 
         // Recreates the database with a new version
         onCreate(db);
