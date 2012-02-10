@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -89,9 +90,11 @@ public class Test3Activity extends Activity {
 					CookieSyncManager.getInstance().sync();
 					//Go to the next activity
 					StrictMode.setThreadPolicy(currentPolicy);
-					this.startActivity(new Intent(Intent.ACTION_RUN));
+					this.startActivity(new Intent(Intent.ACTION_RUN).
+							setComponent(new ComponentName("de.android.test3", "de.android.test3.NextActivity")));
         		} else {
         			Log.e(TAG, "There must be a weird issue with the server because... There is not cookie!!!!");
+        			createErrorDialog(R.string.error_dialog_connection_error);
         		}
 				break;
 			case HttpStatus.SC_UNAUTHORIZED:
@@ -104,12 +107,13 @@ public class Test3Activity extends Activity {
 				break;
 			default:
 				Log.e(TAG, "Error while retrieving the HTTP status line.");
-				createErrorDialog(R.string.error_dialog_userpwd_error);
+				createErrorDialog(R.string.error_dialog_connection_error);
 				break;
             }         	
         } 
         else {
         	Log.e(TAG, "No response? This should never have happened.");
+        	createErrorDialog(R.string.error_dialog_connection_error);
         }
     }
     

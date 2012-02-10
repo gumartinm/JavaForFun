@@ -21,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import android.content.ContentUris;
+import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
@@ -88,7 +90,12 @@ public class MobieAdHttpClient implements Runnable
 				   JSONArray finalResult = new JSONArray(tokener);
 				   for (int i = 0; i < finalResult.length(); i++) {
 					   JSONObject objects = finalResult.getJSONObject(i);
-					   //Find out if that id is in the SQLite database.
+					   IndexerProvider databaseIndexer = new IndexerProvider();
+					   Uri.Builder prueba = new Uri.Builder();
+					   prueba.encodedAuthority("de.android.test3.provider");
+					   prueba.encodedPath("indexer");
+					   prueba.appendQueryParameter("id", (String) objects.get("id"));
+					   databaseIndexer.query(prueba.build(), null, null, null, null);
 					   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
 				   }	
 			   } catch (URISyntaxException e) {

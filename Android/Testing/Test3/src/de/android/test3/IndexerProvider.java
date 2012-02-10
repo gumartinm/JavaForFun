@@ -41,11 +41,11 @@ public class IndexerProvider extends ContentProvider {
         // Create a new instance
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         
-        // Add a pattern that routes URIs terminated with "notes" to a NOTES operation
+        // Add a pattern that routes URIs terminated with "indexer" to a INDEXER operation
         sUriMatcher.addURI("de.android.test3.provider", Indexer.Index.TABLE_NAME, INDEXER);
         
-        // Add a pattern that routes URIs terminated with "notes" plus an integer
-        // to a note ID operation
+        // Add a pattern that routes URIs terminated with "indexer" plus an integer
+        // to a index ID operation
         sUriMatcher.addURI("de.android.test3.provider", Indexer.Index.TABLE_NAME + "/#", INDEXER_ID);
     }
  
