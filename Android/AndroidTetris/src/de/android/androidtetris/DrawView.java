@@ -49,8 +49,9 @@ public class DrawView extends SurfaceView {
 	    		try {
     				Thread.sleep(1000);
     			} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// This code implements the thread's interruption policy. It may swallow the
+    				// interruption request. Java Concurrency in Practice §7.1.3
+					// TODO: I should finish the process in this case.
 				}
 	    		synchronized (view.getHolder())
 	    		{

@@ -21,7 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import android.content.ContentUris;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
@@ -34,11 +37,13 @@ public class MobieAdHttpClient implements Runnable
 	   private final Random random = new Random();
 	   private final URL url;
 	   private final AndroidHttpClient httpClient;
+	   private final Context context;
 	 
-	   public MobieAdHttpClient(final String cookie, final URL url, final AndroidHttpClient httpClient) {
+	   public MobieAdHttpClient(final String cookie, final URL url, final AndroidHttpClient httpClient, Context context) {
 	    	this.cookie = cookie;
 	    	this.url = url;
 	    	this.httpClient = httpClient;
+	    	this.context = context;
 	   }
 	   
 	   @Override
@@ -90,12 +95,12 @@ public class MobieAdHttpClient implements Runnable
 				   JSONArray finalResult = new JSONArray(tokener);
 				   for (int i = 0; i < finalResult.length(); i++) {
 					   JSONObject objects = finalResult.getJSONObject(i);
-					   IndexerProvider databaseIndexer = new IndexerProvider();
-					   Uri.Builder prueba = new Uri.Builder();
-					   prueba.encodedAuthority("de.android.test3.provider");
-					   prueba.encodedPath("indexer");
-					   prueba.appendQueryParameter("id", (String) objects.get("id"));
-					   databaseIndexer.query(prueba.build(), null, null, null, null);
+					   ContentValues values = new ContentValues();
+					   values.put(Indexer.Index.COLUMN_NAME_PATH, "18188181");
+					   values.put(Indexer.Index.COLUMN_NAME_ID_AD, "22");
+					   Uri probando = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer");
+					   this.context.getContentResolver().insert(probando, values);
+					   Cursor cursor = this.context.getContentResolver().query(probando, null, null, null, null);
 					   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
 				   }	
 			   } catch (URISyntaxException e) {

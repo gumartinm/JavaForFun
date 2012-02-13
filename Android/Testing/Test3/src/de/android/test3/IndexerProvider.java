@@ -47,6 +47,24 @@ public class IndexerProvider extends ContentProvider {
         // Add a pattern that routes URIs terminated with "indexer" plus an integer
         // to a index ID operation
         sUriMatcher.addURI("de.android.test3.provider", Indexer.Index.TABLE_NAME + "/#", INDEXER_ID);
+        
+        
+        /*
+         * Creates and initializes a projection map that returns all columns
+         */
+
+        // Creates a new projection map instance. The map returns a column name
+        // given a string. The two are usually equal.
+        sIndexerProjectionMap = new HashMap<String, String>();
+
+        // Maps the string "_ID" to the column name "_ID"
+        sIndexerProjectionMap.put(Indexer.Index._ID, Indexer.Index._ID);
+
+        // Maps "idad" to "idad"
+        sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_ID_AD, Indexer.Index.COLUMN_NAME_ID_AD);
+
+        // Maps "path" to "path"
+        sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_PATH, Indexer.Index.COLUMN_NAME_PATH);
     }
  
     
@@ -198,11 +216,9 @@ public class IndexerProvider extends ContentProvider {
 		
 		// Performs the insert and returns the ID of the new note.
         long rowId = db.insert(
-        	Indexer.Index.COLUMN_NAME_ID_AD, // The table to insert into.
-            Indexer.Index.COLUMN_NAME_PATH,  // A hack, SQLite sets this column value to null
-                                             // if values is empty.
-            values                           // A map of column names, and the values to insert
-                                             // into the columns.
+        	Indexer.Index.TABLE_NAME, // The table to insert into.
+            null,  					  // A hack, SQLite sets this column value to null if values is empty.
+            values                    // A map of column names, and the values to insert into the columns.
         );
 		
         // If the insert succeeded, the row ID exists.
@@ -291,6 +307,7 @@ public class IndexerProvider extends ContentProvider {
 	    		null,          // don't filter by row groups
 	    		orderBy        // The sort order
 	    );
+	    
 	    
 	    // Tells the Cursor what URI to watch, so it knows when its source data changes
 	    c.setNotificationUri(getContext().getContentResolver(), uri);

@@ -38,7 +38,7 @@ public final class Indexer {
         /**
          * The default sort order for this table
          */
-        public static final String DEFAULT_SORT_ORDER = "by " + Index._ID;
+        public static final String DEFAULT_SORT_ORDER = Index._ID;
         
         /**
          * The MIME type of {@link #CONTENT_URI} providing a directory of notes.

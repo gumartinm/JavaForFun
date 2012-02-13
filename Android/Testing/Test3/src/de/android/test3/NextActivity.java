@@ -127,7 +127,7 @@ public class NextActivity extends Activity {
 			Log.e(TAG, "Error while creating a URL", e);
 			return;
 		}
-		webServiceConnection = new MobieAdHttpClient(this.myCookie, url, httpClient);
+		webServiceConnection = new MobieAdHttpClient(this.myCookie, url, httpClient, this);
 		this.exec.execute(webServiceConnection);
     }
 }

@@ -21,13 +21,13 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
     /**
      *
      * Creates the underlying database with table name and column names taken from the
-     * NotePad class.
+     * Indexer class.
      */
     @Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE " + Indexer.Index.TABLE_NAME + " ("
 				+ Indexer.Index._ID + "  INTEGER PRIMARY KEY, "
-				+ Indexer.Index.COLUMN_NAME_ID_AD + " REAL" + " UNIQUE" + "NOT NULL"
+				+ Indexer.Index.COLUMN_NAME_ID_AD + " INTEGER" + " UNIQUE" + " NOT NULL,"
 				+ Indexer.Index.COLUMN_NAME_PATH + " TEXT(15)" + " UNIQUE" + " NOT NULL"
 				+ ");");
 	}
