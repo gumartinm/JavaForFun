@@ -98,9 +98,12 @@ public class MobieAdHttpClient implements Runnable
 					   ContentValues values = new ContentValues();
 					   values.put(Indexer.Index.COLUMN_NAME_PATH, "18188181");
 					   values.put(Indexer.Index.COLUMN_NAME_ID_AD, "22");
-					   Uri probando = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer");
-					   this.context.getContentResolver().insert(probando, values);
+					   Uri probando = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer" + "/idad/" + "22");
+					   
 					   Cursor cursor = this.context.getContentResolver().query(probando, null, null, null, null);
+					   if (cursor != null) {
+					   }
+					   //this.context.getContentResolver().insert(probando, values);
 					   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
 				   }	
 			   } catch (URISyntaxException e) {

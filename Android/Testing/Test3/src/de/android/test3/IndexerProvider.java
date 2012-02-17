@@ -33,6 +33,8 @@ public class IndexerProvider extends ContentProvider {
     // The incoming URI matches the Note ID URI pattern
     private static final int INDEXER_ID = 2;
     
+    private static final int INDEXER_IDAD = 3;
+    
     static {
     	
     	/*
@@ -47,6 +49,8 @@ public class IndexerProvider extends ContentProvider {
         // Add a pattern that routes URIs terminated with "indexer" plus an integer
         // to a index ID operation
         sUriMatcher.addURI("de.android.test3.provider", Indexer.Index.TABLE_NAME + "/#", INDEXER_ID);
+        
+        sUriMatcher.addURI("de.android.test3.provider", Indexer.Index.TABLE_NAME + "/" + Indexer.Index.COLUMN_NAME_ID_AD + "/#", INDEXER_IDAD);
         
         
         /*
@@ -275,7 +279,15 @@ public class IndexerProvider extends ContentProvider {
 	                   // the position of the note ID itself in the incoming URI
 	                   uri.getPathSegments().get(1));
 	            break;
-
+	            
+	        case INDEXER_IDAD:
+	        	qb.setProjectionMap(sIndexerProjectionMap);
+	        	qb.appendWhere(
+	        	Indexer.Index.COLUMN_NAME_ID_AD + // the name of the ID column
+	                   "=" +
+	                   // the position of the Advertisement ID itself in the incoming URI
+	                   uri.getPathSegments().get(2));
+	        	break;
 	        default:
 	            // If the URI doesn't match any of the known patterns, throw an exception.
 	            throw new IllegalArgumentException("Unknown URI " + uri);
