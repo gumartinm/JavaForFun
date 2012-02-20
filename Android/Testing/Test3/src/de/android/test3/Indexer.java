@@ -31,7 +31,7 @@ public final class Indexer {
         
         /**
          * Column name for the ad unique identifier number
-         * <P>Type: REAL</P>
+         * <P>Type: INTEGER</P>
          */
         public static final String COLUMN_NAME_ID_AD = "idad";
         
@@ -52,10 +52,10 @@ public final class Indexer {
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.google.index";
         
         /**
-         * The content URI base for a single note. Callers must
-         * append a numeric note id to this Uri to retrieve a note
+         * The content URI base for a single index. Callers must
+         * append a numeric note id to this Uri to retrieve an index
          */
         public static final Uri CONTENT_ID_URI_BASE
-            = Uri.parse("content://com.google.provider.NotePad/notes/");
+            = Uri.parse("content://de.android.test3.provider/index/");
     }
 }

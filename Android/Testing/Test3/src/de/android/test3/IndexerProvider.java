@@ -218,7 +218,7 @@ public class IndexerProvider extends ContentProvider {
         // This will trigger its creation if it doesn't already exist.
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		
-		// Performs the insert and returns the ID of the new note.
+		// Performs the insert and returns the ID of the new index.
         long rowId = db.insert(
         	Indexer.Index.TABLE_NAME, // The table to insert into.
             null,  					  // A hack, SQLite sets this column value to null if values is empty.
@@ -227,7 +227,7 @@ public class IndexerProvider extends ContentProvider {
 		
         // If the insert succeeded, the row ID exists.
         if (rowId > 0) {
-            // Creates a URI with the note ID pattern and the new row ID appended to it.
+            // Creates a URI with the index ID pattern and the new row ID appended to it.
             Uri noteUri = ContentUris.withAppendedId(Indexer.Index.CONTENT_ID_URI_BASE, rowId);
 
             // Notifies observers registered against this provider that the data changed.

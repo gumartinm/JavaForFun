@@ -21,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -95,16 +94,20 @@ public class MobieAdHttpClient implements Runnable
 				   JSONArray finalResult = new JSONArray(tokener);
 				   for (int i = 0; i < finalResult.length(); i++) {
 					   JSONObject objects = finalResult.getJSONObject(i);
-					   ContentValues values = new ContentValues();
-					   values.put(Indexer.Index.COLUMN_NAME_PATH, "18188181");
-					   values.put(Indexer.Index.COLUMN_NAME_ID_AD, "22");
-					   Uri probando = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer" + "/idad/" + "22");
-					   
-					   Cursor cursor = this.context.getContentResolver().query(probando, null, null, null, null);
+					   Uri uri = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer" + "/idad/" + objects.get("id"));
+					   Cursor cursor = this.context.getContentResolver().query(uri, null, null, null, null);
 					   if (cursor != null) {
-					   }
-					   //this.context.getContentResolver().insert(probando, values);
-					   downloadAds((Integer) objects.get("id"), (String)objects.get("domain"), (String)objects.get("link"));   
+						   if (!cursor.moveToFirst()) {
+							   //If the advertisement was not stored on the database
+							   ContentValues values = new ContentValues();
+							   values.put(Indexer.Index.COLUMN_NAME_ID_AD, new Integer((String) objects.get("id")));
+							   String path = generateName(this.random, 10);
+							   values.put(Indexer.Index.COLUMN_NAME_PATH, path);
+							   uri = this.context.getContentResolver().insert(Indexer.Index.CONTENT_ID_URI_BASE, values);
+							   downloadAds(new Integer((String) objects.get("id")), (String)objects.get("domain"), (String)objects.get("link"), path); 
+						   }
+						   cursor.close();
+					   }					     
 				   }	
 			   } catch (URISyntaxException e) {
 				   Log.e(TAG, "Error while creating URI from URL.", e);  
@@ -169,7 +172,7 @@ public class MobieAdHttpClient implements Runnable
 		   return builder;
 	   }
 	   
-	   public void downloadAds(Integer id, String domain, String link) {
+	   public void downloadAds(Integer id, String domain, String link, String path) {
 		   //if the id is not on the data base, download the ad, otherwise do nothing. USE synchronize
 		   
 		   final HttpGet httpGet = new HttpGet();
@@ -184,7 +187,7 @@ public class MobieAdHttpClient implements Runnable
 			   //By default max 2 connections at the same time per host.
 			   //and infinite time out (we could wait here forever...)
 			   httpResponse = this.httpClient.execute(httpGet);
-			   outputStream = new FileOutputStream(generateName(this.random, 10));
+			   outputStream = new FileOutputStream(path);
 			   switch (httpResponse.getStatusLine().getStatusCode()) {
 			   case HttpStatus.SC_OK:
 				   try {
