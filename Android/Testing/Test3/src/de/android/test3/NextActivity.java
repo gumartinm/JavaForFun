@@ -30,6 +30,7 @@ public class NextActivity extends Activity {
 	private final ExecutorService exec = Executors.newFixedThreadPool(tasksMax);
 	private static final String USERAGENT ="MobieAds/1.0";
 	private static final String ENCODED = "UTF-8";
+	private Object syncObject = new Object();
 	
 	
 	//2.8.4. Pooling connection manager
@@ -127,7 +128,7 @@ public class NextActivity extends Activity {
 			Log.e(TAG, "Error while creating a URL", e);
 			return;
 		}
-		webServiceConnection = new MobieAdHttpClient(this.myCookie, url, httpClient, this);
+		webServiceConnection = new MobieAdHttpClient(this.myCookie, url, httpClient, this, syncObject);
 		this.exec.execute(webServiceConnection);
     }
 }

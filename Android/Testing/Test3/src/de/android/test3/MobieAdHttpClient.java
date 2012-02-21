@@ -2,7 +2,6 @@ package de.android.test3;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -10,7 +9,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Random;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -30,19 +28,19 @@ import android.util.Log;
 
 public class MobieAdHttpClient implements Runnable 
 {
-	   private static final String VALIDCHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	   private final String cookie;
 	   private static final String TAG = "MobieAdHttpClient";
-	   private final Random random = new Random();
 	   private final URL url;
 	   private final AndroidHttpClient httpClient;
 	   private final Context context;
+	   private final Object syncObject;
 	 
-	   public MobieAdHttpClient(final String cookie, final URL url, final AndroidHttpClient httpClient, Context context) {
+	   public MobieAdHttpClient(final String cookie, final URL url, final AndroidHttpClient httpClient, Context context, Object syncObject) {
 	    	this.cookie = cookie;
 	    	this.url = url;
 	    	this.httpClient = httpClient;
 	    	this.context = context;
+	    	this.syncObject = syncObject;
 	   }
 	   
 	   @Override
@@ -94,20 +92,9 @@ public class MobieAdHttpClient implements Runnable
 				   JSONArray finalResult = new JSONArray(tokener);
 				   for (int i = 0; i < finalResult.length(); i++) {
 					   JSONObject objects = finalResult.getJSONObject(i);
-					   Uri uri = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer" + "/idad/" + objects.get("id"));
-					   Cursor cursor = this.context.getContentResolver().query(uri, null, null, null, null);
-					   if (cursor != null) {
-						   if (!cursor.moveToFirst()) {
-							   //If the advertisement was not stored on the database
-							   ContentValues values = new ContentValues();
-							   values.put(Indexer.Index.COLUMN_NAME_ID_AD, new Integer((String) objects.get("id")));
-							   String path = generateName(this.random, 10);
-							   values.put(Indexer.Index.COLUMN_NAME_PATH, path);
-							   uri = this.context.getContentResolver().insert(Indexer.Index.CONTENT_ID_URI_BASE, values);
-							   downloadAds(new Integer((String) objects.get("id")), (String)objects.get("domain"), (String)objects.get("link"), path); 
-						   }
-						   cursor.close();
-					   }					     
+					   if (updatedIndexer(objects)) {
+						   downloadAds((String)objects.get("domain"), (String)objects.get("link"), (String) objects.get("id"));
+					   }
 				   }	
 			   } catch (URISyntaxException e) {
 				   Log.e(TAG, "Error while creating URI from URL.", e);  
@@ -172,7 +159,7 @@ public class MobieAdHttpClient implements Runnable
 		   return builder;
 	   }
 	   
-	   public void downloadAds(Integer id, String domain, String link, String path) {
+	   public void downloadAds(String domain, String link, String path) {
 		   //if the id is not on the data base, download the ad, otherwise do nothing. USE synchronize
 		   
 		   final HttpGet httpGet = new HttpGet();
@@ -187,7 +174,7 @@ public class MobieAdHttpClient implements Runnable
 			   //By default max 2 connections at the same time per host.
 			   //and infinite time out (we could wait here forever...)
 			   httpResponse = this.httpClient.execute(httpGet);
-			   outputStream = new FileOutputStream(path);
+			   outputStream = this.context.openFileOutput(path, Context.MODE_PRIVATE);
 			   switch (httpResponse.getStatusLine().getStatusCode()) {
 			   case HttpStatus.SC_OK:
 				   try {
@@ -214,12 +201,25 @@ public class MobieAdHttpClient implements Runnable
 		   //if any error, remove from data base the id and the file stored or the chunk stored successfully before the error. USE synchronize
 	   }
 	   
-	   public String generateName (Random random, int length) {
-		   char[] chars = new char[length];
-	       for (int i=0; i < length; i++)
-	       {
-	            chars[i] = VALIDCHARS.charAt(random.nextInt(VALIDCHARS.length()));
-	       }
-	       return new String(chars);
+	   public boolean updatedIndexer (JSONObject objects) throws JSONException {	   
+		   boolean updated = false;
+		   Uri uri = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer" + "/idad/" + objects.get("id"));
+		   
+		   synchronized (syncObject) {
+			   Cursor cursor = this.context.getContentResolver().query(uri, null, null, null, null);
+		   
+			   if (cursor != null) {
+				   if (!cursor.moveToFirst()) {
+					   //If the advertisement was not stored on the database
+					   ContentValues values = new ContentValues();
+					   values.put(Indexer.Index.COLUMN_NAME_ID_AD, new Integer((String) objects.get("id")));
+					   values.put(Indexer.Index.COLUMN_NAME_PATH, (String) objects.get("id"));
+					   uri = this.context.getContentResolver().insert(Indexer.Index.CONTENT_ID_URI_BASE, values);
+					   updated = true; 
+				   }
+				   cursor.close();
+			   }					    
+		   }
+		   return updated;
 	   }
-	}
+}
