@@ -15,6 +15,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -159,9 +160,41 @@ public class MobieAdHttpClient implements Runnable
 		   return builder;
 	   }
 	   
-	   public void downloadAds(String domain, String link, String path) {
-		   //if the id is not on the data base, download the ad, otherwise do nothing. USE synchronize
+	   public byte[] sortDownloadAd(HttpResponse httpResponse) throws UnsupportedEncodingException, IllegalStateException, IOException {
+		   byte[] file = null;
+
+		   if (httpResponse != null) {
+			   switch (httpResponse.getStatusLine().getStatusCode()) {
+			   case HttpStatus.SC_OK:
+				   //OK
+				   HttpEntity entity = httpResponse.getEntity();
+				   if (entity != null) {
+					   file = EntityUtils.toByteArray(entity);
+				   }
+				   break;
+			   case HttpStatus.SC_UNAUTHORIZED:
+				   //ERROR IN USERNAME OR PASSWORD
+				   throw new SecurityException("Unauthorized access: error in username or password.");
+			   case HttpStatus.SC_BAD_REQUEST:
+				   //WHAT THE HECK ARE YOU DOING?
+				   throw new IllegalArgumentException("Bad request.");
+			   default:
+	               throw new IllegalArgumentException("Error while retrieving the HTTP status line.");
+			   }
+		   }
 		   
+		   return file;
+	   }
+
+	   public void downloadAds(String domain, String link, String path) {
+		   ResponseHandler<byte[]> handler = new ResponseHandler<byte[]>() {
+			    public byte[] handleResponse(HttpResponse response)
+			            throws ClientProtocolException, UnsupportedEncodingException, IllegalStateException, IOException {
+			        //There could be a null as return value in case of not receiving any data from the server,
+			        //although the HTTP connection was OK.
+			        return sortDownloadAd(response);
+			    }
+			};
 		   final HttpGet httpGet = new HttpGet();
 		   final String URLAd = "http://" + domain + "/" + link;
 		   HttpResponse httpResponse = null;
