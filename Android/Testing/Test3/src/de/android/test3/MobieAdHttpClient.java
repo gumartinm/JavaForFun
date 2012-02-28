@@ -15,7 +15,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,8 +47,7 @@ public class MobieAdHttpClient implements Runnable
 	   public void run()
 	   {
 		   ResponseHandler<StringBuilder> handler = new ResponseHandler<StringBuilder>() {
-			    public StringBuilder handleResponse(HttpResponse response) 
-			    		throws ClientProtocolException, UnsupportedEncodingException, IllegalStateException, IOException {
+			    public StringBuilder handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
 			    	//There could be a null as return value in case of not receiving any data from the server, 
 			    	//although the HTTP connection was OK.
 			    	return sortResponse(response);
@@ -91,7 +89,8 @@ public class MobieAdHttpClient implements Runnable
 				   StringBuilder builder = httpClient.execute(httpGet, handler);
 				   JSONTokener tokener = new JSONTokener(builder.toString());
 				   JSONArray finalResult = new JSONArray(tokener);
-				   for (int i = 0; i < finalResult.length(); i++) {
+				   //TODO: finalResult.length() -1? May be I should remove the last semicolon in the JSON response.
+				   for (int i = 0; i < (finalResult.length() -1); i++) {
 					   JSONObject objects = finalResult.getJSONObject(i);
 					   if (updatedIndexer(objects)) {
 						   downloadAds((String)objects.get("domain"), (String)objects.get("link"), (String) objects.get("id"));
@@ -118,7 +117,7 @@ public class MobieAdHttpClient implements Runnable
 		   }
 	   }
 	   
-	   public StringBuilder sortResponse(HttpResponse httpResponse) throws UnsupportedEncodingException, IllegalStateException, IOException {
+	   public StringBuilder sortResponse(HttpResponse httpResponse) throws IOException {
 		   StringBuilder builder = null;
 		   
 		   if (httpResponse != null) {
@@ -160,41 +159,8 @@ public class MobieAdHttpClient implements Runnable
 		   return builder;
 	   }
 	   
-	   public byte[] sortDownloadAd(HttpResponse httpResponse) throws UnsupportedEncodingException, IllegalStateException, IOException {
-		   byte[] file = null;
-
-		   if (httpResponse != null) {
-			   switch (httpResponse.getStatusLine().getStatusCode()) {
-			   case HttpStatus.SC_OK:
-				   //OK
-				   HttpEntity entity = httpResponse.getEntity();
-				   if (entity != null) {
-					   file = EntityUtils.toByteArray(entity);
-				   }
-				   break;
-			   case HttpStatus.SC_UNAUTHORIZED:
-				   //ERROR IN USERNAME OR PASSWORD
-				   throw new SecurityException("Unauthorized access: error in username or password.");
-			   case HttpStatus.SC_BAD_REQUEST:
-				   //WHAT THE HECK ARE YOU DOING?
-				   throw new IllegalArgumentException("Bad request.");
-			   default:
-	               throw new IllegalArgumentException("Error while retrieving the HTTP status line.");
-			   }
-		   }
-		   
-		   return file;
-	   }
 
 	   public void downloadAds(String domain, String link, String path) {
-		   ResponseHandler<byte[]> handler = new ResponseHandler<byte[]>() {
-			    public byte[] handleResponse(HttpResponse response)
-			            throws ClientProtocolException, UnsupportedEncodingException, IllegalStateException, IOException {
-			        //There could be a null as return value in case of not receiving any data from the server,
-			        //although the HTTP connection was OK.
-			        return sortDownloadAd(response);
-			    }
-			};
 		   final HttpGet httpGet = new HttpGet();
 		   final String URLAd = "http://" + domain + "/" + link;
 		   HttpResponse httpResponse = null;
@@ -205,21 +171,32 @@ public class MobieAdHttpClient implements Runnable
 			   url = new URL(URLAd);
 			   httpGet.setURI(url.toURI());
 			   //By default max 2 connections at the same time per host.
-			   //and infinite time out (we could wait here forever...)
+			   //and infinite time out (we could wait here forever if we do not use a timeout see: 2.1. Connection parameters
+			   //http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html) The same for execute with handler.
 			   httpResponse = this.httpClient.execute(httpGet);
-			   outputStream = this.context.openFileOutput(path, Context.MODE_PRIVATE);
-			   switch (httpResponse.getStatusLine().getStatusCode()) {
-			   case HttpStatus.SC_OK:
-				   try {
-					   httpResponse.getEntity().writeTo(outputStream);
-				   } catch (IOException e) {
-					   Log.e(TAG, "Error while writing to file the received ad.", e);
-				   }
-				   break;
-			   default:
-				   Log.e(TAG, "Error while retrieving the HTTP status line in downloadAds method.");
-				   break;
+			   
+			   if (httpResponse != null) {
+				   switch (httpResponse.getStatusLine().getStatusCode()) {
+				   case HttpStatus.SC_OK:
+					   outputStream = this.context.openFileOutput(path, Context.MODE_PRIVATE);
+					   try {
+						   httpResponse.getEntity().writeTo(outputStream);
+					   } finally {
+						   //Closing the outputStream
+						   outputStream.close();
+					   }
+					   break;
+				   case HttpStatus.SC_UNAUTHORIZED:
+					   //ERROR IN USERNAME OR PASSWORD
+					   throw new SecurityException("Unauthorized access: error in username or password.");
+				   case HttpStatus.SC_BAD_REQUEST:
+					   //WHAT THE HECK ARE YOU DOING?
+					   throw new IllegalArgumentException("Bad request.");
+				   default:
+					   throw new IllegalArgumentException("Error while retrieving the HTTP status line.");
+				   }	   
 			   }
+				   
 		   } catch (MalformedURLException e) {
 			   Log.e(TAG, "Error while creating a URL", e);
 		   } catch (URISyntaxException e) {
@@ -230,8 +207,22 @@ public class MobieAdHttpClient implements Runnable
 			   Log.e(TAG, "Error while creating new file.", e);
 		   } catch (IOException e) {
 			   Log.e(TAG, "Error while executing HTTP client connection.", e);
+		   } finally {
+			   try {
+				   if (httpResponse != null) {
+					   HttpEntity entity = httpResponse.getEntity();
+					   
+					   if (entity != null) {
+						   entity.consumeContent();
+					   } 
+				   }
+			   } catch (Throwable e) {
+				   // Log this exception. The original exception is more
+				   // important and will be thrown to the caller. See: {@link AbstractHttpClient}
+				   Log.w("Error consuming content after an exception.", e);
+			   }
 		   }
-		   //if any error, remove from data base the id and the file stored or the chunk stored successfully before the error. USE synchronize
+		   //TODO: ----> if any error, remove from data base the id and the file stored or the chunk stored successfully before the error. <----
 	   }
 	   
 	   public boolean updatedIndexer (JSONObject objects) throws JSONException {	   
