@@ -89,13 +89,25 @@ public class MobieAdHttpClient implements Runnable
 				   StringBuilder builder = httpClient.execute(httpGet, handler);
 				   JSONTokener tokener = new JSONTokener(builder.toString());
 				   JSONArray finalResult = new JSONArray(tokener);
-				   //TODO: finalResult.length() -1? May be I should remove the last semicolon in the JSON response.
+				   Uri uriInsert = null;
+				   
+				   //TODO: finalResult.length() -1? Maybe I should remove the last semicolon in the JSON response.
 				   for (int i = 0; i < (finalResult.length() -1); i++) {
 					   JSONObject objects = finalResult.getJSONObject(i);
-					   if (updatedIndexer(objects)) {
-						   downloadAds((String)objects.get("domain"), (String)objects.get("link"), (String) objects.get("id"));
+					   if ((uriInsert = updatedIndexer(objects)) != null) {
+						   try {
+							   downloadAds((String)objects.get("domain"), (String)objects.get("link"), (String) objects.get("id"));
+						   } catch (Throwable e) {
+							   //In case of any error, remove from the index database the stored file
+							   //or the chunk successfully stored before the error. 
+							   this.context.getContentResolver().delete(uriInsert, null, null);
+							   //Besides throw the original exception.
+							   throw e;
+						   }
+							   
 					   }
-				   }	
+				   }
+				   
 			   } catch (URISyntaxException e) {
 				   Log.e(TAG, "Error while creating URI from URL.", e);  
 			   } catch (ClientProtocolException e) {
@@ -160,7 +172,8 @@ public class MobieAdHttpClient implements Runnable
 	   }
 	   
 
-	   public void downloadAds(String domain, String link, String path) {
+	   public void downloadAds(String domain, String link, String path) 
+			   			throws MalformedURLException, URISyntaxException, FileNotFoundException, IOException {
 		   final HttpGet httpGet = new HttpGet();
 		   final String URLAd = "http://" + domain + "/" + link;
 		   HttpResponse httpResponse = null;
@@ -197,16 +210,6 @@ public class MobieAdHttpClient implements Runnable
 				   }	   
 			   }
 				   
-		   } catch (MalformedURLException e) {
-			   Log.e(TAG, "Error while creating a URL", e);
-		   } catch (URISyntaxException e) {
-			   Log.e(TAG, "Error while creating URI from URL.", e);  
-		   } catch (ClientProtocolException e) {
-			   Log.e(TAG, "Error while executing HTTP client connection.", e);
-		   } catch (FileNotFoundException e) {
-			   Log.e(TAG, "Error while creating new file.", e);
-		   } catch (IOException e) {
-			   Log.e(TAG, "Error while executing HTTP client connection.", e);
 		   } finally {
 			   try {
 				   if (httpResponse != null) {
@@ -217,16 +220,15 @@ public class MobieAdHttpClient implements Runnable
 					   } 
 				   }
 			   } catch (Throwable e) {
-				   // Log this exception. The original exception is more
+				   // Log this exception. The original exception (if there is one) is more
 				   // important and will be thrown to the caller. See: {@link AbstractHttpClient}
 				   Log.w("Error consuming content after an exception.", e);
 			   }
 		   }
-		   //TODO: ----> if any error, remove from data base the id and the file stored or the chunk stored successfully before the error. <----
 	   }
 	   
-	   public boolean updatedIndexer (JSONObject objects) throws JSONException {	   
-		   boolean updated = false;
+	   public Uri updatedIndexer (JSONObject objects) throws JSONException {	   
+		   Uri updated = null;
 		   Uri uri = Uri.parse("content://" + "de.android.test3.provider" + "/" + "indexer" + "/idad/" + objects.get("id"));
 		   
 		   synchronized (syncObject) {
@@ -238,8 +240,7 @@ public class MobieAdHttpClient implements Runnable
 					   ContentValues values = new ContentValues();
 					   values.put(Indexer.Index.COLUMN_NAME_ID_AD, new Integer((String) objects.get("id")));
 					   values.put(Indexer.Index.COLUMN_NAME_PATH, (String) objects.get("id"));
-					   uri = this.context.getContentResolver().insert(Indexer.Index.CONTENT_ID_URI_BASE, values);
-					   updated = true; 
+					   updated = this.context.getContentResolver().insert(Indexer.Index.CONTENT_ID_URI_BASE, values);
 				   }
 				   cursor.close();
 			   }					    
