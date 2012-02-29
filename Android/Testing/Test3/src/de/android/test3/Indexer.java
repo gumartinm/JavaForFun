@@ -56,6 +56,6 @@ public final class Indexer {
          * append a numeric note id to this Uri to retrieve an index
          */
         public static final Uri CONTENT_ID_URI_BASE
-            = Uri.parse("content://de.android.test3.provider/index/");
+            = Uri.parse("content://de.android.test3.provider/indexer/");
     }
 }

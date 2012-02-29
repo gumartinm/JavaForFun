@@ -97,17 +97,23 @@ public class MobieAdHttpClient implements Runnable
 					   if ((uriInsert = updatedIndexer(objects)) != null) {
 						   try {
 							   downloadAds((String)objects.get("domain"), (String)objects.get("link"), (String) objects.get("id"));
-						   } catch (Throwable e) {
-							   //In case of any error, remove from the index database the stored file
-							   //or the chunk successfully stored before the error. 
-							   this.context.getContentResolver().delete(uriInsert, null, null);
-							   //Besides throw the original exception.
-							   throw e;
-						   }
+						   } catch (Throwable e1) {
+							   //In case of any error, remove the index database and the file
+							   //or chunk successfully stored before the error. 
+							   try {
+								   this.context.getContentResolver().delete(uriInsert, null, null);
+								   this.context.deleteFile((String) objects.get("id"));
+							   } catch (Throwable e2) {
+								   // Log this exception. The original exception (if there is one) is more
+								   // important and will be thrown to the caller.
+								   Log.w("Error removing content after an exception.", e2);
+							   }
 							   
+							   //Besides throw the original exception.
+							   throw e1;
+						   }  
 					   }
-				   }
-				   
+				   } 
 			   } catch (URISyntaxException e) {
 				   Log.e(TAG, "Error while creating URI from URL.", e);  
 			   } catch (ClientProtocolException e) {
