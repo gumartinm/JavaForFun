@@ -84,8 +84,9 @@ public class MobieAdHttpClient implements Runnable
 				   //after a certain period of inactivity in order to conserve system resources, quite often without informing the client. 
 				   //In case the default strategy turns out to be too optimistic, one may want to provide a custom keep-alive strategy.
 				   	   
-				   //So AndroidHttpClient infinite timeout
-				   //and the connection can be kept forever.
+				   //AndroidHttpClient infinite time out (we could wait here forever if we do not use a timeout see: 2.1. Connection parameters
+				   //http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html) The same for execute without handler.
+				   //In that case the connection can be kept forever.
 				   StringBuilder builder = httpClient.execute(httpGet, handler);
 				   JSONTokener tokener = new JSONTokener(builder.toString());
 				   JSONArray finalResult = new JSONArray(tokener);

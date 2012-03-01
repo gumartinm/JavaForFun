@@ -36,6 +36,9 @@ public final class R {
         public static final int error_dialog_userpwd_error=0x7f040002;
         public static final int hello=0x7f040003;
         public static final int password=0x7f040006;
+        public static final int remote_service_label=0x7f04000c;
+        public static final int remote_service_started=0x7f04000a;
+        public static final int remote_service_stopped=0x7f04000b;
         public static final int username=0x7f040005;
     }
 }

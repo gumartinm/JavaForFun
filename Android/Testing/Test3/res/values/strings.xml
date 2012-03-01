@@ -16,4 +16,7 @@
     <string name="button_login">Log In</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="remote_service_started">Remote Service Started</string>
+    <string name="remote_service_stopped">Remote Service Stopped</string>
+    <string name="remote_service_label">Remote Service Label</string>
 </resources>

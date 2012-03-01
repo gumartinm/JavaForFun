@@ -61,6 +61,11 @@
 			android:process="string" When having my service, here I should write the service process name 
 		</provider>-->
        
+		<service
+		    android:name=".TestService"
+        	android:process=":testservice" >
+        </service>
+		
     </application>
 
 </manifest>
