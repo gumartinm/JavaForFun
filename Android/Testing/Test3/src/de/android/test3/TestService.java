@@ -12,6 +12,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.widget.Toast;
+import android.app.Notification;
 
 public class TestService extends Service {
 
@@ -104,6 +105,14 @@ public class TestService extends Service {
      */
     @Override
     public IBinder onBind(Intent intent) {
+    	try {
+    		synchronized (this) {
+    			this.wait(10000);
+    		}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return mMessenger.getBinder();
     }
 
@@ -115,16 +124,16 @@ public class TestService extends Service {
         CharSequence text = getText(R.string.remote_service_started);
 
         // Set the icon, scrolling text and timestamp
-        Notification notification = new Notification(R.drawable.stat_sample, text,
+        Notification notification = new Notification(R.drawable.alert_dialog_icon, text,
                 System.currentTimeMillis());
 
         // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, Controller.class), 0);
+        //PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+        //        new Intent(this, Controller.class), 0);
 
         // Set the info for the views that show in the notification panel.
-        notification.setLatestEventInfo(this, getText(R.string.remote_service_label),
-                       text, contentIntent);
+        //notification.setLatestEventInfo(this, getText(R.string.remote_service_label),
+        //               text, contentIntent);
 
         // Send the notification.
         // We use a string id because it is a unique number.  We use it later to cancel.
