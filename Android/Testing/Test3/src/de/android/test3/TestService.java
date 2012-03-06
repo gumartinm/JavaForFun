@@ -3,7 +3,6 @@ package de.android.test3;
 import java.util.ArrayList;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
@@ -12,7 +11,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.widget.Toast;
-import android.app.Notification;
 
 public class TestService extends Service {
 
@@ -91,6 +89,15 @@ public class TestService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+    	
+    	//Run the same code as MobieAdHttpclient.java
+    	
+    	// If we get killed, after returning from here, restart
+    	return START_STICKY;
+    }
+    
+    @Override
     public void onDestroy() {
         // Cancel the persistent notification.
         mNM.cancel(R.string.remote_service_started);
@@ -105,14 +112,6 @@ public class TestService extends Service {
      */
     @Override
     public IBinder onBind(Intent intent) {
-    	try {
-    		synchronized (this) {
-    			this.wait(10000);
-    		}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         return mMessenger.getBinder();
     }
 
@@ -139,5 +138,4 @@ public class TestService extends Service {
         // We use a string id because it is a unique number.  We use it later to cancel.
         mNM.notify(R.string.remote_service_started, notification);
     }
-
 }
