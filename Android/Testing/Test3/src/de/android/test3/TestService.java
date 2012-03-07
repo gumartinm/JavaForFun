@@ -3,7 +3,9 @@ package de.android.test3;
 import java.util.ArrayList;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -82,7 +84,7 @@ public class TestService extends Service {
 
     @Override
     public void onCreate() {
-        mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mNM = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Display a notification about us starting.
         showNotification();
@@ -123,16 +125,21 @@ public class TestService extends Service {
         CharSequence text = getText(R.string.remote_service_started);
 
         // Set the icon, scrolling text and timestamp
-        Notification notification = new Notification(R.drawable.alert_dialog_icon, text,
-                System.currentTimeMillis());
+        Notification notification = new Notification(R.drawable.alert_dialog_icon, text, System.currentTimeMillis());
 
         // The PendingIntent to launch our activity if the user selects this notification
-        //PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-        //        new Intent(this, Controller.class), 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, NextActivity.class), 0);
+
+        Context context = getApplicationContext();
 
         // Set the info for the views that show in the notification panel.
-        //notification.setLatestEventInfo(this, getText(R.string.remote_service_label),
-        //               text, contentIntent);
+        notification.setLatestEventInfo(context, getText(R.string.remote_service_label), text, contentIntent);
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notification.ledARGB = 0xff00ff00;
+        notification.ledOnMS = 300;
+        notification.ledOffMS = 1000;
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+
 
         // Send the notification.
         // We use a string id because it is a unique number.  We use it later to cancel.

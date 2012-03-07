@@ -90,8 +90,12 @@ public class Test3Activity extends Activity {
 					CookieSyncManager.getInstance().sync();
 					//Go to the next activity
 					StrictMode.setThreadPolicy(currentPolicy);
-					this.startActivity(new Intent(Intent.ACTION_RUN).
-							setComponent(new ComponentName("de.android.test3", "de.android.test3.NextActivity")));
+//					this.startService(new Intent(Test3Activity.this, TestService.class));
+//					this.startActivity(new Intent(Intent.ACTION_RUN).
+//							setComponent(new ComponentName("de.android.test3", "de.android.test3.NextActivity")));
+					this.startService(new Intent(Intent.ACTION_RUN).
+							setComponent(new ComponentName("de.android.test3", "de.android.test3.TestService")));
+					this.finish();
         		} else {
         			Log.e(TAG, "There must be a weird issue with the server because... There is not cookie!!!!");
         			createErrorDialog(R.string.error_dialog_connection_error);

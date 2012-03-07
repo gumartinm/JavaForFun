@@ -64,6 +64,10 @@
 		<service
 		    android:name=".TestService"
         	android:process=":testservice" >
+            <intent-filter>
+                <action android:name="android.intent.action.RUN"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </service>
 		
     </application>

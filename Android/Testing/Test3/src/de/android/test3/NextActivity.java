@@ -118,6 +118,11 @@ public class NextActivity extends Activity {
 
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(0, 10, criteria, locationListener, null);
+        
+        
+        
+        //mCallbackText = new TextView(this);
+		//this.doBindService();
     }
     
     
@@ -139,25 +144,8 @@ public class NextActivity extends Activity {
 			return;
 		}
 		
-		
-		mCallbackText = new TextView(this);
-		this.doBindService();
-		
-		
-		
-		
-		
 		webServiceConnection = new MobieAdHttpClient(this.myCookie, url, httpClient, this, syncObject);
 		this.exec.execute(webServiceConnection);
-		
-		
-		
-		
-		
-		
-		
-		
-		
     }
     
     
@@ -257,7 +245,6 @@ public class NextActivity extends Activity {
         // applications replace our component.
         boolean prueba = bindService(new Intent(NextActivity.this, 
                 TestService.class), mConnection, Context.BIND_AUTO_CREATE);
-        System.out.print(prueba);
         mIsBound = true;
         mCallbackText.setText("Binding.");
     }
