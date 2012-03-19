@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 import android.widget.Toast;
 
 public class TestService extends Service {
@@ -85,7 +86,7 @@ public class TestService extends Service {
     @Override
     public void onCreate() {
         mNM = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-
+        Log.i("servicio", "onCreate");
         // Display a notification about us starting.
         showNotification();
     }
@@ -94,7 +95,7 @@ public class TestService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
     	
     	//Run the same code as MobieAdHttpclient.java
-    	
+    	Log.i("servicio", "onStartCommand");
     	// If we get killed, after returning from here, restart
     	return START_STICKY;
     }
@@ -114,6 +115,7 @@ public class TestService extends Service {
      */
     @Override
     public IBinder onBind(Intent intent) {
+    	Log.i("servicio", "onBind");
         return mMessenger.getBinder();
     }
 
@@ -127,19 +129,24 @@ public class TestService extends Service {
         // Set the icon, scrolling text and timestamp
         Notification notification = new Notification(R.drawable.alert_dialog_icon, text, System.currentTimeMillis());
 
+        Intent intent =  new Intent(this, NextActivity.class);
+        //Intent intent = new Intent(Intent.ACTION_RUN).setComponent(new ComponentName("de.android.test3", "de.android.test3.WelcomeActivity"));
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, NextActivity.class), 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        
 
         Context context = getApplicationContext();
 
+        notification.contentIntent = contentIntent;
         // Set the info for the views that show in the notification panel.
-        notification.setLatestEventInfo(context, getText(R.string.remote_service_label), text, contentIntent);
         notification.defaults |= Notification.DEFAULT_VIBRATE;
         notification.ledARGB = 0xff00ff00;
         notification.ledOnMS = 300;
         notification.ledOffMS = 1000;
         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-
+        //notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.setLatestEventInfo(context, getText(R.string.remote_service_label), text, contentIntent);
 
         // Send the notification.
         // We use a string id because it is a unique number.  We use it later to cancel.

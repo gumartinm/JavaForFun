@@ -9,11 +9,15 @@
     <string name="error_dialog_userpwd_error">
         The username or password you entered is incorrect.
     </string>
-    <string name="hello">Hello World, Test3Activity!</string>
+    <string name="hello">Hello World, NextActivity!</string>
     <string name="app_name">Test3</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="button_login">Log In</string>
+    <string name="button_messagebind">Bind Service</string>
+    <string name="button_messageunbind">Unbind Service</string>
+    <string name="button_messagestopservice">Stop Service</string>
+    <string name="button_messagestartservice">Start Service</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="remote_service_started">Remote Service Started</string>

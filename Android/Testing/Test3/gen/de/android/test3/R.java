@@ -29,16 +29,20 @@ public final class R {
     public static final class string {
         public static final int alert_dialog_cancel=0x7f040000;
         public static final int app_name=0x7f040004;
-        public static final int button_cancel=0x7f040009;
+        public static final int button_cancel=0x7f04000d;
         public static final int button_login=0x7f040007;
-        public static final int button_ok=0x7f040008;
+        public static final int button_messagebind=0x7f040008;
+        public static final int button_messagestartservice=0x7f04000b;
+        public static final int button_messagestopservice=0x7f04000a;
+        public static final int button_messageunbind=0x7f040009;
+        public static final int button_ok=0x7f04000c;
         public static final int error_dialog_connection_error=0x7f040001;
         public static final int error_dialog_userpwd_error=0x7f040002;
         public static final int hello=0x7f040003;
         public static final int password=0x7f040006;
-        public static final int remote_service_label=0x7f04000c;
-        public static final int remote_service_started=0x7f04000a;
-        public static final int remote_service_stopped=0x7f04000b;
+        public static final int remote_service_label=0x7f040010;
+        public static final int remote_service_started=0x7f04000e;
+        public static final int remote_service_stopped=0x7f04000f;
         public static final int username=0x7f040005;
     }
 }

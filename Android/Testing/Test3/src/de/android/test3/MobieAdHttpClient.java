@@ -111,6 +111,16 @@ public class MobieAdHttpClient implements Runnable
 							   }
 							   
 							   //Besides throw the original exception.
+							   if (e1 instanceof Error) {
+									throw (Error) e1;
+							   }
+							   if (e1 instanceof RuntimeException) {
+									throw (RuntimeException) e1;
+							   }
+							   if (e1 instanceof Exception) {
+								   throw (IOException) e1;
+							   }
+							   //throwing Throwable. At least the original exception is not lost :/
 							   throw e1;
 						   }  
 					   }

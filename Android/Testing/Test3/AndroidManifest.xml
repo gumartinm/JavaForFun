@@ -26,7 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+		
         <activity 
 			android:label="@string/app_name"
 			android:name=".NextActivity" 
@@ -35,7 +35,7 @@
 			android:configChanges="touchscreen|keyboard" 
 			android:permission="android.permission.INTERNET">
             <intent-filter>
-                <action android:name="android.intent.action.RUN"/>
+                <action android:name="android.intent.action.MOBIADS"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 		</activity>
@@ -64,10 +64,6 @@
 		<service
 		    android:name=".TestService"
         	android:process=":testservice" >
-            <intent-filter>
-                <action android:name="android.intent.action.RUN"/>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </service>
 		
     </application>

@@ -23,6 +23,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.TextView;
@@ -120,7 +121,10 @@ public class NextActivity extends Activity {
         locationManager.requestLocationUpdates(0, 10, criteria, locationListener, null);
         
         
-        
+        //Al parecer si pongo esto aqui, el servicio es enlazado nada mas iniciarse la aplicacion 
+        //incluso cuando todavia estoy en la activity que hace login (la Test3Activity)
+        //¿Se lanza el onCreate de una activity incluso antes de usar esa activity? ¿Por qué?
+        //¿Quizás porque está declarada en el Manifest?
         //mCallbackText = new TextView(this);
 		//this.doBindService();
     }
@@ -249,4 +253,23 @@ public class NextActivity extends Activity {
         mCallbackText.setText("Binding.");
     }
 
+    
+    public void onClickMessage(View v) {
+    	mCallbackText = new TextView(this);
+		this.doBindService();
+    }
+    
+    
+    public void onClickUnBind(View v) {
+    	this.unbindService(mConnection);
+    }
+    
+    public void onClickStopService(View v) {
+    	this.stopService(new Intent(NextActivity.this, TestService.class));
+    }
+    
+    
+    public void onClickStartService(View v) {
+    	this.startService(new Intent(NextActivity.this, TestService.class));
+    }
 }
