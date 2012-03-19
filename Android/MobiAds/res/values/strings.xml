@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, MobiAdsActivity!</string>
+    <string name="app_name">MobiAds</string>
+    <string name="app_description">Receive notifications about offers and discounts.</string>
+    <string name="alert_dialog_cancel">Do you really want to close the application?</string>
+    <string name="error_dialog_connection_error">Connection error with MobiAd server.</string>
+    <string name="error_dialog_userpwd_error">The username or password you entered is incorrect.</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="button_login">Log In</string>
+    <string name="button_messagebind">Bind Service</string>
+    <string name="button_messageunbind">Unbind Service</string>
+    <string name="button_messagestopservice">Stop Application</string>
+    <string name="button_messagestartservice">Start Application</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="remote_service_started">MobiAds Service Started</string>
+    <string name="remote_service_stopped">MobiAds Service Stopped</string>
+    <string name="remote_service_label">MobiAds Service</string>
+    <string name="url_login_web_service">http://users.mobiads.gumartinm.name/userfront.php/api/login/auth.json</string>
+    <string name="user_agent_web_service">MobieAds/1.0</string>
+    <string name="encoded_web_service">UTF-8</string>
+
+</resources>

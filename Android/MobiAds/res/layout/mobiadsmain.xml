@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="right"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hello" />
+    <FrameLayout 
+    	android:id="@+id/frameLayout1" 
+    	android:layout_width="match_parent" 
+    	android:layout_height="30dp">
+    </FrameLayout>
+    <Button
+		android:id="@+id/login_button"
+		android:onClick="onClickBind"
+	    android:layout_height="wrap_content" 
+	    android:text="@string/button_messagebind" 
+	    android:layout_width="match_parent" 
+	    android:layout_gravity="center"/>
+    <FrameLayout 
+    	android:id="@+id/frameLayout1" 
+    	android:layout_width="match_parent" 
+    	android:layout_height="30dp">
+    </FrameLayout>
+    <Button
+		android:id="@+id/login_button"
+		android:onClick="onClickUnBind"
+	    android:layout_height="wrap_content" 
+	    android:text="@string/button_messageunbind" 
+	    android:layout_width="match_parent" 
+	    android:layout_gravity="center"/>
+    <FrameLayout 
+    	android:id="@+id/frameLayout1" 
+    	android:layout_width="match_parent" 
+    	android:layout_height="30dp">
+    </FrameLayout>
+    <Button
+		android:id="@+id/login_button"
+		android:onClick="onClickStopService"
+	    android:layout_height="wrap_content" 
+	    android:text="@string/button_messagestopservice" 
+	    android:layout_width="match_parent" 
+	    android:layout_gravity="center"/>
+    <FrameLayout 
+    	android:id="@+id/frameLayout1" 
+    	android:layout_width="match_parent" 
+    	android:layout_height="30dp">
+    </FrameLayout>
+    <Button
+		android:id="@+id/login_button"
+		android:onClick="onClickStartService"
+	    android:layout_height="wrap_content" 
+	    android:text="@string/button_messagestartservice" 
+	    android:layout_width="match_parent" 
+	    android:layout_gravity="center"/>  
+</LinearLayout>
