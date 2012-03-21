@@ -37,7 +37,7 @@ public final class R {
         public static final int button_messagestopservice=0x7f04000b;
         public static final int button_messageunbind=0x7f04000a;
         public static final int button_ok=0x7f04000d;
-        public static final int encoded_web_service=0x7f040014;
+        public static final int encoded_web_service=0x7f040015;
         public static final int error_dialog_connection_error=0x7f040004;
         public static final int error_dialog_userpwd_error=0x7f040005;
         public static final int hello=0x7f040000;
@@ -46,7 +46,8 @@ public final class R {
         public static final int remote_service_started=0x7f04000f;
         public static final int remote_service_stopped=0x7f040010;
         public static final int url_login_web_service=0x7f040012;
-        public static final int user_agent_web_service=0x7f040013;
+        public static final int url_web=0x7f040013;
+        public static final int user_agent_web_service=0x7f040014;
         public static final int username=0x7f040006;
     }
 }

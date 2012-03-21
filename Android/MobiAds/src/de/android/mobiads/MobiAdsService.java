@@ -45,12 +45,12 @@ public class MobiAdsService extends Service {
     
     @Override
     public void onCreate() {
-    	notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        // Display a notification about us starting.
-        showNotification();
         
+        //There should not be more than one thread using mobiAdsBatch field, see: 
+        //http://developer.android.com/guide/topics/fundamentals/services.html#LifecycleCallbacks
+        //Otherwise there could be issues about sharing this field...
         this.mobiAdsBatch = new MobiAdsBatch(this.getResources().getString(R.string.user_agent_web_service), 
-        									 this.getResources().getString(R.string.encoded_web_service));
+        									 this.getResources().getString(R.string.encoded_web_service), this);
         
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -98,6 +98,10 @@ public class MobiAdsService extends Service {
 
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(0, 10, criteria, locationListener, null);
+        
+        notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        // Display a notification about us starting.
+        showNotification();
     }
     
     

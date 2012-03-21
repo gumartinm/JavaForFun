@@ -23,7 +23,6 @@ import android.app.DialogFragment;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -84,7 +83,7 @@ public class MobiAdsLoginActivity extends Activity {
         	case HttpStatus.SC_OK:
         		String cookie = httpResponse.getLastHeader(SETCOOKIEFIELD).getValue();
         		if (cookie != null) {
-        			CookieManager.getInstance().setCookie("users.mobiads.gumartinm.name",cookie);
+        			CookieManager.getInstance().setCookie(getResources().getString(R.string.url_web),cookie);
 					CookieSyncManager.getInstance().sync();
 					//Go to the next activity
 					StrictMode.setThreadPolicy(currentPolicy);
