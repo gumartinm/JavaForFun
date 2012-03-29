@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JposEntries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="jpos.xsd">
+
+    <!-- Wincor KeyBoard  -->
+    <JposEntry logicalName="WN_KB2">
+        <creation factoryClass="com.wn.retail.jpos17.WNJposServiceInstanceFactory" serviceClass="com.wn.retail.jpos17.WNPOSKeyboard" />
+        <vendor name="Wincor Nixdorf" url="http://www.wincor-nixdorf.com" />
+        <jpos category="POSKeyboard" version="1.7" />
+        <product description="TA61 POS Keyboard, JPOS1.7" name="Wincor Nixdorf Services for JavaPOS(TM) Standard" url="http://www.wincor-nixdorf.com" />
+        <!--
+        	Other non JavaPOS required property (mostly vendor properties and bus
+			specific properties i.e. RS232 )
+        -->
+        <prop name="dcalClass" type="String" value="com.wn.retail.jpos17.dcal.KBDDeviceLinux, KBD" />
+        <prop name="posKeyDataMode" type="String" value="0" />
+        <prop name="keyTable" type="String" value="TableTA61" />
+        <prop name="openMode" type="String" value="process" />
+    </JposEntry>
+
+    <!-- My Custom KeyBoard  -->
+    <JposEntry logicalName="myPOSKeyBoard">
+        <creation factoryClass="de.javapos.example.JposServiceInstanceFactoryImpl" serviceClass="de.javapos.example.MyPOSKeyboard"/>
+        <vendor name="Gustavo Martin Morcuende" url="http://www.gumartinm.name"/>
+        <jpos category="POSKeyboard" version="1.12"/>
+        <product description="Jpos Service for TA61 POS Keyboard, JPOS1.12" name="Services for JavaPOS(TM) Standard" url="http://www.gumartinm.name"/>
+        <prop name="device" type="String" value="/dev/input/event5"/>
+        <prop name="maxEvents" type="String" value="1024"/>
+        <!--   <prop name="keyTable" type="String" value="scancodes_to_WN_KB"/> -->
+        <prop name="keyTable" type="String" value="WN.KeyTranslation.TableTA61"/>
+        <!-- timeout absurdamente grande, ¡esto es JavaTM! -->
+        <prop name="checkTimeout" type="String" value="5000"/>
+    </JposEntry>
+
+    <!--KeyBoard map keys -->
+    <JposEntry logicalName="WN.KeyTranslation.TableTA61">
+        <creation factoryClass="&lt;none&gt;" serviceClass="&lt;none&gt;"/>
+        <vendor name="WincorNixdorf" url="http://www.wincor-nixdorf.com"/>
+        <jpos category="POSKeyboard" version="1.7"/>
+        <product description="Reference Entry for regular entries" name="ReferenceEntry" url="&lt;none&gt;"/>
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="59" type="String" value="7143498=0x0000102c"/>
+        <prop name="58" type="String" value="7012430=0x0000102b"/>
+        <prop name="57" type="String" value="5308432=0x00001029"/>
+        <prop name="56" type="String" value="5242905=0x00001028"/>
+        <prop name="55" type="String" value="5177368=0x00001027"/>
+        <prop name="54" type="String" value="5832748=0x00001026"/>
+        <prop name="53" type="String" value="5046322=0x00001025"/>
+        <prop name="52" type="String" value="851996=0x00001024"/>
+        <prop name="51" type="String" value="6488145=0x00000033"/>
+        <prop name="50" type="String" value="2228305=0x00000033"/>
+        <prop name="49" type="String" value="6422608=0x00000032"/>
+        <prop name="48" type="String" value="2621520=0x00000032"/>
+        <prop name="47" type="String" value="6357071=0x00000031"/>
+        <prop name="46" type="String" value="2293839=0x00000031"/>
+        <prop name="45" type="String" value="2228561=0x00001023"/>
+        <prop name="44" type="String" value="2621776=0x00001022"/>
+        <prop name="43" type="String" value="2294095=0x00001021"/>
+        <prop name="42" type="String" value="4980774=0x0000101f"/>
+        <prop name="41" type="String" value="4915237=0x0000101e"/>
+        <prop name="40" type="String" value="4849700=0x0000101d"/>
+        <prop name="39" type="String" value="4784151=0x0000101c"/>
+        <prop name="38" type="String" value="4718627=0x0000101b"/>
+        <prop name="37" type="String" value="4653090=0x0000101a"/>
+        <prop name="36" type="String" value="6684749=0x00000036"/>
+        <prop name="35" type="String" value="2555981=0x00000036"/>
+        <prop name="34" type="String" value="6619212=0x00000035"/>
+        <prop name="33" type="String" value="786508=0x00000035"/>
+        <prop name="32" type="String" value="6553675=0x00000034"/>
+        <prop name="31" type="String" value="2424907=0x00000034"/>
+        <prop name="referenceEntryDescription" type="String" value="key table definition for TA61 (POSKeyboard)"/>
+        <prop name="30" type="String" value="2556237=0x00001019"/>
+        <prop name="referenceEntryDevCat" type="String" value="POSKeyboard"/>
+        <prop name="29" type="String" value="2097209=0x00001018"/>
+        <prop name="28" type="String" value="2425163=0x00001017"/>
+        <prop name="27" type="String" value="4587553=0x00001015"/>
+        <prop name="26" type="String" value="4522002=0x00001014"/>
+        <prop name="25" type="String" value="4456480=0x00001013"/>
+        <prop name="24" type="String" value="4390958=0x00001012"/>
+        <prop name="23" type="String" value="4325424=0x00001011"/>
+        <prop name="22" type="String" value="4259870=0x00001010"/>
+        <prop name="21" type="String" value="6881353=0x00000039"/>
+        <prop name="20" type="String" value="2162761=0x00000039"/>
+        <prop name="9" type="String" value="7733313=0x00001009"/>
+        <prop name="8" type="String" value="7667776=0x00001008"/>
+        <prop name="7" type="String" value="7602239=0x00001007"/>
+        <prop name="6" type="String" value="7536702=0x00001006"/>
+        <prop name="5" type="String" value="7471165=0x00001005"/>
+        <prop name="4" type="String" value="7405628=0x00001004"/>
+        <prop name="3" type="String" value="7340091=0x00001003"/>
+        <prop name="2" type="String" value="524302=0x00001002"/>
+        <prop name="1" type="String" value="1769473=0x00001001"/>
+        <prop name="19" type="String" value="6815816=0x00000038"/>
+        <prop name="18" type="String" value="2490440=0x00000038"/>
+        <prop name="17" type="String" value="6750279=0x00000037"/>
+        <prop name="16" type="String" value="2359367=0x00000037"/>
+        <prop name="15" type="String" value="2163017=0x0000100f"/>
+        <prop name="14" type="String" value="2490696=0x0000100e"/>
+        <prop name="13" type="String" value="2359623=0x0000100d"/>
+        <prop name="12" type="String" value="7929924=0x0000100c"/>
+        <prop name="11" type="String" value="7864387=0x0000100b"/>
+        <prop name="10" type="String" value="7798850=0x0000100a"/>
+        <prop name="71" type="String" value="5111857=0x00001035"/>
+        <prop name="70" type="String" value="5898261=0x00001034"/>
+        <prop name="69" type="String" value="5767213=0x00001033"/>
+        <prop name="68" type="String" value="5701649=0x00001032"/>
+        <prop name="67" type="String" value="5636143=0x00001031"/>
+        <prop name="66" type="String" value="5570582=0x00001030"/>
+        <prop name="65" type="String" value="7209043=0x0000102f"/>
+        <prop name="64" type="String" value="3014739=0x0000102f"/>
+        <prop name="63" type="String" value="5439519=0x0000102e"/>
+        <prop name="62" type="String" value="5373971=0x0000102d"/>
+        <prop name="61" type="String" value="6291538=0x00000030"/>
+        <prop name="60" type="String" value="2949202=0x00000030"/>
+    </JposEntry>
+
+	<!-- Wincor Key -->
+    <JposEntry logicalName="WN_KL">
+        <creation factoryClass="com.wn.retail.jpos17.WNJposServiceInstanceFactory" serviceClass="com.wn.retail.jpos17.WNKeylock" />
+        <vendor name="Wincor Nixdorf" url="http://www.wincor-nixdorf.com" />
+        <jpos category="Keylock" version="1.7" />
+        <product description="Keylock of TAxx POS Keyboard, JPOS1.7" name="Wincor Nixdorf Services for JavaPOS(TM) Standard" url="http://www.wincor-nixdorf.com" />
+        <!--
+            Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )
+        -->
+        <prop name="uses" type="String" value="POSKeyboard.WN_KB1p" />
+        <prop name="dcalClass" type="String" value="com.wn.retail.jpos17.dcal.KBDDeviceLinux, LOCK" />
+        <prop name="keylocktype" type="String" value="lock" />
+        <prop name="getDMIInfo" type="String" value="on" />
+    </JposEntry>
+    
+    <!--Custom Key (Keylock)  -->
+    <JposEntry logicalName="myKeyLock">
+        <creation factoryClass="de.javapos.example.JposServiceInstanceFactoryImpl" serviceClass="de.javapos.example.MyKeylock"/>
+        <vendor name="Gustavo Martin Morcuende" url="http://www.gumartinm.name"/>
+        <jpos category="Keylock" version="1.7"/>
+        <product description="Jpos Service for TA61 POS Keylock, JPOS1.12" name="Services for JavaPOS(TM) Standard" url="http://www.gumartinm.name"/>
+        <prop name="device" type="String" value="/dev/input/event5"/>
+        <prop name="maxEvents" type="String" value="1024"/>
+        <prop name="checkTimeout" type="String" value="5000"/>
+    </JposEntry>
+
+</JposEntries>

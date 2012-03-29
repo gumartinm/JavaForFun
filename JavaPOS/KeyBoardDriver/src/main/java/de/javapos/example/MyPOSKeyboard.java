@@ -1,22 +1,22 @@
-package es.dia.pos.n2a.gus.jpos;
+package de.javapos.example;
  
-
-import java.io.FileInputStream;
+import de.javapos.example.hardware.BaseKeyBoardDriver;
+import de.javapos.example.queue.JposEventQueue;
+import de.javapos.example.queue.JposEventQueueImpl;
 import jpos.JposConst;
 import jpos.JposException;
 import jpos.POSKeyboardConst;
-import jpos.config.simple.SimpleEntryRegistry;
 import jpos.loader.JposServiceLoader;
 import jpos.loader.JposServiceManager;
 import jpos.services.EventCallbacks;
-import jpos.services.POSKeyboardService17;
+import jpos.services.POSKeyboardService112;
 import jpos.config.JposEntry;
 import jpos.config.JposEntryRegistry;
-import jpos.events.DataEvent;
-import jpos.events.DataListener;
+import jpos.events.JposEvent;
  
-public class POSKeyboard implements POSKeyboardService17, JposConst, POSKeyboardConst
+public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeyboardConst
 {
+	private static final int deviceVersion12  = 1002000;
 	private String logicalname;
 	private EventCallbacks callbacks = null;
 	private JposEntryRegistry jposEntryRegistry = null;
@@ -25,6 +25,7 @@ public class POSKeyboard implements POSKeyboardService17, JposConst, POSKeyboard
 	private int maxEvents;
 	private BaseKeyBoardDriver deviceDriver;
 	private JposDriverInstanceFactory jposDriverFactory;
+	private JposEventQueue jposEventQueue;
 	
 	@Override
 	public int getCapPowerReporting() throws JposException {
@@ -167,8 +168,7 @@ public class POSKeyboard implements POSKeyboardService17, JposConst, POSKeyboard
 
 	@Override
 	public int getDeviceServiceVersion() throws JposException {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.deviceVersion12;
 	}
 
 	@Override
@@ -250,11 +250,19 @@ public class POSKeyboard implements POSKeyboardService17, JposConst, POSKeyboard
 		//en el jpos.xml o en el jpos.properties en el campo driverClass que es donde he definido
 		//que se ponga el nombre de la clase que implementa el driver. En Wincord era en dcalClass.
 		//Por ejemplo yo ahora tendria que aniadir un campos driverClass al jpos.xml de la N2A
-		//con la clase es.dia.pos.n2a.gus.jpos.GUSKBDDeviceLinux
+		//con la clase de.javapos.example.hardware.KeyBoardDeviceLinux
 		//Lo que no me gusta es que la factoria si se cambiara debe hacerse aquí en el codigo :S
+		//TODO: poner la factoria tambien como un campo en el jpos.xml y extraerla por reflexión.
 		this.jposDriverFactory = new JposDriverInstanceFactoryImpl();
-		BaseKeyBoardDriver instanceHWDriver = this.jposDriverFactory.createInstance(paramString, 
-				this.jposEntry, BaseKeyBoardDriver.class);
+		this.deviceDriver = this.jposDriverFactory.createInstance(paramString, this.jposEntry, 
+																	BaseKeyBoardDriver.class);
+		
+		//Crear la cola donde almacenamos eventos estilo FIFO.
+		//Esto tambien puede hacerser en jpos.xml y queda todo como un puzle LOL
+		//TODO: poner la cola de eventos en el jpos.xml
+		this.jposEventQueue = new JposEventQueueImpl(this.callbacks);
+		this.deviceDriver.addEventListener(this.jposEventQueue);
+		
 		
 	}
 	
@@ -323,8 +331,8 @@ public class POSKeyboard implements POSKeyboardService17, JposConst, POSKeyboard
 	
 
 	@Override
-	public void setDeviceEnabled(boolean arg0) throws JposException {
-		// TODO Auto-generated method stub
+	public void setDeviceEnabled(boolean deviceEnable) throws JposException {
+		this.deviceDriver.enable();
 		
 	}
 
@@ -336,6 +344,62 @@ public class POSKeyboard implements POSKeyboardService17, JposConst, POSKeyboard
 
 	@Override
 	public void deleteInstance() throws JposException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getCapCompareFirmwareVersion() throws JposException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean getCapUpdateFirmware() throws JposException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void compareFirmwareVersion(String firmwareFileName, int[] result)
+			throws JposException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateFirmware(String firmwareFileName) throws JposException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getCapStatisticsReporting() throws JposException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean getCapUpdateStatistics() throws JposException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void resetStatistics(String statisticsBuffer) throws JposException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void retrieveStatistics(String[] statisticsBuffer)
+			throws JposException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateStatistics(String statisticsBuffer) throws JposException {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,15 +1,16 @@
 /**
  * 
  */
-package es.dia.pos.n2a.gus.jpos;
+package de.javapos.example.hardware;
 
+import de.javapos.example.queue.JposEventQueue;
 import jpos.JposException;
 
 /**
  * @author
  *
  */
-public interface BaseKeyBoardDriver extends Runnable {
+public interface BaseKeyBoardDriver {
 	
 	public boolean isOpened();
 
@@ -29,9 +30,9 @@ public interface BaseKeyBoardDriver extends Runnable {
 	
 	public boolean isEnabled();
 	
-	public void addEventListener(DCALEventListener paramDCALEventListener) throws JposException;
+	public void addEventListener(JposEventQueue jposEventQueue) throws JposException;
 	
-	public void removeEventListener(DCALEventListener paramDCALEventListener);
+	public void removeEventListener(JposEventQueue jposEventQueue);
 	
 	public boolean write(byte[] paramArrayOfByte, int paramInt1, int paramInt2, 
 			int paramInt3) throws JposException;
@@ -46,4 +47,6 @@ public interface BaseKeyBoardDriver extends Runnable {
 	public String getDescription(int paramInt);
 		
 	public void flush(int paramInt) throws JposException;
+	
+	public void device(String device) throws JposException;
 }

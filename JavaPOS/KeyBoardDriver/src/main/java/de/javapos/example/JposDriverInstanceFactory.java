@@ -1,7 +1,7 @@
 /**
  * 
  */
-package es.dia.pos.n2a.gus.jpos;
+package de.javapos.example;
 
 import jpos.JposException;
 import jpos.config.JposEntry;

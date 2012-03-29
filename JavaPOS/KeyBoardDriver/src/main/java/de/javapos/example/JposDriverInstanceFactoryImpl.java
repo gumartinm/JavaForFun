@@ -1,8 +1,6 @@
-package es.dia.pos.n2a.gus.jpos;
-
+package de.javapos.example;
 
 import java.lang.reflect.Constructor;
-
 import jpos.JposConst;
 import jpos.JposException;
 import jpos.config.JposEntry;
