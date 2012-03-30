@@ -58,13 +58,10 @@
           	android:permission="android.permission.MOBIADS"
           	android:readPermission="android.permission.READ_MOBIADS"
           	android:syncable="false"
-          	android:writePermission="android.permission.WRITE_MOBIADS" >
+          	android:writePermission="android.permission.WRITE_MOBIADS"
+          	android:process=":mobiadsservice" >
             <grant-uri-permission android:pathPattern=".*" />
 		</provider>
-		<!--
-		<provider 
-			android:process="string" When having my service, here I should write the service process name 
-		</provider>-->
         
     </application>
     

@@ -27,8 +27,6 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.EditText;
 
 public class MobiAdsLoginActivity extends Activity {
@@ -40,7 +38,6 @@ public class MobiAdsLoginActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CookieSyncManager.createInstance(this);
         currentPolicy = StrictMode.getThreadPolicy();
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
         setContentView(R.layout.main);
@@ -83,12 +80,13 @@ public class MobiAdsLoginActivity extends Activity {
         	case HttpStatus.SC_OK:
         		String cookie = httpResponse.getLastHeader(SETCOOKIEFIELD).getValue();
         		if (cookie != null) {
-        			CookieManager.getInstance().setCookie(getResources().getString(R.string.url_web),cookie);
-					CookieSyncManager.getInstance().sync();
+        			cookie = cookie.split(";")[0];
 					//Go to the next activity
 					StrictMode.setThreadPolicy(currentPolicy);
-					this.startActivity(new Intent("android.intent.action.MOBIADS").
-							setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.MobiAdsMainActivity")));
+					Intent intent = new Intent("android.intent.action.MOBIADS").
+							setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.MobiAdsMainActivity"));
+					intent.putExtra("cookie", cookie);
+					this.startActivity(intent);
         		} else {
         			Log.e(TAG, "There must be a weird issue with the server because... There is not cookie!!!!");
         			createErrorDialog(R.string.error_dialog_connection_error);

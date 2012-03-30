@@ -41,16 +41,16 @@ public class MobiAdsService extends Service {
     
     private LocationManager locationManager;
     private LocationListener locationListener;
-
-    
-    @Override
-    public void onCreate() {
         
-        //There should not be more than one thread using mobiAdsBatch field, see: 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+    	final String cookie = intent.getStringExtra("cookie");
+    	
+    	//There should not be more than one thread using mobiAdsBatch field, see: 
         //http://developer.android.com/guide/topics/fundamentals/services.html#LifecycleCallbacks
         //Otherwise there could be issues about sharing this field...
         this.mobiAdsBatch = new MobiAdsBatch(this.getResources().getString(R.string.user_agent_web_service), 
-        									 this.getResources().getString(R.string.encoded_web_service), this);
+        									 this.getResources().getString(R.string.encoded_web_service), this, cookie);
         
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -63,6 +63,7 @@ public class MobiAdsService extends Service {
         criteria.setSpeedAccuracy(Criteria.ACCURACY_LOW);
         criteria.setSpeedRequired(true);
         criteria.setVerticalAccuracy(Criteria.NO_REQUIREMENT);
+        
         
         // Acquire a reference to the system Location Manager
         this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -102,8 +103,9 @@ public class MobiAdsService extends Service {
         notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         // Display a notification about us starting.
         showNotification();
+        
+        return super.onStartCommand(intent, flags, startId);
     }
-    
     
 	@Override
 	public IBinder onBind(Intent intent) {

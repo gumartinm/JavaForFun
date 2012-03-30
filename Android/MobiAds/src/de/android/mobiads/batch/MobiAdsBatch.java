@@ -30,9 +30,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsBatch {
@@ -44,15 +41,13 @@ public class MobiAdsBatch {
 	private final String mobiAdsCookie;
 	
 	
-	public MobiAdsBatch (String userAgent, String encoded, Context context) {
+	public MobiAdsBatch (String userAgent, String encoded, Context context, String cookie) {
 		this.context = context;
 		this.httpClient = AndroidHttpClient.newInstance(userAgent);
-		
+		this.mobiAdsCookie = cookie;
 		this.httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, encoded);
 		this.httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 		
-		CookieSyncManager.createInstance(this.context);
-        this.mobiAdsCookie = CookieManager.getInstance().getCookie(this.context.getResources().getString(R.string.url_web));
 	}
 	
 	
@@ -123,6 +118,7 @@ public class MobiAdsBatch {
 								//In case of any error, remove the index database and the file
 								//or chunk successfully stored before the error.
 								try {
+									Log.i("MobiAdsBatch","delete");
 									MobiAdsBatch.this.context.getContentResolver().delete(uriInsert, null, null);
 									MobiAdsBatch.this.context.deleteFile((String) objects.get("id"));
 								} catch (Throwable e2) {
@@ -138,7 +134,7 @@ public class MobiAdsBatch {
 								if (e1 instanceof RuntimeException) {
 									throw (RuntimeException) e1;
 								}
-								if (e1 instanceof Exception) {
+								if (e1 instanceof IOException) {
 									throw (IOException) e1;
 								}
 								//throwing Throwable. At least the original exception is not lost :/
@@ -192,14 +188,14 @@ public class MobiAdsBatch {
 						}
 					}
 					break;
-					case HttpStatus.SC_UNAUTHORIZED:
-					   //ERROR IN USERNAME OR PASSWORD
-					   throw new SecurityException("Unauthorized access: error in username or password.");
-					case HttpStatus.SC_BAD_REQUEST:
-					   //WHAT THE HECK ARE YOU DOING?
-					   throw new IllegalArgumentException("Bad request.");
-					default:
-		               throw new IllegalArgumentException("Error while retrieving the HTTP status line.");
+				case HttpStatus.SC_UNAUTHORIZED:
+					//ERROR IN USERNAME OR PASSWORD
+					throw new SecurityException("Unauthorized access: error in username or password.");
+				case HttpStatus.SC_BAD_REQUEST:
+					//WHAT THE HECK ARE YOU DOING?
+					throw new IllegalArgumentException("Bad request.");
+				default:
+					throw new IllegalArgumentException("Error while retrieving the HTTP status line.");
 				}
 			}
 			return builder; 
@@ -263,16 +259,22 @@ public class MobiAdsBatch {
 			Uri uri = Uri.parse("content://" + "de.android.mobiads.provider" + "/" + "indexer" + "/idad/" + objects.get("id"));
 			
 			synchronized (MobiAdsBatch.this) {
+				//getContentResolver().query method never returns Cursor with null value.
+				//TODO: review my code in order to find more cases like this. :(
+				//Be aware with the RunTimeExceptions. Apparently Java needs try/catch blocks in everywhere...
 				Cursor cursor = MobiAdsBatch.this.context.getContentResolver().query(uri, null, null, null, null);
-				
-				if (cursor != null) {
+				try {
 					if (!cursor.moveToFirst()) {
 						//If the advertisement was not stored on the database
 						ContentValues values = new ContentValues();
 						values.put(Indexer.Index.COLUMN_NAME_ID_AD, new Integer((String) objects.get("id")));
 						values.put(Indexer.Index.COLUMN_NAME_PATH, (String) objects.get("id"));
+						//This method may throw SQLiteException (as a RunTimeException). So, without a try/catch block
+						//there could be a leaked cursor...
+						//TODO: review code looking for more cases like this one...
 						updated = MobiAdsBatch.this.context.getContentResolver().insert(Indexer.Index.CONTENT_ID_URI_BASE, values);
 					}
+				} finally {
 					cursor.close();
 				}
 			}

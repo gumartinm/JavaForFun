@@ -9,8 +9,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteReadOnlyDatabaseException;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
+
 
 /**
  *
@@ -81,6 +84,7 @@ public class IndexerProvider extends ContentProvider {
 	 */
 	@Override
 	public boolean onCreate() {
+		Log.i("IndexerProvider", "onCreate");
 		
       // Creates a new helper object. Note that the database itself isn't opened until
       // something tries to access it, and it's only created if it doesn't already exist.
@@ -252,7 +256,6 @@ public class IndexerProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-		
 		// Constructs a new query builder and sets its table name
 	    SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 	    qb.setTables(Indexer.Index.TABLE_NAME);
@@ -320,7 +323,10 @@ public class IndexerProvider extends ContentProvider {
 	    		orderBy        // The sort order
 	    );
 	    
-	    
+	    if (c == null) {
+	    	// If the cursor is null, throw an exception
+            throw new SQLiteReadOnlyDatabaseException("Unable to query " + uri);
+	    }
 	    // Tells the Cursor what URI to watch, so it knows when its source data changes
 	    c.setNotificationUri(getContext().getContentResolver(), uri);
 	    return c;
@@ -349,7 +355,6 @@ public class IndexerProvider extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String where,
 			String[] whereArgs) {
-		
 		// Opens the database object in "write" mode.
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
@@ -418,5 +423,9 @@ public class IndexerProvider extends ContentProvider {
         // Returns the number of rows updated.
         return count;
 	}
-
+	
+	@Override
+	public void shutdown() {
+		mOpenHelper.close();
+	}
 }

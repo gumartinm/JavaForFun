@@ -12,26 +12,25 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MobiAdsMainActivity extends Activity {
     /** Messenger for communicating with service. */
     Messenger mService = null;
     /** Flag indicating whether we have called bind on the service. */
     boolean mIsBound;
-    /** Some text view we are using to show state information. */
-    TextView mCallbackText;
     /**
      * Target we publish for clients to send messages to IncomingHandler.
      */
     final Messenger mMessenger = new Messenger(new IncomingHandler());
-	private static final String TAG = "MobiAdsMainActivity";
+    
+    private String cookie;
 
 	
 	 /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	Bundle bundle = getIntent().getExtras();
+    	this.cookie = bundle.getString("cookie");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mobiadsmain);
     }    
@@ -44,7 +43,6 @@ public class MobiAdsMainActivity extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MobiAdsService.MSG_SET_VALUE:
-                    mCallbackText.setText("Received from service: " + msg.arg1);
                     break;
                 default:
                     super.handleMessage(msg);
@@ -66,7 +64,6 @@ public class MobiAdsMainActivity extends Activity {
             // service through an IDL interface, so get a client-side
             // representation of that from the raw service object.
             mService = new Messenger(service);
-            mCallbackText.setText("Attached.");
 
             // We want to monitor the service for as long as we are
             // connected to it.
@@ -86,21 +83,12 @@ public class MobiAdsMainActivity extends Activity {
                 // disconnected (and then reconnected if it can be restarted)
                 // so there is no need to do anything here.
             }
-
-            // As part of the sample, tell the user what happened.
-            Toast.makeText(MobiAdsMainActivity.this, R.string.remote_service_started,
-                    Toast.LENGTH_SHORT).show();
         }
 
         public void onServiceDisconnected(ComponentName className) {
             // This is called when the connection with the service has been
             // unexpectedly disconnected -- that is, its process crashed.
             mService = null;
-            mCallbackText.setText("Disconnected.");
-
-            // As part of the sample, tell the user what happened.
-            Toast.makeText(MobiAdsMainActivity.this, R.string.remote_service_stopped,
-                    Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -111,12 +99,10 @@ public class MobiAdsMainActivity extends Activity {
         boolean prueba = bindService(new Intent(MobiAdsMainActivity.this, 
         		MobiAdsService.class), mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
-        mCallbackText.setText("Binding.");
     }
 
     
     public void onClickBind(View v) {
-    	mCallbackText = new TextView(this);
 		this.doBindService();
     }
     
@@ -131,6 +117,8 @@ public class MobiAdsMainActivity extends Activity {
     
     
     public void onClickStartService(View v) {
-    	this.startService(new Intent(MobiAdsMainActivity.this, MobiAdsService.class));
+    	Intent intent = new Intent(MobiAdsMainActivity.this, MobiAdsService.class);
+    	intent.putExtra("cookie", this.cookie);
+    	this.startService(intent);
     }
 }

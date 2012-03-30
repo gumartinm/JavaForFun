@@ -25,6 +25,7 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
      */
     @Override
 	public void onCreate(SQLiteDatabase db) {
+    	Log.i("IndexerOpenHelper", "onCreate");
 		db.execSQL("CREATE TABLE " + Indexer.Index.TABLE_NAME + " ("
 				+ Indexer.Index._ID + "  INTEGER PRIMARY KEY, "
 				+ Indexer.Index.COLUMN_NAME_ID_AD + " INTEGER" + " UNIQUE" + " NOT NULL,"
@@ -32,6 +33,11 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
 				+ ");");
 	}
 
+    @Override
+    public void close() {
+    	super.close();
+    	Log.i("IndexerOpenHelper", "close");
+    }
 
     /**
      *
