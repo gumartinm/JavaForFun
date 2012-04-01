@@ -4,8 +4,6 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
 import jpos.JposConst;
@@ -19,7 +17,8 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	//value EV_KEY from include/linux/input.h
 	private static final int EV_KEY = 1;
 	private Semaphore mutex = new Semaphore(1, true);
-	private final ExecutorService exec = Executors.newSingleThreadExecutor();
+	//No me gusta nada esto, simplemente es para evitar mirar si thread es null la primera vez en el metodo enable...
+	private Thread thread = new Thread ("KeyBoardDeviceLinux-Thread");
 	private DataInputStream device;
 	private boolean isClaimed;
 	private boolean autoDisable;
@@ -72,22 +71,21 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 			throw new JposException(JposConst.JPOSERR, "There is not an assigned device", 
 					new NullPointerException("The device field has null value"));
 		}
-		//Mirar en capitulo 8? como hacer que no se encolen mas tareas
-		//(por si se llama varias veces a enable ¿sin querer?)
-		//me da a mí que en este caso es una chorrada usar Executor... :(
-		//En el Executor hay que cambiar la Policy (si se puede) y usar: {@link ThreadPoolExecutor.DiscardPolicy}
-		//Por defecto usa una que lanza excepcion RunTime si no pueden añadirse nuevas tareas :(
-		this.exec.execute(new HardwareLoop(this.device));
+
+		if (!this.thread.isAlive()) {
+			this.thread = new Thread (new HardwareLoop(this.device), "KeyBoardDeviceLinux-Thread");
+			this.thread.start();
+		}
 	}
 
 	@Override
 	public void disable() throws JposException {
-		this.exec.shutdownNow();
+		this.thread.interrupt();
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return this.exec.isTerminated();
+		return this.thread.isAlive();
 	}
 
 	@Override
@@ -165,6 +163,9 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 		
 		@Override
 		public void run() {
+			//Para 32 bits
+			//En 64 bits me parece que struct timeval tiene un valor diferente. Averigüar valor de
+			//struct timeval en 64 bits :(
 			byte []buffer = new byte[16];
 			short code = 0;
 			short type = 0;
