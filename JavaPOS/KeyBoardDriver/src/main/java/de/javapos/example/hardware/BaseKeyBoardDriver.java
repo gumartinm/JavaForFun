@@ -3,7 +3,7 @@
  */
 package de.javapos.example.hardware;
 
-import de.javapos.example.queue.JposEventQueue;
+import de.javapos.example.queue.JposEventListener;
 import jpos.JposException;
 
 /**
@@ -30,9 +30,9 @@ public interface BaseKeyBoardDriver {
 	
 	public boolean isEnabled();
 	
-	public void addEventListener(JposEventQueue jposEventQueue) throws JposException;
+	public void addEventListener(JposEventListener jposEventListener) throws JposException;
 	
-	public void removeEventListener(JposEventQueue jposEventQueue);
+	public void removeEventListener(JposEventListener jposEventListener);
 	
 	public boolean write(byte[] paramArrayOfByte, int paramInt1, int paramInt2, 
 			int paramInt3) throws JposException;
@@ -49,4 +49,6 @@ public interface BaseKeyBoardDriver {
 	public void flush(int paramInt) throws JposException;
 	
 	public void device(String device) throws JposException;
+
+	public void autoDisable (boolean autoDisable);
 }

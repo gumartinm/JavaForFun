@@ -12,18 +12,18 @@ import jpos.JposConst;
 import jpos.JposException;
 import org.apache.log4j.Logger;
 import de.javapos.example.ThreadSafe;
-import de.javapos.example.queue.JposEventQueue;
+import de.javapos.example.queue.JposEventListener;
 
 public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	private static final Logger logger = Logger.getLogger(KeyBoardDeviceLinux.class);
 	//value EV_KEY from include/linux/input.h
 	private static final int EV_KEY = 1;
 	private Semaphore mutex = new Semaphore(1, true);
-	private JposEventQueue eventQueue;
 	private final ExecutorService exec = Executors.newSingleThreadExecutor();
 	private DataInputStream device;
 	private boolean isClaimed;
 	private boolean autoDisable;
+	private JposEventListener eventListener;
 	
 	@Override
 	public boolean isOpened() {
@@ -37,11 +37,6 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 
 	}
 
-	
-	/**
-	 * 
-	 * @throws JposException
-	 */
 	@Override
 	public void claim() throws JposException {
 		this.claim(0);
@@ -96,16 +91,19 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	}
 
 	@Override
-	public void addEventListener(JposEventQueue jposEventQueue)
-			throws JposException {
-		this.eventQueue = jposEventQueue;
-
+	public void autoDisable(boolean autoDisable) {
+		this.autoDisable = autoDisable;
 	}
 
 	@Override
-	public void removeEventListener(JposEventQueue jposEventQueue) {
-		// TODO Auto-generated method stub
+	public void addEventListener(JposEventListener jposEventListener)
+			throws JposException {
+		this.eventListener = jposEventListener;
+	}
 
+	@Override
+	public void removeEventListener(JposEventListener jposEventListener) {
+		this.eventListener = null;
 	}
 
 	@Override
@@ -220,7 +218,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 		//Because I do not have a POS I am going to use the keyboard of my computer.
 		//see: /dev/input/by-path/
 		//And the Keyborad scancode is for USB devices.
-		String device ="/dev/input/event4";
+		String device ="/dev/input/event5";
 		
 		KeyBoardDeviceLinux driver = new KeyBoardDeviceLinux();
 		

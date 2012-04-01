@@ -2,11 +2,22 @@ package de.javapos.example.queue;
 
 import jpos.events.JposEvent;
 
+//Similar a WNBaseService  ¿mejor una clase o implementarlo en cada servicio :/?
+//¿O mejor un servicio que extienda una clase que implementa este interfaz XD?
 public interface JposEventQueue {
 	
-	public void inputAvailable(JposEvent input);
+	public void putEvent(JposEvent paramJposEvent) throws InterruptedException;
+
+	public void clearAllEvents();
+
+	public void clearInputEvents();
+
+	public void clearOutputEvents();
 	
-	public void errorOccurred(JposEvent error);
-	
-	public void statusUpdateOccurred(JposEvent status);
+	public int getNumberOfEvents();
+
+	public void checkEvents();
+
+	public boolean eventQueueIsFull();
+
 }

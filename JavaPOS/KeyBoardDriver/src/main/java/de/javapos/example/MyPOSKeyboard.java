@@ -1,6 +1,7 @@
 package de.javapos.example;
  
 import de.javapos.example.hardware.BaseKeyBoardDriver;
+import de.javapos.example.queue.JposEventListener;
 import de.javapos.example.queue.JposEventQueue;
 import de.javapos.example.queue.JposEventQueueImpl;
 import jpos.JposConst;
@@ -12,20 +13,22 @@ import jpos.services.EventCallbacks;
 import jpos.services.POSKeyboardService112;
 import jpos.config.JposEntry;
 import jpos.config.JposEntryRegistry;
+import jpos.events.DataEvent;
 import jpos.events.JposEvent;
  
 public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeyboardConst
 {
 	private static final int deviceVersion12  = 1002000;
 	private String logicalname;
-	private EventCallbacks callbacks = null;
-	private JposEntryRegistry jposEntryRegistry = null;
-	private JposEntry jposEntry = null;
+	private EventCallbacks callbacks;
+	private JposEntryRegistry jposEntryRegistry;
+	private JposEntry jposEntry;
 	private String device;
 	private int maxEvents;
 	private BaseKeyBoardDriver deviceDriver;
 	private JposDriverInstanceFactory jposDriverFactory;
 	private JposEventQueue jposEventQueue;
+	private JposEventListener eventListener;
 	
 	@Override
 	public int getCapPowerReporting() throws JposException {
@@ -260,8 +263,12 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 		//Crear la cola donde almacenamos eventos estilo FIFO.
 		//Esto tambien puede hacerser en jpos.xml y queda todo como un puzle LOL
 		//TODO: poner la cola de eventos en el jpos.xml
-		this.jposEventQueue = new JposEventQueueImpl(this.callbacks);
-		this.deviceDriver.addEventListener(this.jposEventQueue);
+		this.jposEventQueue = new JposEventQueueImpl();
+
+		//estaria genial poner esto en el jpos.xml y asi puede tambien cambiar el eventlistener
+		this.eventListener = new MyPOSKeyBoardEventListener(this.jposEventQueue, this.callbacks);
+
+		this.deviceDriver.addEventListener(eventListener);
 		
 		
 	}
@@ -403,8 +410,40 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
-	
-	
+
+	//o mejor ¿una clase declarada en el jpos.xml que implementa JposEventListener y a la
+	//que en el constructor le pasamos las callbacks? :/
+	@ThreadSafe
+	private class MyPOSKeyBoardEventListener implements JposEventListener {
+		private final JposEventQueue jposEventQueue;
+		private final EventCallbacks callbacks;
+
+		//cuando sepa como usara la tabla de traduccion de teclas aqui debo pasarsela
+		//es esta clase en los metodos que implementa donde uso la tabla de traduccion de teclas
+		private MyPOSKeyBoardEventListener (JposEventQueue jposEventQueue, EventCallbacks callbacks) {
+			this.jposEventQueue = jposEventQueue;
+			this.callbacks = callbacks;
+			//En el futuro un campo con la tabla de traduccion tecla/codigo
+		}
+
+		@Override
+		public void inputAvailable(int input) {
+			try {
+				this.jposEventQueue.putEvent(new DataEvent(this.callbacks, input));
+			} catch (InterruptedException e) {
+				//restore interrupt status.
+				Thread.currentThread().interrupt();
+			}
+		}
+
+		@Override
+		public void errorOccurred(int error) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void statusUpdateOccurred(int status) {
+			// TODO Auto-generated method stub
+		}
+	}
 }
