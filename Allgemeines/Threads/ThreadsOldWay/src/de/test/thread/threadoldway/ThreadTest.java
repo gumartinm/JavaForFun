@@ -30,7 +30,7 @@ public class ThreadTest implements Runnable {
 		// IF THERE IS NO ONE, A DEFAULT EXCEPTION HANDLER IS RUN BY THE JVM. Typically it will be enough for your requirements.
 		//
 		//In my example I am in the first case where the handler is in the parent code. It is in the parent code but 
-		//the code is executed by the sibling. What means thread1 will run the defined handler exception in thread main.
+		//the code is executed by the sibling. What means thread1 will run el manejador de excepcion que fue definido en el hilo main.
 		Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler()); 
 		//So, in my example the ExceptionHandler is in the parent thread. When thread1 throws RuntimeException
 		//the thread1 will search an exception handler finding this one in the parent. See the Thread constructor,
