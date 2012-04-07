@@ -260,6 +260,11 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 		this.deviceDriver = this.jposDriverFactory.createInstance(paramString, this.jposEntry, 
 																	BaseKeyBoardDriver.class);
 		
+		if (this.deviceDriver == null) {
+			throw new JposException(JPOS_E_NOEXIST, "Class: " + this.jposEntry.getPropertyValue("driverClass") + 
+					" not found in current class loader.");
+		}
+		
 		//Crear la cola donde almacenamos eventos estilo FIFO.
 		//Esto tambien puede hacerser en jpos.xml y queda todo como un puzle LOL
 		//TODO: poner la cola de eventos en el jpos.xml
