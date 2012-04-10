@@ -31,24 +31,22 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	private static final String javaposKeyBoardLock = "/tmp/javaposKeyBoardLock";
 	//No me gusta nada esto, simplemente es para evitar mirar si thread es null la primera vez en el metodo enable...
 	private Thread thread = new Thread ("KeyBoardDeviceLinux-Thread");
-	private DataInputStream device;
+	private String deviceName;
 	private FileChannel fileChannelLock;
+	private DataInputStream device;
 	private boolean isClaimed;
-	private boolean autoDisable;
-	private boolean isEnabled;
+	//Usando volatile porque cumplo las condiciones de uso. Ver Java Concurrency in Practice PAG????
+	private volatile boolean autoDisable;
 	private JposEventListener eventListener;
 	private FileLock lock;
 	
 	@Override
 	public boolean isOpened() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void close() throws JposException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -62,7 +60,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	 * 1. Several processes trying to claim the device. Just one will own the device and the another 
 	 * receive a nice exception.
 	 * 2. Several threads in the same Java process trying to claim the device. If the class loader is the same for
-	 * both threads for sure one will lock and the another one receive an exception.
+	 * both threads for sure one will lock and the another one receive an OverlappingFileLockException.
 	 * This method probably is not going to work in this case:
 	 * 1. Several threads in the same Java process with different class loaders. The java.nio classes must be in the
 	 * same class loader, otherwise (I have not tested it) the threads are not going to realize the file was previously locked
@@ -70,42 +68,57 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	 * See: SharedFileLockTable in FileChannelImpl where the static classes are being used. By the way, since Java 5.0 
 	 * it is system-wide but in 1.4 it was not. The doubt is with different class loaders for each thread... Is this "system-wide" 
 	 * implementation going to work? I do not think so.
+	 * Just one more thing: sun.nio.ch.disableSystemWideOverlappingFileLockCheck system property must be false or
+	 * it must not exist. see: FileChannelImpl.isSharedFileLockTable
 	 */
 	@Override
-	public void claim(int paramInt) throws JposException {
+	public void claim(int time) throws JposException {
 		FileLock lock = null;
 		
-		try {
-			this.fileChannelLock = new FileOutputStream(javaposKeyBoardLock).getChannel();
-		} catch (FileNotFoundException e) {
-			throw new JposException(JposConst.JPOS_E_NOTCLAIMED, "File not found.",e);
+		if (this.fileChannelLock == null) {
+			try {
+				//Problema tocho tocho tocho ¿cuando cierro este archivo/canal? ¿¿¿la fastidié??? :( Si Java tuviera destructores... :(
+				//Mierda mierda si no lo cierro nunca me voy a quedar sin file descriptors en el sistema operativo LOL
+				this.fileChannelLock = new FileOutputStream(javaposKeyBoardLock).getChannel();
+			} catch (FileNotFoundException e) {
+				this.throwException(JposConst.JPOS_E_NOTCLAIMED, "File not found.",e);
+			}
 		}
 		
-		if (paramInt == -1) {
+		if (time == -1) {
 			try {
 				lock = this.fileChannelLock.lock();
 			//I do not like catching RunTimeExceptions but I have no choice...
 			} catch (OverlappingFileLockException e) {
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "Some thread from this process already claimed this device.",e);
+				this.throwException(JposConst.JPOS_E_CLAIMED, "Some thread from this process already claimed this device.",e);
 			} catch (IOException e) {
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
+				this.throwException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
 			}
 		}
 		else {
-			long initTime = System.nanoTime();
-			do {
+			long lastTime = System.nanoTime() + ((time + 250) * 1000000);
+			//Espera activa. ¿Alguna idea de cómo hacer esto sin espera activa?  :(
+			while((System.nanoTime() <= lastTime) && (lock == null)) {
 				try {
-					lock = this.fileChannelLock.tryLock();
+					if ((lock = this.fileChannelLock.tryLock()) != null) {
+						break;
+					}
 				//I do not like catching RunTimeExceptions but I have no choice...
 				} catch (OverlappingFileLockException e) {
-					throw new JposException(JposConst.JPOS_E_CLAIMED, "Some thread from this process already claimed this device.",e);
+					this.throwException(JposConst.JPOS_E_CLAIMED, "Some thread from this process already claimed this device.",e);
 				} catch (IOException e) {
-					throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
+					this.throwException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
 				}
-			} while ((((System.nanoTime() - initTime)/ 1000000) < paramInt) && (lock == null));
+				try {
+                    this.wait(250);
+                } catch(InterruptedException e) {
+                	//restore interrupt status.
+                	Thread.currentThread().interrupt();
+                }	
+			} 
 			
 			if (lock == null) {
-				throw new JposException(JposConst.JPOS_E_TIMEOUT, "Timeout while trying to claim device.");
+				this.throwException(JposConst.JPOS_E_TIMEOUT, "Timeout while trying to claim device.", null);
 			}
 			else {
 				this.lock = lock;
@@ -115,10 +128,18 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 
 	@Override
 	public void release() throws JposException {
+		this.isClaimed = false;
+		if (this.lock != null) {
+			try {
+				this.lock.release();
+			} catch (IOException e) {
+				this.throwException(JposConst.JPOSERR, "Error when releasing the keyboard file lock",e);
+			}
+		}
 		try {
-			this.lock.release();
+			this.fileChannelLock.close();
 		} catch (IOException e) {
-			throw new JposException(JposConst.JPOSERR, "Device not found.",e);
+			this.throwException(JposConst.JPOSERR, "Error when closing the keyboard file lock", e);
 		}
 	}
 
@@ -136,38 +157,65 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	 */
 	@Override
 	public void enable() throws JposException {
-
-		if (this.device == null) {
-			throw new JposException(JposConst.JPOSERR, "There is not an assigned device", 
-								new NullPointerException("The device field has null value"));
+		if (this.deviceName == null) {
+			this.throwException(JposConst.JPOSERR, "There is not an assigned device", 
+										new NullPointerException("The deviceName field has null value"));
 		}
 
-		if (this.isEnabled) {
-			throw new JposException(JposConst.JPOSERR, "The device was not disabled.");
+		//Esto mola porque me ahorro una variable indicando si el dispositivo fue habilitado o no
+		//el problema es que puede darse el caso que se ejecute esto:
+		//open();
+		//claim();<--- El teclado no es un dispostivo compartido (var la especificacion JavaPOS)
+		//enable;
+		//disable();
+		//enable();
+		//Y en segundo enable (aqui) se vea el hilo todavía vivo (temas del planificador del SO) y lanze excepcion de que 
+		//el dispositivo no ha sido deshabilitado cuando realmente sí lo ha sido.  :(
+		//Ese no puede ser el comportamiento esperado... Luego esto estaba gracioso porque me evitaba tener
+		//que usar una variable compartida llamada isEnable pero no es válido. :(
+		//Reahacer esto y usar unicamente una variable compartida llamada isEnable para saber si el
+		//dispostivo fue o no deshabilitado y dejar de fijarme en el estado del hilo.
+		//Espera!!! ¿Y si en disable me espero a que termine el hilo? Entonces esto funcionaría guay.
+		//Por narices el hilo va a terminar tal y como lo he hecho así que no habria problema :)
+		//Esa es la solucion adecuada!!! Aunque el disable ahora tarde un poco mas hace mi aplicacion más robusta
+		//¿Hay algún inconveniente mas a parte de hacer que el disable sea algo más lento? tardara el tiempo
+		//que tarde en morir el hilo.
+		//PROBLEMA OTRA VEZ, ¿y si el hilo murio por alguna cosa inesperada como por ejemplo que el archivo del 
+		//dispositivo del SO se borro o cualquier otra cosa? Aqui veria el hilo muerto pero en realidad el
+		//dispositivo no fue deshabilitado si no que el hilo murio de forma inesperada... Si soluciono este
+		//ultimo escollo sí me podre basar en si el hilo está o no muerto.
+		if (this.thread.isAlive()) {
+			this.throwException(JposConst.JPOSERR, "The device was not disabled.", null);
 		}
 		else {
-			if (this.thread.isAlive()) {
-				throw new JposException(JposConst.JPOSERR, "The device was disabled but the hardware " +
-										"thread is still running. Overloaded system?");
-			}
-			else {
-				this.thread = new Thread (new HardwareLoop(this.device, this.eventListener), "KeyBoardDeviceLinux-Thread");
-				this.thread.setUncaughtExceptionHandler(new DriverHWUncaughtExceptionHandler());
-				this.thread.start();
-				this.isEnabled = true;
-			}
+			try {
+				this.device = new DataInputStream(Channels.newInputStream(new FileInputStream(this.deviceName).getChannel()));
+			} catch (FileNotFoundException e) {
+				this.throwException(JposConst.JPOS_E_NOHARDWARE, "Device not found.",e);
+			}	
+			this.thread = new Thread (new HardwareLoop(this.device, this.eventListener), "KeyBoardDeviceLinux-Thread");
+			this.thread.setUncaughtExceptionHandler(new DriverHWUncaughtExceptionHandler());
+			this.thread.start();
 		}
 	}
 
 	@Override
 	public void disable() throws JposException {
 		this.thread.interrupt();
-		this.isEnabled = false;
+		try {
+			this.thread.join();
+			this.device.close();
+		} catch (InterruptedException e) {
+			//restore interrupt status.
+			Thread.currentThread().interrupt();	
+		} catch (IOException e) {
+			this.throwException(JposConst.JPOSERR, "Error when closing the keyboard device file", e);
+		}
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return this.isEnabled;
+		return this.thread.isAlive();
 	}
 
 	@Override
@@ -176,8 +224,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	}
 
 	@Override
-	public void addEventListener(JposEventListener jposEventListener)
-			throws JposException {
+	public void addEventListener(JposEventListener jposEventListener) throws JposException {
 		this.eventListener = jposEventListener;
 	}
 
@@ -189,14 +236,12 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	@Override
 	public boolean write(byte[] paramArrayOfByte, int paramInt1, int paramInt2,
 			int paramInt3) throws JposException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public int read(byte[] paramArrayOfByte, int paramInt1, int paramInt2,
 			int paramInt3) throws JposException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -204,19 +249,16 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	public int writeRead(byte[] paramArrayOfByte1, int paramInt1,
 			int paramInt2, byte[] paramArrayOfByte2, int paramInt3,
 			int paramInt4, int paramInt5) throws JposException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public String getDescription(int paramInt) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void flush(int paramInt) throws JposException {
-		// TODO Auto-generated method stub
 
 	}
 	
@@ -224,15 +266,36 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	/**
 	 * 
 	 * NO OLVIDAR try/finally PARA DEJAR EL DISPOSITIVO CORRECTAMENTE
-	 * @throws JposException
 	 */
 	@Override
-	public void device(String device) throws JposException {
+	public void device(String device) {
+		this.deviceName = device;
+	}
+	
+	/**
+	 * Trying to reach the second level :/
+	 * Para mi que este objetivo no debo alcanzarlo aqui si no en el codigo superior en MyPOSKeyboard... :(
+	 */
+	private void exceptionSafety() {
 		try {
-			this.device = new DataInputStream(Channels.newInputStream(new FileInputStream(device).getChannel()));
-		} catch (FileNotFoundException e) {
-			throw new JposException(JposConst.JPOS_E_NOHARDWARE, "Device not found.",e);
+			this.release();
+		} catch (JposException e) {
+			// Log this exception. The original exception (if there is one) is more
+            // important and will be thrown to the caller.
+            logger.warn("Error consuming content after an exception.", e);
 		}
+		try {
+			this.disable();
+		} catch (JposException e) {
+			// Log this exception. The original exception (if there is one) is more
+            // important and will be thrown to the caller.
+            logger.warn("Error consuming content after an exception.", e);
+		}
+	}
+	
+	private void throwException(int jposConst, String message, Exception exception) throws JposException {
+		this.exceptionSafety();
+		throw new JposException (jposConst, message, exception);
 	}
 	
 	@ThreadSafe
@@ -289,8 +352,12 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 			        value = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
 			        
 			        if (type == KeyBoardDeviceLinux.EV_KEY) {
-			        	//this.eventListener.inputAvailable(code);
+			        	this.eventListener.inputAvailable(code);
 			        	logger.debug("Captured key " + "type: " + type + " code: " + code + " value: " + value);
+			        	
+			        	if (KeyBoardDeviceLinux.this.autoDisable) {
+			        		Thread.currentThread().interrupt();
+			        	}
 			        }
 				}
 			} catch (EOFException e) {
