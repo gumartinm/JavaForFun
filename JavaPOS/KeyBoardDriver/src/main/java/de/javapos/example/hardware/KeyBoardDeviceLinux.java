@@ -15,7 +15,6 @@ import java.util.concurrent.RejectedExecutionException;
 import jpos.JposConst;
 import jpos.JposException;
 import org.apache.log4j.Logger;
-import de.javapos.example.ThreadSafe;
 import de.javapos.example.queue.JposEventListener;
 
 /**
@@ -24,7 +23,7 @@ import de.javapos.example.queue.JposEventListener;
  * @author
  *
  */
-public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
+public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 	private static final Logger logger = Logger.getLogger(KeyBoardDeviceLinux.class);
 	//value EV_KEY from include/linux/input.h
 	private static final int EV_KEY = 1;
@@ -55,21 +54,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	}
 
 	/**
-	 * Not thread-safe.
-	 * This method just works in the following cases:
-	 * 1. Several processes trying to claim the device. Just one will own the device and the another 
-	 * receive a nice exception.
-	 * 2. Several threads in the same Java process trying to claim the device. If the class loader is the same for
-	 * both threads for sure one will lock and the another one receive an OverlappingFileLockException.
-	 * This method probably is not going to work in this case:
-	 * 1. Several threads in the same Java process with different class loaders. The java.nio classes must be in the
-	 * same class loader, otherwise (I have not tested it) the threads are not going to realize the file was previously locked
-	 * because the FileLock implementation is using static fields in order to find out if the file was locked before.
-	 * See: SharedFileLockTable in FileChannelImpl where the static classes are being used. By the way, since Java 5.0 
-	 * it is system-wide but in 1.4 it was not. The doubt is with different class loaders for each thread... Is this "system-wide" 
-	 * implementation going to work? I do not think so.
-	 * Just one more thing: sun.nio.ch.disableSystemWideOverlappingFileLockCheck system property must be false or
-	 * it must not exist. see: FileChannelImpl.isSharedFileLockTable
+	 * Not thread-safe.!!!!!
 	 */
 	@Override
 	public void claim(int time) throws JposException {
@@ -87,23 +72,11 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 
 		if (time == -1) {
 			try {
+				//This method is not aware interrupt. :(
 				lock = this.fileChannelLock.lock();
 			//I do not like catching RunTimeExceptions but I have no choice...
 			} catch (OverlappingFileLockException e) {
-				//¿esta cosa se entera si hay otra instancia de esta clase manejada desde otro thread?
-				//otro open del mismo archivo devuelve un file descriptor distinto. ¿Cómo Java se enteraría
-				//de que otro hilo que creó otra instancia de esta clase KeyBoardDeviceLinux está intentando bloquear
-				//el mismo archivo?
-				//WOW Java sí se entera si creo dos instancias de esta clase desde varios hilos y ambos
-				//intentan bloquear el mismo archivo incluso aunque los file descriptor sean distintos.
-				//Usa un objecto llamado FileKey.java que contiene entre otras cosas 2 campos: st_dev y st_ino
-				//esos campos los consigue con FileKey.init que llama a fstat64!!!! WOWOWOWOWOW
-				//así incluso si tenemos 2 instancias del objecto KeyBoardDeviceLinux usadas por 2 hilos distintos podemos
-				//saber si el hilo fue bloqueado ya.
-				//CON ESTA IMPLEMENTACION SOLO SALTARIA OverlappingFileLockException SI OTRO HILO CREA UNA NUEVA
-				//INSTANCIA DE ESTA CLASE E INTENTA HACER UN claim. CON HILOS USANDO LA MISMA INSTANCIA DE LA CLASE
-				//DEBERIAN VER LA PROPIEDAD isClaimed A TRUE Y POR TANTO NUNCA LLEGARIAN AQUI.
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "Some thread from this process already claimed this device.",e);
+				logger.warn("Concurrent access in claim method not supported without synchronization.", e);
 			} catch (IOException e) {
 				throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
 			}
@@ -118,7 +91,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 					}
 				//I do not like catching RunTimeExceptions but I have no choice...
 				} catch (OverlappingFileLockException e) {
-					throw new JposException(JposConst.JPOS_E_CLAIMED, "Some thread from this process already claimed this device.",e);
+					logger.warn("Concurrent access in claim method not supported without synchronization.", e);
 				} catch (IOException e) {
 					throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
 				}
@@ -133,38 +106,46 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 			if (lock == null) {
 				throw new JposException(JposConst.JPOS_E_TIMEOUT, "Timeout while trying to claim device.", null);
 			}
-			else {
-				this.lock = lock;
-			}
+		}
+		
+		if (lock != null) {
+			//Just when concurrent access without synchronization (this method is not tread-safe) you could see
+			//null value. claim does not support concurrent access in itself anyway I take counter measures in case
+			//of someone forgets it.
+			this.lock = lock;
+			this.isClaimed = true;
 		}
 	}
 
+	/**
+	 * Not thread-safe.!!!!!
+	 */
 	@Override
 	public void release() throws JposException {
-		this.isClaimed = false;
-
+		if (!this.isClaimed) {
+			return;
+		}
+		
 		if (this.lock != null) {
 			try {
 				//SI LLAMO A ESTO PERO FALLO AL INTENTAR LOCK NO CIERRO NI LIBERO EL LOCK REALIZADO
 				//DESDE OTRO HILO :)
 				this.lock.release();
 			} catch (IOException e) {
-				//NO PUEDO LLAMAR A ESTO AQUI PORQUE ME METO EN UN BUCLE INFERNAL
 				throw new JposException(JposConst.JPOSERR, "Error when releasing the keyboard file lock",e);
 			}
 		}
 
 		if (this.fileChannelLock != null) {
 			try {
-				//NO HAY PROBLEMA EN LLAMAR A ESTO, CADA HILO CIERRA SU fd. CADA HILO TIENE
-				//SU PROPIO file descriptor QUE ES LO QUE CIERRA :)
 				this.fileChannelLock.close();
 				this.fileChannelLock = null;
 			} catch (IOException e) {
-				//NO PUEDO LLAMAR A ESTO AQUI PORQUE ME METO EN UN BUCLE INFERNAL
 				throw new JposException(JposConst.JPOSERR, "Error when closing the keyboard file lock", e);
 			}
 		}
+		
+		this.isClaimed = false;
 	}
 
 	@Override
@@ -217,7 +198,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 			} catch (FileNotFoundException e) {
 				throw new JposException(JposConst.JPOS_E_NOHARDWARE, "Device not found.",e);
 			}	
-			this.thread = new Thread (new HardwareLoop(this.device, this.eventListener), "KeyBoardDeviceLinux-Thread");
+			this.thread = new Thread (this, "KeyBoardDeviceLinux-Thread");
 			this.thread.setUncaughtExceptionHandler(new DriverHWUncaughtExceptionHandler());
 			this.thread.start();
 		}
@@ -300,90 +281,78 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	public void device(String device) {
 		this.deviceName = device;
 	}
-	
-	
-	@ThreadSafe
-	private class HardwareLoop implements Runnable {
-		private final DataInputStream device;
-		private final JposEventListener eventListener;
-		
-		private HardwareLoop (DataInputStream device, JposEventListener eventListener) {
-			this.device = device;
-			this.eventListener = eventListener;
-		}
-		
-		@Override
-		public void run() {
-			//OS 64 bits
-			byte []buffer = new byte[24];
-			short code = 0;
-			short type = 0;
-			int value = 0;
-			int ch1 = 0;
-			int ch2 = 0;
-			int ch3 = 0;
-			int ch4 = 0;
 			
+	@Override
+	public void run() {
+		//OS 64 bits
+		byte []buffer = new byte[24];
+		short code = 0;
+		short type = 0;
+		int value = 0;
+		int ch1 = 0;
+		int ch2 = 0;
+		int ch3 = 0;
+		int ch4 = 0;
+		
+		try {
+			while (true) {
+				//using command: evtest /dev/input/event4
+				//It is not clear hear but I am using sun.nio.ch.FileChannelImpl.read(ByteBuffer ) method which throws
+				//exception (java.nio.channels.ClosedByInterruptException) when the thread is interrupted
+				//see: Thread.interrupt(), sun.nio.ch.FileChannelImpl.read(ByteBuffer) and 
+				//java.nio.channels.spi.AbstractInterruptibleChannel.begin() methods
+				//Basically before getting in an I/O operation that might block indefinitely the begin method implements
+				//the Thread.blocker field. This field is used when running the method Thread.interrupt(). The blocker
+				//implementation closes the file descriptor, so the I/0 operation throws an IOException (closed file)
+				//In the finally block of the sun.nio.ch.FileChannelImpl.read(ByteBuffer) method we can find the
+				//java.nio.channels.spi.AbstractInterruptibleChannel.end(boolean) method which throws the java.nio.channels.ClosedByInterruptException
+				//We are losing the IOException (because the file was closed by the blocker implementation) but indeed
+				//the reality is that we are getting out of the I/O blocking operation because we interrupted the running thread. 
+				this.device.readFully(buffer);
+				
+				ch1 = buffer[19];
+		        ch2 = buffer[18];
+		        code = (short)((ch1 << 8) + (ch2 << 0));
+		        
+		        ch1 = buffer[17];
+		        ch2 = buffer[16];
+		        type = (short)((ch1 << 8) + (ch2 << 0));
+		        
+		        
+		        ch1 = buffer[23];
+		        ch2 = buffer[22];;
+		        ch3 = buffer[21];
+		        ch4 = buffer[20];
+		        value = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+		        
+		        if (type == KeyBoardDeviceLinux.EV_KEY) {
+		        	this.eventListener.inputAvailable(code);
+		        	logger.debug("Captured key " + "type: " + type + " code: " + code + " value: " + value);
+		        	
+		        	if (KeyBoardDeviceLinux.this.autoDisable) {
+                        //CERRAR this.device.close();  NO SE COMO HACER ESTO CORRECTAMENTE :(
+                        break;
+		        	}
+		        }
+			}
+		} catch (EOFException e) {
+			logger.error("Something went really bad. Impossible end of file while reading keyboard device!!!!", e);
+		} catch (IOException e) {
+			//We reach this code because the thread was interrupted (disable) or because there was an I/O error
+			//logger.debug or logger.error if it was an error I am not going to log it... :/
+			logger.debug("Finished KeyBoardDeviceLinux Thread", e);
+		} finally {
 			try {
-				while (true) {
-					//using command: evtest /dev/input/event4
-					//It is not clear hear but I am using sun.nio.ch.FileChannelImpl.read(ByteBuffer ) method which throws
-					//exception (java.nio.channels.ClosedByInterruptException) when the thread is interrupted
-					//see: Thread.interrupt(), sun.nio.ch.FileChannelImpl.read(ByteBuffer) and 
-					//java.nio.channels.spi.AbstractInterruptibleChannel.begin() methods
-					//Basically before getting in an I/O operation that might block indefinitely the begin method implements
-					//the Thread.blocker field. This field is used when running the method Thread.interrupt(). The blocker
-					//implementation closes the file descriptor, so the I/0 operation throws an IOException (closed file)
-					//In the finally block of the sun.nio.ch.FileChannelImpl.read(ByteBuffer) method we can find the
-					//java.nio.channels.spi.AbstractInterruptibleChannel.end(boolean) method which throws the java.nio.channels.ClosedByInterruptException
-					//We are losing the IOException (because the file was closed by the blocker implementation) but indeed
-					//the reality is that we are getting out of the I/O blocking operation because we interrupted the running thread. 
-					this.device.readFully(buffer);
-					
-					ch1 = buffer[19];
-			        ch2 = buffer[18];
-			        code = (short)((ch1 << 8) + (ch2 << 0));
-			        
-			        ch1 = buffer[17];
-			        ch2 = buffer[16];
-			        type = (short)((ch1 << 8) + (ch2 << 0));
-			        
-			        
-			        ch1 = buffer[23];
-			        ch2 = buffer[22];;
-			        ch3 = buffer[21];
-			        ch4 = buffer[20];
-			        value = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
-			        
-			        if (type == KeyBoardDeviceLinux.EV_KEY) {
-			        	this.eventListener.inputAvailable(code);
-			        	logger.debug("Captured key " + "type: " + type + " code: " + code + " value: " + value);
-			        	
-			        	if (KeyBoardDeviceLinux.this.autoDisable) {
-                            //CERRAR this.device.close();  NO SE COMO HACER ESTO CORRECTAMENTE :(
-                            break;
-			        	}
-			        }
-				}
-			} catch (EOFException e) {
-				logger.error("Something went really bad. Impossible end of file while reading keyboard device!!!!", e);
-			} catch (IOException e) {
-				//We reach this code because the thread was interrupted (disable) or because there was an I/O error
-				//logger.debug or logger.error if it was an error I am not going to log it... :/
-				logger.debug("Finished KeyBoardDeviceLinux Thread", e);
-			} finally {
-				try {
-					this.device.close();
-					//SI EL HILO MUERE ¿DEBERÍA DEJAR EL ESTADO DEL DISPOSITIVO LOGICO JAVAPOS
-					//EN UN MODO CONSISTENTE?
-					//liberar el LOCK SI EL HILO MUERE DE FORMA INESPERADA????
-					//¿como moriria este hilo de forma inesperada?? por ejemplo por RunTimeException
-					//¿Como hago saber a la aplicacion que este hilo murio de forma inesperada por RunTimeException y el teclado
-					//ha dejado de funcionar... Si el teclado deja de funcionar no sería mejor parar toda la aplicacion y ver
-					//que pasa...
-				} catch (IOException e1) {
-					logger.warn("Something went wrong while closing the channel",e1);
-				}
+				this.device.close();
+				//SI EL HILO MUERE ¿DEBERÍA DEJAR EL ESTADO DEL DISPOSITIVO LOGICO JAVAPOS
+				//EN UN MODO CONSISTENTE?
+				//liberar el LOCK SI EL HILO MUERE DE FORMA INESPERADA????
+				//¿como moriria este hilo de forma inesperada?? por ejemplo por RunTimeException
+				//¿Como hago saber a la aplicacion que este hilo murio de forma inesperada por RunTimeException y el teclado
+				//ha dejado de funcionar... Si el teclado deja de funcionar no sería mejor parar toda la aplicacion y ver
+				//que pasa...
+			} catch (IOException e1) {
+				logger.warn("Something went wrong while closing the channel",e1);
 			}
 		}
 	}
