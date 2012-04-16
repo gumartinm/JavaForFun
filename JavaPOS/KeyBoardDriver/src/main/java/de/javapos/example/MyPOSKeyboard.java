@@ -344,6 +344,9 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 
 	@Override
 	public void setDeviceEnabled(boolean deviceEnable) throws JposException {
+		if (!this.deviceDriver.isClaimed()) {
+			throw new JposException(JposConst.JPOS_E_NOTCLAIMED, "Device not claimed.");
+		}
 		this.deviceDriver.enable();
 		
 	}

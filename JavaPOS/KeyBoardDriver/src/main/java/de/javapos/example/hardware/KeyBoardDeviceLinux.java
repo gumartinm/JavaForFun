@@ -23,7 +23,7 @@ import de.javapos.example.queue.JposEventListener;
  * @author
  *
  */
-public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
+public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	private static final Logger logger = Logger.getLogger(KeyBoardDeviceLinux.class);
 	//value EV_KEY from include/linux/input.h
 	private static final int EV_KEY = 1;
@@ -192,7 +192,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 		//PROBLEMA OTRA VEZ, ¿y si el hilo murio por alguna cosa inesperada como por ejemplo que el archivo del 
 		//dispositivo del SO se borro o cualquier otra cosa? Aqui veria el hilo muerto pero en realidad el
 		//dispositivo no fue deshabilitado si no que el hilo murio de forma inesperada Y NO SE CERRO this.device!!!... 
-		//Si soluciono este ultimo escollo sí me podre basar en si el hilo está o no muerto.
+		//Si soluciono este ultimo escollo ¿sí me podre basar en si el hilo está o no muerto?
 		if (this.thread.isAlive()) {
 			throw new JposException(JposConst.JPOSERR, "The device was not disabled.", null);
 		}
@@ -201,8 +201,18 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 				this.device = new DataInputStream(Channels.newInputStream(new FileInputStream(this.deviceName).getChannel()));
 			} catch (FileNotFoundException e) {
 				throw new JposException(JposConst.JPOS_E_NOHARDWARE, "Device not found.",e);
-			}	
-			this.thread = new Thread (this, "KeyBoardDeviceLinux-Thread");
+			}
+
+			Runnable task = new Runnable () {
+
+				@Override
+				public void run() {
+					//Hidden pointer: KeyBoardDeviceLinux.this.runBatchTask();
+					runBatchTask();
+				}
+
+			};
+			this.thread = new Thread (task, "KeyBoardDeviceLinux-Thread");
 			this.thread.setUncaughtExceptionHandler(new DriverHWUncaughtExceptionHandler());
 			this.thread.start();
 		}
@@ -220,7 +230,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 			//TAL Y COMO ESTA HECHO EL HILO NO TARDARA MUCHO EN MORIR (espero) ASI QUE 
 			//AUNQUE ALGO ME INTERRUMPA NO DEBERIA PASAR GRAN COSA, LO UNICO QUE SI OTRO HILO
 			//JUSTO AQUI INTENTA HACER ENABLE PUEDE QUE VEA EL HILO TODAVIA VIVO AUNQUE YA SE HABIA
-			//PASADO POR EL DISABLE, PERO TAN POCO ES UN GRAN PROBLEMA ESO. LUEGO PARA MÍ QUE ESTO ESTA OK!!! :)
+			//PASADO POR EL DISABLE, ¿¿¿PERO TAN POCO ES UN GRAN PROBLEMA ESO??? LUEGO PARA MÍ QUE ¿ESTO ESTA OK?
 			Thread.currentThread().interrupt();	
 		}
 	}
@@ -283,11 +293,13 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 	public void device(String device) {
 		this.deviceName = device;
 	}
-			
-	@Override
-	public void run() {
-		//OS 64 bits
-		byte []buffer = new byte[24];
+
+
+	private void runBatchTask() {
+		//OS 64 bits timeval 8 bytes  -> struct input_event 16 bytes
+		//OS 32 bits timeval 16 bytes -> struct input_event 24 bytes
+		byte []buffer = new byte[16];
+		//byte []buffer = new byte[24];
 		short code = 0;
 		short type = 0;
 		int value = 0;
@@ -312,26 +324,33 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 				//the reality is that we are getting out of the I/O blocking operation because we interrupted the running thread. 
 				this.device.readFully(buffer);
 				
-				ch1 = buffer[19];
-		        ch2 = buffer[18];
+				ch1 = buffer[11];
+		        ch2 = buffer[10];
+		        //ch1 = buffer[19];
+		        //ch2 = buffer[18];
 		        code = (short)((ch1 << 8) + (ch2 << 0));
 		        
-		        ch1 = buffer[17];
-		        ch2 = buffer[16];
+		        ch1 = buffer[9];
+		        ch2 = buffer[8];
+		        //ch1 = buffer[17];
+		        //ch2 = buffer[16];
 		        type = (short)((ch1 << 8) + (ch2 << 0));
 		        
 		        
-		        ch1 = buffer[23];
-		        ch2 = buffer[22];;
-		        ch3 = buffer[21];
-		        ch4 = buffer[20];
+		        ch1 = buffer[15];
+		        ch2 = buffer[14];
+		        ch3 = buffer[13];
+		        ch4 = buffer[12];
+		        //ch1 = buffer[23];
+		        //ch2 = buffer[22];
+		        //ch3 = buffer[21];
+		        //ch4 = buffer[20];
 		        value = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
 		        
 		        if (type == KeyBoardDeviceLinux.EV_KEY) {
-		        	//this.eventListener.inputAvailable(code);
+                    eventListener.inputAvailable(code);
 		        	logger.debug("Captured key " + "type: " + type + " code: " + code + " value: " + value);
-		        	
-		        	if (KeyBoardDeviceLinux.this.autoDisable) {
+                    if (autoDisable) {
                         break;
 		        	}
 		        }
@@ -343,7 +362,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 			//logger.debug or logger.error if it was an error I am not going to log it... :/
 			logger.debug("Finished KeyBoardDeviceLinux Thread", e);
 		} finally {
-			//This method releases the Java NIO channels. It is thread-safety :) see: Interruptible 
+			//This method releases the Java NIO channels. It is thread safety :) see: Interruptible 
 			this.thread.interrupt();
 				//SI EL HILO MUERE ¿ESTOY DEJANDO EL ESTADO DEL DISPOSITIVO LOGICO JAVAPOS
 				//EN UN MODO CONSISTENTE?
@@ -370,7 +389,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 		//Because I do not have a POS I am going to use the keyboard of my computer.
 		//see: /dev/input/by-path/
 		//And the Keyborad scancode is for USB devices.
-		String device ="/dev/input/event5";
+		String device ="/dev/input/event4";
 		KeyBoardDeviceLinux driver = new KeyBoardDeviceLinux();
 		
 		logger.info("Main test of KeyBoardDeviceLinux class");
