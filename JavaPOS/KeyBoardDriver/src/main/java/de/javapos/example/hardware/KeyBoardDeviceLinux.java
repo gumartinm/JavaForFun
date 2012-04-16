@@ -46,6 +46,8 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 
 	@Override
 	public void close() throws JposException {
+		this.disable();
+		this.release();
 	}
 
 	@Override
@@ -76,7 +78,8 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 				lock = this.fileChannelLock.lock();
 			//I do not like catching RunTimeExceptions but I have no choice...
 			} catch (OverlappingFileLockException e) {
-				logger.warn("Concurrent access in claim method not supported without synchronization.", e);
+				logger.warn("Concurrent access in claim method not supported without synchronization or you have" +
+							"more than one instances of the KeyBoardDeviceLinux class", e);
 			} catch (IOException e) {
 				throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
 			}
@@ -91,7 +94,8 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 					}
 				//I do not like catching RunTimeExceptions but I have no choice...
 				} catch (OverlappingFileLockException e) {
-					logger.warn("Concurrent access in claim method not supported without synchronization.", e);
+					logger.warn("Concurrent access in claim method not supported without synchronization or you have" +
+								"more than one instances of the KeyBoardDeviceLinux class", e);
 				} catch (IOException e) {
 					throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
 				}
@@ -206,10 +210,10 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 
 	@Override
 	public void disable() throws JposException {
+		//This method releases the Java NIO channel. It is thread safety. :) see: Interruptible
 		this.thread.interrupt();
 		try {
 			this.thread.join();
-			this.device.close();
 		} catch (InterruptedException e) {
 			//restore interrupt status.
 			//QUE PASA SIN LLAMAN A INTERRUPT EN JOIN Y EL HILO NUNCA MURIERA
@@ -218,8 +222,6 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 			//JUSTO AQUI INTENTA HACER ENABLE PUEDE QUE VEA EL HILO TODAVIA VIVO AUNQUE YA SE HABIA
 			//PASADO POR EL DISABLE, PERO TAN POCO ES UN GRAN PROBLEMA ESO. LUEGO PARA MÍ QUE ESTO ESTA OK!!! :)
 			Thread.currentThread().interrupt();	
-		} catch (IOException e) {
-			throw new JposException(JposConst.JPOSERR, "Error when closing the keyboard device file", e);
 		}
 	}
 
@@ -326,11 +328,10 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 		        value = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
 		        
 		        if (type == KeyBoardDeviceLinux.EV_KEY) {
-		        	this.eventListener.inputAvailable(code);
+		        	//this.eventListener.inputAvailable(code);
 		        	logger.debug("Captured key " + "type: " + type + " code: " + code + " value: " + value);
 		        	
 		        	if (KeyBoardDeviceLinux.this.autoDisable) {
-                        //CERRAR this.device.close();  NO SE COMO HACER ESTO CORRECTAMENTE :(
                         break;
 		        	}
 		        }
@@ -342,18 +343,16 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 			//logger.debug or logger.error if it was an error I am not going to log it... :/
 			logger.debug("Finished KeyBoardDeviceLinux Thread", e);
 		} finally {
-			try {
-				this.device.close();
-				//SI EL HILO MUERE ¿DEBERÍA DEJAR EL ESTADO DEL DISPOSITIVO LOGICO JAVAPOS
+			//This method releases the Java NIO channels. It is thread-safety :) see: Interruptible 
+			this.thread.interrupt();
+				//SI EL HILO MUERE ¿ESTOY DEJANDO EL ESTADO DEL DISPOSITIVO LOGICO JAVAPOS
 				//EN UN MODO CONSISTENTE?
-				//liberar el LOCK SI EL HILO MUERE DE FORMA INESPERADA????
+				//liberar el LOCK SI EL HILO MUERE DE FORMA INESPERADA???? NO, JavaPOS no dice nada.
 				//¿como moriria este hilo de forma inesperada?? por ejemplo por RunTimeException
 				//¿Como hago saber a la aplicacion que este hilo murio de forma inesperada por RunTimeException y el teclado
 				//ha dejado de funcionar... Si el teclado deja de funcionar no sería mejor parar toda la aplicacion y ver
 				//que pasa...
-			} catch (IOException e1) {
-				logger.warn("Something went wrong while closing the channel",e1);
-			}
+
 		}
 	}
 
@@ -371,7 +370,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver, Runnable {
 		//Because I do not have a POS I am going to use the keyboard of my computer.
 		//see: /dev/input/by-path/
 		//And the Keyborad scancode is for USB devices.
-		String device ="/dev/input/event6";
+		String device ="/dev/input/event5";
 		KeyBoardDeviceLinux driver = new KeyBoardDeviceLinux();
 		
 		logger.info("Main test of KeyBoardDeviceLinux class");
