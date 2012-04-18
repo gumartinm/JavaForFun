@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, MobiAdsActivity!</string>
+    <string name="hello">MobiAdsActivity!</string>
     <string name="app_name">MobiAds</string>
     <string name="app_description">Receive notifications about offers and discounts.</string>
     <string name="alert_dialog_cancel">Do you really want to close the application?</string>
