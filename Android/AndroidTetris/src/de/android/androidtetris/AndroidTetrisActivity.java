@@ -1,8 +1,10 @@
 package de.android.androidtetris;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.inputmethod.InputMethodManager;
 
 public class AndroidTetrisActivity extends Activity {
 	DrawView drawView;

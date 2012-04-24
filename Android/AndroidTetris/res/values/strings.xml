@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, AndroidTetrisActivity!</string>
-    <string name="app_name">AndroidTetris</string>
+    <string name="score">Score: </string>
+    <string name="level">Level: </string>
 </resources>

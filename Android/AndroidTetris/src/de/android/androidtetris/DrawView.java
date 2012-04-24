@@ -22,7 +22,7 @@ import android.view.SurfaceView;
 public class DrawView extends SurfaceView {
 	private SurfaceHolder holder;
     private final MainLoop mainLoop;
-    private static final int TILESIZE=16;
+    private static final int TILESIZE=32;
     private static final int MAPWIDTH=10;
     private static final int MAPHEIGHT=20;
     private static final int GREY=8;
@@ -168,30 +168,30 @@ public class DrawView extends SurfaceView {
     	//canvas.getWidth() <----------------- retrieve the screen width
     	//canvas.getWidth()/TILESIZE <-------- the tile size is 16, so we have to count on it when finding the center
     	//((canvas.getWidth()/TILESIZE))/2 <-- this is the middle of our screen, it depends on the tile size.
-    	final int initX = (((canvas.getWidth()/TILESIZE)/2) - MAPWIDTH);
+        final int initX = ((((canvas.getWidth()/TILESIZE)/2) - MAPWIDTH) + 1);
     	
     	
     	//draw the left bar (with scores, and next pieces
     	for(int x=MAPWIDTH; x< MAPWIDTH + GREY; x++)
     		for(int y=0; y< MAPHEIGHT; y++)
-    			drawTile(canvas, Tile.GRAY.getColor(), x + initX, y);
+                drawTile(canvas, Tile.GRAY.getColor(), x + initX, y + 10);
     	
     	//draw the pre-piece
     	for(int x=0; x < PrePiece.WIDTH; x++)
     		for(int y=0; y< PrePiece.HEIGHT; y++)
     			if(prePiece.size[x][y] != Tile.NOCOLOR)
-    				drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x + initX, prePiece.y +y);
+                    drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x + initX, prePiece.y + y + 10);
     	
     	//draw grid
     	for(int x=0; x < MAPWIDTH; x++)
     		for(int y=0; y < MAPHEIGHT; y++)
-    			drawTile(canvas, mapMatrix[x][y].getColor(), x + initX, y);
+                drawTile(canvas, mapMatrix[x][y].getColor(), x + initX, y+10);
 
     	//draw the current block
     	for(int x=0; x < CurrentPiece.WIDTH; x++)
     		for(int y=0; y < CurrentPiece.HEIGHT; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-    				drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x + initX, currentPiece.y +y);
+                    drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x + initX, currentPiece.y +y +10);
     }
     
     

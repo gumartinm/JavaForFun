@@ -4,6 +4,7 @@
       android:versionCode="1"
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="13" />
+    <supports-screens android:requiresSmallestWidthDp="720" />
 
     <application android:label="My AndroidTetris">
         <activity android:name=".AndroidTetrisActivity"
