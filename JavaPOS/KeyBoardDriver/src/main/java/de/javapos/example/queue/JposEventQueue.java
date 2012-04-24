@@ -8,16 +8,23 @@ public interface JposEventQueue {
 	
 	public void putEvent(JposEvent paramJposEvent) throws InterruptedException;
 
-	public void clearAllEvents();
+	public JposEvent getEvent() throws InterruptedException;
 
 	public void clearInputEvents();
 
 	public void clearOutputEvents();
-	
+
 	public int getNumberOfEvents();
 
 	public void checkEvents();
 
-	public boolean eventQueueIsFull();
+	public void removeAllEvents();
 
+	public boolean removeEvent(JposEvent paramJposEvent);
+
+	public JposEvent peekElement(int paramInt);
+
+	public boolean isFull();
+
+	public int getSize();
 }

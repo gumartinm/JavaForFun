@@ -16,8 +16,8 @@ public class JposEventQueueImpl implements JposEventQueue {
 	}
 
 	@Override
-	public void clearAllEvents() {
-		this.linkedBlockingQueue.clear();
+	public JposEvent getEvent() throws InterruptedException {
+		return this.linkedBlockingQueue.take();
 	}
 
 	@Override
@@ -41,8 +41,28 @@ public class JposEventQueueImpl implements JposEventQueue {
 	}
 
 	@Override
-	public boolean eventQueueIsFull() {
+	public void removeAllEvents() {
+		this.linkedBlockingQueue.clear();
+	}
+
+	@Override
+	public boolean removeEvent(JposEvent paramJposEvent) {
+		return this.linkedBlockingQueue.remove(paramJposEvent);
+	}
+
+	@Override
+	public JposEvent peekElement(int paramInt) {
+		 return null;
+	}
+
+	@Override
+	public boolean isFull() {
 		//No seguro de esto :/
 		return false;
+	}
+
+	@Override
+	public int getSize() {
+		return this.linkedBlockingQueue.size();
 	}
 }

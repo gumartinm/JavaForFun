@@ -158,6 +158,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	}
 
 	/**
+	 * Not thread-safe.!!!!!
 	 * 
 	 * NO OLVIDAR try/finally PARA DEJAR EL DISPOSITIVO CORRECTAMENTE
 	 * @throws JposException
@@ -296,8 +297,8 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 
 
 	private void runBatchTask() {
-		//OS 64 bits timeval 8 bytes  -> struct input_event 16 bytes
-		//OS 32 bits timeval 16 bytes -> struct input_event 24 bytes
+		//OS 64 bits timeval 16 bytes  -> struct input_event 24 bytes
+		//OS 32 bits timeval 8 bytes -> struct input_event 16 bytes
 		byte []buffer = new byte[16];
 		//byte []buffer = new byte[24];
 		short code = 0;

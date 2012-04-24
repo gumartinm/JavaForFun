@@ -171,7 +171,7 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 
 	@Override
 	public int getDeviceServiceVersion() throws JposException {
-		return this.deviceVersion12;
+		return MyPOSKeyboard.deviceVersion12;
 	}
 
 	@Override
@@ -275,6 +275,8 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 
 		this.deviceDriver.addEventListener(eventListener);
 		
+		//estaria genial poner esto en el jpos.xml y asi puede tambien cambiar el firethread
+		//Lo malo es que no tengo interfaz para ello :(  Luego nada :/
 		
 	}
 	
@@ -437,7 +439,7 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 		@Override
 		public void inputAvailable(int input) {
 			try {
-				this.jposEventQueue.putEvent(new DataEvent(this.callbacks, input));
+				this.jposEventQueue.putEvent(new DataEvent(this.callbacks.getEventSource(), input));
 			} catch (InterruptedException e) {
 				//restore interrupt status.
 				Thread.currentThread().interrupt();
