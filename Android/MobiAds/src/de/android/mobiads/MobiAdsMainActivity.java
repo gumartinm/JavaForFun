@@ -23,14 +23,16 @@ public class MobiAdsMainActivity extends Activity {
      */
     final Messenger mMessenger = new Messenger(new IncomingHandler());
     
-    private String cookie;
+    private static String cookie;
 
 	
 	 /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	Bundle bundle = getIntent().getExtras();
-    	this.cookie = bundle.getString("cookie");
+        if (MobiAdsMainActivity.cookie == null) {
+            MobiAdsMainActivity.cookie = bundle.getString("cookie");
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mobiadsmain);
     }    
@@ -118,7 +120,7 @@ public class MobiAdsMainActivity extends Activity {
     
     public void onClickStartService(View v) {
     	Intent intent = new Intent(MobiAdsMainActivity.this, MobiAdsService.class);
-    	intent.putExtra("cookie", this.cookie);
+        intent.putExtra("cookie", MobiAdsMainActivity.cookie);
     	this.startService(intent);
     }
 }
