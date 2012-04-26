@@ -11,7 +11,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -21,16 +24,17 @@ import android.view.SurfaceView;
  */
 public class DrawView extends SurfaceView {
 	private SurfaceHolder holder;
-    private final MainLoop mainLoop;
+    private MainLoop mainLoop;
     private static final int TILESIZE=32;
-    private static final int MAPWIDTH=10;
-    private static final int MAPHEIGHT=20;
-    private static final int GREY=8;
+    private static final int MAPWIDTH=10;  //Traditional tetris just 10 columns
+    private static final int MAPHEIGHT=24; //Traditional tetris just 20 rows
+    private static final int GREY=7;
     private Bitmap[] tileArray;
     private Tile[][] mapMatrix;
     private PrePiece prePiece;
     private CurrentPiece currentPiece;
-    private final ExecutorService exec;
+    private ExecutorService exec;
+    private GestureDetector gestureDetector;
 	
     private class MainLoop implements Runnable 
 	{
@@ -69,6 +73,23 @@ public class DrawView extends SurfaceView {
     public DrawView(final Context context) 
     {
     	super(context);
+    	this.initialize(context);
+    }
+
+    public DrawView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initialize(context);
+    }
+    
+    public DrawView(Context context, AttributeSet attrs, int defStyle) {
+    	super(context, attrs, defStyle);
+    	this.initialize(context);
+    }
+    
+    private void initialize(Context context) {
+    	gestureDetector = new GestureDetector(context, new GestureListener(this));
+
+    	
     	
     	//I have so much to learn...
     	//The OnKeyListener for a specific View will only be called if the key is pressed 
@@ -108,8 +129,6 @@ public class DrawView extends SurfaceView {
         		}
         });      
     }
-
-    
     private void resetTiles(int tilecount) {
     	tileArray = new Bitmap[tilecount];
     }
@@ -163,35 +182,35 @@ public class DrawView extends SurfaceView {
     
     private void drawMap(Canvas canvas)
     {
-    	canvas.drawColor(Color.WHITE);
+    	canvas.drawColor(Color.BLACK);
     	//We have to center the grid in the middle of our canvas.
     	//canvas.getWidth() <----------------- retrieve the screen width
     	//canvas.getWidth()/TILESIZE <-------- the tile size is 16, so we have to count on it when finding the center
     	//((canvas.getWidth()/TILESIZE))/2 <-- this is the middle of our screen, it depends on the tile size.
-        final int initX = ((((canvas.getWidth()/TILESIZE)/2) - MAPWIDTH) + 1);
+        final int initX = ((((canvas.getWidth()/TILESIZE)/2) - MAPWIDTH) + 2);
     	
     	
     	//draw the left bar (with scores, and next pieces
     	for(int x=MAPWIDTH; x< MAPWIDTH + GREY; x++)
     		for(int y=0; y< MAPHEIGHT; y++)
-                drawTile(canvas, Tile.GRAY.getColor(), x + initX, y + 10);
+                drawTile(canvas, Tile.GRAY.getColor(), x + initX, y + 2);
     	
     	//draw the pre-piece
     	for(int x=0; x < PrePiece.WIDTH; x++)
     		for(int y=0; y< PrePiece.HEIGHT; y++)
     			if(prePiece.size[x][y] != Tile.NOCOLOR)
-                    drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x + initX, prePiece.y + y + 10);
+                    drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x + initX, prePiece.y + y + 2);
     	
     	//draw grid
     	for(int x=0; x < MAPWIDTH; x++)
     		for(int y=0; y < MAPHEIGHT; y++)
-                drawTile(canvas, mapMatrix[x][y].getColor(), x + initX, y+10);
+                drawTile(canvas, mapMatrix[x][y].getColor(), x + initX, y + 2);
 
     	//draw the current block
     	for(int x=0; x < CurrentPiece.WIDTH; x++)
     		for(int y=0; y < CurrentPiece.HEIGHT; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-                    drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x + initX, currentPiece.y +y +10);
+                    drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x + initX, currentPiece.y +y + 2);
     }
     
     
@@ -371,4 +390,36 @@ public class DrawView extends SurfaceView {
     	
     	return false;
     }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+    	return gestureDetector.onTouchEvent(motionEvent);
+    }
+    
+
+    public void onLeftSwipe() {
+            //userMoveLeft();
+    }
+
+
+    public void onRightSwipe() {
+    	synchronized (this.getHolder())
+		{
+			Canvas c = this.getHolder().lockCanvas();
+			this.move(1, 0);
+			this.drawMap(c);
+			//view.onDraw(c);
+			this.getHolder().unlockCanvasAndPost(c);
+		}
+    }
+
+    public void onTapUp(boolean onGround) {
+            //userRotate();
+    }
+
+    public void onDownSwipe() {
+            //userFallDown();
+    }
+
+
 }

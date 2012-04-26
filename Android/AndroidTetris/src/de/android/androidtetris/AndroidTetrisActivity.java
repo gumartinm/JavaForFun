@@ -1,10 +1,8 @@
 package de.android.androidtetris;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.inputmethod.InputMethodManager;
 
 public class AndroidTetrisActivity extends Activity {
 	DrawView drawView;
@@ -16,9 +14,9 @@ public class AndroidTetrisActivity extends Activity {
         this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         
         setContentView(R.layout.main);
-        drawView = new DrawView(this);
+        //drawView = new DrawView(this);
         //drawView.setDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
-        this.setContentView(drawView);
-        drawView.requestFocus();
+        //this.setContentView(drawView);
+        //drawView.requestFocus();
     }
 }

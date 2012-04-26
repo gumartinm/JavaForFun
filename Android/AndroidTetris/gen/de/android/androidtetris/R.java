@@ -17,6 +17,7 @@ public final class R {
         public static final int yellowstar=0x7f020003;
     }
     public static final class id {
+        public static final int game_display=0x7f050002;
         public static final int level_display=0x7f050001;
         public static final int score_display=0x7f050000;
     }
