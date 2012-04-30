@@ -34,6 +34,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	private FileChannel fileChannelLock;
 	private DataInputStream device;
 	private boolean isClaimed;
+	private boolean isEnabled;
 	//Usando volatile porque cumplo las condiciones de uso. Ver Java Concurrency in Practice PAG????
 	private volatile boolean autoDisable;
 	private JposEventListener eventListener;
@@ -61,13 +62,14 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	@Override
 	public void claim(int time) throws JposException {
 		FileLock lock = null;
+		FileChannel fileChannelLock = null;
 		
 		if (this.isClaimed) {
 			return;
 		}
 
 		try {
-			this.fileChannelLock = new FileOutputStream(javaposKeyBoardLock).getChannel();
+			fileChannelLock = new FileOutputStream(javaposKeyBoardLock).getChannel();
 		} catch (FileNotFoundException e) {
 			throw new JposException(JposConst.JPOS_E_NOTCLAIMED, "File not found.",e);
 		}
@@ -75,12 +77,24 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 		if (time == -1) {
 			try {
 				//This method is not aware interrupt. :(
-				lock = this.fileChannelLock.lock();
+				lock = fileChannelLock.lock();
 			//I do not like catching RunTimeExceptions but I have no choice...
 			} catch (OverlappingFileLockException e) {
 				logger.warn("Concurrent access in claim method not supported without synchronization or you have" +
 							"more than one instances of the KeyBoardDeviceLinux class", e);
+				try {
+					fileChannelLock.close();
+				} catch (IOException e1) {
+					//The first exception is more important.
+					logger.warn("Error while closing the file lock", e1);
+				}
 			} catch (IOException e) {
+				try {
+					fileChannelLock.close();
+				} catch (IOException e1) {
+					//The first exception is more important.
+					logger.warn("Error while closing the file lock", e1);
+				}
 				throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
 			}
 		}
@@ -89,34 +103,59 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 			//Espera activa. ¿Alguna idea de cómo hacer esto sin espera activa?  :(
 			while((System.nanoTime() <= lastTime) && (lock == null)) {
 				try {
-					if ((lock = this.fileChannelLock.tryLock()) != null) {
+					if ((lock = fileChannelLock.tryLock()) != null) {
 						break;
 					}
+					this.wait(250);
 				//I do not like catching RunTimeExceptions but I have no choice...
 				} catch (OverlappingFileLockException e) {
 					logger.warn("Concurrent access in claim method not supported without synchronization or you have" +
 								"more than one instances of the KeyBoardDeviceLinux class", e);
+					try {
+						fileChannelLock.close();
+					} catch (IOException e1) {
+						//The first exception is more important.
+						logger.warn("Error while closing the file lock", e1);
+					}
 				} catch (IOException e) {
-					throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
-				}
-				try {
-                    this.wait(250);
+					try {
+						fileChannelLock.close();
+					} catch (IOException e1) {
+						//The first exception is more important.
+						logger.warn("Error while closing the file lock", e1);
+                    }
+                    throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
                 } catch(InterruptedException e) {
-                	//restore interrupt status.
+                    try {
+                        fileChannelLock.close();
+                    } catch (IOException e1) {
+                        //The first exception is more important.
+                        logger.warn("Error while closing the file lock", e1);
+                    }
+                    //restore interrupt status.
                 	Thread.currentThread().interrupt();
-                }	
+                    throw new JposException(JposConst.JPOSERR, "Interrupt exception detected.", e);
+                }
 			} 
 			
 			if (lock == null) {
-				throw new JposException(JposConst.JPOS_E_TIMEOUT, "Timeout while trying to claim device.", null);
+				try {
+					fileChannelLock.close();
+				} catch (IOException e) {
+					//The timeout exception is more important.
+					logger.warn("Error while closing the file lock", e);
+				}
+				throw new JposException(JposConst.JPOS_E_TIMEOUT, "Timeout while trying to claim device.");
 			}
 		}
 		
 		if (lock != null) {
-			//Just when concurrent access without synchronization (this method is not tread-safe) you could see
-			//null value. claim does not support concurrent access in itself anyway I take counter measures in case
+			//Just when concurrent access without synchronization (this method is not tread-safe) or having more
+			//than one instances of this class you could see null value. 
+			//claim does not support concurrent access in itself. Anyway I take counter measures in case
 			//of someone forgets it.
 			this.lock = lock;
+			this.fileChannelLock = fileChannelLock;
 			this.isClaimed = true;
 		}
 	}
@@ -167,6 +206,9 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	 */
 	@Override
 	public void enable() throws JposException {
+		if (this.isEnabled) {
+			return;
+		}
 		if (this.deviceName == null) {
 			throw new JposException(JposConst.JPOSERR, "There is not an assigned device", 
 										new NullPointerException("The deviceName field has null value"));
@@ -194,10 +236,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 		//dispositivo del SO se borro o cualquier otra cosa? Aqui veria el hilo muerto pero en realidad el
 		//dispositivo no fue deshabilitado si no que el hilo murio de forma inesperada Y NO SE CERRO this.device!!!... 
 		//Si soluciono este ultimo escollo ¿sí me podre basar en si el hilo está o no muerto?
-		if (this.thread.isAlive()) {
-			throw new JposException(JposConst.JPOSERR, "The device was not disabled.", null);
-		}
-		else {
+		if (!this.thread.isAlive()) {
 			try {
 				this.device = new DataInputStream(Channels.newInputStream(new FileInputStream(this.deviceName).getChannel()));
 			} catch (FileNotFoundException e) {
@@ -216,29 +255,33 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 			this.thread = new Thread (task, "KeyBoardDeviceLinux-Thread");
 			this.thread.setUncaughtExceptionHandler(new DriverHWUncaughtExceptionHandler());
 			this.thread.start();
+			this.isEnabled = true;
 		}
 	}
 
 	@Override
 	public void disable() throws JposException {
+
+		if (!this.isEnabled) {
+			return;
+		}
+
 		//This method releases the Java NIO channel. It is thread safety. :) see: Interruptible
 		this.thread.interrupt();
 		try {
 			this.thread.join();
 		} catch (InterruptedException e) {
 			//restore interrupt status.
-			//QUE PASA SIN LLAMAN A INTERRUPT EN JOIN Y EL HILO NUNCA MURIERA
-			//TAL Y COMO ESTA HECHO EL HILO NO TARDARA MUCHO EN MORIR (espero) ASI QUE 
-			//AUNQUE ALGO ME INTERRUMPA NO DEBERIA PASAR GRAN COSA, LO UNICO QUE SI OTRO HILO
-			//JUSTO AQUI INTENTA HACER ENABLE PUEDE QUE VEA EL HILO TODAVIA VIVO AUNQUE YA SE HABIA
-			//PASADO POR EL DISABLE, ¿¿¿PERO TAN POCO ES UN GRAN PROBLEMA ESO??? LUEGO PARA MÍ QUE ¿ESTO ESTA OK?
-			Thread.currentThread().interrupt();	
+			Thread.currentThread().interrupt();
+			throw new JposException(JposConst.JPOSERR, "Interrupt exception detected.", e);
 		}
+
+		this.isEnabled = false;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return this.thread.isAlive();
+		return this.isEnabled;
 	}
 
 	@Override
@@ -349,7 +392,12 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 		        value = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
 		        
 		        if (type == KeyBoardDeviceLinux.EV_KEY) {
-                    eventListener.inputAvailable(code);
+                    //Problema aqui con eventListener y que vea != null y luego justo dentro del if
+                    //otro hilo me lo quite...
+                    if (eventListener != null) {
+                        eventListener.inputAvailable(code);
+                    }
+
 		        	logger.debug("Captured key " + "type: " + type + " code: " + code + " value: " + value);
                     if (autoDisable) {
                         break;
@@ -363,8 +411,9 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 			//logger.debug or logger.error if it was an error I am not going to log it... :/
 			logger.debug("Finished KeyBoardDeviceLinux Thread", e);
 		} finally {
-			//This method releases the Java NIO channels. It is thread safety :) see: Interruptible 
+			//This method releases the Java NIO channels (this.device). It is thread safety :) see: Interruptible
 			this.thread.interrupt();
+			this.device = null;   //¿Realmente esto es necesario? (no lo creo  :/ )
 				//SI EL HILO MUERE ¿ESTOY DEJANDO EL ESTADO DEL DISPOSITIVO LOGICO JAVAPOS
 				//EN UN MODO CONSISTENTE?
 				//liberar el LOCK SI EL HILO MUERE DE FORMA INESPERADA???? NO, JavaPOS no dice nada.

@@ -1,7 +1,11 @@
 package de.javapos.example.queue;
 
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import jpos.events.DataEvent;
+import jpos.events.ErrorEvent;
 import jpos.events.JposEvent;
 
 public class JposEventQueueImpl implements JposEventQueue {
@@ -37,7 +41,13 @@ public class JposEventQueueImpl implements JposEventQueue {
 
 	@Override
 	public void checkEvents() {
-		// TODO Auto-generated method stub
+		//WIP sorry... :/
+		Iterator<JposEvent> iterator = this.linkedBlockingQueue.iterator();
+		while (iterator.hasNext()) {
+			if (!(iterator.next() instanceof DataEvent) || !(iterator.next() instanceof ErrorEvent)) {
+
+			}
+		}
 	}
 
 	@Override
@@ -52,7 +62,7 @@ public class JposEventQueueImpl implements JposEventQueue {
 
 	@Override
 	public JposEvent peekElement(int paramInt) {
-		 return null;
+		 return this.linkedBlockingQueue.peek();
 	}
 
 	@Override

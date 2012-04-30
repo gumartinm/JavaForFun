@@ -1,5 +1,6 @@
 package de.javapos.example;
  
+import de.javapos.example.annotation.ThreadSafe;
 import de.javapos.example.hardware.BaseKeyBoardDriver;
 import de.javapos.example.queue.JposEventListener;
 import de.javapos.example.queue.JposEventQueue;

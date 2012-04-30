@@ -10,14 +10,14 @@ import jpos.services.EventCallbacks;
 import de.javapos.example.queue.JposEventQueue;
 
 public class ThreadFireEvent extends Thread {
+	private boolean isDataEventEnabled = true;
 	private final JposEventQueue jposEventQueue;
-	private boolean isDataEventEnabled;
 	private final EventCallbacks eventCallbacks;
+	private final ThreadGate freezeEventsGate = new ThreadGate();
 	
 	public ThreadFireEvent (JposEventQueue jposEventQueue, 
-				boolean isDataEventEnabled, EventCallbacks  eventCallbacks) {
+				      boolean isDataEventEnabled, EventCallbacks  eventCallbacks) {
 		this.jposEventQueue = jposEventQueue;
-		this.isDataEventEnabled = isDataEventEnabled;
 		this.eventCallbacks = eventCallbacks;
 	}
 	
@@ -26,14 +26,24 @@ public class ThreadFireEvent extends Thread {
 		
 		while (true) {
 			if (this.jposEventQueue.getNumberOfEvents() != 0) {
+
+				try {
+					this.freezeEventsGate.await();
+				} catch (InterruptedException e1) {
+					//We are implementing the interruption policy in this class
+					//for this thread. So, this is permitted.
+					//End of thread.
+					break;
+				}
+
 				//PROBLEMA: si DataEventEnabled es false y lo unico que hay en la cola son eventos de datos
 				//me meto en un bucle que va a dejar la CPU frita... :/
 				if (this.isDataEventEnabled) {
 					try {
 						jposEvent = this.jposEventQueue.getEvent();
 					} catch (InterruptedException e) {
-						//restore interrupt status.
-						Thread.currentThread().interrupt();
+						//We are implementing the interruption policy in this class
+						//for this thread. So, this is permitted.
 						//End of thread.
 						break;
 					}
@@ -43,7 +53,6 @@ public class ThreadFireEvent extends Thread {
 				}
 			}
 			
-			//TODO: Bloquearme hasta que freezeEvent sea false
 			
 			if (jposEvent instanceof DataEvent) {
 				this.eventCallbacks.fireDataEvent((DataEvent)jposEvent);
@@ -63,5 +72,18 @@ public class ThreadFireEvent extends Thread {
 				this.eventCallbacks.fireOutputCompleteEvent((OutputCompleteEvent)jposEvent);
 			}
 		}
+	}
+
+	public void setFreezeEvents (boolean freezeEvents) {
+		if (freezeEvents) {
+			this.freezeEventsGate.close();
+		}
+		else {
+			this.freezeEventsGate.open();
+		}
+	}
+
+	public void setDataEventEnabled (boolean dataEventEnabled) {
+		this.isDataEventEnabled = dataEventEnabled;
 	}
 }
