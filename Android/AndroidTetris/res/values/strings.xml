@@ -2,4 +2,8 @@
 <resources>
     <string name="score">Score: </string>
     <string name="level">Level: </string>
+    <string name="right">Right </string>
+    <string name="left">Left </string>
+    <string name="down">Down </string>
+    <string name="rotate">Rotate </string>
 </resources>

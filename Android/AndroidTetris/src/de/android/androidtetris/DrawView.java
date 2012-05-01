@@ -3,6 +3,7 @@
  */
 package de.android.androidtetris;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,9 +18,10 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 /**
- * @author gusarapo
+ * @author
  *
  */
 public class DrawView extends SurfaceView {
@@ -35,6 +37,11 @@ public class DrawView extends SurfaceView {
     private CurrentPiece currentPiece;
     private ExecutorService exec;
     private GestureDetector gestureDetector;
+    private final Context context;
+    private int score;
+    private int level;
+    private int timeout = 1000;
+    private final DecimalFormat sixDigits = new DecimalFormat("0000");
 	
     private class MainLoop implements Runnable 
 	{
@@ -55,7 +62,7 @@ public class DrawView extends SurfaceView {
     			} catch (InterruptedException e) {
 					// This code implements the thread's interruption policy. It may swallow the
     				// interruption request. Java Concurrency in Practice §7.1.3
-					// TODO: I should finish the process in this case.
+					break;
 				}
 	    		synchronized (view.getHolder())
 	    		{
@@ -73,16 +80,19 @@ public class DrawView extends SurfaceView {
     public DrawView(final Context context) 
     {
     	super(context);
+    	this.context = context;
     	this.initialize(context);
     }
 
     public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         initialize(context);
     }
     
     public DrawView(Context context, AttributeSet attrs, int defStyle) {
     	super(context, attrs, defStyle);
+    	this.context = context;
     	this.initialize(context);
     }
     
@@ -127,7 +137,7 @@ public class DrawView extends SurfaceView {
         		public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height) {
         	
         		}
-        });      
+        });
     }
     private void resetTiles(int tilecount) {
     	tileArray = new Bitmap[tilecount];
@@ -193,24 +203,24 @@ public class DrawView extends SurfaceView {
     	//draw the left bar (with scores, and next pieces
     	for(int x=MAPWIDTH; x< MAPWIDTH + GREY; x++)
     		for(int y=0; y< MAPHEIGHT; y++)
-                drawTile(canvas, Tile.GRAY.getColor(), x + initX, y + 2);
+                drawTile(canvas, Tile.GRAY.getColor(), x + initX, y + 1);
     	
     	//draw the pre-piece
     	for(int x=0; x < PrePiece.WIDTH; x++)
     		for(int y=0; y< PrePiece.HEIGHT; y++)
     			if(prePiece.size[x][y] != Tile.NOCOLOR)
-                    drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x + initX, prePiece.y + y + 2);
+                    drawTile(canvas, prePiece.size[x][y].getColor(), prePiece.x + x + initX, prePiece.y + y + 1);
     	
     	//draw grid
     	for(int x=0; x < MAPWIDTH; x++)
     		for(int y=0; y < MAPHEIGHT; y++)
-                drawTile(canvas, mapMatrix[x][y].getColor(), x + initX, y + 2);
+                drawTile(canvas, mapMatrix[x][y].getColor(), x + initX, y + 1);
 
     	//draw the current block
     	for(int x=0; x < CurrentPiece.WIDTH; x++)
     		for(int y=0; y < CurrentPiece.HEIGHT; y++)
     			if(currentPiece.size[x][y] != Tile.NOCOLOR)
-                    drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x + initX, currentPiece.y +y + 2);
+                    drawTile(canvas, currentPiece.size[x][y].getColor(), currentPiece.x + x + initX, currentPiece.y +y + 1);
     }
     
     
@@ -239,8 +249,26 @@ public class DrawView extends SurfaceView {
     		{
     			if (currentPiece.y == -1)
                 {
-                    //GAMEOVER
-    				startMap();	
+    				//GAME OVER
+    				startMap();
+    				this.score = 0;
+    				((AndroidTetrisActivity)this.context).runOnUiThread(new Runnable() {
+						public void run() {
+			            	((TextView)((AndroidTetrisActivity)DrawView.this.context).
+			            					findViewById(R.id.score_display)).
+			            							setText(getResources().getString(R.string.score) + 
+			            											sixDigits.format(score));
+			            }
+					});
+    				this.level = 0;
+    				((AndroidTetrisActivity)this.context).runOnUiThread(new Runnable() {
+						public void run() {
+			            	((TextView)((AndroidTetrisActivity)DrawView.this.context).
+			            					findViewById(R.id.level_display)).
+			            							setText(getResources().getString(R.string.level) + 
+			            											sixDigits.format(level));
+			            }
+					});
                 }
                 else
                 {
@@ -261,6 +289,27 @@ public class DrawView extends SurfaceView {
 
     					if(filled)
     					{
+    						this.score++;
+    						((AndroidTetrisActivity)this.context).runOnUiThread(new Runnable() {
+    							public void run() {
+    				            	((TextView)((AndroidTetrisActivity)DrawView.this.context).
+    				            					findViewById(R.id.score_display)).
+    				            							setText(getResources().getString(R.string.score) + 
+    				            											sixDigits.format(score));
+    				            }
+    						});
+    						if ((this.score % 10) == 0) {
+    							this.level++;
+    							((AndroidTetrisActivity)this.context).runOnUiThread(new Runnable() {
+        							public void run() {
+        				            	((TextView)((AndroidTetrisActivity)DrawView.this.context).
+        				            					findViewById(R.id.level_display)).
+        				            							setText(getResources().getString(R.string.level) + 
+        				            											sixDigits.format(level));
+        				            }
+        						});
+    							this.timeout = this.timeout + this.level;
+    						}
     						removeRow(j);
     					}
     				}
@@ -398,7 +447,14 @@ public class DrawView extends SurfaceView {
     
 
     public void onLeftSwipe() {
-            //userMoveLeft();
+    	synchronized (this.getHolder())
+		{
+			Canvas c = this.getHolder().lockCanvas();
+			this.move(-1, 0);
+			this.drawMap(c);
+			//view.onDraw(c);
+			this.getHolder().unlockCanvasAndPost(c);
+		}
     }
 
 
@@ -414,12 +470,24 @@ public class DrawView extends SurfaceView {
     }
 
     public void onTapUp(boolean onGround) {
-            //userRotate();
+    	synchronized (this.getHolder())
+		{
+			Canvas c = this.getHolder().lockCanvas();
+			this.rotateBlock();
+			this.drawMap(c);
+			//view.onDraw(c);
+			this.getHolder().unlockCanvasAndPost(c);
+		}
     }
 
     public void onDownSwipe() {
-            //userFallDown();
+    	synchronized (this.getHolder())
+		{
+			Canvas c = this.getHolder().lockCanvas();
+			this.move(0,1);
+			this.drawMap(c);
+			//view.onDraw(c);
+			this.getHolder().unlockCanvasAndPost(c);
+		}
     }
-
-
 }
