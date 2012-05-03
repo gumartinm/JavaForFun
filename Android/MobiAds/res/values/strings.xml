@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">MobiAdsActivity!</string>
+    <string name="hello">Android MobiAds!</string>
     <string name="app_name">MobiAds</string>
     <string name="app_description">Receive notifications about offers and discounts.</string>
     <string name="alert_dialog_cancel">Do you really want to close the application?</string>
@@ -14,6 +14,7 @@
     <string name="button_messageunbind">Unbind Service</string>
     <string name="button_messagestopservice">Stop Application</string>
     <string name="button_messagestartservice">Start Application</string>
+    <string name="button_messagelistlocalads">List Your Ads</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="remote_service_started">MobiAds Service Started</string>
@@ -23,5 +24,5 @@
     <string name="url_web">users.mobiads.gumartinm.name</string>
     <string name="user_agent_web_service">MobieAds/1.0</string>
     <string name="encoded_web_service">UTF-8</string>
-
+    <string name="desc">description</string>
 </resources>

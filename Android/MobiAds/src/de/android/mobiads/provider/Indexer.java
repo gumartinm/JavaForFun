@@ -36,6 +36,18 @@ public final class Indexer {
         public static final String COLUMN_NAME_ID_AD = "idad";
         
         /**
+         * Column name for the ad's text.
+         * <P>Type: TEXT</P>
+         */
+        public static final String COLUMN_NAME_TEXT = "text";
+        
+        /**
+         * Column name for the ad's URL.
+         * <P>Type: TEXT</P>
+         */
+        public static final String COLUMN_NAME_URL = "url";
+        
+        /**
          * The default sort order for this table
          */
         public static final String DEFAULT_SORT_ORDER = Index._ID;

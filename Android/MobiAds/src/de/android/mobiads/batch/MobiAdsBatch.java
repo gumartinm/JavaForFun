@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -55,8 +56,8 @@ public class MobiAdsBatch {
     	
     	final String latitude = Double.toString(location.getLatitude());
     	final String longitude = Double.toString(location.getLongitude());
-    	final String latitudeReplace = latitude.replace(".", ",");
-    	final String longitudeReplace = longitude.replace(".", ",");
+    	final String latitudeReplace = /*latitude.replace(".", ",")*/ "40,5129";
+    	final String longitudeReplace = /*longitude.replace(".", ",")*/"-3,3492";
     	final String URLAuth = "http://users.mobiads.gumartinm.name/userfront.php/api/" + latitudeReplace + "/" + longitudeReplace + "/gpsads.json";
     	URL url = null;
     	
@@ -138,7 +139,7 @@ public class MobiAdsBatch {
 									throw (IOException) e1;
 								}
 								//throwing Throwable. At least the original exception is not lost :/
-								throw e1;
+								throw new UndeclaredThrowableException(e1);
 							}
 						}
 						
@@ -246,7 +247,7 @@ public class MobiAdsBatch {
 							entity.consumeContent();
 						}
 					}
-				} catch (Throwable e) {
+				} catch (IOException e) {
 					// Log this exception. The original exception (if there is one) is more
 					// important and will be thrown to the caller. See: {@link AbstractHttpClient}
 					Log.w("Error consuming content after an exception.", e);

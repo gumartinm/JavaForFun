@@ -25,11 +25,12 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
      */
     @Override
 	public void onCreate(SQLiteDatabase db) {
-    	Log.i("IndexerOpenHelper", "onCreate");
 		db.execSQL("CREATE TABLE " + Indexer.Index.TABLE_NAME + " ("
-				+ Indexer.Index._ID + "  INTEGER PRIMARY KEY, "
-				+ Indexer.Index.COLUMN_NAME_ID_AD + " INTEGER" + " UNIQUE" + " NOT NULL,"
-				+ Indexer.Index.COLUMN_NAME_PATH + " TEXT(15)" + " UNIQUE" + " NOT NULL"
+				+ Indexer.Index._ID + " INTEGER PRIMARY KEY, "
+				+ Indexer.Index.COLUMN_NAME_ID_AD + " INTEGER" + " UNIQUE" + " NOT NULL, "
+				+ Indexer.Index.COLUMN_NAME_PATH + " TEXT(15)" + " UNIQUE" + " NOT NULL, "
+				+ Indexer.Index.COLUMN_NAME_URL + " TEXT(2000)" + " NOT NULL, "
+				+ Indexer.Index.COLUMN_NAME_TEXT + " TEXT(255)" + " NOT NULL"
 				+ ");");
 	}
 

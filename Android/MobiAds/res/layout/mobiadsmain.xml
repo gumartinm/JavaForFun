@@ -15,46 +15,58 @@
     	android:layout_height="30dp">
     </FrameLayout>
     <Button
-		android:id="@+id/login_button"
+		android:id="@+id/button_bind"
 		android:onClick="onClickBind"
 	    android:layout_height="wrap_content" 
 	    android:text="@string/button_messagebind" 
 	    android:layout_width="match_parent" 
 	    android:layout_gravity="center"/>
     <FrameLayout 
-    	android:id="@+id/frameLayout1" 
+    	android:id="@+id/frameLayout2" 
     	android:layout_width="match_parent" 
     	android:layout_height="30dp">
     </FrameLayout>
     <Button
-		android:id="@+id/login_button"
+		android:id="@+id/button_unbind"
 		android:onClick="onClickUnBind"
 	    android:layout_height="wrap_content" 
 	    android:text="@string/button_messageunbind" 
 	    android:layout_width="match_parent" 
 	    android:layout_gravity="center"/>
     <FrameLayout 
-    	android:id="@+id/frameLayout1" 
+    	android:id="@+id/frameLayout3" 
     	android:layout_width="match_parent" 
     	android:layout_height="30dp">
     </FrameLayout>
     <Button
-		android:id="@+id/login_button"
+		android:id="@+id/button_stopservice"
 		android:onClick="onClickStopService"
 	    android:layout_height="wrap_content" 
 	    android:text="@string/button_messagestopservice" 
 	    android:layout_width="match_parent" 
 	    android:layout_gravity="center"/>
     <FrameLayout 
-    	android:id="@+id/frameLayout1" 
+    	android:id="@+id/frameLayout4" 
     	android:layout_width="match_parent" 
     	android:layout_height="30dp">
     </FrameLayout>
     <Button
-		android:id="@+id/login_button"
+		android:id="@+id/button_startservice"
 		android:onClick="onClickStartService"
 	    android:layout_height="wrap_content" 
 	    android:text="@string/button_messagestartservice" 
 	    android:layout_width="match_parent" 
-	    android:layout_gravity="center"/>  
+	    android:layout_gravity="center"/>
+    <FrameLayout 
+        android:id="@+id/frameLayout5" 
+        android:layout_width="match_parent" 
+        android:layout_height="30dp">
+    </FrameLayout>
+    <Button
+        android:id="@+id/button_lislocalads"
+        android:onClick="onClickListLocalAds"
+        android:layout_height="wrap_content" 
+        android:text="@string/button_messagelistlocalads" 
+        android:layout_width="match_parent" 
+        android:layout_gravity="center"/>
 </LinearLayout>

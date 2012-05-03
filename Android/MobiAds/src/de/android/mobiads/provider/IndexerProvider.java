@@ -72,6 +72,10 @@ public class IndexerProvider extends ContentProvider {
 
         // Maps "path" to "path"
         sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_PATH, Indexer.Index.COLUMN_NAME_PATH);
+        
+        sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_TEXT, Indexer.Index.COLUMN_NAME_TEXT);
+        
+        sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_URL, Indexer.Index.COLUMN_NAME_URL);
     }
  
     
@@ -84,8 +88,6 @@ public class IndexerProvider extends ContentProvider {
 	 */
 	@Override
 	public boolean onCreate() {
-		Log.i("IndexerProvider", "onCreate");
-		
       // Creates a new helper object. Note that the database itself isn't opened until
       // something tries to access it, and it's only created if it doesn't already exist.
       mOpenHelper = new IndexerOpenHelper(getContext());
@@ -223,6 +225,8 @@ public class IndexerProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		
 		// Performs the insert and returns the ID of the new index.
+		values.put(Indexer.Index.COLUMN_NAME_TEXT, "Texto de prueba");
+		values.put(Indexer.Index.COLUMN_NAME_URL, "http://gumartinm.name");
         long rowId = db.insert(
         	Indexer.Index.TABLE_NAME, // The table to insert into.
             null,  					  // A hack, SQLite sets this column value to null if values is empty.

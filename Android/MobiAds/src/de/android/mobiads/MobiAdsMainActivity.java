@@ -35,7 +35,28 @@ public class MobiAdsMainActivity extends Activity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mobiadsmain);
-    }    
+    }
+    
+    @Override
+    public void onPause() {
+    	super.onPause();
+    }
+    
+    @Override
+    public void onStop() {
+    	super.onStop();
+    }
+    
+    @Override
+    public void onDestroy() {
+    	this.stopService(new Intent(MobiAdsMainActivity.this, MobiAdsService.class));
+    	super.onDestroy();
+    }
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+    }
     
     /**
      * Handler of incoming messages from service.
@@ -122,5 +143,11 @@ public class MobiAdsMainActivity extends Activity {
     	Intent intent = new Intent(MobiAdsMainActivity.this, MobiAdsService.class);
         intent.putExtra("cookie", MobiAdsMainActivity.cookie);
     	this.startService(intent);
+    }
+    
+    public void onClickListLocalAds(View v) {
+    	Intent intent = new Intent("android.intent.action.MOBIADSLIST").
+				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.list.MobiAdsListActivity"));
+		this.startActivity(intent);
     }
 }
