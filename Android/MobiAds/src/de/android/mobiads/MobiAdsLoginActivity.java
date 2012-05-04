@@ -65,12 +65,15 @@ public class MobiAdsLoginActivity extends Activity {
 	        httpResponse = httpClient.execute(httpPost);
 		} catch (UnsupportedEncodingException e) {
 			Log.e(TAG, "Error while encoding POST parameters.", e);
+			return;
 		} catch (ClientProtocolException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
  			createErrorDialog(R.string.error_dialog_connection_error);
+ 			return;
  		} catch (IOException e) {
  			Log.e(TAG, "Error while executing HTTP client connection.", e);
  			createErrorDialog(R.string.error_dialog_connection_error);
+ 			return;
  		} finally {
  			httpClient.getConnectionManager().shutdown();
  		}

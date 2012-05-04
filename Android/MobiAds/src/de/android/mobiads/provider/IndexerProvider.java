@@ -12,7 +12,6 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.database.sqlite.SQLiteReadOnlyDatabaseException;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 
 /**
