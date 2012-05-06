@@ -15,11 +15,20 @@ public interface BaseKeyBoardDriver {
 	public boolean isOpened();
 
 	public void close() throws JposException;
-    
-	public void claim() throws JposException;
 	
+	/**
+	 * Claim device.
+	 *
+	 * @param  paramInt -1 wait forever
+	 * @throws JposException in case of any error while trying to claim the device.
+	 */
 	public void claim(int paramInt) throws JposException;
 
+	/**
+	 * Release device.
+	 *
+	 * @throws JposException in case of any error while trying to release the device.
+	 */
 	public void release() throws JposException;
 	
 	public boolean isClaimed();
