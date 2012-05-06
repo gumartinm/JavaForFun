@@ -102,7 +102,7 @@ public class MobiAdsService extends Service {
         
         notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         // Display a notification about us starting.
-        showNotification();
+        showNotification(0);
         
         return super.onStartCommand(intent, flags, startId);
     }
@@ -132,12 +132,7 @@ public class MobiAdsService extends Service {
 	/**
      * Show a notification while this service is running.
      */
-    private void showNotification() {
-        // In this sample, we'll use the same text for the ticker and the expanded notification
-        CharSequence text = getText(R.string.remote_service_started);
-
-        // Set the icon, scrolling text and timestamp
-        Notification notification = new Notification(R.drawable.ic_launcher, text, System.currentTimeMillis());
+    public void showNotification(int level) {        
 
         Intent intent =  new Intent(this, MobiAdsMainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -145,17 +140,16 @@ public class MobiAdsService extends Service {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         
 
-        Context context = getApplicationContext();
-
-        //notification.contentIntent = contentIntent;
-        // Set the info for the views that show in the notification panel.
-        //notification.defaults |= Notification.DEFAULT_VIBRATE;
-        //notification.ledARGB = 0xff00ff00;
-        //notification.ledOnMS = 300;
-        //notification.ledOffMS = 1000;
-        //notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+        // Set the icon, scrolling text and timestamp
+        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext()).
+        											setSmallIcon(R.drawable.wheelnotification, level).
+        												setTicker(getText(R.string.remote_service_started)).
+        													setWhen(System.currentTimeMillis()).
+        														setContentText(getText(R.string.remote_service_started)).
+        															setContentTitle(getText(R.string.remote_service_label)).
+        																setContentIntent(contentIntent);
+        Notification notification = notificationBuilder.getNotification();
         notification.flags |= Notification.FLAG_NO_CLEAR;
-        notification.setLatestEventInfo(context, getText(R.string.remote_service_label), text, contentIntent);
 
         // Send the notification.
         // We use a string id because it is a unique number.  We use it later to cancel.

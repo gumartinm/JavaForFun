@@ -6,9 +6,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.android.mobiads.MobiAdsMainActivity;
 import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -45,8 +50,8 @@ public class MobiAdsListActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Uri uri = Uri.parse(newsEntryAdapter.getItem(position).getTitle());
-				startActivity( new Intent( Intent.ACTION_VIEW, uri ) );
-				}
+				startActivity(new Intent(Intent.ACTION_VIEW, uri));
+			}
         });
         
     }

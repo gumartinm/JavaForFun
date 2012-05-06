@@ -31,6 +31,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
+import de.android.mobiads.MobiAdsService;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsBatch {
@@ -115,6 +116,7 @@ public class MobiAdsBatch {
 						if ((uriInsert = updatedIndexer(objects)) != null) {
 							try {
 								downloadAds((String)objects.get("domain"), (String)objects.get("link"), (String) objects.get("id"));
+								((MobiAdsService)MobiAdsBatch.this.context).showNotification(1);
 							} catch (Throwable e1) {
 								//In case of any error, remove the index database and the file
 								//or chunk successfully stored before the error.

@@ -1,6 +1,9 @@
 package de.android.mobiads;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +17,8 @@ import android.os.RemoteException;
 import android.view.View;
 
 public class MobiAdsMainActivity extends Activity {
+	/** For showing and hiding our notification. */
+    private NotificationManager notificationManager;
     /** Messenger for communicating with service. */
     Messenger mService = null;
     /** Flag indicating whether we have called bind on the service. */
@@ -22,7 +27,8 @@ public class MobiAdsMainActivity extends Activity {
      * Target we publish for clients to send messages to IncomingHandler.
      */
     final Messenger mMessenger = new Messenger(new IncomingHandler());
-    
+    /**TODO: I should use message with service to find out if the service is running instead of this booleanf field.*/
+    private boolean isEnabledService;
     private static String cookie;
 
 	
@@ -55,6 +61,9 @@ public class MobiAdsMainActivity extends Activity {
     
     @Override
     public void onResume() {
+    	if (this.isEnabledService) {
+    		this.showNotification(0);
+    	}
     	super.onResume();
     }
     
@@ -136,12 +145,15 @@ public class MobiAdsMainActivity extends Activity {
     
     public void onClickStopService(View v) {
     	this.stopService(new Intent(MobiAdsMainActivity.this, MobiAdsService.class));
+    	this.isEnabledService = false;
     }
     
     
     public void onClickStartService(View v) {
     	Intent intent = new Intent(MobiAdsMainActivity.this, MobiAdsService.class);
         intent.putExtra("cookie", MobiAdsMainActivity.cookie);
+        this.notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        this.isEnabledService = true;
     	this.startService(intent);
     }
     
@@ -149,5 +161,32 @@ public class MobiAdsMainActivity extends Activity {
     	Intent intent = new Intent("android.intent.action.MOBIADSLIST").
 				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.list.MobiAdsListActivity"));
 		this.startActivity(intent);
+    }
+    
+    /**
+     * Show a notification while this service is running.
+     */
+    public void showNotification(int level) {        
+
+        Intent intent =  new Intent(this, MobiAdsMainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        // The PendingIntent to launch our activity if the user selects this notification
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        
+
+        // Set the icon, scrolling text and timestamp
+        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext()).
+        											setSmallIcon(R.drawable.wheelnotification, level).
+        												setTicker(getText(R.string.remote_service_started)).
+        													setWhen(System.currentTimeMillis()).
+        														setContentText(getText(R.string.remote_service_started)).
+        															setContentTitle(getText(R.string.remote_service_label)).
+        																setContentIntent(contentIntent);
+        Notification notification = notificationBuilder.getNotification();
+        notification.flags |= Notification.FLAG_NO_CLEAR;
+
+        // Send the notification.
+        // We use a string id because it is a unique number.  We use it later to cancel.
+        notificationManager.notify(R.string.remote_service_started, notification);
     }
 }
