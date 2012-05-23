@@ -115,7 +115,7 @@ public class MobiAdsBatch {
 						JSONObject objects = finalResult.getJSONObject(i);
 						if ((uriInsert = updatedIndexer(objects)) != null) {
 							try {
-								downloadAds((String)objects.get("domain"), (String)objects.get("link"), (String) objects.get("id"));
+								downloadAds((String)objects.get("image"), (String) objects.get("id"));
 								((MobiAdsService)MobiAdsBatch.this.context).showNotification(1);
 							} catch (Throwable e1) {
 								//In case of any error, remove the index database and the file
@@ -204,10 +204,10 @@ public class MobiAdsBatch {
 			return builder; 
 		}
 		
-		public void downloadAds(String domain, String link, String path)
+		public void downloadAds(String image, String path)
 				throws MalformedURLException, URISyntaxException, FileNotFoundException, IOException {
 			final HttpGet httpGet = new HttpGet();
-			final String URLAd = "http://" + domain + "/" + link;
+			final String URLAd = image;
 			HttpResponse httpResponse = null;
 			URL url = null;
 			OutputStream outputStream = null;
@@ -272,6 +272,8 @@ public class MobiAdsBatch {
 						ContentValues values = new ContentValues();
 						values.put(Indexer.Index.COLUMN_NAME_ID_AD, new Integer((String) objects.get("id")));
 						values.put(Indexer.Index.COLUMN_NAME_PATH, (String) objects.get("id"));
+						values.put(Indexer.Index.COLUMN_NAME_TEXT, (String) objects.get("text"));
+						values.put(Indexer.Index.COLUMN_NAME_URL, (String) objects.get("link"));
 						//This method may throw SQLiteException (as a RunTimeException). So, without a try/catch block
 						//there could be a leaked cursor...
 						//TODO: review code looking for more cases like this one...

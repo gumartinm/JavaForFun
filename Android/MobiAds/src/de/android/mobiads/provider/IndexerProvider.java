@@ -215,7 +215,9 @@ public class IndexerProvider extends ContentProvider {
 		
         // If the values map doesn't contain the path or ad identifier number.
         if ((values.containsKey(Indexer.Index.COLUMN_NAME_PATH) == false) || 
-        	(values.containsKey(Indexer.Index.COLUMN_NAME_ID_AD) == false)){
+        	(values.containsKey(Indexer.Index.COLUMN_NAME_ID_AD) == false) || 
+        	(values.containsKey(Indexer.Index.COLUMN_NAME_TEXT) == false) || 
+        	(values.containsKey(Indexer.Index.COLUMN_NAME_URL) == false)){
         	throw new SQLException("Missed parameter. Failed to insert row into " + uri);
         }      
         
@@ -224,8 +226,8 @@ public class IndexerProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		
 		// Performs the insert and returns the ID of the new index.
-		values.put(Indexer.Index.COLUMN_NAME_TEXT, "Texto de prueba");
-		values.put(Indexer.Index.COLUMN_NAME_URL, "http://gumartinm.name");
+		//values.put(Indexer.Index.COLUMN_NAME_TEXT, "Texto de prueba");
+		//values.put(Indexer.Index.COLUMN_NAME_URL, "http://gumartinm.name");
         long rowId = db.insert(
         	Indexer.Index.TABLE_NAME, // The table to insert into.
             null,  					  // A hack, SQLite sets this column value to null if values is empty.

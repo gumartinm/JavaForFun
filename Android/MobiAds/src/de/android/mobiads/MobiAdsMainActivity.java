@@ -27,7 +27,7 @@ public class MobiAdsMainActivity extends Activity {
      * Target we publish for clients to send messages to IncomingHandler.
      */
     final Messenger mMessenger = new Messenger(new IncomingHandler());
-    /**TODO: I should use message with service to find out if the service is running instead of this booleanf field.*/
+    /**TODO: I should send a message to the service to find out if the service is running instead of this boolean field.*/
     private boolean isEnabledService;
     private static String cookie;
 
