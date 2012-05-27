@@ -12,10 +12,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import jpos.JposConst;
 import jpos.JposException;
 import org.apache.log4j.Logger;
@@ -36,15 +32,14 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	//No me gusta nada esto, simplemente es para evitar mirar si thread es null la primera vez en el metodo enable...
 	private Thread thread = new Thread ("KeyBoardDeviceLinux-Thread");
 	private String deviceName;
-	@GuardedBy("claimLock") private FileChannel fileChannelLock;
+	@GuardedBy("this") private FileChannel fileChannelLock;
 	@GuardedBy("this") private DataInputStream device;
-	@GuardedBy("claimLock") private volatile boolean isClaimed;
+	@GuardedBy("this") private boolean isClaimed;
 	@GuardedBy("this") private boolean isEnabled;
 	//Usando volatile porque cumplo las condiciones de uso. Ver Java Concurrency in Practice PAG????
 	private volatile boolean autoDisable;
 	private JposEventListener eventListener;
-	@GuardedBy("claimLock") private FileLock lock;
-	private Lock claimLock = new ReentrantLock(true);
+	@GuardedBy("this") private FileLock lock;
 	
 	@Override
 	public boolean isOpened() {
@@ -64,53 +59,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	 * <b>Thread-safe</b>
 	 * </p>
 	 */
-	@Override
-	public void claim(int time) throws JposException {
-
-		//Using explicit Locks. Java Concurrency in Practice§13
-		//I want to attempt to acquire this lock without waiting for it forever when the timeout is not -1.
-		if (time == -1) {
-			try {
-				this.claimLock.lockInterruptibly();
-				//Exclusive access code.
-				try {
-					this.claimImplementation(time);
-				} finally {
-					this.claimLock.unlock();
-				}
-			} catch (InterruptedException e) {
-				//restore interrupt status.
-				Thread.currentThread().interrupt();
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "Interrupt exception detected.", e);
-			}
-		}
-		else {
-			try {
-				if (this.claimLock.tryLock(time, TimeUnit.MILLISECONDS)) {
-					//Exclusive access code.
-					try {
-						this.claimImplementation(time);
-					} finally {
-						this.claimLock.unlock();
-					}
-				}
-				else {
-					throw new JposException(JposConst.JPOS_E_TIMEOUT, "Timeout while trying to claim device.");
-				}
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "Interrupt exception detected.", e);
-			}
-			try {
-				this.wait(250);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "Interrupt exception detected.", e);
-			}
-		}
-	}
-
-	private void claimImplementation(int time) throws JposException {
+	public synchronized void claim(int time) throws JposException {
 		FileLock lock = null;
 		FileChannel fileChannelLock = null;
 
@@ -126,17 +75,32 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 		}
 
 		if (time == -1) {
-			try {
-				//This method is not aware interrupt. :(
-				lock = fileChannelLock.lock();
-			//I do not like catching RunTimeExceptions but I have no choice...
-			} catch (OverlappingFileLockException e) {
-				closeFileLock(fileChannelLock);
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "More than one instances of the " +
-										"KeyBoardDeviceLinux JavaPOS driver.",e); 
-			} catch (IOException e) {
-				closeFileLock(fileChannelLock);
-				throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
+			//Espera activa. ¿Alguna idea de cómo hacer esto sin espera activa?  :(
+			while(true) {
+				try {
+					if ((lock = fileChannelLock.tryLock()) != null) {
+						break;
+					}
+					//Release monitor
+					this.wait(250);
+				//I do not like catching RunTimeExceptions but I have no choice...
+				} catch (OverlappingFileLockException e) {
+					closeFileLock(fileChannelLock);
+					logger.warn("File already locked or more than one instances of the " +
+									"KeyBoardDeviceLinux JavaPOS driver.",e);
+					//Nothing to do. File already locked (claimed device)
+					//or you are running more than one instances of this driver at the
+					//same time and in the same Java process, which is not supported.
+					return;
+				} catch (IOException e) {
+					closeFileLock(fileChannelLock);
+					throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);
+				} catch(InterruptedException e) {
+                    closeFileLock(fileChannelLock);
+                    //restore interrupt status.
+                    Thread.currentThread().interrupt();
+                    throw new JposException(JposConst.JPOSERR, "Interrupt exception detected.", e);
+                }
 			}
 		}
 		else {
@@ -147,19 +111,24 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 					if ((lock = fileChannelLock.tryLock()) != null) {
 						break;
 					}
+					//Release monitor
 					this.wait(250);
 				//I do not like catching RunTimeExceptions but I have no choice...
 				} catch (OverlappingFileLockException e) {
 					closeFileLock(fileChannelLock);
-					throw new JposException(JposConst.JPOS_E_CLAIMED, "More than one instances of the " +
-															"KeyBoardDeviceLinux JavaPOS driver.",e); 
+					logger.warn("File already locked or more than one instances of the " +
+									"KeyBoardDeviceLinux JavaPOS driver.",e);
+					//Nothing to do. File already locked (claimed device)
+					//or you are running more than one instances of this driver at the
+					//same time and in the same Java process, which is not supported.
+					return;
 				} catch (IOException e) {
 					closeFileLock(fileChannelLock);
 					throw new JposException(JposConst.JPOS_E_CLAIMED, "Error while trying to claim device.",e);    
                 } catch(InterruptedException e) {
                     closeFileLock(fileChannelLock);
                     //restore interrupt status.
-                	Thread.currentThread().interrupt();
+                    Thread.currentThread().interrupt();
                     throw new JposException(JposConst.JPOSERR, "Interrupt exception detected.", e);
                 }
 			} while(System.nanoTime() <= lastTime);
@@ -192,23 +161,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	 * </p>
 	 */
 	@Override
-	public void release() throws JposException {
-		try {
-			this.claimLock.lockInterruptibly();
-			try {
-				//Exclusive access code.
-				this.releaseImplementation();
-			} finally {
-				this.claimLock.unlock();
-			}
-		} catch (InterruptedException e) {
-			//restore interrupt status.
-			Thread.currentThread().interrupt();
-			throw new JposException(JposConst.JPOS_E_CLAIMED, "Interrupt exception detected.", e);
-		}
-	}
-
-	private void releaseImplementation() throws JposException {
+	public synchronized void release() throws JposException {
 
 		if (!this.isClaimed) {
 			return;
@@ -225,7 +178,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
 	}
 
 	@Override
-	public boolean isClaimed() {
+	public synchronized boolean isClaimed() {
 		return this.isClaimed;
 	}
 
