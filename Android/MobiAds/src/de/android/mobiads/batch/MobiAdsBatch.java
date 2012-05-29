@@ -41,6 +41,7 @@ public class MobiAdsBatch {
 	private final AndroidHttpClient httpClient;
 	private final Context context;
 	private final String mobiAdsCookie;
+	private static final String USERS_SERVER = "http://companies.mobiads.gumartinm.name/uploads/images/";
 	
 	
 	public MobiAdsBatch (String userAgent, String encoded, Context context, String cookie) {
@@ -57,8 +58,8 @@ public class MobiAdsBatch {
     	
     	final String latitude = Double.toString(location.getLatitude());
     	final String longitude = Double.toString(location.getLongitude());
-    	final String latitudeReplace = /*latitude.replace(".", ",")*/ "40,5129";
-    	final String longitudeReplace = /*longitude.replace(".", ",")*/"-3,3492";
+        final String latitudeReplace = latitude.replace(".", ",");
+        final String longitudeReplace = longitude.replace(".", ",");
     	final String URLAuth = "http://users.mobiads.gumartinm.name/userfront.php/api/" + latitudeReplace + "/" + longitudeReplace + "/gpsads.json";
     	URL url = null;
     	
@@ -207,7 +208,7 @@ public class MobiAdsBatch {
 		public void downloadAds(String image, String path)
 				throws MalformedURLException, URISyntaxException, FileNotFoundException, IOException {
 			final HttpGet httpGet = new HttpGet();
-			final String URLAd = image;
+			final String URLAd = USERS_SERVER + image;
 			HttpResponse httpResponse = null;
 			URL url = null;
 			OutputStream outputStream = null;
