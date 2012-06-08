@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:gravity="right"
-    android:layout_width="match_parent" 
-    android:layout_height="match_parent" 
-    android:orientation="vertical" 
-    android:weightSum="1">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1" >
     
     <FrameLayout 
     	android:id="@+id/frameLayout1" 
@@ -21,7 +20,7 @@
 	
 	<EditText
 		android:id="@+id/password"
-		android:password="true"
+		android:inputType="textPassword"
 		android:singleLine="true"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
@@ -34,17 +33,30 @@
 	<Button
 		android:id="@+id/login_button"
 		android:onClick="onClickLogin"
-	    android:layout_height="wrap_content" 
+	    android:layout_height="70dp" 
 	    android:text="@string/button_login" 
 	    android:layout_width="match_parent" 
 	    android:layout_gravity="center"/>
-	<Button
-		android:id="@+id/cancel_button"
-		android:onClick="onClickCancel"
-		android:gravity="right" 
-	    android:layout_height="wrap_content" 
-	    android:layout_width="wrap_content" 
-	    android:layout_gravity="right" 
-	    android:text="@string/button_cancel"/>
+    <FrameLayout 
+        android:layout_width="match_parent" 
+        android:id="@+id/frameLayout3" 
+        android:layout_height="30dp">
+    </FrameLayout>
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	     android:orientation="horizontal" 
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent">
+         <Button android:layout_weight="1" 
+             android:layout_height="wrap_content" 
+             android:layout_width="0dip"
+             android:onClick="onClickLocalAds"
+             android:text="@string/button_localads" />
+         <Button android:layout_weight="1"
+             android:layout_height="wrap_content" 
+             android:layout_width="0dip"
+             android:onClick="onClickCancel"
+             android:text="@string/button_cancel" />
+    </LinearLayout>
+	
 	
 </LinearLayout>

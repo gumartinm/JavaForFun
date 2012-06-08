@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import de.android.mobiads.MobiAdsService;
+import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsBatch {
@@ -117,7 +118,19 @@ public class MobiAdsBatch {
 						if ((uriInsert = updatedIndexer(objects)) != null) {
 							try {
 								downloadAds((String)objects.get("image"), (String) objects.get("id"));
-								((MobiAdsService)MobiAdsBatch.this.context).showNotification(1);
+								int noReadCount = 0;
+						        CharSequence contentText;
+						        if ((noReadCount =  MobiAdsBatch.this.noReadAdsCount()) == 0) {
+						        	contentText = ((MobiAdsService)MobiAdsBatch.this.context).
+						        						getText(R.string.remote_service_content_empty_notification);
+						        }
+						        else {
+						        	contentText = ((MobiAdsService)MobiAdsBatch.this.context).
+						        						getText(R.string.remote_service_content_notification);
+						        }
+								((MobiAdsService)MobiAdsBatch.this.context).
+										showNotification(0, noReadCount, contentText);
+
 							} catch (Throwable e1) {
 								//In case of any error, remove the index database and the file
 								//or chunk successfully stored before the error.
@@ -266,6 +279,8 @@ public class MobiAdsBatch {
 				//getContentResolver().query method never returns Cursor with null value.
 				//TODO: review my code in order to find more cases like this. :(
 				//Be aware with the RunTimeExceptions. Apparently Java needs try/catch blocks in everywhere...
+				//TODO this method outside updatedIndexer. It is all about semantic and good design. No time sorry...
+				//Open an issue about improving my code some day...
 				Cursor cursor = MobiAdsBatch.this.context.getContentResolver().query(uri, null, null, null, null);
 				try {
 					if (!cursor.moveToFirst()) {
@@ -275,6 +290,7 @@ public class MobiAdsBatch {
 						values.put(Indexer.Index.COLUMN_NAME_PATH, (String) objects.get("id"));
 						values.put(Indexer.Index.COLUMN_NAME_TEXT, (String) objects.get("text"));
 						values.put(Indexer.Index.COLUMN_NAME_URL, (String) objects.get("link"));
+						values.put(Indexer.Index.COLUMN_NAME_IS_READ, new Integer(0));
 						//This method may throw SQLiteException (as a RunTimeException). So, without a try/catch block
 						//there could be a leaked cursor...
 						//TODO: review code looking for more cases like this one...
@@ -286,5 +302,21 @@ public class MobiAdsBatch {
 			}
 			return updated;
 		}
+	}
+	
+	
+	public int noReadAdsCount() {
+		Uri uri = Uri.parse("content://" + "de.android.mobiads.provider" + "/" + "indexer" + "/isRead/");
+		
+		Cursor cursor = MobiAdsBatch.this.context.getContentResolver().query(uri, null, null, null, null);
+		int count = 0; 
+		
+		try {
+			count = cursor.getCount();
+		} finally {
+			cursor.close();
+		}
+		
+		return count;
 	}
 }

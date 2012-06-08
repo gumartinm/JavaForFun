@@ -1,6 +1,7 @@
 package de.android.mobiads;
 
 import de.android.mobiads.batch.MobiAdsBatch;
+import de.android.mobiads.list.MobiAdsNewAdsActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,6 +12,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 
@@ -41,6 +43,18 @@ public class MobiAdsService extends Service {
     
     private LocationManager locationManager;
     private LocationListener locationListener;
+    
+    /**
+     * Class for clients to access.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with
+     * IPC.
+     */
+    public class LocalBinder extends Binder {
+        MobiAdsService getService() {
+            return MobiAdsService.this;
+        }
+    }
+
         
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -102,8 +116,15 @@ public class MobiAdsService extends Service {
         
         notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         // Display a notification about us starting.
-        showNotification(0);
-        
+        int noReadCount = 0;
+        CharSequence contentText;
+        if ((noReadCount = this.mobiAdsBatch.noReadAdsCount()) == 0) {
+        	contentText = getText(R.string.remote_service_content_empty_notification);
+        }
+        else {
+        	contentText = getText(R.string.remote_service_content_notification);
+        }
+        showNotification(0, noReadCount, contentText);
         return super.onStartCommand(intent, flags, startId);
     }
     
@@ -117,7 +138,7 @@ public class MobiAdsService extends Service {
 	@Override
     public void onDestroy() {
         // Cancel the persistent notification.
-		notificationManager.cancel(R.string.remote_service_started);
+		notificationManager.cancel(R.string.remote_service_title_notification);
 		
         if (this.locationListener != null) {
         	this.locationManager.removeUpdates(this.locationListener);	
@@ -132,27 +153,27 @@ public class MobiAdsService extends Service {
 	/**
      * Show a notification while this service is running.
      */
-    public void showNotification(int level) {        
+    public void showNotification(final int level, final int noReadAds, CharSequence contentText) {        
 
-        Intent intent =  new Intent(this, MobiAdsMainActivity.class);
+        Intent intent =  new Intent(this, MobiAdsNewAdsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // The PendingIntent to launch our activity if the user selects this notification
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        
-
+                
         // Set the icon, scrolling text and timestamp
         Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext()).
         											setSmallIcon(R.drawable.wheelnotification, level).
-        												setTicker(getText(R.string.remote_service_started)).
+        												setTicker(getText(R.string.remote_service_started_notification)).
         													setWhen(System.currentTimeMillis()).
-        														setContentText(getText(R.string.remote_service_started)).
-        															setContentTitle(getText(R.string.remote_service_label)).
-        																setContentIntent(contentIntent);
+        														setContentText(contentText).
+        															setContentTitle(getText(R.string.remote_service_title_notification)).
+        																setNumber(noReadAds).
+        																	setContentIntent(contentIntent);
         Notification notification = notificationBuilder.getNotification();
         notification.flags |= Notification.FLAG_NO_CLEAR;
 
         // Send the notification.
         // We use a string id because it is a unique number.  We use it later to cancel.
-        notificationManager.notify(R.string.remote_service_started, notification);
+        notificationManager.notify(R.string.remote_service_title_notification, notification);
     }
 }

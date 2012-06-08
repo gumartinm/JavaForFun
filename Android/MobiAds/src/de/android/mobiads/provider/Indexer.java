@@ -48,6 +48,13 @@ public final class Indexer {
         public static final String COLUMN_NAME_URL = "url";
         
         /**
+         * Column name for the Sqlite3 integer as boolean field. <br>
+         * It let us know if the ad was already read by the user or not.
+         * <P>Type: TEXT</P>
+         */
+        public static final String COLUMN_NAME_IS_READ = "isRead";
+        
+        /**
          * The default sort order for this table
          */
         public static final String DEFAULT_SORT_ORDER = Index._ID;

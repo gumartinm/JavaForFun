@@ -37,6 +37,8 @@ public class IndexerProvider extends ContentProvider {
     
     private static final int INDEXER_IDAD = 3;
     
+    private static final int NOREAD = 4;
+    
     static {
     	
     	/*
@@ -54,6 +56,7 @@ public class IndexerProvider extends ContentProvider {
         
         sUriMatcher.addURI("de.android.mobiads.provider", Indexer.Index.TABLE_NAME + "/" + Indexer.Index.COLUMN_NAME_ID_AD + "/#", INDEXER_IDAD);
         
+        sUriMatcher.addURI("de.android.mobiads.provider", Indexer.Index.TABLE_NAME + "/" + Indexer.Index.COLUMN_NAME_IS_READ, NOREAD);
         
         /*
          * Creates and initializes a projection map that returns all columns
@@ -75,6 +78,8 @@ public class IndexerProvider extends ContentProvider {
         sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_TEXT, Indexer.Index.COLUMN_NAME_TEXT);
         
         sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_URL, Indexer.Index.COLUMN_NAME_URL);
+        
+        sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_IS_READ, Indexer.Index.COLUMN_NAME_IS_READ);
     }
  
     
@@ -217,7 +222,8 @@ public class IndexerProvider extends ContentProvider {
         if ((values.containsKey(Indexer.Index.COLUMN_NAME_PATH) == false) || 
         	(values.containsKey(Indexer.Index.COLUMN_NAME_ID_AD) == false) || 
         	(values.containsKey(Indexer.Index.COLUMN_NAME_TEXT) == false) || 
-        	(values.containsKey(Indexer.Index.COLUMN_NAME_URL) == false)){
+        	(values.containsKey(Indexer.Index.COLUMN_NAME_URL) == false) ||
+        	(values.containsKey(Indexer.Index.COLUMN_NAME_IS_READ) == false)){
         	throw new SQLException("Missed parameter. Failed to insert row into " + uri);
         }      
         
@@ -295,6 +301,10 @@ public class IndexerProvider extends ContentProvider {
 	                   "=" +
 	                   // the position of the Advertisement ID itself in the incoming URI
 	                   uri.getPathSegments().get(2));
+	        	break;
+	        case NOREAD:
+	        	qb.setProjectionMap(sIndexerProjectionMap);
+	        	qb.appendWhere(Indexer.Index.COLUMN_NAME_IS_READ + " = " + "0");
 	        	break;
 	        default:
 	            // If the URI doesn't match any of the known patterns, throw an exception.
@@ -414,7 +424,22 @@ public class IndexerProvider extends ContentProvider {
                                               // null if the values are in the where argument.
                 );
                 break;
-        		
+        	 
+        	case NOREAD:
+        		finalWhere = Indexer.Index.COLUMN_NAME_IS_READ + " = " + "0";
+        		if (where !=null) {
+                    finalWhere = finalWhere + " AND " + where;
+                }
+        		// Does the update and returns the number of rows updated.
+                count = db.update(
+                	Indexer.Index.TABLE_NAME, // The database table name.
+                    values,                   // A map of column names and new values to use.
+                    finalWhere,               // The final WHERE clause to use
+                                              // placeholders for whereArgs
+                    whereArgs                 // The where clause column values to select on, or
+                                              // null if the values are in the where argument.
+                );
+        		break;
         	default:
         		throw new IllegalArgumentException("Unknown URI " + uri);
         }

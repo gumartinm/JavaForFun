@@ -52,7 +52,7 @@ public class MobiAdsLoginActivity extends Activity {
 		HttpEntity httpEntity = null;
 		HttpResponse httpResponse = null;
 		final List<NameValuePair> formParams = new ArrayList<NameValuePair>(2);
-
+		
 		httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, getResources().getString(R.string.encoded_web_service));
 		httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getResources().getString(R.string.user_agent_web_service));
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
@@ -90,6 +90,7 @@ public class MobiAdsLoginActivity extends Activity {
 							setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.MobiAdsMainActivity"));
 					intent.putExtra("cookie", cookie);
 					this.startActivity(intent);
+					this.finish();
         		} else {
         			Log.e(TAG, "There must be a weird issue with the server because... There is not cookie!!!!");
         			createErrorDialog(R.string.error_dialog_connection_error);
@@ -113,6 +114,12 @@ public class MobiAdsLoginActivity extends Activity {
         	Log.e(TAG, "No response? This should never have happened.");
         	createErrorDialog(R.string.error_dialog_connection_error);
         }
+    }
+    
+    public void onClickLocalAds(View v) {
+    	Intent intent = new Intent("android.intent.action.MOBIADSLIST").
+				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.list.MobiAdsListActivity"));
+		this.startActivity(intent);
     }
     
     public void onClickCancel(View v) {
