@@ -290,6 +290,7 @@ public class MobiAdsBatch {
 						values.put(Indexer.Index.COLUMN_NAME_PATH, (String) objects.get("id"));
 						values.put(Indexer.Index.COLUMN_NAME_TEXT, (String) objects.get("text"));
 						values.put(Indexer.Index.COLUMN_NAME_URL, (String) objects.get("link"));
+						values.put(Indexer.Index.COLUMN_NAME_AD_NAME, (String) objects.get("adname"));
 						values.put(Indexer.Index.COLUMN_NAME_IS_READ, new Integer(0));
 						//This method may throw SQLiteException (as a RunTimeException). So, without a try/catch block
 						//there could be a leaked cursor...

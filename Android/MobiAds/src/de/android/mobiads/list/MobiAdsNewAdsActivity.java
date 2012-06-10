@@ -5,12 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.android.mobiads.MobiAdsService;
 import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -34,7 +38,7 @@ public class MobiAdsNewAdsActivity extends Activity {
 	        
 	        // Setup the list view
 	        final ListView newsEntryListView = (ListView) findViewById(R.id.list);
-	        final AdsEntryAdapter newsEntryAdapter = new AdsEntryAdapter(this, R.layout.news_entry_list_item);
+	        final AdsEntryAdapter newsEntryAdapter = new AdsEntryAdapter(this, R.layout.ads_entry_list_item);
 	        newsEntryListView.setAdapter(newsEntryAdapter);
 	        
 	        // Populate the list, through the adapter. Should I populate the whole list right now? I do not think so...
@@ -86,8 +90,10 @@ public class MobiAdsNewAdsActivity extends Activity {
 								}
 							}
 						}
-						entries.add(new AdsEntry(cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_URL)), 
-								cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_TEXT)), bitMap));
+						entries.add(new AdsEntry(cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_AD_NAME)), 
+								cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_TEXT)), bitMap,
+								cursor.getInt(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_ID_AD)),
+								cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_URL))));
 
 						
 						cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_PATH));
@@ -101,10 +107,21 @@ public class MobiAdsNewAdsActivity extends Activity {
 					cursor.close();
 			}
 	    	
-
-	        showNotification(0, 0, getText(R.string.remote_service_content_empty_notification));
+	    	if (this.isMyServiceRunning()) {
+	    		showNotification(0, 0, getText(R.string.remote_service_content_empty_notification));
+	    	}
 	    	
 	    	return entries;
+	    }
+	    
+	    private boolean isMyServiceRunning() {
+	        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	            if (MobiAdsService.class.getName().equals(service.service.getClassName())) {
+	                return true;
+	            }
+	        }
+	        return false;
 	    }
 	    
 	    public void showNotification(final int level, final int noReadAds, CharSequence contentText) {        

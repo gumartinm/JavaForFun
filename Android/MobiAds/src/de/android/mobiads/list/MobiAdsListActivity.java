@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,20 +18,26 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import de.android.mobiads.MobiAdsService;
 import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsListActivity extends Activity {
 	private static final String TAG = "MobiAdsListActivity";
+	private AdsEntryAdapter newsEntryAdapter;
 	
+
     @Override
     public void onResume() {
         super.onResume();
@@ -37,7 +45,7 @@ public class MobiAdsListActivity extends Activity {
         
         // Setup the list view
         final ListView newsEntryListView = (ListView) findViewById(R.id.list);
-        final AdsEntryAdapter newsEntryAdapter = new AdsEntryAdapter(this, R.layout.news_entry_list_item);
+        newsEntryAdapter = new AdsEntryAdapter(this, R.layout.ads_entry_list_item);
         newsEntryListView.setAdapter(newsEntryAdapter);
         
         this.registerForContextMenu(newsEntryListView);
@@ -51,7 +59,7 @@ public class MobiAdsListActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Uri uri = Uri.parse(newsEntryAdapter.getItem(position).getTitle());
+				Uri uri = Uri.parse(newsEntryAdapter.getItem(position).getURL());
 				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 			}
         });
@@ -89,8 +97,10 @@ public class MobiAdsListActivity extends Activity {
 							}
 						}
 					}
-					entries.add(new AdsEntry(cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_URL)), 
-							cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_TEXT)), bitMap));			
+					entries.add(new AdsEntry(cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_AD_NAME)), 
+							cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_TEXT)), bitMap,
+							cursor.getInt(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_ID_AD)),
+							cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_URL))));			
 					if (cursor.getInt(cursor.getColumnIndexOrThrow(Indexer.Index.COLUMN_NAME_IS_READ)) == 0)
 					{
 						values.put(Indexer.Index.COLUMN_NAME_IS_READ, new Integer(1));
@@ -104,7 +114,9 @@ public class MobiAdsListActivity extends Activity {
 				cursor.close();
 		}
     	
-    	showNotification(0, 0, getText(R.string.remote_service_content_empty_notification));
+    	if (this.isMyServiceRunning()) {
+    		showNotification(0, 0, getText(R.string.remote_service_content_empty_notification));
+    	}
     	
     	return entries;
     }
@@ -116,6 +128,37 @@ public class MobiAdsListActivity extends Activity {
         inflater.inflate(R.menu.menuads, menu);
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.menuadsremove:
+            	removeAd(info.position);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+    
+    public void removeAd(int position){
+    	AdsEntry entry = this.newsEntryAdapter.getItem(position);
+    	int idAd = entry.getIdAd();
+    	Uri uriDelete = Uri.parse("content://" + "de.android.mobiads.provider" + "/" + "indexer" + "/idad/" + idAd);
+    	
+    	getContentResolver().delete(uriDelete, null, null);
+    	this.newsEntryAdapter.remove(entry);
+    	this.newsEntryAdapter.notifyDataSetChanged();
+    }
+    
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (MobiAdsService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     public void showNotification(final int level, final int noReadAds, CharSequence contentText) {        
     	NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);

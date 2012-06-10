@@ -14,11 +14,11 @@ import android.widget.TextView;
  */
 public final class AdsEntryAdapter extends ArrayAdapter<AdsEntry> {
 
-	private final int newsItemLayoutResource;
+	private final int adsItemLayoutResource;
 
-	public AdsEntryAdapter(final Context context, final int newsItemLayoutResource) {
+	public AdsEntryAdapter(final Context context, final int adsItemLayoutResource) {
 		super(context, 0);
-		this.newsItemLayoutResource = newsItemLayoutResource;
+		this.adsItemLayoutResource = adsItemLayoutResource;
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public final class AdsEntryAdapter extends ArrayAdapter<AdsEntry> {
 			final LayoutInflater inflater = (LayoutInflater)context.getSystemService
 		      (Context.LAYOUT_INFLATER_SERVICE);
 			
-			workingView = inflater.inflate(newsItemLayoutResource, null);
+			workingView = inflater.inflate(adsItemLayoutResource, null);
 		} else {
 			workingView = convertView;
 		}

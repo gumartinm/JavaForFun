@@ -29,9 +29,10 @@ public class IndexerOpenHelper extends SQLiteOpenHelper {
 				+ Indexer.Index._ID + " INTEGER PRIMARY KEY, "
 				+ Indexer.Index.COLUMN_NAME_ID_AD + " INTEGER" + " UNIQUE" + " NOT NULL, "
 				+ Indexer.Index.COLUMN_NAME_PATH + " TEXT(15)" + " UNIQUE" + " NOT NULL, "
-				+ Indexer.Index.COLUMN_NAME_URL + " TEXT(2000)" + " NOT NULL, "
-				+ Indexer.Index.COLUMN_NAME_TEXT + " TEXT(255)" + " NOT NULL, "
-				+ Indexer.Index.COLUMN_NAME_IS_READ + " INTEGER" + " NOT NULL "
+				+ Indexer.Index.COLUMN_NAME_URL + " TEXT(3000)" + " NOT NULL, "
+				+ Indexer.Index.COLUMN_NAME_TEXT + " TEXT(500)" + " NOT NULL, "
+				+ Indexer.Index.COLUMN_NAME_IS_READ + " INTEGER" + " NOT NULL, "
+				+ Indexer.Index.COLUMN_NAME_AD_NAME + " TEXT(255)" + " NOT NULL "
 				+ ");");
 	}
 

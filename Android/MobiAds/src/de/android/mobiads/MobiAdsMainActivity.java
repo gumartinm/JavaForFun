@@ -108,6 +108,7 @@ public class MobiAdsMainActivity extends Activity {
     public void onClickListLocalAds(View v) {
     	Intent intent = new Intent("android.intent.action.MOBIADSLIST").
 				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.list.MobiAdsListActivity"));
+    	intent.putExtra("login", false);
 		this.startActivity(intent);
     }
 }

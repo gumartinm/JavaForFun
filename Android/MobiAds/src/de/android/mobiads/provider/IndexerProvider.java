@@ -80,6 +80,8 @@ public class IndexerProvider extends ContentProvider {
         sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_URL, Indexer.Index.COLUMN_NAME_URL);
         
         sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_IS_READ, Indexer.Index.COLUMN_NAME_IS_READ);
+        
+        sIndexerProjectionMap.put(Indexer.Index.COLUMN_NAME_AD_NAME, Indexer.Index.COLUMN_NAME_AD_NAME);
     }
  
     
@@ -158,7 +160,21 @@ public class IndexerProvider extends ContentProvider {
         				selectionArgs                  // The incoming where clause values.
         		);
         		break;
-
+        		
+        	case INDEXER_IDAD:
+	        	finalWhere = Indexer.Index.COLUMN_NAME_ID_AD + // the name of the ID column
+	                   "=" +
+	                   // the position of the Advertisement ID itself in the incoming URI
+	                   uri.getPathSegments().get(2);
+	        	if (selection != null) {
+        			finalWhere = finalWhere + " AND " + selection;
+        		}
+	        	count = db.delete(
+        				Indexer.Index.TABLE_NAME,  // The database table name.
+        				finalWhere,                // The final WHERE clause
+        				selectionArgs                  // The incoming where clause values.
+        		);
+	        	break;
         	default:
         		throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -223,8 +239,9 @@ public class IndexerProvider extends ContentProvider {
         	(values.containsKey(Indexer.Index.COLUMN_NAME_ID_AD) == false) || 
         	(values.containsKey(Indexer.Index.COLUMN_NAME_TEXT) == false) || 
         	(values.containsKey(Indexer.Index.COLUMN_NAME_URL) == false) ||
+        	(values.containsKey(Indexer.Index.COLUMN_NAME_AD_NAME) == false) ||
         	(values.containsKey(Indexer.Index.COLUMN_NAME_IS_READ) == false)){
-        	throw new SQLException("Missed parameter. Failed to insert row into " + uri);
+        		throw new SQLException("Missed parameter. Failed to insert row into " + uri);
         }      
         
         // Opens the database object in "write" mode.
