@@ -1,6 +1,8 @@
 package de.android.mobiads;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -100,9 +102,11 @@ public class MobiAdsMainActivity extends Activity {
     
     
     public void onClickStartService(View v) {
-    	Intent intent = new Intent(MobiAdsMainActivity.this, MobiAdsService.class);
-        intent.putExtra("cookie", MobiAdsMainActivity.cookie);
-    	this.startService(intent);
+    	if (!this.isMyServiceRunning()) {
+    		Intent intent = new Intent(MobiAdsMainActivity.this, MobiAdsService.class);
+    		intent.putExtra("cookie", MobiAdsMainActivity.cookie);
+    		this.startService(intent);
+    	}
     }
     
     public void onClickListLocalAds(View v) {
@@ -110,5 +114,15 @@ public class MobiAdsMainActivity extends Activity {
 				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.list.MobiAdsListActivity"));
     	intent.putExtra("login", false);
 		this.startActivity(intent);
+    }
+    
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (MobiAdsService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

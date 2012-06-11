@@ -120,11 +120,13 @@ public class MobiAdsService extends Service {
         CharSequence contentText;
         if ((noReadCount = this.mobiAdsBatch.noReadAdsCount()) == 0) {
         	contentText = getText(R.string.remote_service_content_empty_notification);
+        	showNotification(0, noReadCount, contentText, null);
         }
         else {
         	contentText = getText(R.string.remote_service_content_notification);
+        	showNotification(0, noReadCount, contentText, MobiAdsNewAdsActivity.class);
         }
-        showNotification(0, noReadCount, contentText);
+        
         return super.onStartCommand(intent, flags, startId);
     }
     
@@ -153,12 +155,16 @@ public class MobiAdsService extends Service {
 	/**
      * Show a notification while this service is running.
      */
-    public void showNotification(final int level, final int noReadAds, CharSequence contentText) {        
-
-        Intent intent =  new Intent(this, MobiAdsNewAdsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    public void showNotification(final int level, final int noReadAds, CharSequence contentText, Class<?> cls) {        
+    	PendingIntent contentIntent = null;
+    	
+    	if (cls != null) {
+    		Intent intent =  new Intent(this, MobiAdsNewAdsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            // The PendingIntent to launch our activity if the user selects this notification
+            contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    	}
+        
                 
         // Set the icon, scrolling text and timestamp
         Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext()).

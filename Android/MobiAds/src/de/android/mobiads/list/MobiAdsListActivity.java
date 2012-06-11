@@ -162,10 +162,6 @@ public class MobiAdsListActivity extends Activity {
     
     public void showNotification(final int level, final int noReadAds, CharSequence contentText) {        
     	NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intent =  new Intent(this, MobiAdsNewAdsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 
         // Set the icon, scrolling text and timestamp
         Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext()).
@@ -174,8 +170,7 @@ public class MobiAdsListActivity extends Activity {
         													setWhen(System.currentTimeMillis()).
         														setContentText(contentText).
         															setContentTitle(getText(R.string.remote_service_title_notification)).
-        																setNumber(noReadAds).
-        																	setContentIntent(contentIntent);
+        																setNumber(noReadAds);
         Notification notification = notificationBuilder.getNotification();
         notification.flags |= Notification.FLAG_NO_CLEAR;
 
