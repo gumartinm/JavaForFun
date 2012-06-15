@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+      <item android:id="@+id/menuadsremove"
+          android:title="@string/menuads_remove"
+          android:titleCondensed="@string/menuads_remove"
+          android:showAsAction="never"
+          android:alphabeticShortcut="string"
+          android:numericShortcut="string"
+          android:checkable="false"
+          android:visible="true"
+          android:enabled="true" />
+</menu>
