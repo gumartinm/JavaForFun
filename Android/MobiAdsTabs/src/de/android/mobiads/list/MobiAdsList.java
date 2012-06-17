@@ -190,14 +190,14 @@ public class MobiAdsList extends Activity {
 		AdsEntryAdapter mAdapter;
 		// If non-null, this is the current filter the user has provided.
 		String mCurFilter;
-
+		
 		@Override 
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 			
 			ListView listView = getListView();
 			
-			getActivity().registerForContextMenu(listView);
+			registerForContextMenu(listView);
 			
 			listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -221,8 +221,10 @@ public class MobiAdsList extends Activity {
 			setListShown(false);
 
 			// Prepare the loader.  Either re-connect with an existing one,
-			// or start a new one.
-			getLoaderManager().initLoader(0, null, this);
+			// or start a new one.			
+			//TODO: reload just if there are changes in the data base :/
+			//getLoaderManager().initLoader(0, null, this);
+			getLoaderManager().restartLoader(0, null, this);
 		}
 
 		@Override

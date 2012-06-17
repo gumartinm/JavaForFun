@@ -11,12 +11,17 @@ import android.preference.PreferenceFragment;
 
 public class MobiAdsPreferences extends PreferenceFragment {
 
-	@Override 
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	@Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
+    }
+	
+	@Override 
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
         
         CheckBoxPreference checkBoxPreference = (CheckBoxPreference) findPreference("service_started");
         checkBoxPreference.setChecked(isMyServiceRunning());
