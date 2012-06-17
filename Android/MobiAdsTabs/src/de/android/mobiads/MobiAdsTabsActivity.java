@@ -1,6 +1,6 @@
 package de.android.mobiads;
 
-import de.android.mobiads.list.MobiAdsListFragment;
+import de.android.mobiads.list.MobiAdsList;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 public class MobiAdsTabsActivity extends Activity {
 
@@ -31,19 +30,19 @@ public class MobiAdsTabsActivity extends Activity {
 
         bar.addTab(bar.newTab()
                 .setText("Local Ads")
-                .setTabListener(new TabListener<MobiAdsListFragment>(
-                        this, "localads", MobiAdsListFragment.class)));
+                .setTabListener(new TabListener<MobiAdsList.MobiAdsListFragment>(
+                        this, "localads", MobiAdsList.MobiAdsListFragment.class)));
         
         if (Cookie.getCookie() != null || isMyServiceRunning()) {
         	bar.addTab(bar.newTab()
                     .setText("Control Panel")
-                    .setTabListener(new TabListener<MobiAdsPreferences>(
-                        this, "controlpanel", MobiAdsPreferences.class)));
+                    	.setTabListener(new TabListener<MobiAdsPreferences>(
+                    				this, "controlpanel", MobiAdsPreferences.class)));
         }
         	
         bar.addTab(bar.newTab()
         		.setText("Login")
-        		.setTabListener(new Login()));
+        			.setTabListener(new Login()));
         
         
         
@@ -63,8 +62,8 @@ public class MobiAdsTabsActivity extends Activity {
     	super.onResume();
     	if ((Cookie.getCookie() != null) && (getActionBar().getTabCount() == 2)) {
     		getActionBar().addTab(getActionBar().newTab()
-    	                   .setText("Control Panel")
-    	                   .setTabListener(new TabListener<MobiAdsPreferences>(
+    	                   	.setText("Control Panel")
+    	                   		.setTabListener(new TabListener<MobiAdsPreferences>(
     	                		   this, "controlpanel", MobiAdsPreferences.class)), 1);
 
     	 }
@@ -114,7 +113,7 @@ public class MobiAdsTabsActivity extends Activity {
         }
 
         public void onTabReselected(Tab tab, FragmentTransaction ft) {
-            Toast.makeText(mActivity, "Reselected!", Toast.LENGTH_SHORT).show();
+           //Nothing to do here.
         }
     }
     
@@ -134,8 +133,7 @@ public class MobiAdsTabsActivity extends Activity {
 
 		@Override
 		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-			// TODO Auto-generated method stub
-			
+			//Nothing to do here		
 		}
 
 		@Override

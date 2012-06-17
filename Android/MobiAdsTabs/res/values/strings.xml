@@ -31,4 +31,5 @@
     <string name="encoded_web_service">UTF-8</string>
     <string name="desc">description</string>
     <string name="menuads_remove">Remove</string>
+    <string name="error_dialog_no_local_ads">You have no downloaded ads.</string>
 </resources>

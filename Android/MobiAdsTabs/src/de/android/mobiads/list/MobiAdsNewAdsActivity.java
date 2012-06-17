@@ -37,7 +37,7 @@ public class MobiAdsNewAdsActivity extends Activity {
 	        
 	        // Setup the list view
 	        final ListView newsEntryListView = (ListView) findViewById(R.id.list);
-	        final AdsEntryAdapter newsEntryAdapter = new AdsEntryAdapter(this, R.layout.news_entry_list_item);
+	        final AdsEntryAdapter newsEntryAdapter = new AdsEntryAdapter(this, R.layout.ads_entry_list_item);
 	        newsEntryListView.setAdapter(newsEntryAdapter);
 	        
 	        // Populate the list, through the adapter. Should I populate the whole list right now? I do not think so...
