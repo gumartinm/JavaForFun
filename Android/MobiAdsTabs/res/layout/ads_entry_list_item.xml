@@ -15,6 +15,7 @@
         android:layout_alignParentLeft="true"
         android:padding="3dp"
         android:orientation="vertical"
+        android:background="?android:attr/activatedBackgroundIndicator"
         android:contentDescription="@string/desc"/>
     
     <!-- Title of the ads entry -->

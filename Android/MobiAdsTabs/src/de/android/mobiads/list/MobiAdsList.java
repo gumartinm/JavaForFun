@@ -24,21 +24,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextMenu;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import de.android.mobiads.MobiAdsService;
@@ -191,13 +191,85 @@ public class MobiAdsList extends Activity {
 		// If non-null, this is the current filter the user has provided.
 		String mCurFilter;
 		
+		
 		@Override 
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 			
 			ListView listView = getListView();
 			
-			registerForContextMenu(listView);
+			if (getListView().getCheckedItemCount() == 0)
+			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+			
+			listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+
+			    @Override
+			    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+			    	final int checkedCount = getListView().getCheckedItemCount();
+			    	switch (checkedCount) {
+	                case 0:
+	                    mode.setSubtitle(null);
+	                    break;
+	                case 1:
+	                    mode.setSubtitle("One item selected");
+	                    break;
+	                default:
+	                    mode.setSubtitle("" + checkedCount + " items selected");
+	                    break;
+			    	}
+			    }
+
+			    @Override
+			    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+			        // Respond to clicks on the actions in the CAB
+			        switch (item.getItemId()) {
+			            case R.id.menuadsremove:
+			            	SparseBooleanArray itemsPositions = getListView().getCheckedItemPositions();
+			            	for (int i=0; i< itemsPositions.size(); i++) {
+			            		if (itemsPositions.get(i)) {
+			            			removeAd(i);
+			            		}
+			            	}
+			                mode.finish(); // Action picked, so close the CAB
+			                return true;
+			            default:
+			                return false;
+			        }
+			    }
+
+			    @Override
+			    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			    	MenuInflater inflater = mode.getMenuInflater();
+			        inflater.inflate(R.menu.menuads, menu);
+			    	final int checkedCount = getListView().getCheckedItemCount();
+			    	switch (checkedCount) {
+	                case 0:
+	                    mode.setSubtitle(null);
+	                    break;
+	                case 1:
+	                    mode.setSubtitle("One item selected");
+	                    break;
+	                default:
+	                    mode.setSubtitle("" + checkedCount + " items selected");
+	                    break;
+			    	}
+			        return true;
+			    }
+
+			    @Override
+			    public void onDestroyActionMode(ActionMode mode) {
+			        // Here you can make any necessary updates to the activity when
+			        // the CAB is removed. By default, selected items are deselected/unchecked.
+			    }
+
+			    @Override
+			    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			        // Here you can perform updates to the CAB due to
+			        // an invalidate() request
+			        return false;
+			    }
+			});
+
 			
 			listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -226,25 +298,6 @@ public class MobiAdsList extends Activity {
 			//getLoaderManager().initLoader(0, null, this);
 			getLoaderManager().restartLoader(0, null, this);
 		}
-
-		@Override
-	    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	        super.onCreateContextMenu(menu, v, menuInfo);
-	        MenuInflater inflater = getActivity().getMenuInflater();
-	        inflater.inflate(R.menu.menuads, menu);
-	    }
-
-		@Override
-	    public boolean onContextItemSelected(MenuItem item) {
-	        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-	        switch (item.getItemId()) {
-	            case R.id.menuadsremove:
-	            	removeAd(info.position);
-	                return true;
-	            default:
-	                return super.onContextItemSelected(item);
-	        }
-	    }
 		
 		private void removeAd(int position){
 	    	AdsEntry entry = mAdapter.getItem(position);
@@ -378,6 +431,7 @@ public class MobiAdsList extends Activity {
 	
 			// Setting image view
 			viewHolder.imageView.setImageBitmap(entry.getIcon());
+			
 	
 			return view;
 		}
