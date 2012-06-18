@@ -136,13 +136,12 @@ public class MobiAdsBatch {
 								//In case of any error, remove the index database and the file
 								//or chunk successfully stored before the error.
 								try {
-									Log.i("MobiAdsBatch","delete");
 									MobiAdsBatch.this.context.getContentResolver().delete(uriInsert, null, null);
 									MobiAdsBatch.this.context.deleteFile((String) objects.get("id"));
 								} catch (Throwable e2) {
 									// Log this exception. The original exception (if there is one) is more
 									// important and will be thrown to the caller.
-									Log.w("Error removing content after an exception.", e2);
+									Log.w(TAG, "Error removing content after an exception.", e2);
 								}
 								
 								//Besides throw the original exception.
