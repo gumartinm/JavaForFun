@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -191,10 +192,17 @@ public class MobiAdsList extends Activity {
 		// If non-null, this is the current filter the user has provided.
 		String mCurFilter;
 		
+		@Override
+		public void onPause() {
+			super.onPause();
+			
+			getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
+		}
 		
-		@Override 
-		public void onActivityCreated(Bundle savedInstanceState) {
-			super.onActivityCreated(savedInstanceState);
+		
+		@Override
+		public void onResume() {
+			super.onResume();
 			
 			ListView listView = getListView();
 			
@@ -225,9 +233,15 @@ public class MobiAdsList extends Activity {
 			        switch (item.getItemId()) {
 			            case R.id.menuadsremove:
 			            	SparseBooleanArray itemsPositions = getListView().getCheckedItemPositions();
+			            	Collection<AdsEntry> aux = new ArrayList<AdsEntry>(mAdapter.getCount());
 			            	for (int i=0; i< itemsPositions.size(); i++) {
-			            		if (itemsPositions.get(i)) {
-			            			removeAd(i);
+			            		if (itemsPositions.valueAt(i)) {
+			            			aux.add(mAdapter.getItem(itemsPositions.keyAt(i)));
+			            		}
+			            	}
+			            	if (!aux.isEmpty()) {
+			            		for(final AdsEntry entry : aux) {
+			            			removeAd(entry);
 			            		}
 			            	}
 			                mode.finish(); // Action picked, so close the CAB
@@ -258,8 +272,8 @@ public class MobiAdsList extends Activity {
 
 			    @Override
 			    public void onDestroyActionMode(ActionMode mode) {
-			        // Here you can make any necessary updates to the activity when
-			        // the CAB is removed. By default, selected items are deselected/unchecked.
+			    	//TODO: Save state (checked items) in orde to keep them when coming back from
+			    	//the home screen.
 			    }
 
 			    @Override
@@ -291,7 +305,7 @@ public class MobiAdsList extends Activity {
 			setListAdapter(mAdapter);
 			// Start out with a progress indicator.
 			setListShown(false);
-
+			
 			// Prepare the loader.  Either re-connect with an existing one,
 			// or start a new one.			
 			//TODO: reload just if there are changes in the data base :/
@@ -299,8 +313,7 @@ public class MobiAdsList extends Activity {
 			getLoaderManager().restartLoader(0, null, this);
 		}
 		
-		private void removeAd(int position){
-	    	AdsEntry entry = mAdapter.getItem(position);
+		private void removeAd(AdsEntry entry){
 	    	int idAd = entry.getIdAd();
 	    	Uri uriDelete = Uri.parse("content://" + "de.android.mobiads.provider" + "/" + "indexer" + "/idad/" + idAd);
 	    	
