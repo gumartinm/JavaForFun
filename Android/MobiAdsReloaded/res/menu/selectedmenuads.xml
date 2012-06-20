@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+      <item android:id="@+id/selectedmenuads"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:titleCondensed="@string/menuads_remove"
+          android:showAsAction="never"
+          android:alphabeticShortcut="string"
+          android:numericShortcut="string"
+          android:checkable="false"
+          android:visible="true"
+          android:enabled="true" />
+      
+      <!-- I want overflow menu button when showing the removing action: android:showAsAction="never" -->
+</menu>

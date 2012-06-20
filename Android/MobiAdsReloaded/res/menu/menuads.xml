@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+      <item android:id="@+id/menuadsremove"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:titleCondensed="@string/menuads_remove"
+          android:showAsAction="ifRoom|withText"
+          android:alphabeticShortcut="string"
+          android:numericShortcut="string"
+          android:checkable="false"
+          android:visible="true"
+          android:enabled="true" />
+      <item android:id="@+id/menu_save"
+          android:icon="@android:drawable/ic_menu_save"
+          android:title="@string/menuads_remove"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" />
+      <item android:id="@+id/menu_prueba"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" />
+      <item android:id="@+id/menu_gus"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" />
+      
+      <item android:id="@+id/menu_gusa"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" />
+      <item android:id="@+id/menu_gusas"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" />
+      
+      <item android:id="@+id/menu_gusasss"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" />
+      
+      
+      <item android:id="@+id/menu_gusass"
+          android:icon="@android:drawable/ic_menu_upload"
+          android:title="@string/menuads_remove"
+          android:visible="true"
+          android:showAsAction="ifRoom|withText" /> 
+     
+      <!-- I want overflow menu button if there is no room: android:showAsAction="ifRoom|withText" -->
+</menu>

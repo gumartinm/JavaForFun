@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:key="preferencescreen">
+        
+    <CheckBoxPreference
+            android:key="service_started"
+            android:title="Service started" 
+            android:enabled="true" 
+            android:selectable="true"/>
+</PreferenceScreen> 

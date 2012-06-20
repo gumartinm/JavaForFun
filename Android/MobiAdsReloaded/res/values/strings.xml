@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="header_bar">MobiAds</string>
+    <string name="new_ads">Latest received Ads</string>
+    <string name="app_name">MobiAds</string>
+    <string name="app_description">Receive notifications about offers and discounts.</string>
+    <string name="alert_dialog_logged">You are already logged in</string>
+    <string name="error_dialog_connection_error">Connection error with MobiAds server.</string>
+    <string name="error_dialog_userpwd_error">The username or password you entered is incorrect.</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="button_login">Log In</string>
+    <string name="button_messagebind">Bind Service</string>
+    <string name="button_messageunbind">Unbind Service</string>
+    <string name="button_messagestopservice">Stop Application</string>
+    <string name="button_messagestartservice">Start Application</string>
+    <string name="button_messagelistlocalads">List Your Ads</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_localads">Local Ads</string>
+    <string name="remote_service_new_ads"> new Ads downloaded for you.</string>
+    <string name="remote_service_received_ad_notification">Received Ad</string>
+    <string name="remote_service_content_notification">New Ads waiting for you</string>
+    <string name="remote_service_content_empty_notification">No new Ads waiting for you</string>
+    <string name="remote_service_started_notification">MobiAds Service Started</string>
+    <string name="remote_service_stopped_notification">MobiAds Service Stopped</string>
+    <string name="remote_service_title_notification">MobiAds Service</string>
+    <string name="url_login_web_service">http://users.mobiads.gumartinm.name/userfront.php/api/login/auth.json</string>
+    <string name="url_web">users.mobiads.gumartinm.name</string>
+    <string name="user_agent_web_service">MobiAds/1.0</string>
+    <string name="encoded_web_service">UTF-8</string>
+    <string name="desc">description</string>
+    <string name="menuads_remove">Remove</string>
+    <string name="error_dialog_no_local_ads">You have no downloaded ads.</string>
+</resources>
