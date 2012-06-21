@@ -17,6 +17,7 @@ import android.app.LoaderManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.AsyncTaskLoader;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -43,21 +44,25 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
+import de.android.mobiads.Cookie;
 import de.android.mobiads.MobiAdsService;
 import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsList extends Activity {
+	Menu mMenu;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final ActionBar bar = getActionBar();
+        final ActionBar actionBar = getActionBar();
         
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        bar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_TITLE);
-        bar.setTitle(getResources().getString(R.string.header_bar));
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_TITLE);
+        actionBar.setTitle(getResources().getString(R.string.header_bar));
+        //actionBar.setDisplayHomeAsUpEnabled(true);
+
         
         
         FragmentManager fm = getFragmentManager();
@@ -73,12 +78,31 @@ public class MobiAdsList extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		return super.onOptionsItemSelected(item);
+		super.onOptionsItemSelected(item);
+		Intent intent = null;
+        switch (item.getItemId()) {
+            case R.id.menuads_settings:
+            	intent = new Intent("android.intent.action.MOBIADS").
+								setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.MobiAdsSettings"));
+            	this.startActivity(intent);
+                return true;
+            case R.id.menuads_login:
+            	intent = new Intent("android.intent.action.MOBIADS").
+				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.MobiAdsLoginActivity"));
+            	this.startActivity(intent);
+            	return true;
+            default:
+                return false;
+        }
 	}
 	
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		return super.onPrepareOptionsMenu(menu);
+	public boolean onPrepareOptionsMenu(Menu menu) {	
+		super.onPrepareOptionsMenu(menu);
+		MenuItem item = menu.findItem(R.id.menuads_settings);
+		item.getIcon().setAlpha(70);	
+		mMenu = menu;
+		return true;
 	}
 	
 	@Override
@@ -88,6 +112,28 @@ public class MobiAdsList extends Activity {
 	    inflater.inflate(R.menu.menuads, menu);
 	    
 	    return true;
+	}
+	
+	public void onOptionsMenuClosed(Menu menu) {
+        super.onOptionsMenuClosed(menu);
+    }
+	
+	//Si doy al boton pa tras pasa por onCreateOptionsMenu y onPrepareOptionsMenu
+	//Si doy al boton home solo pasa por onResume
+	//:/
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+//		if (Cookie.getCookie() != null) {
+//			MenuItem item = mMenu.findItem(R.id.menuads_settings);
+//			item.getIcon().setAlpha(255);
+//			item = mMenu.findItem(R.id.menuads_settings);
+//			item.setEnabled(true);
+//			item = mMenu.findItem(R.id.menuads_login);
+//			item.setEnabled(false);
+//			item.setVisible(false);
+//		}
 	}
 
 	
@@ -269,7 +315,7 @@ public class MobiAdsList extends Activity {
 				    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 				        // Respond to clicks on the actions in the CAB
 				        switch (item.getItemId()) {
-				            case R.id.selectedmenuads:
+				            case R.id.selectedmenu_remove:
 				            	SparseBooleanArray itemsPositions = getListView().getCheckedItemPositions();
 				            	Collection<AdsEntry> aux = new ArrayList<AdsEntry>(mAdapter.getCount());
 				            	for (int i=0; i< itemsPositions.size(); i++) {
@@ -328,7 +374,7 @@ public class MobiAdsList extends Activity {
 				setEmptyText("No downloaded Ads.");
 
 				// We have a menu item to show in action bar.
-				setHasOptionsMenu(false);      
+				setHasOptionsMenu(true);      
 
 
 				mAdapter = new AdsEntryAdapter(getActivity(), R.layout.ads_entry_list_item);
@@ -374,46 +420,17 @@ public class MobiAdsList extends Activity {
 		
 		/**
 		 * When setHasOptionsMenu(true) we populate the action bar with this menu. It is merged to the
-		 * current action bar menu (if there is no)
+		 * current action bar menu (if there is no one)
 		 */
 		@Override 
 		public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 			// Place an action bar item for searching.
 			MenuItem item = menu.add("Search");
 			item.setIcon(android.R.drawable.ic_menu_search);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 			SearchView sv = new SearchView(getActivity());
 			sv.setOnQueryTextListener(this);
 			item.setActionView(sv);
-			
-			item = menu.add("Login");
-			item.setIcon(android.R.drawable.ic_lock_power_off);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
-			item = menu.add("Login");
-			item.setIcon(android.R.drawable.ic_lock_power_off);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
-			item = menu.add("Login");
-			item.setIcon(android.R.drawable.ic_lock_power_off);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
-			item = menu.add("Login");
-			item.setIcon(android.R.drawable.ic_lock_power_off);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
-			item = menu.add("Login");
-			item.setIcon(android.R.drawable.ic_lock_power_off);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
-			item = menu.add("Login");
-			item.setIcon(android.R.drawable.ic_menu_upload);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-			
-			item = menu.add("Login");
-			item.setIcon(android.R.drawable.ic_lock_power_off);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
 		}
 
 		@Override

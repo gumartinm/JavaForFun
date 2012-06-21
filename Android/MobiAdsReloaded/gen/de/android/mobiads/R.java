@@ -12,7 +12,9 @@ public final class R {
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
-        public static final int wheelnotification=0x7f020001;
+        public static final int ic_menu_login=0x7f020001;
+        public static final int ic_menu_settings_holo_light=0x7f020002;
+        public static final int wheelnotification=0x7f020003;
     }
     public static final class id {
         public static final int ads_entry_icon=0x7f070000;
@@ -22,16 +24,10 @@ public final class R {
         public static final int frameLayout2=0x7f070007;
         public static final int list_frag=0x7f070003;
         public static final int login_button=0x7f070008;
-        public static final int menu_gus=0x7f07000c;
-        public static final int menu_gusa=0x7f07000d;
-        public static final int menu_gusas=0x7f07000e;
-        public static final int menu_gusass=0x7f070010;
-        public static final int menu_gusasss=0x7f07000f;
-        public static final int menu_prueba=0x7f07000b;
-        public static final int menu_save=0x7f07000a;
-        public static final int menuadsremove=0x7f070009;
+        public static final int menuads_login=0x7f070009;
+        public static final int menuads_settings=0x7f07000a;
         public static final int password=0x7f070006;
-        public static final int selectedmenuads=0x7f070011;
+        public static final int selectedmenu_remove=0x7f07000b;
         public static final int username=0x7f070005;
     }
     public static final class layout {
@@ -60,10 +56,12 @@ public final class R {
         public static final int desc=0x7f05001d;
         public static final int encoded_web_service=0x7f05001c;
         public static final int error_dialog_connection_error=0x7f050005;
-        public static final int error_dialog_no_local_ads=0x7f05001f;
+        public static final int error_dialog_no_local_ads=0x7f050021;
         public static final int error_dialog_userpwd_error=0x7f050006;
         public static final int header_bar=0x7f050000;
+        public static final int menuads_login=0x7f050020;
         public static final int menuads_remove=0x7f05001e;
+        public static final int menuads_settings=0x7f05001f;
         public static final int new_ads=0x7f050001;
         public static final int password=0x7f050008;
         public static final int remote_service_content_empty_notification=0x7f050015;

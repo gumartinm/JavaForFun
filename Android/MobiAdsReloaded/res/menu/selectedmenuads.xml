@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-      <item android:id="@+id/selectedmenuads"
-          android:icon="@android:drawable/ic_menu_upload"
+      <item android:id="@+id/selectedmenu_remove"
+          android:icon="@android:drawable/ic_menu_delete"
           android:title="@string/menuads_remove"
           android:titleCondensed="@string/menuads_remove"
           android:showAsAction="never"

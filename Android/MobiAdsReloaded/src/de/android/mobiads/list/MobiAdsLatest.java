@@ -94,7 +94,7 @@ public class MobiAdsLatest extends Activity {
 				public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 					// Respond to clicks on the actions in the CAB
 					switch (item.getItemId()) {
-					case R.id.menuadsremove:
+					case R.id.selectedmenu_remove:
 						SparseBooleanArray itemsPositions = getListView().getCheckedItemPositions();
 						Collection<AdsEntry> aux = new ArrayList<AdsEntry>(mAdapter.getCount());
 						for (int i=0; i< itemsPositions.size(); i++) {

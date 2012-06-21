@@ -52,67 +52,65 @@ public class MobiAdsLoginActivity extends Activity {
 		HttpEntity httpEntity = null;
 		HttpResponse httpResponse = null;
 		final List<NameValuePair> formParams = new ArrayList<NameValuePair>(2);
-		
-		Cookie.setCookie("prueba");
-		
-//		httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, getResources().getString(R.string.encoded_web_service));
-//		httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getResources().getString(R.string.user_agent_web_service));
-//		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-//		//TODO: RESTful Web Service must use JSON instead of signin array :(
-//		formParams.add(new BasicNameValuePair("signin[username]", username.getText().toString()));
-//		formParams.add(new BasicNameValuePair("signin[password]", password.getText().toString()));
-//        try {
-//			httpEntity = new UrlEncodedFormEntity(formParams, getResources().getString(R.string.encoded_web_service));
-//			httpPost.setEntity(httpEntity);
-//	        httpResponse = httpClient.execute(httpPost);
-//		} catch (UnsupportedEncodingException e) {
-//			Log.e(TAG, "Error while encoding POST parameters.", e);
-//			return;
-//		} catch (ClientProtocolException e) {
-// 			Log.e(TAG, "Error while executing HTTP client connection.", e);
-// 			createErrorDialog(R.string.error_dialog_connection_error);
-// 			return;
-// 		} catch (IOException e) {
-// 			Log.e(TAG, "Error while executing HTTP client connection.", e);
-// 			createErrorDialog(R.string.error_dialog_connection_error);
-// 			return;
-// 		} finally {
-// 			httpClient.getConnectionManager().shutdown();
-// 		}
-//        
-//        if (httpResponse != null) {
-//            switch (httpResponse.getStatusLine().getStatusCode()) {
-//        	case HttpStatus.SC_OK:
-//        		String cookie = httpResponse.getLastHeader(SETCOOKIEFIELD).getValue();
-//        		if (cookie != null) {
-//        			cookie = cookie.split(";")[0];
-//					//Go to the next activity
-//					StrictMode.setThreadPolicy(currentPolicy);
-//					Cookie.setCookie(cookie);
-//					this.finish();
-//        		} else {
-//        			Log.e(TAG, "There must be a weird issue with the server because... There is not cookie!!!!");
-//        			createErrorDialog(R.string.error_dialog_connection_error);
-//        		}
-//				break;
-//			case HttpStatus.SC_UNAUTHORIZED:
-//				//Username or password is incorrect
-//				createErrorDialog(R.string.error_dialog_userpwd_error);
-//				break;
-//			case HttpStatus.SC_BAD_REQUEST:
-//				//What the heck are you doing?
-//				createErrorDialog(R.string.error_dialog_userpwd_error);
-//				break;
-//			default:
-//				Log.e(TAG, "Error while retrieving the HTTP status line.");
-//				createErrorDialog(R.string.error_dialog_connection_error);
-//				break;
-//            }         	
-//        } 
-//        else {
-//        	Log.e(TAG, "No response? This should never have happened.");
-//        	createErrorDialog(R.string.error_dialog_connection_error);
-//        }
+				
+		httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, getResources().getString(R.string.encoded_web_service));
+		httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getResources().getString(R.string.user_agent_web_service));
+		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
+		//TODO: RESTful Web Service must use JSON instead of signin array :(
+		formParams.add(new BasicNameValuePair("signin[username]", username.getText().toString()));
+		formParams.add(new BasicNameValuePair("signin[password]", password.getText().toString()));
+        try {
+			httpEntity = new UrlEncodedFormEntity(formParams, getResources().getString(R.string.encoded_web_service));
+			httpPost.setEntity(httpEntity);
+	        httpResponse = httpClient.execute(httpPost);
+		} catch (UnsupportedEncodingException e) {
+			Log.e(TAG, "Error while encoding POST parameters.", e);
+			return;
+		} catch (ClientProtocolException e) {
+ 			Log.e(TAG, "Error while executing HTTP client connection.", e);
+ 			createErrorDialog(R.string.error_dialog_connection_error);
+ 			return;
+ 		} catch (IOException e) {
+ 			Log.e(TAG, "Error while executing HTTP client connection.", e);
+ 			createErrorDialog(R.string.error_dialog_connection_error);
+ 			return;
+ 		} finally {
+ 			httpClient.getConnectionManager().shutdown();
+ 		}
+        
+        if (httpResponse != null) {
+            switch (httpResponse.getStatusLine().getStatusCode()) {
+        	case HttpStatus.SC_OK:
+        		String cookie = httpResponse.getLastHeader(SETCOOKIEFIELD).getValue();
+        		if (cookie != null) {
+        			cookie = cookie.split(";")[0];
+					//Go to the next activity
+					StrictMode.setThreadPolicy(currentPolicy);
+					Cookie.setCookie(cookie);
+					this.finish();
+        		} else {
+        			Log.e(TAG, "There must be a weird issue with the server because... There is not cookie!!!!");
+        			createErrorDialog(R.string.error_dialog_connection_error);
+        		}
+				break;
+			case HttpStatus.SC_UNAUTHORIZED:
+				//Username or password is incorrect
+				createErrorDialog(R.string.error_dialog_userpwd_error);
+				break;
+			case HttpStatus.SC_BAD_REQUEST:
+				//What the heck are you doing?
+				createErrorDialog(R.string.error_dialog_userpwd_error);
+				break;
+			default:
+				Log.e(TAG, "Error while retrieving the HTTP status line.");
+				createErrorDialog(R.string.error_dialog_connection_error);
+				break;
+            }         	
+        } 
+        else {
+        	Log.e(TAG, "No response? This should never have happened.");
+        	createErrorDialog(R.string.error_dialog_connection_error);
+        }
     }
     
     public void onClickLocalAds(View v) {

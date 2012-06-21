@@ -36,8 +36,8 @@ public class MobiAdsTabsActivity extends Activity {
         if (Cookie.getCookie() != null || isMyServiceRunning()) {
         	bar.addTab(bar.newTab()
                     .setText("Control Panel")
-                    	.setTabListener(new TabListener<MobiAdsPreferences>(
-                    				this, "controlpanel", MobiAdsPreferences.class)));
+                    	.setTabListener(new TabListener<MobiAdsPreferences.MobiAdsPreferencesFragment>(
+                    				this, "controlpanel", MobiAdsPreferences.MobiAdsPreferencesFragment.class)));
         }
         	
         bar.addTab(bar.newTab()
@@ -63,8 +63,8 @@ public class MobiAdsTabsActivity extends Activity {
     	if ((Cookie.getCookie() != null) && (getActionBar().getTabCount() == 2)) {
     		getActionBar().addTab(getActionBar().newTab()
     	                   	.setText("Control Panel")
-    	                   		.setTabListener(new TabListener<MobiAdsPreferences>(
-    	                		   this, "controlpanel", MobiAdsPreferences.class)), 1);
+    	                   		.setTabListener(new TabListener<MobiAdsPreferences.MobiAdsPreferencesFragment>(
+    	                		   this, "controlpanel", MobiAdsPreferences.MobiAdsPreferencesFragment.class)), 1);
 
     	 }
     }

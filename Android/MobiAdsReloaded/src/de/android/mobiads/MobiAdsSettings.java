@@ -10,9 +10,8 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import de.android.mobiads.list.MobiAdsList.MobiAdsListFragment;
 
-public class MobiAdsPreferences extends Activity {
+public class MobiAdsSettings extends Activity {
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,14 +21,14 @@ public class MobiAdsPreferences extends Activity {
 
         // Create the list fragment and add it as our sole content.
         if (fm.findFragmentById(android.R.id.content) == null) {
-        	MobiAdsListFragment list = new MobiAdsListFragment();
+        	MobiAdsSettingsFragment list = new MobiAdsSettingsFragment();
             fm.beginTransaction().add(android.R.id.content, list).commit();
         }
         
         
     }
 	
-	public static class MobiAdsPreferencesFragment extends PreferenceFragment  {
+	public static class MobiAdsSettingsFragment extends PreferenceFragment  {
 		
 		@Override
 		public void onCreate(Bundle savedInstanceState) {

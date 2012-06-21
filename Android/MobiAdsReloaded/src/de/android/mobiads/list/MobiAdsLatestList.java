@@ -95,7 +95,7 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
-			case R.id.menuadsremove:
+			case R.id.selectedmenu_remove:
 				removeAd(info.position);
 				return true;
 			default:
