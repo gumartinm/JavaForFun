@@ -5,6 +5,7 @@
     <string name="app_name">MobiAds</string>
     <string name="app_description">Receive notifications about offers and discounts.</string>
     <string name="alert_dialog_logged">You are already logged in</string>
+    <string name="alert_dialog_not_logged">You are not logged in</string>
     <string name="error_dialog_connection_error">Connection error with MobiAds server.</string>
     <string name="error_dialog_userpwd_error">The username or password you entered is incorrect.</string>
     <string name="username">Username</string>

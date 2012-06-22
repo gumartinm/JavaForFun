@@ -1,15 +1,13 @@
 package de.android.mobiads;
 
-import de.android.mobiads.batch.MobiAdsBatch;
-import de.android.mobiads.list.MobiAdsLatest;
-import de.android.mobiads.list.MobiAdsLatestList;
-import de.android.mobiads.list.MobiAdsNewAdsActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -17,6 +15,8 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import de.android.mobiads.batch.MobiAdsBatch;
+import de.android.mobiads.list.MobiAdsLatestList;
 
 public class MobiAdsService extends Service {
 	private MobiAdsBatch mobiAdsBatch;
@@ -57,6 +57,27 @@ public class MobiAdsService extends Service {
         }
     }
 
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+ 	   @Override
+ 	   public void onReceive(Context context, Intent intent) {
+ 	      String action = intent.getAction();
+ 	      //This will be run in the main thread of this service. It might be interesting to use a Hanlder
+ 	      //for this receiver implemeting its own thread. :/
+ 	      //TODO: If I do not want to have any trouble, to use a synchronize to access this code here and when
+ 	      //receiving new ads. Besides you are using the same code xD. No time right now. I must improve my code 
+ 	      //but I am in a hurry.
+ 	     int noReadCount = 0;
+         CharSequence contentText;
+         if ((noReadCount = mobiAdsBatch.noReadAdsCount()) == 0) {
+         	contentText = getText(R.string.remote_service_content_empty_notification);
+         	showNotification(0, noReadCount, contentText, null);
+         }
+         else {
+         	contentText = getText(R.string.remote_service_content_notification);
+         	showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
+         } 
+ 	   }
+ 	};
         
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -129,6 +150,12 @@ public class MobiAdsService extends Service {
         	showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
         }
         
+        
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("de.android.mobiads.MOBIADSRECEIVER");
+        registerReceiver(receiver, filter);
+
+        
         return super.onStartCommand(intent, flags, startId);
     }
     
@@ -141,6 +168,8 @@ public class MobiAdsService extends Service {
 	
 	@Override
     public void onDestroy() {
+		unregisterReceiver(receiver);
+
         // Cancel the persistent notification.
 		notificationManager.cancel(R.string.remote_service_title_notification);
 		

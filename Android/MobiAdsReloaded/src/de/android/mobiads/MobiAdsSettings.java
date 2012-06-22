@@ -1,10 +1,16 @@
 package de.android.mobiads;
 
+import de.android.mobiads.MobiAdsTabsActivity.AlertDialogFragment;
+import de.android.mobiads.list.MobiAdsList;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -50,9 +56,16 @@ public class MobiAdsSettings extends Activity {
 				public boolean onPreferenceClick(Preference preference) {
 					CheckBoxPreference checkBoxPreference = (CheckBoxPreference) preference;
 					if (checkBoxPreference.isChecked()) {
-						Intent intent = new Intent(getActivity(), MobiAdsService.class);
-						intent.putExtra("cookie", Cookie.getCookie());
-						getActivity().startService(intent);
+						if (Cookie.getCookie() != null) {
+							Intent intent = new Intent(getActivity(), MobiAdsService.class);
+							intent.putExtra("cookie", Cookie.getCookie());
+							getActivity().startService(intent);
+						}
+						else {
+							 DialogFragment newFragment = MobiAdsList.AlertDialogFragment.newInstance(R.string.alert_dialog_not_logged);
+						     newFragment.show(getFragmentManager(), "alertDialog");
+						     checkBoxPreference.setChecked(false);
+						}
 					}
 					else {
 						getActivity().stopService(new Intent(getActivity(), MobiAdsService.class));
@@ -72,4 +85,6 @@ public class MobiAdsSettings extends Activity {
 			return false;
 		}
 	}
+	
+	 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,6 +43,7 @@ public class MobiAdsLoginActivity extends Activity {
         currentPolicy = StrictMode.getThreadPolicy();
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.LAX);
         setContentView(R.layout.login);
+
     }
     
     public void onClickLogin(View v) {
@@ -53,6 +56,8 @@ public class MobiAdsLoginActivity extends Activity {
 		HttpResponse httpResponse = null;
 		final List<NameValuePair> formParams = new ArrayList<NameValuePair>(2);
 				
+		Cookie.setCookie("gugugu");
+		
 		httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, getResources().getString(R.string.encoded_web_service));
 		httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getResources().getString(R.string.user_agent_web_service));
 		httpClient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);

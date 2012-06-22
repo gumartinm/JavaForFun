@@ -5,8 +5,6 @@
           android:title="@string/menuads_login"
           android:titleCondensed="@string/menuads_login"
           android:showAsAction="ifRoom|withText"
-          android:alphabeticShortcut="string"
-          android:numericShortcut="string"
           android:checkable="false"
           android:visible="true"
           android:enabled="true" />
@@ -17,7 +15,7 @@
           android:titleCondensed="@string/menuads_settings"
           android:visible="true"
           android:checkable="false"
-          android:enabled="false"
+          android:enabled="true"
           android:showAsAction="ifRoom|withText"/>
      
       <!-- I want overflow menu button if there is no room: android:showAsAction="ifRoom|withText" -->

@@ -33,7 +33,7 @@ import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import de.android.mobiads.MobiAdsService;
 import de.android.mobiads.R;
-import de.android.mobiads.list.MobiAdsNewAdsActivity;
+import de.android.mobiads.list.MobiAdsLatestList;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsBatch {
@@ -130,7 +130,7 @@ public class MobiAdsBatch {
 						        						getText(R.string.remote_service_content_notification);
 						        }
 								((MobiAdsService)MobiAdsBatch.this.context).
-										showNotification(0, noReadCount, contentText, MobiAdsNewAdsActivity.class);
+										showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
 
 							} catch (Throwable e1) {
 								//In case of any error, remove the index database and the file

@@ -3,9 +3,9 @@ package de.android.mobiads.list;
 import java.util.List;
 import de.android.mobiads.MobiAdsService;
 import de.android.mobiads.R;
-import de.android.mobiads.list.MobiAdsLatest.AdsEntry;
-import de.android.mobiads.list.MobiAdsLatest.AdsEntryAdapter;
-import de.android.mobiads.list.MobiAdsLatest.AdsListLoader;
+import de.android.mobiads.list.MobiAdsList.AdsEntry;
+import de.android.mobiads.list.MobiAdsList.AdsEntryAdapter;
+import de.android.mobiads.list.MobiAdsList.AdsListLoader;
 import android.app.ActivityManager;
 import android.app.ListActivity;
 import android.app.LoaderManager;
@@ -27,7 +27,8 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class MobiAdsLatestList extends ListActivity implements LoaderManager.LoaderCallbacks<List<AdsEntry>> {
+public class MobiAdsLatestList extends ListActivity implements LoaderManager.LoaderCallbacks<List<AdsEntry>> 
+{
 	AdsEntryAdapter mAdapter;
 	
 	@Override

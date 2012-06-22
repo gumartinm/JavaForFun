@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.app.LoaderManager;
@@ -20,12 +22,14 @@ import android.content.AsyncTaskLoader;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -50,7 +54,6 @@ import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsList extends Activity {
-	Menu mMenu;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +90,14 @@ public class MobiAdsList extends Activity {
             	this.startActivity(intent);
                 return true;
             case R.id.menuads_login:
-            	intent = new Intent("android.intent.action.MOBIADS").
-				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.MobiAdsLoginActivity"));
-            	this.startActivity(intent);
+            	if (Cookie.getCookie() != null) {
+    				createAlertDialog(R.string.alert_dialog_logged);
+    			}
+    			else {
+    				intent = new Intent("android.intent.action.MOBIADS").
+    				setComponent(new ComponentName("de.android.mobiads", "de.android.mobiads.MobiAdsLoginActivity"));
+    				this.startActivity(intent);
+    			}
             	return true;
             default:
                 return false;
@@ -98,11 +106,7 @@ public class MobiAdsList extends Activity {
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {	
-		super.onPrepareOptionsMenu(menu);
-		MenuItem item = menu.findItem(R.id.menuads_settings);
-		item.getIcon().setAlpha(70);	
-		mMenu = menu;
-		return true;
+		return super.onPrepareOptionsMenu(menu);
 	}
 	
 	@Override
@@ -117,24 +121,6 @@ public class MobiAdsList extends Activity {
 	public void onOptionsMenuClosed(Menu menu) {
         super.onOptionsMenuClosed(menu);
     }
-	
-	//Si doy al boton pa tras pasa por onCreateOptionsMenu y onPrepareOptionsMenu
-	//Si doy al boton home solo pasa por onResume
-	//:/
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-//		if (Cookie.getCookie() != null) {
-//			MenuItem item = mMenu.findItem(R.id.menuads_settings);
-//			item.getIcon().setAlpha(255);
-//			item = mMenu.findItem(R.id.menuads_settings);
-//			item.setEnabled(true);
-//			item = mMenu.findItem(R.id.menuads_login);
-//			item.setEnabled(false);
-//			item.setVisible(false);
-//		}
-	}
 
 	
 	/**
@@ -279,9 +265,11 @@ public class MobiAdsList extends Activity {
 
 	public static class MobiAdsListFragment extends ListFragment implements OnQueryTextListener, 
 														LoaderManager.LoaderCallbacks<List<AdsEntry>> {
+		private static final String TAG = "MobiAdsListFragment";
 		AdsEntryAdapter mAdapter;
 		// If non-null, this is the current filter the user has provided.
 		String mCurFilter;
+		AsyncTask<Void, Void, Void> mOnItemClick;
 		
 		
 		 @Override 
@@ -382,6 +370,38 @@ public class MobiAdsList extends Activity {
 				setListAdapter(mAdapter);
 				// Start out with a progress indicator.
 				setListShown(false);
+				
+				
+				mOnItemClick = new AsyncTask<Void, Void, Void>() {
+					
+                    @Override 
+                    protected Void doInBackground(Void... params) {
+                    	final Uri uri = Uri.parse("content://" + "de.android.mobiads.provider" + "/" + "indexer");
+            			final ContentValues values = new ContentValues();
+            			Cursor cursor = null;
+            			try {
+            				cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+            				values.put(Indexer.Index.COLUMN_NAME_IS_READ, new Integer(1));
+            				Uri uriUpdate = Uri.parse("content://" + "de.android.mobiads.provider" + "/" + "indexer/" + 
+            						cursor.getString(cursor.getColumnIndexOrThrow(Indexer.Index._ID)));
+						
+            				getActivity().getContentResolver().update(uriUpdate, values, null, null);
+            			}
+            			catch(Throwable e) {
+            				Log.e(TAG, "AsyncTask error");
+            			}
+            			finally {
+            				if (cursor != null) {
+            					cursor.close();
+            				}
+            			}
+						
+						//Send BroadCast
+                        
+                        return null;
+                    }
+                    
+                };
 		 }
 		
 		//TODO: Broadcast receiver from service, and stop using onResume... :/
@@ -655,4 +675,40 @@ public class MobiAdsList extends Activity {
 			return URL;
 		}
 	}
+	
+	private void createAlertDialog(int title) {
+        DialogFragment newFragment = AlertDialogFragment.newInstance(title);
+        newFragment.show(getFragmentManager(), "alertDialog");
+    }
+	
+	//Create a helper for this or at least write its own file.
+	public static class AlertDialogFragment extends DialogFragment {
+    	
+    	public static AlertDialogFragment newInstance(int title) {
+    		AlertDialogFragment frag = new AlertDialogFragment();
+   	     	Bundle args = new Bundle();
+   	        
+   	     	args.putInt("title", title);
+   	     	frag.setArguments(args);
+   	     
+   	     	return frag;
+   	 	}
+
+   	 	@Override
+   	 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+   	 		int title = getArguments().getInt("title");
+
+   	 		return new AlertDialog.Builder(getActivity())
+   	 					.setIcon(android.R.drawable.ic_dialog_alert)
+   	 					.setTitle(title)
+   	 					.setPositiveButton(R.string.button_ok,
+   	 							new DialogInterface.OnClickListener() {
+   	 								public void onClick(DialogInterface dialog, int whichButton) {
+   	 									
+   	 								}
+   	 							}
+   	 					)
+   	 					.create();
+   	    }
+   }
 }
