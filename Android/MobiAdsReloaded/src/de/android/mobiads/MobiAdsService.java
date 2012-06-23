@@ -1,5 +1,6 @@
 package de.android.mobiads;
 
+import java.util.ArrayList;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,7 +15,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import de.android.mobiads.batch.MobiAdsBatch;
 import de.android.mobiads.list.MobiAdsLatestList;
 
@@ -46,6 +51,11 @@ public class MobiAdsService extends Service {
     private LocationManager locationManager;
     private LocationListener locationListener;
     
+    private final ArrayList<Messenger> mClients = new ArrayList<Messenger>();
+    /** Holds last value set by a client. */
+    int mValue = 0;
+
+    
     /**
      * Class for clients to access.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with
@@ -58,25 +68,19 @@ public class MobiAdsService extends Service {
     }
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
- 	   @Override
- 	   public void onReceive(Context context, Intent intent) {
- 	      String action = intent.getAction();
- 	      //This will be run in the main thread of this service. It might be interesting to use a Hanlder
- 	      //for this receiver implemeting its own thread. :/
- 	      //TODO: If I do not want to have any trouble, to use a synchronize to access this code here and when
- 	      //receiving new ads. Besides you are using the same code xD. No time right now. I must improve my code 
- 	      //but I am in a hurry.
- 	     int noReadCount = 0;
-         CharSequence contentText;
-         if ((noReadCount = mobiAdsBatch.noReadAdsCount()) == 0) {
-         	contentText = getText(R.string.remote_service_content_empty_notification);
-         	showNotification(0, noReadCount, contentText, null);
-         }
-         else {
-         	contentText = getText(R.string.remote_service_content_notification);
-         	showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
-         } 
- 	   }
+    	
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		String action = intent.getAction();
+    		//This will be run in the main thread of this service. It might be interesting to use a Hanlder
+    		//for this receiver implemeting its own thread. :/
+    		//TODO: If I do not want to have any trouble, to use a synchronize to access this code here and when
+    		//receiving new ads. Besides you are using the same code xD. No time right now. I must improve my code
+    		//but I am in a hurry.
+    		if(action.equals("de.android.mobiads.MOBIADSRECEIVER")){
+    			updateNotification();
+    		}
+    	}
  	};
         
     @Override
@@ -138,17 +142,9 @@ public class MobiAdsService extends Service {
         locationManager.requestLocationUpdates(0, 10, criteria, locationListener, null);
         
         notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        // Display a notification about us starting.
-        int noReadCount = 0;
-        CharSequence contentText;
-        if ((noReadCount = this.mobiAdsBatch.noReadAdsCount()) == 0) {
-        	contentText = getText(R.string.remote_service_content_empty_notification);
-        	showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
-        }
-        else {
-        	contentText = getText(R.string.remote_service_content_notification);
-        	showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
-        }
+        
+        
+        updateNotification ();
         
         
         IntentFilter filter = new IntentFilter();
@@ -156,13 +152,12 @@ public class MobiAdsService extends Service {
         registerReceiver(receiver, filter);
 
         
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_REDELIVER_INTENT;
     }
     
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return null;
+		return mMessenger.getBinder();
 	}
 	
 	
@@ -183,10 +178,24 @@ public class MobiAdsService extends Service {
     }
 	
 	
+	public void updateNotification () {
+    	
+    	int noReadCount = 0;
+        CharSequence contentText;
+        if ((noReadCount = this.mobiAdsBatch.noReadAdsCount()) == 0) {
+        	contentText = getText(R.string.remote_service_content_empty_notification);
+        	showNotification(0, noReadCount, contentText, null);
+        }
+        else {
+        	contentText = getText(R.string.remote_service_content_notification);
+        	showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
+        }
+    }
+
 	/**
      * Show a notification while this service is running.
      */
-    public void showNotification(final int level, final int noReadAds, CharSequence contentText, Class<?> cls) {        
+    private void showNotification(final int level, final int noReadAds, CharSequence contentText, Class<?> cls) {        
     	PendingIntent contentIntent = null;
     	
     	if (cls != null) {
@@ -213,4 +222,41 @@ public class MobiAdsService extends Service {
         // We use a string id because it is a unique number.  We use it later to cancel.
         notificationManager.notify(R.string.remote_service_title_notification, notification);
     }
+    
+    /**
+     * Handler of incoming messages from clients.
+     */
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_REGISTER_CLIENT:
+                    mClients.add(msg.replyTo);
+                    break;
+                case MSG_UNREGISTER_CLIENT:
+                    mClients.remove(msg.replyTo);
+                    break;
+                case MSG_SET_VALUE:
+                    mValue = msg.arg1;
+                    for (int i=mClients.size()-1; i>=0; i--) {
+                        try {
+                            mClients.get(i).send(Message.obtain(null,
+                                    MSG_SET_VALUE, mValue, 0));
+                        } catch (RemoteException e) {
+                            // The client is dead.  Remove it from the list;
+                            // we are going through the list from back to front
+                            // so this is safe to do inside the loop.
+                            mClients.remove(i);
+                        }
+                    }
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
+
+    
 }

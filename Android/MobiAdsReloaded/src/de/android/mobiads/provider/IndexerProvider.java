@@ -457,6 +457,21 @@ public class IndexerProvider extends ContentProvider {
                                               // null if the values are in the where argument.
                 );
         		break;
+        		
+        	case INDEXER_IDAD:
+        		finalWhere = Indexer.Index.COLUMN_NAME_ID_AD + " = " + uri.getPathSegments().get(2);
+        		if (where !=null) {
+                    finalWhere = finalWhere + " AND " + where;
+                }
+        		count = db.update(
+                    	Indexer.Index.TABLE_NAME, // The database table name.
+                        values,                   // A map of column names and new values to use.
+                        finalWhere,               // The final WHERE clause to use
+                                                  // placeholders for whereArgs
+                        whereArgs                 // The where clause column values to select on, or
+                                                  // null if the values are in the where argument.
+                    );
+        		break;
         	default:
         		throw new IllegalArgumentException("Unknown URI " + uri);
         }

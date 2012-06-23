@@ -13,13 +13,17 @@ public final class AdsEntry {
 	private final Bitmap icon;
 	private final int idAd;
 	private final String URL;
+	private boolean readStatus;
 
-	public AdsEntry(final String title, final String text, final Bitmap icon, final int idAd, final String URL) {
+	public AdsEntry(final String title, final String text, 
+						final Bitmap icon, final int idAd, 
+							final String URL, final boolean alreadyRead) {
 		this.title = title;
 		this.text = text;
 		this.icon = icon;
 		this.idAd = idAd;
 		this.URL = URL;
+		this.readStatus = alreadyRead;
 	}
 
 	/**
@@ -49,11 +53,26 @@ public final class AdsEntry {
 	public int getIdAd() {
 		return idAd;
 	}
-	
+
 	/**
 	 * @return URL matching this ad.
 	 */
 	public String getURL() {
 		return URL;
+	}
+	
+	/**
+	 * @return boolean true is already read false otherwise.
+	 */
+	public boolean isRead() {
+		return readStatus;
+	}
+	
+	/**
+	 * 
+	 * @param readStatus true is already read false otherwise
+	 */
+	public void setIsRead(boolean readStatus) {
+		this.readStatus = readStatus;
 	}
 }

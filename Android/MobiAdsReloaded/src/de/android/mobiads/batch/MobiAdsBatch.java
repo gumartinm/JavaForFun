@@ -119,18 +119,7 @@ public class MobiAdsBatch {
 						if ((uriInsert = updatedIndexer(objects)) != null) {
 							try {
 								downloadAds((String)objects.get("image"), (String) objects.get("id"));
-								int noReadCount = 0;
-						        CharSequence contentText;
-						        if ((noReadCount =  MobiAdsBatch.this.noReadAdsCount()) == 0) {
-						        	contentText = ((MobiAdsService)MobiAdsBatch.this.context).
-						        						getText(R.string.remote_service_content_empty_notification);
-						        }
-						        else {
-						        	contentText = ((MobiAdsService)MobiAdsBatch.this.context).
-						        						getText(R.string.remote_service_content_notification);
-						        }
-								((MobiAdsService)MobiAdsBatch.this.context).
-										showNotification(0, noReadCount, contentText, MobiAdsLatestList.class);
+								((MobiAdsService)MobiAdsBatch.this.context).updateNotification();
 
 							} catch (Throwable e1) {
 								//In case of any error, remove the index database and the file

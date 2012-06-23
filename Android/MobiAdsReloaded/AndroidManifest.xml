@@ -75,20 +75,19 @@
             android:theme="@android:style/Theme.Dialog" 
             android:screenOrientation="portrait"
             android:configChanges="touchscreen|keyboard"
-            android:noHistory="true"
             android:excludeFromRecents="true"
-            android:taskAffinity="de.android.mobiads.list"
+            android:taskAffinity=""
             android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MOBIADSNEWADS" />
+                <action android:name="android.intent.action.MOBIADSLATESTADS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
         <service
             android:name=".MobiAdsService"
-            android:process=":mobiadsservice" >
-        </service>
+            android:process=":mobiadsservice"
+            android:exported="false" />
         
         <provider 
             android:authorities="de.android.mobiads.provider"
