@@ -26,14 +26,13 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import de.android.mobiads.MobiAdsService;
-import de.android.mobiads.R;
-import de.android.mobiads.list.MobiAdsLatestList;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsBatch {
@@ -119,6 +118,12 @@ public class MobiAdsBatch {
 						if ((uriInsert = updatedIndexer(objects)) != null) {
 							try {
 								downloadAds((String)objects.get("image"), (String) objects.get("id"));
+								
+								//Update view on activities.
+								Intent updateList = new Intent("de.android.mobiads.MOBIADSLISTRECEIVER");
+								MobiAdsBatch.this.context.sendBroadcast(updateList);
+								
+								//Change notification (if there is one)
 								((MobiAdsService)MobiAdsBatch.this.context).updateNotification();
 
 							} catch (Throwable e1) {

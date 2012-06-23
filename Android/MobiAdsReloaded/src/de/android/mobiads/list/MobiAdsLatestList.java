@@ -8,9 +8,11 @@ import java.util.List;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -30,15 +32,15 @@ import android.widget.ListView;
 import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
-public class MobiAdsLatestList extends ListActivity implements LoaderManager.LoaderCallbacks<List<AdsEntry>> 
-{
+public class MobiAdsLatestList extends ListActivity implements LoaderManager.LoaderCallbacks<List<AdsEntry>> {
 	AdsEntryLatestAdapter mAdapter;
-	
+	private BroadcastReceiver mReceiver;
+
 	@Override
-	public void onResume() {
-		super.onResume();
-	        
-		 mAdapter = new AdsEntryLatestAdapter(this, R.layout.ads_entry_list_item);
+    protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		mAdapter = new AdsEntryLatestAdapter(this, R.layout.ads_entry_list_item);
 		 setListAdapter(mAdapter);
 	    	    
 		 getListView().setTextFilterEnabled(true);
@@ -70,9 +72,31 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
 		 
 		 registerForContextMenu(getListView());
 	    
-		 //TODO: stop using onResume and to use a broadcast from the service about changes in database.
-		 getLoaderManager().restartLoader(0, null, this);
-	 }
+		 getLoaderManager().initLoader(0, null, this);
+		
+		 mReceiver = new BroadcastReceiver() {
+        	
+        	@Override
+        	public void onReceive(Context context, Intent intent) {
+        		String action = intent.getAction();
+        		//This will be run in the main thread of this service. It might be interesting to use a Handler
+        		//for this receiver implementing its own thread. :/
+        		if(action.equals("de.android.mobiads.MOBIADSLISTRECEIVER")){
+        			getLoaderManager().restartLoader(0, null, MobiAdsLatestList.this);
+        		}
+        	}
+     	};
+     	
+     	IntentFilter filter = new IntentFilter();
+        filter.addAction("de.android.mobiads.MOBIADSLISTRECEIVER");
+        registerReceiver(mReceiver, filter);
+	}
+	
+	@Override
+	protected void onDestroy() {
+	  unregisterReceiver(mReceiver);
+	  super.onDestroy();
+	}
 
 	@Override
 	public Loader<List<AdsEntry>> onCreateLoader(int id, Bundle args) {

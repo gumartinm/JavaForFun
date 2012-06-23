@@ -15,11 +15,13 @@ import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -43,12 +45,15 @@ import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsList extends Activity {
+	private BroadcastReceiver mReceiver;
+	
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final ActionBar actionBar = getActionBar();
+        final MobiAdsListFragment list = new MobiAdsListFragment();
         
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_TITLE);
@@ -61,12 +66,34 @@ public class MobiAdsList extends Activity {
 
         // Create the list fragment and add it as our sole content.
         if (fm.findFragmentById(android.R.id.content) == null) {
-        	MobiAdsListFragment list = new MobiAdsListFragment();
             fm.beginTransaction().add(android.R.id.content, list).commit();
         }
         
         
+        mReceiver = new BroadcastReceiver() {
+        	
+        	@Override
+        	public void onReceive(Context context, Intent intent) {
+        		String action = intent.getAction();
+        		//This will be run in the main thread of this service. It might be interesting to use a Handler
+        		//for this receiver implementing its own thread. :/
+        		if(action.equals("de.android.mobiads.MOBIADSLISTRECEIVER")){
+        			getLoaderManager().restartLoader(0, null, list);
+        		}
+        	}
+     	};
+     	
+     	IntentFilter filter = new IntentFilter();
+        filter.addAction("de.android.mobiads.MOBIADSLISTRECEIVER");
+        registerReceiver(mReceiver, filter);
+        
     }
+
+	@Override
+	protected void onDestroy() {
+	  unregisterReceiver(mReceiver);
+	  super.onDestroy();
+	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -358,19 +385,9 @@ public class MobiAdsList extends Activity {
 				// Start out with a progress indicator.
 				setListShown(false);
 				
-		 }
-		
-		//TODO: Broadcast receiver from service, and stop using onResume... :/
-		@Override
-		public void onResume() {
-			super.onResume();
+				getLoaderManager().initLoader(0, null, this);
 				
-			// Prepare the loader.  Either re-connect with an existing one,
-			// or start a new one.			
-			//TODO: reload just if there are changes in the data base :/ What means: broadcast receiver from service...
-			//getLoaderManager().initLoader(0, null, this);
-			getLoaderManager().restartLoader(0, null, this);
-		}
+		 }
 		
 		@Override 
 		public void onListItemClick(ListView l, View v, int position, long id) {

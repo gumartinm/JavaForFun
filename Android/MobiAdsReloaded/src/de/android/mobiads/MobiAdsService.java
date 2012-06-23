@@ -72,8 +72,8 @@ public class MobiAdsService extends Service {
     	@Override
     	public void onReceive(Context context, Intent intent) {
     		String action = intent.getAction();
-    		//This will be run in the main thread of this service. It might be interesting to use a Hanlder
-    		//for this receiver implemeting its own thread. :/
+    		//This will be run in the main thread of this service. It might be interesting to use a Handler
+    		//for this receiver implementing its own thread. :/
     		//TODO: If I do not want to have any trouble, to use a synchronize to access this code here and when
     		//receiving new ads. Besides you are using the same code xD. No time right now. I must improve my code
     		//but I am in a hurry.
