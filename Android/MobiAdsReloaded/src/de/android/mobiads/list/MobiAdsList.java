@@ -335,8 +335,7 @@ public class MobiAdsList extends Activity {
 
 				    @Override
 				    public void onDestroyActionMode(ActionMode mode) {
-				    	//TODO: Save state (checked items) in order to keep them when coming back from
-				    	//the home screen.
+				    	//Nothing to do here.
 				    }
 
 				    @Override
@@ -383,14 +382,13 @@ public class MobiAdsList extends Activity {
 			
 			//Change notification (if there is one)
 			Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSRECEIVER");
-
 			getActivity().sendBroadcast(updateDatabase);
 	        
 	        //Going to open the web navigator whatever it is... 
 			Uri uri = Uri.parse(entry.getURL());
 			startActivity(new Intent(Intent.ACTION_VIEW, uri));		
 			
-			//Hopefully this will update our view showing a nice black background for this item in our list :/
+			//This will update our view showing a nice black background for this item in our list :/
 			mAdapter.notifyDataSetChanged();
         }
 		
@@ -412,6 +410,11 @@ public class MobiAdsList extends Activity {
 	    	
 	    	getActivity().getContentResolver().delete(uriDelete, null, null);
 	    	mAdapter.remove(entry);
+	    	
+	    	//Change notification (if there is one)
+			Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSRECEIVER");
+			getActivity().sendBroadcast(updateDatabase);
+			
 	    	mAdapter.notifyDataSetChanged();
 	    }
 		

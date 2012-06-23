@@ -32,13 +32,13 @@ import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsLatestList extends ListActivity implements LoaderManager.LoaderCallbacks<List<AdsEntry>> 
 {
-	AdsEntryAdapter mAdapter;
+	AdsEntryLatestAdapter mAdapter;
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 	        
-		 mAdapter = new AdsEntryAdapter(this, R.layout.ads_entry_list_item);
+		 mAdapter = new AdsEntryLatestAdapter(this, R.layout.ads_entry_list_item);
 		 setListAdapter(mAdapter);
 	    	    
 		 getListView().setTextFilterEnabled(true);
@@ -58,13 +58,12 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
 				
 				//Change notification (if there is one)
 				Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSRECEIVER");
-
 				sendBroadcast(updateDatabase);
 				
 				Uri uri = Uri.parse(mAdapter.getItem(position).getURL());
 				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				
-				//Hopefully this will update our view showing a nice black background for this item in our list :/
+				//This will update our view showing a nice black background for this item in our list :/
 				mAdapter.notifyDataSetChanged();
 			}
 		 });

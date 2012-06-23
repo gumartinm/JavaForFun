@@ -52,6 +52,7 @@ public final class AdsEntryAdapter extends ArrayAdapter<AdsEntry> {
 			color = Color.BLACK;
 			colorText = Color.GRAY;
 		}
+		
 		view.setBackgroundColor(color);
 		
 		// Setting the text view
@@ -64,7 +65,6 @@ public final class AdsEntryAdapter extends ArrayAdapter<AdsEntry> {
 
 		// Setting image view
 		viewHolder.imageView.setImageBitmap(entry.getIcon());
-		viewHolder.imageView.setBackgroundColor(Color.BLACK);
 		
 
 		return view;
