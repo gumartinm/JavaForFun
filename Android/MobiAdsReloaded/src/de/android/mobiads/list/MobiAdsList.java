@@ -398,15 +398,15 @@ public class MobiAdsList extends Activity {
 			}
 			
 			//Change notification (if there is one)
-			Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSRECEIVER");
-			getActivity().sendBroadcast(updateDatabase);
-	        
-	        //Going to open the web navigator whatever it is... 
-			Uri uri = Uri.parse(entry.getURL());
-			startActivity(new Intent(Intent.ACTION_VIEW, uri));		
+			Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSSERVICERECEIVER");
+			getActivity().sendBroadcast(updateDatabase);	        
 			
 			//This will update our view showing a nice black background for this item in our list :/
 			mAdapter.notifyDataSetChanged();
+			
+			//Going to open the web navigator whatever it is... 
+			Uri uri = Uri.parse(entry.getURL());
+			startActivity(new Intent(Intent.ACTION_VIEW, uri));		
         }
 		
 		private void setIsReadEntry(final AdsEntry entry) {
@@ -429,7 +429,7 @@ public class MobiAdsList extends Activity {
 	    	mAdapter.remove(entry);
 	    	
 	    	//Change notification (if there is one)
-			Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSRECEIVER");
+			Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSSERVICERECEIVER");
 			getActivity().sendBroadcast(updateDatabase);
 			
 	    	mAdapter.notifyDataSetChanged();

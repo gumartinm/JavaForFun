@@ -77,7 +77,7 @@ public class MobiAdsService extends Service {
     		//TODO: If I do not want to have any trouble, to use a synchronize to access this code here and when
     		//receiving new ads. Besides you are using the same code xD. No time right now. I must improve my code
     		//but I am in a hurry.
-    		if(action.equals("de.android.mobiads.MOBIADSRECEIVER")){
+    		if(action.equals("de.android.mobiads.MOBIADSSERVICERECEIVER")){
     			updateNotification();
     		}
     	}
@@ -148,7 +148,7 @@ public class MobiAdsService extends Service {
         
         
         IntentFilter filter = new IntentFilter();
-        filter.addAction("de.android.mobiads.MOBIADSRECEIVER");
+        filter.addAction("de.android.mobiads.MOBIADSSERVICERECEIVER");
         registerReceiver(receiver, filter);
 
         

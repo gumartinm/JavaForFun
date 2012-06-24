@@ -40,6 +40,28 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		mReceiver = new BroadcastReceiver() {
+        	
+        	@Override
+        	public void onReceive(Context context, Intent intent) {
+        		String action = intent.getAction();
+        		//This will be run in the main thread of this service. It might be interesting to use a Handler
+        		//for this receiver implementing its own thread. :/
+        		if(action.equals("de.android.mobiads.MOBIADSLISTRECEIVER")){
+        			getLoaderManager().restartLoader(0, null, MobiAdsLatestList.this);
+        		}
+        	}
+     	};
+     	
+     	IntentFilter filter = new IntentFilter();
+        filter.addAction("de.android.mobiads.MOBIADSLISTRECEIVER");
+        registerReceiver(mReceiver, filter);
+	}
+	
+	@Override
+    protected void onResume() {
+		super.onResume();
+		
 		mAdapter = new AdsEntryLatestAdapter(this, R.layout.ads_entry_list_item);
 		 setListAdapter(mAdapter);
 	    	    
@@ -59,37 +81,24 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
 				}
 				
 				//Change notification (if there is one)
-				Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSRECEIVER");
+				Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSSERVICERECEIVER");
+				sendBroadcast(updateDatabase);			
+				
+				mAdapter.remove(entry);
+				//Update view lists
+				updateDatabase = new Intent("de.android.mobiads.MOBIADSLISTRECEIVER");
 				sendBroadcast(updateDatabase);
 				
 				Uri uri = Uri.parse(mAdapter.getItem(position).getURL());
 				startActivity(new Intent(Intent.ACTION_VIEW, uri));
 				
-				//This will update our view showing a nice black background for this item in our list :/
-				mAdapter.notifyDataSetChanged();
+				mAdapter.notifyDataSetChanged();				
 			}
 		 });
 		 
 		 registerForContextMenu(getListView());
 	    
 		 getLoaderManager().initLoader(0, null, this);
-		
-		 mReceiver = new BroadcastReceiver() {
-        	
-        	@Override
-        	public void onReceive(Context context, Intent intent) {
-        		String action = intent.getAction();
-        		//This will be run in the main thread of this service. It might be interesting to use a Handler
-        		//for this receiver implementing its own thread. :/
-        		if(action.equals("de.android.mobiads.MOBIADSLISTRECEIVER")){
-        			getLoaderManager().restartLoader(0, null, MobiAdsLatestList.this);
-        		}
-        	}
-     	};
-     	
-     	IntentFilter filter = new IntentFilter();
-        filter.addAction("de.android.mobiads.MOBIADSLISTRECEIVER");
-        registerReceiver(mReceiver, filter);
 	}
 	
 	@Override
@@ -110,7 +119,7 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
 			List<AdsEntry> data) {
 		
 		mAdapter.setData(data);
-		
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -146,11 +155,16 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
 																						+ "/idad/" + idAd);
 		
 		getContentResolver().delete(uriDelete, null, null);
-		mAdapter.remove(entry);
-		
+			
 		//Change notification (if there is one)
-		Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSRECEIVER");
+		Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSSERVICERECEIVER");
 		sendBroadcast(updateDatabase);
+		
+		//Update view lists
+		updateDatabase = new Intent("de.android.mobiads.MOBIADSLISTRECEIVER");
+		sendBroadcast(updateDatabase);
+		
+		mAdapter.remove(entry);
 		
 		mAdapter.notifyDataSetChanged();
 	}
