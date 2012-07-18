@@ -56,7 +56,6 @@ public class MobiAdsLoginActivity extends Activity {
 		HttpResponse httpResponse = null;
 		final List<NameValuePair> formParams = new ArrayList<NameValuePair>(2);
 				
-		Cookie.setCookie("gugugu");
 		
 		httpClient.getParams().setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, getResources().getString(R.string.encoded_web_service));
 		httpClient.getParams().setParameter(CoreProtocolPNames.USER_AGENT, getResources().getString(R.string.user_agent_web_service));
