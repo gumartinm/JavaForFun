@@ -19,7 +19,7 @@ import jpos.events.JposEvent;
  
 public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeyboardConst
 {
-	private static final int deviceVersion12  = 1002000;
+	private static final int deviceVersion112  = 1012000;
 	private String logicalname;
 	private EventCallbacks callbacks;
 	private JposEntryRegistry jposEntryRegistry;
@@ -172,7 +172,7 @@ public class MyPOSKeyboard implements POSKeyboardService112, JposConst, POSKeybo
 
 	@Override
 	public int getDeviceServiceVersion() throws JposException {
-		return MyPOSKeyboard.deviceVersion12;
+		return MyPOSKeyboard.deviceVersion112;
 	}
 
 	@Override

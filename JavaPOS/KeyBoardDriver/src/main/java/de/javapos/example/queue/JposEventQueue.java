@@ -5,26 +5,28 @@ import jpos.events.JposEvent;
 //Similar a WNBaseService  ¿mejor una clase o implementarlo en cada servicio :/?
 //¿O mejor un servicio que extienda una clase que implementa este interfaz XD?
 public interface JposEventQueue {
-	
-	public void putEvent(JposEvent paramJposEvent) throws InterruptedException;
 
-	public JposEvent getEvent() throws InterruptedException;
+    public void putEvent(JposEvent paramJposEvent) throws InterruptedException;
 
-	public void clearInputEvents();
+    public JposEvent getEvent() throws InterruptedException;
 
-	public void clearOutputEvents();
+    public void clearInputEvents();
 
-	public int getNumberOfEvents();
+    public void clearOutputEvents();
 
-	public void checkEvents();
+    public int getNumberOfEvents();
 
-	public void removeAllEvents();
+    public void checkEvents();
 
-	public boolean removeEvent(JposEvent paramJposEvent);
+    public void removeAllEvents();
 
-	public JposEvent peekElement(int paramInt);
+    public boolean removeEvent(JposEvent paramJposEvent);
 
-	public boolean isFull();
+    public JposEvent peekElement(int paramInt);
 
-	public int getSize();
+    public boolean isFull();
+
+    public int getSize();
+
+    public JposEvent peekEvent() throws InterruptedException;
 }
