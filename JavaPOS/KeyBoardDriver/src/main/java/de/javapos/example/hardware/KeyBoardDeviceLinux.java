@@ -116,9 +116,9 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
                     throw new JposException(JposConst.JPOS_E_CLAIMED,
                             "Error while trying to claim device.", e);
                 } catch (InterruptedException e) {
-                    closeFileLock(fileChannelLock);
                     // restore interrupt status.
                     Thread.currentThread().interrupt();
+                    closeFileLock(fileChannelLock);
                     throw new JposException(JposConst.JPOSERR,
                             "Interrupt exception detected.", e);
                 }
@@ -152,9 +152,9 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
                     throw new JposException(JposConst.JPOS_E_CLAIMED,
                             "Error while trying to claim device.", e);
                 } catch (InterruptedException e) {
-                    closeFileLock(fileChannelLock);
                     // restore interrupt status.
                     Thread.currentThread().interrupt();
+                    closeFileLock(fileChannelLock);
                     throw new JposException(JposConst.JPOSERR,
                             "Interrupt exception detected.", e);
                 }
@@ -179,7 +179,7 @@ public class KeyBoardDeviceLinux implements BaseKeyBoardDriver {
             fileChannelLock.close();
         } catch (IOException e) {
             throw new JposException(JposConst.JPOSERR,
-                    "Error while closing the file lock", e);
+                    "Error while closing the lock file", e);
         }
     }
 
