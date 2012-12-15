@@ -27,6 +27,8 @@
     <string name="remote_service_stopped_notification">MobiAds Service Stopped</string>
     <string name="remote_service_title_notification">MobiAds Service</string>
     <string name="url_login_web_service">http://users.mobiads.gumartinm.name/userfront.php/api/login/auth.json</string>
+    <string name="url_api_web_services">http://users.mobiads.gumartinm.name/userfront.php/api/</string>
+    <string name="url_images">http://companies.mobiads.gumartinm.name/uploads/images/</string>
     <string name="url_web">users.mobiads.gumartinm.name</string>
     <string name="user_agent_web_service">MobiAds/1.0</string>
     <string name="encoded_web_service">UTF-8</string>
@@ -35,4 +37,10 @@
     <string name="menuads_settings">Settings</string>
     <string name="menuads_login">Login</string>
     <string name="error_dialog_no_local_ads">You have no downloaded ads.</string>
+    <string name="service_preference_title">Service started</string>
+    <string name="service_preference_title_summary">Start or stop downloading ads.</string>
+    <string name="meters_update_rate_preference_title">Meters update rate</string>
+    <string name="meters_update_rate_preference_summary">Control the frequency of location updates. Lower values increase power consumption.</string>
+    <string name="time_update_rate_preference_title">Time update rate</string>
+    <string name="time_update_rate_preference_summary">Elapsed time between location updates. Lower values increase power consumption.</string>
 </resources>

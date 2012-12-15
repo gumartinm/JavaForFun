@@ -35,6 +35,7 @@ import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import de.android.mobiads.MobiAdsService;
+import de.android.mobiads.R;
 import de.android.mobiads.provider.Indexer;
 
 public class MobiAdsBatch {
@@ -63,7 +64,7 @@ public class MobiAdsBatch {
         final String longitude = String.valueOf(location.getLongitude());
         final String latitudeReplace = latitude.replace(".", ",");
         final String longitudeReplace = longitude.replace(".", ",");
-        final String URLAuth = "http://users.mobiads.gumartinm.name/userfront.php/api/" + latitudeReplace + "/" + longitudeReplace + "/gpsads.json";
+        final String URLAuth = this.context.getResources().getString(R.string.url_api_web_services) + latitudeReplace + "/" + longitudeReplace + "/gpsads.json";
         URL url = null;
 
         try {
@@ -218,7 +219,7 @@ public class MobiAdsBatch {
         public void downloadImage(final String image, final String path)
                 throws MalformedURLException, URISyntaxException, FileNotFoundException, IOException {
             final HttpGet httpGet = new HttpGet();
-            final String URLAd = USERS_SERVER + image;
+            final String URLAd = MobiAdsBatch.this.context.getResources().getString(R.string.url_images) + image;
             HttpResponse httpResponse = null;
             URL url = null;
 

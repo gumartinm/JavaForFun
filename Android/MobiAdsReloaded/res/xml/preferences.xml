@@ -5,7 +5,30 @@
         
     <CheckBoxPreference
             android:key="service_started"
-            android:title="Service started" 
+            android:title="@string/service_preference_title" 
+            android:summary="@string/service_preference_title_summary"
             android:enabled="true" 
             android:selectable="true"/>
+    <ListPreference
+            android:key="meters_update_rate"
+            android:dialogTitle="@string/meters_update_rate_preference_title"
+            android:title="@string/meters_update_rate_preference_title"
+            android:summary="@string/meters_update_rate_preference_summary"
+            android:enabled="true" 
+            android:selectable="true"
+            android:persistent="true"
+            android:entries="@array/meters_update_rate_human_value"
+            android:entryValues="@array/meters_update_rate_value"
+            android:defaultValue="10"/>
+    <ListPreference
+            android:key="time_update_rate"
+            android:dialogTitle="@string/time_update_rate_preference_title"
+            android:title="@string/time_update_rate_preference_title"
+            android:summary="@string/time_update_rate_preference_summary"
+            android:enabled="true" 
+            android:selectable="true"
+            android:persistent="true"
+            android:entries="@array/time_update_rate_human_value"
+            android:entryValues="@array/time_update_rate_value"
+            android:defaultValue="0"/>
 </PreferenceScreen> 

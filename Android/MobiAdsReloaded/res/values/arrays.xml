@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="meters_update_rate_value">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </string-array>
+    <string-array name="meters_update_rate_human_value">
+        <item>10 meters</item>
+        <item>20 meters</item>
+        <item>30 meters</item>
+        <item>40 meters</item>
+        <item>50 meters</item>
+    </string-array>
+    <string-array name="time_update_rate_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+    </string-array>
+    <string-array name="time_update_rate_human_value">
+        <item>0 minutes</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>20 minutes</item>
+    </string-array>
+</resources>
