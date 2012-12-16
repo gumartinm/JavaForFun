@@ -11,8 +11,6 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="button_login">Log In</string>
-    <string name="button_messagebind">Bind Service</string>
-    <string name="button_messageunbind">Unbind Service</string>
     <string name="button_messagestopservice">Stop Application</string>
     <string name="button_messagestartservice">Start Application</string>
     <string name="button_messagelistlocalads">List Your Ads</string>

@@ -45,7 +45,6 @@ public class MobiAdsBatch {
     private final AndroidHttpClient httpClient;
     private final Context context;
     private final String mobiAdsCookie;
-    private static final String USERS_SERVER = "http://companies.mobiads.gumartinm.name/uploads/images/";
 
 
     public MobiAdsBatch (final String userAgent, final String encoded, final Context context, final String cookie) {

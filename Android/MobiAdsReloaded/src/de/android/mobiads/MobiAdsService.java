@@ -1,7 +1,5 @@
 package de.android.mobiads;
 
-import java.util.ArrayList;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,47 +12,37 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 import de.android.mobiads.batch.MobiAdsBatch;
 import de.android.mobiads.list.MobiAdsLatestList;
 
 public class MobiAdsService extends Service {
+    private static final String TAG = "MobiAdsService";
     private MobiAdsBatch mobiAdsBatch;
     /** For showing and hiding our notification. */
     NotificationManager notificationManager;
-    /**
-     * Command to the service to register a client, receiving callbacks
-     * from the service.  The Message's replyTo field must be a Messenger of
-     * the client where callbacks should be sent.
-     */
-    public static final int MSG_REGISTER_CLIENT = 1;
 
     /**
-     * Command to the service to unregister a client, ot stop receiving callbacks
-     * from the service.  The Message's replyTo field must be a Messenger of
-     * the client as previously given with MSG_REGISTER_CLIENT.
+     * Command to service to retrieve the current cookie value.  This can be sent to the
+     * service to retrieve the cookie value, and will be sent by the service to
+     * any registered clients with the current value used by the service in order
+     * to connect with the Web Service.
      */
-    public static final int MSG_UNREGISTER_CLIENT = 2;
+    public static final int MSG_GET_VALUE = 1;
 
     /**
-     * Command to service to set a new value.  This can be sent to the
-     * service to supply a new value, and will be sent by the service to
-     * any registered clients with the new value.
+     * Stores the current cookie value.
      */
-    public static final int MSG_SET_VALUE = 3;
+    private String cookie = "WTF";
 
     private LocationManager locationManager;
     private LocationListener locationListener;
-
-    private final ArrayList<Messenger> mClients = new ArrayList<Messenger>();
-    /** Holds last value set by a client. */
-    int mValue = 0;
 
     /**
      * Meters update rate value used by LocationManager
@@ -68,16 +56,6 @@ public class MobiAdsService extends Service {
      */
     private long timeUpdateRateValue = 0;
 
-    /**
-     * Class for clients to access.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with
-     * IPC.
-     */
-    public class LocalBinder extends Binder {
-        MobiAdsService getService() {
-            return MobiAdsService.this;
-        }
-    }
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -87,7 +65,7 @@ public class MobiAdsService extends Service {
             //This will be run in the main thread of this service. It might be interesting to use a Handler
             //for this receiver implementing its own thread. :/
             //TODO: If I do not want to have any trouble, to use a synchronize to access this code here and when
-            //receiving new ads. Besides you are using the same code xD. No time right now. I must improve my code
+            //receiving new ads in MobiAdsBatch class. Besides you are using the same code xD. No time right now. I must improve my code
             //but I am in a hurry.
             if(action.equals("de.android.mobiads.MOBIADSSERVICERECEIVER")){
                 updateNotification();
@@ -97,7 +75,7 @@ public class MobiAdsService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        final String cookie = intent.getStringExtra("cookie");
+        cookie = intent.getStringExtra("cookie");
         metersUpdateRateValue = Float.parseFloat(intent.getStringExtra("meters_update_rate_value"));
         timeUpdateRateValue = 60 * 1000 * Integer.parseInt(intent.getStringExtra("time_update_rate_value"));
 
@@ -136,6 +114,7 @@ public class MobiAdsService extends Service {
 
             @Override
             public void onStatusChanged(final String provider, final int status, final Bundle extras) {
+                //TODO:
                 //1. Find out the provider state. (see Copilot.java code GPSLocationListener)
                 //2. If it is TEMPORARILY_UNAVAILABLE:
                 //2.1. locationManager.removeUpdates(locationListener); <--- Stop wasting GPS or GSM connections
@@ -248,24 +227,15 @@ public class MobiAdsService extends Service {
         @Override
         public void handleMessage(final Message msg) {
             switch (msg.what) {
-                case MSG_REGISTER_CLIENT:
-                    mClients.add(msg.replyTo);
-                    break;
-                case MSG_UNREGISTER_CLIENT:
-                    mClients.remove(msg.replyTo);
-                    break;
-                case MSG_SET_VALUE:
-                    mValue = msg.arg1;
-                    for (int i=mClients.size()-1; i>=0; i--) {
-                        try {
-                            mClients.get(i).send(Message.obtain(null,
-                                    MSG_SET_VALUE, mValue, 0));
-                        } catch (final RemoteException e) {
-                            // The client is dead.  Remove it from the list;
-                            // we are going through the list from back to front
-                            // so this is safe to do inside the loop.
-                            mClients.remove(i);
-                        }
+                case MSG_GET_VALUE:
+                    try {
+                        final Bundle data = new Bundle();
+                        data.putString("cookie", MobiAdsService.this.cookie);
+                        final Message returnMessage = Message.obtain(null, MSG_GET_VALUE);
+                        returnMessage.setData(data);
+                        msg.replyTo.send(returnMessage);
+                    } catch (final RemoteException e) {
+                        Log.wtf(TAG, "Client is dead", e);
                     }
                     break;
                 default:
