@@ -85,13 +85,17 @@ public class MobiAdsLatestList extends ListActivity implements LoaderManager.Loa
                 Intent updateDatabase = new Intent("de.android.mobiads.MOBIADSSERVICERECEIVER");
                 sendBroadcast(updateDatabase);
 
-                final Uri uri = Uri.parse(mAdapter.getItem(position).getURL());
                 mAdapter.remove(entry);
                 //Update view lists
                 updateDatabase = new Intent("de.android.mobiads.MOBIADSLISTRECEIVER");
                 sendBroadcast(updateDatabase);
 
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                //Going to web browser.
+                String url = entry.getURL();
+                if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                    url = "http://" + url;
+                }
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
 
                 mAdapter.notifyDataSetChanged();
             }

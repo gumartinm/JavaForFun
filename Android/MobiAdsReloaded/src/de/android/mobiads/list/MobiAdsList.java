@@ -423,9 +423,12 @@ public class MobiAdsList extends Activity {
             //This will update our view showing a nice black background for this item in our list :/
             mAdapter.notifyDataSetChanged();
 
-            //Going to open the web navigator whatever it is...
-            final Uri uri = Uri.parse(entry.getURL());
-            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            //Going to web browser.
+            String url = entry.getURL();
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "http://" + url;
+            }
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         }
 
         private void setIsReadEntry(final AdsEntry entry) {
