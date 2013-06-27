@@ -43,8 +43,8 @@
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	
-	<bean id="transactionManagerN2A" 
-	       class="de.spring.example.TransactionManagerN2A"
+	<bean id="myTransactionManager"
+	       class="de.spring.example.TransactionManager"
 	       factory-method="getInstance">
         <property name="transactionManager">
             <ref bean="transactionManager" />
