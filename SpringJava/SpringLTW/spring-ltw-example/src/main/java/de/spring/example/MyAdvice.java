@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Before;
 public class MyAdvice {
 
 
-    @Before("execution(* de.spring.example.web.Gus.prueba())")
+    @Before("@annotation(de.spring.example.annotation.initTransactional)")
     public void initTransactional()
     {
         System.out.println("I am the Advice initTransaction.");
