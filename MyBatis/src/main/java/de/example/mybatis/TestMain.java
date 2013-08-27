@@ -11,9 +11,6 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import de.example.mybatis.model.Ad;
 import de.example.mybatis.repository.mapper.AdMapper;
 
-//import de.example.ibatis.demo.dao.UserDao;
-//import de.example.ibatis.demo.dao.UserDaoIbatis;
-//import de.example.ibatis.dto.UserTEO;
 
 public class TestMain {
 
@@ -79,7 +76,7 @@ public class TestMain {
         // EN EL CLASSPATH:
         final SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder()
         .build(/**TestMain.class.getResourceAsStream("sql-maps-config.xml")**/
-                Resources.getResourceAsStream("mybatis-sql-maps-config.xml"));
+                Resources.getResourceAsStream("mybatis-sql-maps-config.xml"), "mybatisexample");
         final SqlSession session = sqlSessionFactory.openSession();
         // EN MYBATIS HAY UNA FORMA MEJOR QUE ESTA
         //		try {
@@ -88,60 +85,21 @@ public class TestMain {
         //			session.close();
         //		}
         // ESTA FORMA ES MUCHO MEJOR :)
+
         try {
             final AdMapper mapper = session.getMapper(AdMapper.class);
             final Ad adprueba = new Ad();
+            adprueba.setAdMobileImage("lol");
             adprueba.setCompanyCategId(200L);
             adprueba.setCreatedAt(new Date());
             adprueba.setCompanyId(2L);
             adprueba.setUpdatedAt(new Date());
             mapper.insert(adprueba);
+            session.commit();
             //			Ad ad = mapper.selectByPrimaryKey(1000L);
         } finally {
             session.close();
         }
-
-        // De esa forma consigo que el encoding dependa del valor puesto en la cabecera del xml :)
-
-        //		SqlSession session = sqlSessionFactory.openSession();
-        //		try {
-        //		  Blog blog = session.selectOne("org.mybatis.example.BlogMapper.selectBlog", 101);
-        //		} finally {
-        //		  session.close();
-        //		}
-        //
-        //		SqlSession session = sqlSessionFactory.openSession();
-        //		try {
-        //		  BlogMapper mapper = session.getMapper(BlogMapper.class);
-        //		  Blog blog = mapper.selectBlog(101);
-        //		} finally {
-        //		  session.close();
-        //		}
-        //		SqlMapClient sqlmapClient = SqlMapClientBuilder.buildSqlMapClient (reader);
-        //
-        //		//Create a new user to persist
-        //		UserTEO user = new UserTEO();
-        //		user.setId(1);
-        //		user.setName("Demo User");
-        //		user.setPassword("password");
-        //		user.setEmail("demo-user@howtodoinjava.com");
-        //		user.setStatus(1);
-        //
-        //		//Add the user
-        //		manager.addUser(user,sqlmapClient);
-        //
-        //		//Fetch the user detail
-        //		UserTEO createdUser = manager.getUserById(4, sqlmapClient);
-        //		System.out.println(createdUser.getEmail());
-        //
-        //		//Lets delete the user
-        //		manager.deleteUserById(1, sqlmapClient);
-        //		try {
-        //			Thread.sleep(100000);
-        //		} catch (InterruptedException e) {
-        //			// TODO Auto-generated catch block
-        //			e.printStackTrace();
-        //		}
     }
 
 }
