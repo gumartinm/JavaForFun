@@ -12,8 +12,8 @@
 
     <context id="MySQLTables" targetRuntime="MyBatis3">
         <commentGenerator>
-            <property name="suppressAllComments" value="true" />
-            <property name="suppressDate" value="true" />
+            <property name="suppressAllComments" value="false" />
+            <property name="suppressDate" value="false" />
         </commentGenerator>
         
         <!--
@@ -34,7 +34,7 @@
             <!--property name="constructorBased" value="true" />
             <property name="immutable" value="true" /-->
             <property name="enableSubPackages" value="true" />
-            <property name="trimStrings" value="true" />
+            <property name="trimStrings" value="false" />
         </javaModelGenerator>
 
         <sqlMapGenerator targetPackage="de.example.mybatis.repository.mapper" targetProject="MAVEN">
