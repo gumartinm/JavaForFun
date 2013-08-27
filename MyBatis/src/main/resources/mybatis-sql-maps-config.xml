@@ -28,6 +28,12 @@
       <transactionManager type="JDBC"/>
       <dataSource type="UNPOOLED">
         <property name="driver" value="com.mysql.jdbc.Driver"/>
+        <!--
+        If you are dropping like me (by means of some firewall) IPV6 connections and you feel
+        during the first MySLQ connection as if there is a huge lag and you are using
+        *NIX, you could use this system property -Djava.net.preferIPv4Stack=true
+        in order to stop using IPV6 from JVM.
+         -->
         <property name="url" value="jdbc:mysql://localhost:3306/mybatis_example?characterEncoding=UTF-8"/>
         <property name="username" value="root"/>
         <property name="password" value="root"/>

@@ -15,7 +15,7 @@ import de.example.mybatis.repository.mapper.AdMapper;
 
 
 public class TestMain {
-    static Logger logger = Logger.getLogger(TestMain.class);
+    private static final Logger logger = Logger.getLogger(TestMain.class);
 
     public static void main(final String[] args) throws IOException {
 
@@ -39,12 +39,12 @@ public class TestMain {
         .build(/**TestMain.class.getResourceAsStream("sql-maps-config.xml")**/
                 Resources.getResourceAsStream("mybatis-sql-maps-config.xml"), "mybatisexample");
 
-        final SqlSession session = sqlSessionFactory.openSession();
+        SqlSession session = sqlSessionFactory.openSession();
 
         try {
             final AdMapper adMapper = session.getMapper(AdMapper.class);
             final Ad adTest = new Ad();
-            adTest.setAdMobileImage("lol");
+            adTest.setAdMobileImage("mobileImage.jpg");
             adTest.setCompanyCategId(200L);
             adTest.setCreatedAt(new Date());
             adTest.setCompanyId(2L);
@@ -59,12 +59,29 @@ public class TestMain {
                     logger.info("Ad GPS: " + new String(ad.getAdGps(), "UTF-8"));
                 }
                 logger.info("Ad mobileImage: " + ad.getAdMobileImage());
-                logger.info("Ad mobileImage: " + ad.getCompanyCategId());
-                logger.info("Ad id: " + ad.getCompanyId());
-                logger.info("Ad id: " + ad.getCreatedAt());
-                logger.info("Ad id: " + ad.getUpdatedAt());
+                logger.info("Ad companyCategId: " + ad.getCompanyCategId());
+                logger.info("Ad companyId: " + ad.getCompanyId());
+                logger.info("Ad createdAt: " + ad.getCreatedAt());
+                logger.info("Ad updatedAt: " + ad.getUpdatedAt());
                 logger.info("\n");
             }
+        } finally {
+            session.close();
+        }
+
+        session = sqlSessionFactory.openSession();
+
+        try {
+            logger.info("Last insert");
+            final AdMapper adMapper = session.getMapper(AdMapper.class);
+            final Ad adTest = new Ad();
+            adTest.setAdMobileImage("mobileImage.jpg");
+            adTest.setCompanyCategId(200L);
+            adTest.setCreatedAt(new Date());
+            adTest.setCompanyId(2L);
+            adTest.setUpdatedAt(new Date());
+            adMapper.insert(adTest);
+            session.commit();
 
         } finally {
             session.close();
