@@ -17,6 +17,10 @@
             <property name="replaceString" value="Criteria"/>
         </plugin>
 
+        <!-- This can be useful in paging applications -->
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin">
+        </plugin>
+
         <commentGenerator>
             <property name="suppressAllComments" value="false" />
             <property name="suppressDate" value="false" />
