@@ -11,6 +11,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.log4j.Logger;
 
 import de.example.mybatis.model.Ad;
+import de.example.mybatis.model.AdCriteria;
 import de.example.mybatis.repository.mapper.AdMapper;
 
 
@@ -83,6 +84,40 @@ public class TestMain {
             adMapper.insert(adTest);
             session.commit();
 
+        } finally {
+            session.close();
+        }
+
+        session = sqlSessionFactory.openSession();
+
+        try {
+            logger.info("Using criteria");
+
+            final AdCriteria adCriteria = new AdCriteria();
+
+            adCriteria.or().andAdMobileImageEqualTo("mobileImage.jpg")
+                    .andCreatedAtNotEqualTo(new Date());
+
+            adCriteria.or().andAdMobileImageNotEqualTo("noMobileImage.jpg")
+                    .andAdMobileImageIsNotNull();
+
+            // where (ad_mobile_image = "mobileImage.jpg" and created_at <> Now())
+            // or (ad_mobile_image <> "noMobileImage.jpg" and ad_mobile_image is not null)
+
+            final AdMapper adMapper = session.getMapper(AdMapper.class);
+            final List<Ad> adLists = adMapper.selectByExampleWithBLOBs(adCriteria);
+            for (final Ad ad : adLists) {
+                logger.info("Ad id: " + ad.getId());
+                if (ad.getAdGps() != null) {
+                    logger.info("Ad GPS: " + new String(ad.getAdGps(), "UTF-8"));
+                }
+                logger.info("Ad mobileImage: " + ad.getAdMobileImage());
+                logger.info("Ad companyCategId: " + ad.getCompanyCategId());
+                logger.info("Ad companyId: " + ad.getCompanyId());
+                logger.info("Ad createdAt: " + ad.getCreatedAt());
+                logger.info("Ad updatedAt: " + ad.getUpdatedAt());
+                logger.info("\n");
+            }
         } finally {
             session.close();
         }
