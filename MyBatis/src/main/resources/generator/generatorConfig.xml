@@ -11,6 +11,12 @@
     <classPathEntry location="/home/gustavo/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar" />
 
     <context id="MySQLTables" targetRuntime="MyBatis3">
+
+        <plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+            <property name="searchString" value="Example$"/>
+            <property name="replaceString" value="Criteria"/>
+        </plugin>
+
         <commentGenerator>
             <property name="suppressAllComments" value="false" />
             <property name="suppressDate" value="false" />
