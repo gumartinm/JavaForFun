@@ -31,6 +31,8 @@
         during the first MySLQ connection as if there is a huge lag and you are using
         *NIX, you could use this system property -Djava.net.preferIPv4Stack=true
         in order to stop using IPV6 from JVM.
+        The JVM tries to find out if IPV6 is available by means of opening a random
+        AF_INET6 POSIX socket.
          -->
         <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis_example?autoReconnect=true&amp;characterEncoding=UTF-8"/>
         <property name="initialPoolSize" value="5"/>
