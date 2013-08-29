@@ -14,6 +14,8 @@ public class TestMain {
         final ExampleService exampleService = (ExampleService) SpringContextLocator
                 .getInstance().getBean("exampleService");
 
+        exampleService.insertNewAd();
+
         exampleService.getAdsByCriteria();
     }
 

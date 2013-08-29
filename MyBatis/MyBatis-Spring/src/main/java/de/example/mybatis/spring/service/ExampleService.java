@@ -20,7 +20,6 @@ public class ExampleService {
         this.adMapper = adMapper;
     }
 
-    @Transactional /**There is not inserts so this is useless, anyhow this is just an example**/
     public void getAdsByCriteria() {
         logger.info("Using criteria");
 
@@ -52,5 +51,18 @@ public class ExampleService {
             logger.info("Ad updatedAt: " + ad.getUpdatedAt());
             logger.info("\n");
         }
+    }
+
+    @Transactional /** With just one table, it is useless. Anyhow this an example **/
+    public void insertNewAd() {
+        logger.info("Insert new Ad");
+
+        final Ad adTest = new Ad();
+        adTest.setAdMobileImage("bild.jpg");
+        adTest.setCompanyCategId(200L);
+        adTest.setCreatedAt(new Date());
+        adTest.setCompanyId(2L);
+        adTest.setUpdatedAt(new Date());
+        this.adMapper.insert(adTest);
     }
 }
