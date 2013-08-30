@@ -9,6 +9,7 @@
   <url>http://gumartinm.name</url>
   <properties>
     <mybatis.generator.outputdirectory>${project.build.directory}/generated-sources/mybatis-generator/</mybatis.generator.outputdirectory>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
     <dependency>
@@ -62,7 +63,7 @@
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <version>2.0.2</version>
+            <version>3.1</version>
             <configuration>
                 <source>1.6</source>
                 <target>1.6</target>
