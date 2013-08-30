@@ -15,7 +15,7 @@ public class ThreadTest {
         //We have a pool with 2 threads.
         //The third task will wait in a Queue until one thread of that pool is freed.
         for (int i = 0; i < 3 ; i++) {
-            future[i] = exec.submit(new ThreadExecutor(i));
+            future[i] = this.exec.submit(new ThreadExecutor(i));
         }
 
         for (int i = 0; i < 3 ; i++) {
@@ -28,13 +28,13 @@ public class ThreadTest {
                 //The exception thrown in the threads is caught by the main thread here.
                 System.out.println("Exception from task " + i + ": "
                         + Thread.currentThread().getName() + "\n");
+            } finally {
+                future[i].cancel(true);
             }
         }
 
         try {
-            synchronized(this) {
-                wait(4000);
-            }
+            Thread.sleep(4000);
         } catch (final InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -44,16 +44,16 @@ public class ThreadTest {
         //The third task will wait in a Queue until one thread of that pool is freed.
         for (int i = 0; i < 3 ; i++) {
             //Code without implementing the Future class. The exception from the threads is not treated.
-            exec.submit(new ThreadExecutor(i));
+            this.exec.submit(new ThreadExecutor(i));
         }
 
-        exec.shutdown();
+        this.exec.shutdown();
 
         // After exec.shutdown if we try to execute more tasks a RejectedExecutionException
         // exception will be thrown to the main thread.
         System.out.println("Going to receive a RejectedExecutionException");
         for (int i = 0; i < 3; i++) {
-            exec.execute(new ThreadExecutor(i));
+            this.exec.execute(new ThreadExecutor(i));
         }
     }
 
@@ -71,15 +71,13 @@ public class ThreadTest {
             //treat it in you main thread.
             //Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler());
             try {
-                synchronized(this) {
-                    wait(4000);
-                }
+                Thread.sleep(4000);
             } catch (final InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            System.out.println(Thread.currentThread().getName() + " number: " + i + "\n");
-            throw new RuntimeException("EXCEPTION: " + i);
+            System.out.println(Thread.currentThread().getName() + " number: " + this.i + "\n");
+            throw new RuntimeException("EXCEPTION: " + this.i);
         }
     }
 }
