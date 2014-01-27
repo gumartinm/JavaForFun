@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>remote-agents</artifactId>
+    <groupId>de.remote.agents</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>remote-agents-services-interfaces</artifactId>
+  <name>remote-agents-services-interfaces</name>
+  <url>http://gumartinm.name</url>
+  <dependencies>
+    <dependency>
+      <groupId>com.github.briandilley.jsonrpc4j</groupId>
+      <artifactId>jsonrpc4j</artifactId>
+    </dependency>
+  </dependencies>
+</project>

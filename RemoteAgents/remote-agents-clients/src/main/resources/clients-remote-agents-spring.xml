@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+  
+    
+    <bean id="remoteUserService" class="com.googlecode.jsonrpc4j.spring.JsonProxyFactoryBean">
+        <property name="serviceUrl" value="http://127.0.0.1:8080/spring-mainapp/UserService.json"/>
+        <property name="serviceInterface" value="de.remote.agents.services.UserService"/>
+    </bean>  
+
+</beans>
