@@ -28,6 +28,10 @@
       <groupId>org.springframework.ws</groupId>
       <artifactId>spring-ws-core</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.github.briandilley.jsonrpc4j</groupId>
+      <artifactId>jsonrpc4j</artifactId>
+    </dependency>
     <!--  
     <dependency>
       <groupId>javax</groupId>

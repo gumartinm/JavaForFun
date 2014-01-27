@@ -13,10 +13,6 @@
   <url>http://gumartinm.name</url>
   <dependencies>
     <dependency>
-      <groupId>com.github.briandilley.jsonrpc4j</groupId>
-      <artifactId>jsonrpc4j</artifactId>
-    </dependency>
-    <dependency>
       <groupId>de.remote.agents</groupId>
       <artifactId>remote-agents-services-interfaces</artifactId>
       <version>${project.version}</version>

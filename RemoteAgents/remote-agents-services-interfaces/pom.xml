@@ -12,9 +12,5 @@
   <name>remote-agents-services-interfaces</name>
   <url>http://gumartinm.name</url>
   <dependencies>
-    <dependency>
-      <groupId>com.github.briandilley.jsonrpc4j</groupId>
-      <artifactId>jsonrpc4j</artifactId>
-    </dependency>
   </dependencies>
 </project>
