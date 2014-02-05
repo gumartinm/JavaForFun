@@ -17,5 +17,10 @@
         <property name="service" ref="userService"/>
         <property name="serviceInterface" value="de.remote.agents.services.UserService"/>
     </bean>
+    
+    <bean name="/CurrentDateService.json" class="com.googlecode.jsonrpc4j.spring.JsonServiceExporter">
+        <property name="service" ref="currentDateService"/>
+        <property name="serviceInterface" value="de.remote.agents.services.CurrentDateService"/>
+    </bean>
 
 </beans>

@@ -10,5 +10,8 @@
 
     <bean id="userService" class="de.remote.agents.services.UserServiceImpl">
     </bean>
+    
+    <bean id="currentDateService" class="de.remote.agents.services.CurrentDateServiceImpl">
+    </bean>
 
 </beans>
