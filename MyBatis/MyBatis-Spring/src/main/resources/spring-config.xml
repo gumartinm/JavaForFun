@@ -16,8 +16,16 @@
                            http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
 
 
-    <!-- There is no need to register all your mappers one by one. Instead, you can let MyBatis-Spring scan your classpath for them. -->
-    <mybatis:scan base-package="de.example.mybatis.repository.mapper" />
+    <!--
+    There is no need to register all your mappers one by one. Instead, you can let MyBatis-Spring scan your classpath for them.
+    <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation.
+    The annotation property specifies an annotation to search for. The marker-interface attribute specifies a parent interface
+    to search for. If both properties are specified, mappers are added for interfaces that match either criteria. By default,
+    these two properties are null, so all interfaces in the given base package(s) will be loaded as mappers.
+    See http://mybatis.org/schema/mybatis-spring.xsd for further information.
+    -->
+    <mybatis:scan base-package="de.example.mybatis.repository.mapper"
+                  marker-interface="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
 
     <!-- enable the configuration of transactional behavior based on annotations -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
