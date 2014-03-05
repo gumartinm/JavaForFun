@@ -15,4 +15,9 @@
         <property name="serviceInterface" value="de.remote.agents.services.CurrentDateService"/>
     </bean>
 
+    <bean id="remoteWriteTextService" class="com.googlecode.jsonrpc4j.spring.JsonProxyFactoryBean">
+        <property name="serviceUrl" value="http://127.0.0.1:8080/spring-mainapp/WriteTextService.json"/>
+        <property name="serviceInterface" value="de.remote.agents.services.WriteTextService"/>
+    </bean>
+
 </beans>

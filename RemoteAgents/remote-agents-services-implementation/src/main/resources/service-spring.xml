@@ -14,4 +14,7 @@
     <bean id="currentDateService" class="de.remote.agents.services.CurrentDateServiceImpl">
     </bean>
 
+    <bean id="writeTextService" class="de.remote.agents.services.WriteTextServiceImpl">
+    </bean>
+
 </beans>

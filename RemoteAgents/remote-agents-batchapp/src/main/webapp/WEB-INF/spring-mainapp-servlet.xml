@@ -23,4 +23,9 @@
         <property name="serviceInterface" value="de.remote.agents.services.CurrentDateService"/>
     </bean>
 
+    <bean name="/WriteTextService.json" class="com.googlecode.jsonrpc4j.spring.JsonServiceExporter">
+        <property name="service" ref="writeTextService"/>
+        <property name="serviceInterface" value="de.remote.agents.services.WriteTextService"/>
+    </bean>
+
 </beans>

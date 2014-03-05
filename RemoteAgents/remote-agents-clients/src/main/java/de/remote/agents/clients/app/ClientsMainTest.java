@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import de.remote.agents.services.CurrentDateService;
+import de.remote.agents.services.WriteTextService;
 
 public class ClientsMainTest {
     private static final Logger logger = Logger.getLogger(ClientsMainTest.class);
@@ -60,6 +61,10 @@ public class ClientsMainTest {
         final Thread GUIThread = new Thread(task, "GUI-Thread");
         // GUIThread.setUncaughtExceptionHandler(new DriverHWUncaughtExceptionHandler());
         GUIThread.start();
+
+        final WriteTextService remoteWriteText = (WriteTextService) SpringContextLocator
+                .getInstance().getBean("remoteWriteTextService");
+        window.setWriteTextService(remoteWriteText);
 
         final Timer t = new Timer("Timer-Thread", false);
         t.scheduleAtFixedRate(new TimerTask() {

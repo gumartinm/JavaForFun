@@ -30,8 +30,8 @@ public class SpringContextLocator {
     }
 
     /**
-     * Singleton pattern not thread safety. To use SingletoHolder pattern as the
-     * best approximation otherwise to use an Enum class (see Effective Java
+     * Singleton pattern not thread safety. To use SingletonHolder pattern as
+     * the best approximation otherwise to use an Enum class (see Effective Java
      * Second Edition and ) if we need serialization.
      */
     public static SpringContextLocator getInstance() {
