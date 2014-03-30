@@ -1,0 +1,107 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="de.example.exampletdd.MainActivity$PlaceholderFragment" >
+
+    <EditText
+        android:id="@+id/editTextCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:labelFor="@id/editTextCity"
+        android:text="@string/text_default_city" />
+
+    <Button
+        android:id="@+id/buttonweather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:onClick="onClickGetWeather"
+        android:text="@string/button_weather" />
+
+    <EditText
+        android:id="@+id/editTextWeatherDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextCity"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="102dp"
+        android:ems="10"
+        android:inputType="none"
+        android:labelFor="@id/editTextWeatherDescription"
+        android:text="@string/text_field_description" />
+
+    <EditText
+        android:id="@+id/editTextTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextWeatherDescription"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="none"
+        android:labelFor="@id/editTextTemperature"
+        android:text="@string/text_field_tem" />
+
+    <EditText
+        android:id="@+id/editTextMaxTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextTemperature"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="none"
+        android:labelFor="@id/editTextMaxTemperature"
+        android:text="@string/text_field_tem_max" />
+
+    <EditText
+        android:id="@+id/editTextMinTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextMaxTemperature"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="none"
+        android:labelFor="@id/editTextMinTemperature"
+        android:text="@string/text_field_tem_min" />
+
+    <EditText
+        android:id="@+id/editTextSunRise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextMinTemperature"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="none"
+        android:labelFor="@id/editTextSunRise"
+        android:text="@string/text_field_sun_rise" />
+
+    <EditText
+        android:id="@+id/editTextSunSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextSunRise"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="none"
+        android:labelFor="@id/editTextSunSet"
+        android:text="@string/text_field_sun_set" />
+
+    <ImageView
+        android:id="@+id/imageIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextCity"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:contentDescription="@string/icon_weather_description"
+        android:src="@drawable/ic_launcher" />
+
+</RelativeLayout>
