@@ -6,9 +6,9 @@
     <string name="button_weather">Get weather</string>
     <string name="uri_api_coord">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}</string>
     <string name="uri_api_city">http://api.openweathermap.org/data/{0}/weather?q={1}</string>
-    <string name="uri_api_icon">http://openweathermap.org/img/w/{0}</string>
+    <string name="uri_api_icon">http://openweathermap.org/img/w/{0}.png</string>
     <string name="api_version">2.5</string>
-    <string name="text_default_city">City,country</string>
+    <string name="text_default_city">London,uk</string>
     <string name="text_field_city">City name</string>
     <string name="text_field_latitude">Latitude</string>
     <string name="text_field_longitude">Longitude</string>

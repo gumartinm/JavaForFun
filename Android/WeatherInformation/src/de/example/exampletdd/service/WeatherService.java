@@ -46,8 +46,10 @@ public class WeatherService {
     public String createURIAPIicon(final String icon, final String urlAPI) {
 
         final MessageFormat formatURIAPI = new MessageFormat(urlAPI, Locale.ENGLISH);
+        final Object[] values = new Object[1];
+        values[0] = icon;
 
-        return formatURIAPI.format(icon);
+        return formatURIAPI.format(values);
     }
 
 }

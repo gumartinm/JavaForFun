@@ -35,12 +35,13 @@ public class WeatherHTTPClient {
                 if (response != null) {
                     final HttpEntity entity = response.getEntity();
                     if (entity != null) {
-                        final String contentEncoding = entity
-                                .getContentEncoding()
-                                .getValue();
+                        // Not receiving encoding :(
+                        // final String contentEncoding = entity
+                        // .getContentEncoding()
+                        // .getValue();
                         final ByteArrayOutputStream buffer = WeatherHTTPClient.this
                                 .sortResponse(response);
-                        return new String(buffer.toByteArray(), contentEncoding);
+                        return new String(buffer.toByteArray(), "UTF-8");
                     }
 
                     throw new IOException("There is no entity");

@@ -1,5 +1,6 @@
 package de.example.exampletdd.parser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +26,10 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         final WeatherData.System system = new WeatherData.System(country,
                 sunRiseTime, sunSetTime, message);
 
-        jsonObject = jsonWeatherData.getJSONObject("weather");
+        // TODO: array of WeatherData.Weather :(
+        final JSONArray jsonArray = jsonWeatherData.getJSONArray("weather");
+        jsonObject = jsonArray.getJSONObject(0);
+
         final int id = jsonObject.getInt("id");
         final String mainWeather = jsonObject.getString("main");
         final String description = jsonObject.getString("description");
@@ -35,8 +39,8 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
 
         jsonObject = jsonWeatherData.getJSONObject("main");
         final double temp = jsonObject.getDouble("temp");
-        final double minTemp = jsonObject.getDouble("minTemp");
-        final double maxTemp = jsonObject.getDouble("maxTemp");
+        final double minTemp = jsonObject.getDouble("temp_min");
+        final double maxTemp = jsonObject.getDouble("temp_max");
         final double humidity = jsonObject.getDouble("humidity");
         final double pressure = jsonObject.getDouble("pressure");
         final WeatherData.Main main = new WeatherData.Main(temp, minTemp,
@@ -45,9 +49,18 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         jsonObject = jsonWeatherData.getJSONObject("wind");
         final double speed = jsonObject.getDouble("speed");
         final double deg = jsonObject.getDouble("deg");
-        final double gust = jsonObject.getDouble("gust");
-        final double var_beg = jsonObject.getDouble("var_beg");
-        final double var_end = jsonObject.getDouble("var_end");
+        double gust = 0;
+        try {
+            gust = jsonObject.getDouble("gust");
+        } catch (final JSONException e) {}
+        double var_beg = 0;
+        try {
+            var_beg = jsonObject.getDouble("var_beg");
+        } catch (final JSONException e) {}
+        double var_end = 0;
+        try {
+            var_end = jsonObject.getDouble("var_end");
+        } catch (final JSONException e) {}
         final WeatherData.Wind wind = new WeatherData.Wind(speed, deg, gust,
                 var_beg, var_end);
 
@@ -55,7 +68,10 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         final double cloudiness = jsonObject.getDouble("all");
         final WeatherData.Clouds clouds = new WeatherData.Clouds(cloudiness);
 
-        final double time = jsonObject.getDouble("time");
+        double time = 0;
+        try {
+            time = jsonObject.getDouble("time");
+        } catch (final JSONException e) {}
         final WeatherData.DataReceivingTime dataReceivingTime =
                 new WeatherData.DataReceivingTime(time);
 
