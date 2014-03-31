@@ -19,12 +19,15 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
 
-        final WeatherDataFragment weatherDataFragment = new WeatherDataFragment();
-
-        if (savedInstanceState == null) {
-            this.getFragmentManager().beginTransaction()
-            .add(R.id.container, weatherDataFragment).commit();
-        }
+        // Better using xml files.
+        // final WeatherDataFragment weatherDataFragment = new WeatherDataFragment();
+        //
+        // if (savedInstanceState == null) {
+        //      this.getFragmentManager().beginTransaction()
+        //      .add(R.id.container, weatherDataFragment).commit();
+        // }
+        final WeatherDataFragment weatherDataFragment = (WeatherDataFragment) this
+                .getFragmentManager().findFragmentById(R.id.weather_data_frag);
 
         this.onclickButtons = weatherDataFragment;
     }

@@ -3,5 +3,14 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="de.example.exampletdd.MainActivity"
-    tools:ignore="MergeRootFrame" />
+    tools:context="de.example.exampletdd.WeatherInformationActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <fragment
+        android:id="@+id/weather_data_frag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="de.example.exampletdd.fragment.WeatherDataFragment"
+        tools:layout="@layout/fragment_main" />
+
+</FrameLayout>
