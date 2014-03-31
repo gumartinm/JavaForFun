@@ -22,5 +22,6 @@
     <string name="error_dialog_connection_tiemout">Connection error timeout</string>
     <string name="error_dialog_generic_error">Impossible to receive weather data.</string>
     <string name="icon_weather_description">Icon weather</string>
+    <string name="header_action_bar">Weather Information</string>
 
 </resources>

@@ -1,7 +1,10 @@
 package de.example.exampletdd;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +21,12 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
+        
+        final ActionBar actionBar = getActionBar();
+
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_TITLE);
+        actionBar.setTitle(getResources().getString(R.string.header_action_bar));
 
         // Better using xml files.
         // final WeatherDataFragment weatherDataFragment = new WeatherDataFragment();
@@ -45,10 +54,18 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        final int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.weather_menu_settings:
+                final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO").
+                setComponent(new ComponentName("de.example.exampletdd",
+                        "de.example.exampletdd.WeatherInformationSettings"));
+                this.startActivity(intent);
+                return true;
+            default:
+                break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
