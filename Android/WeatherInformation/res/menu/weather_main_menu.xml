@@ -9,8 +9,7 @@
         android:visible="true"
         android:checkable="false"
         android:enabled="true"
-        android:onClick="onMenuSettings"
-        android:showAsAction="ifRoom|withText">
+        android:showAsAction="collapseActionView">
     </item>
     
 

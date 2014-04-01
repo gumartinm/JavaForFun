@@ -23,5 +23,9 @@
     <string name="error_dialog_generic_error">Impossible to receive weather data.</string>
     <string name="icon_weather_description">Icon weather</string>
     <string name="header_action_bar">Weather Information</string>
+    <string name="weather_preferences_units_key">weather_preferences_units</string>
+    <string name="weather_preferences_units_fahrenheit">Fahrenheit</string>
+    <string name="weather_preferences_units_celsius">Celsius</string>
+    <string name="weather_preferences_units">Units of measurement</string>
 
 </resources>

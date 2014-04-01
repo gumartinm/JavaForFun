@@ -11,13 +11,14 @@ import java.util.Date;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import android.app.Activity;
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,15 +34,15 @@ import de.example.exampletdd.parser.IJPOSWeatherParser;
 import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.WeatherService;
 
-public class WeatherDataFragment extends Fragment implements OnClickButtons {
-    private Activity currentActivity;
-    EditText weatherDescription;
-    EditText temperature;
-    EditText maxTemperature;
-    EditText minTemperature;
-    EditText sunRise;
-    EditText sunSet;
-    ImageView imageIcon;
+public class WeatherInformationDataFragment extends Fragment implements OnClickButtons {
+    private boolean isFahrenheit;
+    private EditText weatherDescription;
+    private EditText temperature;
+    private EditText maxTemperature;
+    private EditText minTemperature;
+    private EditText sunRise;
+    private EditText sunSet;
+    private ImageView imageIcon;
 
 
     @Override
@@ -50,7 +51,6 @@ public class WeatherDataFragment extends Fragment implements OnClickButtons {
         final View rootView = inflater.inflate(R.layout.fragment_main,
                 container, false);
 
-        this.currentActivity = this.getActivity();
 
         this.weatherDescription = (EditText) rootView.findViewById(R.id.editTextWeatherDescription);
         this.temperature = (EditText) rootView.findViewById(R.id.editTextTemperature);
@@ -85,18 +85,19 @@ public class WeatherDataFragment extends Fragment implements OnClickButtons {
     public void updateWeatherData(final WeatherData weatherData) {
         final DecimalFormat tempFormatter = new DecimalFormat("#####.#####");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
+        final double tempUnits = this.isFahrenheit ? 0 : 273.15;
 
         if (weatherData.getWeather() != null) {
             this.weatherDescription.setText(weatherData.getWeather()
                     .getDescription());
             double conversion = weatherData.getMain().getTemp();
-            conversion = conversion - 273.15;
+            conversion = conversion - tempUnits;
             this.temperature.setText(tempFormatter.format(conversion));
             conversion = weatherData.getMain().getMaxTemp();
-            conversion = conversion - 273.15;
+            conversion = conversion - tempUnits;
             this.maxTemperature.setText(tempFormatter.format(conversion));
             conversion = weatherData.getMain().getMinTemp();
-            conversion = conversion - 273.15;
+            conversion = conversion - tempUnits;
             this.minTemperature.setText(tempFormatter.format(conversion));
         }
 
@@ -117,6 +118,25 @@ public class WeatherDataFragment extends Fragment implements OnClickButtons {
                     weatherData.getIconData(), 0,
                     weatherData.getIconData().length);
             this.imageIcon.setImageBitmap(icon);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this.getActivity());
+
+        final String unitsKey = this.getResources().getString(
+                R.string.weather_preferences_units_key);
+        final String units = sharedPreferences.getString(unitsKey, "");
+        final String celsius = this.getResources().getString(
+                R.string.weather_preferences_units_celsius);
+        if (units.equals(celsius)) {
+            this.isFahrenheit = false;
+        } else {
+            this.isFahrenheit = true;
         }
     }
 
@@ -157,9 +177,9 @@ public class WeatherDataFragment extends Fragment implements OnClickButtons {
         @Override
         protected void onPostExecute(final WeatherData weatherData) {
             if (weatherData != null) {
-                WeatherDataFragment.this.updateWeatherData(weatherData);
+                WeatherInformationDataFragment.this.updateWeatherData(weatherData);
             } else {
-                ((ErrorMessage) WeatherDataFragment.this.currentActivity)
+                ((ErrorMessage) WeatherInformationDataFragment.this.getActivity())
                 .createErrorDialog(R.string.error_dialog_generic_error);
             }
 
@@ -169,7 +189,7 @@ public class WeatherDataFragment extends Fragment implements OnClickButtons {
         @Override
         protected void onCancelled(final WeatherData weatherData) {
             this.onCancelled();
-            ((ErrorMessage) WeatherDataFragment.this.currentActivity)
+            ((ErrorMessage) WeatherInformationDataFragment.this.getActivity())
             .createErrorDialog(R.string.error_dialog_connection_tiemout);
 
             this.weatherHTTPClient.close();
@@ -179,9 +199,9 @@ public class WeatherDataFragment extends Fragment implements OnClickButtons {
                 throws ClientProtocolException, MalformedURLException,
                 URISyntaxException, IOException, JSONException {
             final String cityCountry = (String) params[0];
-            final String urlAPICity = WeatherDataFragment.this.getResources()
+            final String urlAPICity = WeatherInformationDataFragment.this.getResources()
                     .getString(R.string.uri_api_city);
-            final String APIVersion = WeatherDataFragment.this.getResources()
+            final String APIVersion = WeatherInformationDataFragment.this.getResources()
                     .getString(R.string.api_version);
             String url = this.weatherService.createURIAPICityCountry(
                     cityCountry, urlAPICity, APIVersion);
@@ -194,7 +214,7 @@ public class WeatherDataFragment extends Fragment implements OnClickButtons {
 
 
             final String icon = weatherData.getWeather().getIcon();
-            final String urlAPIicon = WeatherDataFragment.this
+            final String urlAPIicon = WeatherInformationDataFragment.this
                     .getResources().getString(R.string.uri_api_icon);
             url = this.weatherService.createURIAPIicon(icon, urlAPIicon);
             final byte[] iconData = this.weatherHTTPClient
