@@ -23,14 +23,14 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
 
-        PreferenceManager.setDefaultValues(this, R.xml.weather_preferences,
-                false);
+        PreferenceManager.setDefaultValues(this, R.xml.weather_preferences, false);
 
         final ActionBar actionBar = this.getActionBar();
 
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_TITLE);
-        actionBar.setTitle(this.getResources().getString(R.string.header_action_bar));
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_USE_LOGO, ActionBar.DISPLAY_USE_LOGO);
+        // actionBar.setTitle(this.getResources().getString(R.string.header_action_bar));
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Better using xml files? How to deal with savedInstanceState with xml files?
         // final WeatherDataFragment weatherDataFragment = new WeatherDataFragment();

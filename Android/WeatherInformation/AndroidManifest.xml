@@ -15,11 +15,11 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
+        android:logo="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
             android:name="de.example.exampletdd.WeatherInformationActivity"
-            android:label="@string/app_name"
             android:hardwareAccelerated="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,9 +29,8 @@
         </activity>
         
         <activity
-            android:label="@string/app_name"
             android:name=".WeatherInformationPreferencesActivity" 
-            android:theme="@android:style/Theme.Holo">
+            android:parentActivityName="de.example.exampletdd.WeatherInformationActivity">
             <intent-filter >
                 <action android:name="android.intent.action.WEATHERINFORMATIONSETTINGS" />
                 <category android:name="android.intent.category.LAUNCHER" />

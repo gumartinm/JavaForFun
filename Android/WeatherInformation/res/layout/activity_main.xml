@@ -11,6 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         class="de.example.exampletdd.fragment.WeatherInformationDataFragment"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/weather_data_list" />
 
 </FrameLayout>
