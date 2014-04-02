@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     
+    
+    <item
+        android:id="@+id/weather_menu_get"
+        android:menuCategory="system"
+        android:title="@string/action_get_weather"
+        android:titleCondensed="@string/action_get_weather"
+        android:checked="false"
+        android:visible="true"
+        android:checkable="false"
+        android:enabled="true"
+        android:icon="@drawable/ic_action_import_export"
+        android:showAsAction="ifRoom|withText">
+    </item>
     <item
         android:id="@+id/weather_menu_settings"
         android:menuCategory="system"
@@ -10,7 +23,8 @@
         android:visible="true"
         android:checkable="false"
         android:enabled="true"
-        android:showAsAction="never">
+        android:icon="@drawable/ic_action_settings"
+        android:showAsAction="ifRoom|withText">
     </item>
     
     

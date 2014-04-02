@@ -8,12 +8,16 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import android.app.Fragment;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.ErrorMessage;
@@ -33,7 +38,6 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.WeatherService;
 
 public class WeatherInformationDataFragment extends Fragment implements OnClickButtons {
-    private WeatherDataAdapter mAdapter;
     private boolean isFahrenheit;
 
 
@@ -53,28 +57,17 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         final ListView listWeatherView = (ListView) this.getActivity().findViewById(
                 R.id.weather_data_list_view);
 
-        this.mAdapter = new WeatherDataAdapter(this.getActivity(),
+        final WeatherDataAdapter adapter = new WeatherDataAdapter(this.getActivity(),
                 R.layout.weather_data_entry_list);
 
-        final Collection<WeatherDataEntry> entries = new ArrayList<WeatherDataEntry>();
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_description), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_tem), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_tem_max), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_tem_min), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_sun_rise), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_sun_set), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_cloudiness), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_rain_time), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_rain_amount), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_wind_speed), ""));
-        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_humidity), ""));
+        final Collection<WeatherDataEntry> entries = createEmptyEntriesList();
 
-        this.mAdapter.addAll(entries);
-        listWeatherView.setAdapter(this.mAdapter);
+        adapter.addAll(entries);
+        listWeatherView.setAdapter(adapter);
     }
 
     @Override
-    public void onClickGetWeather(final View v) {
+    public void onClickGetWeather() {
 
         final IJPOSWeatherParser JPOSWeatherParser = new JPOSWeatherParser();
         final WeatherService weatherService = new WeatherService(
@@ -87,7 +80,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         final WeatherTask weatherTask = new WeatherTask(HTTPweatherClient, weatherService);
 
 
-        weatherTask.execute("London,uk");
+        weatherTask.execute("Candeleda,spain");
     }
 
     public void updateWeatherData(final WeatherData weatherData) {
@@ -95,17 +88,58 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
         final double tempUnits = this.isFahrenheit ? 0 : 273.15;
 
-        if (weatherData.getWeather() != null) {
+        final List<WeatherDataEntry> entries = createEmptyEntriesList();
 
+        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
+                R.id.weather_data_list_view);
+
+        final WeatherDataAdapter adapter = new WeatherDataAdapter(this.getActivity(),
+                R.layout.weather_data_entry_list);
+
+        if (weatherData.getWeather() != null) {
+            entries.set(0, new WeatherDataEntry(this.getString(R.string.text_field_description), weatherData.getWeather()
+                    .getDescription()));
+            double conversion = weatherData.getMain().getTemp();
+            conversion = conversion - tempUnits;
+            entries.set(1, new WeatherDataEntry(this.getString(R.string.text_field_tem), tempFormatter.format(conversion)));
+            conversion = weatherData.getMain().getMaxTemp();
+            conversion = conversion - tempUnits;
+            entries.set(2, new WeatherDataEntry(this.getString(R.string.text_field_tem_max), tempFormatter.format(conversion)));
+            conversion = weatherData.getMain().getMinTemp();
+            conversion = conversion - tempUnits;
+            entries.set(3, new WeatherDataEntry(this.getString(R.string.text_field_tem_min), tempFormatter.format(conversion)));
         }
 
         if (weatherData.getSystem() != null) {
+            long unixTime = weatherData.getSystem().getSunRiseTime();
+            Date unixDate = new Date(unixTime * 1000L);
+            String dateFormatUnix = dateFormat.format(unixDate);
+            entries.set(4, new WeatherDataEntry(this.getString(R.string.text_field_sun_rise), dateFormatUnix));
 
+            unixTime = weatherData.getSystem().getSunSetTime();
+            unixDate = new Date(unixTime * 1000L);
+            dateFormatUnix = dateFormat.format(unixDate);
+            entries.set(5, new WeatherDataEntry(this.getString(R.string.text_field_sun_set), dateFormatUnix));
+        }
+
+        if (weatherData.getClouds() != null) {
+            final double cloudiness = weatherData.getClouds().getCloudiness();
+            entries.set(6, new WeatherDataEntry(this.getString(R.string.text_field_cloudiness), tempFormatter.format(cloudiness)));
         }
 
         if (weatherData.getIconData() != null) {
-
+            final Bitmap icon = BitmapFactory.decodeByteArray(
+                    weatherData.getIconData(), 0,
+                    weatherData.getIconData().length);
+            final ImageView imageIcon = (ImageView) getActivity().findViewById(R.id.weather_picture);
+            imageIcon.setImageBitmap(icon);
         }
+
+
+
+        listWeatherView.setAdapter(null);
+        adapter.addAll(entries);
+        listWeatherView.setAdapter(adapter);
     }
 
     @Override
@@ -211,5 +245,22 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
 
             return weatherData;
         }
+    }
+
+    private List<WeatherDataEntry> createEmptyEntriesList() {
+        final List<WeatherDataEntry> entries = new ArrayList<WeatherDataEntry>();
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_description), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_tem), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_tem_max), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_tem_min), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_sun_rise), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_sun_set), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_cloudiness), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_rain_time), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_rain_amount), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_wind_speed), null));
+        entries.add(new WeatherDataEntry(this.getString(R.string.text_field_humidity), null));
+
+        return entries;
     }
 }

@@ -4,6 +4,7 @@
     <string name="app_name">Weather Information</string>
     <string name="action_settings">Settings</string>
     <string name="action_search">City,country</string>
+    <string name="action_get_weather">Get weather</string>
     <string name="button_weather">Get weather</string>
     <string name="uri_api_coord">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}</string>
     <string name="uri_api_city">http://api.openweathermap.org/data/{0}/weather?q={1}</string>
@@ -19,7 +20,7 @@
     <string name="text_field_tem">Temperature:</string>
     <string name="text_field_tem_min">Min temperature:</string>
     <string name="text_field_tem_max">Max temperature:</string>
-    <string name="text_field_cloudiness">Cloudiness:</string>
+    <string name="text_field_cloudiness">Cloudiness in %:</string>
     <string name="text_field_rain_time">Rain time:</string>
     <string name="text_field_rain_amount">Rain amount:</string>
     <string name="text_field_wind_speed">Wind speed:</string>
@@ -28,7 +29,7 @@
     <string name="error_dialog_connection_tiemout">Connection error timeout</string>
     <string name="error_dialog_generic_error">Impossible to receive weather data.</string>
     <string name="icon_weather_description">Icon weather</string>
-    <string name="header_action_bar">Weather Information</string>
+    <string name="header_action_bar">City,country</string>
     <string name="weather_preferences_units_key">weather_preferences_units</string>
     <string name="weather_preferences_units_fahrenheit">Fahrenheit</string>
     <string name="weather_preferences_units_celsius">Celsius</string>

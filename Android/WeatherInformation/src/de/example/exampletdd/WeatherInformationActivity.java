@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import de.example.exampletdd.activityinterface.ErrorMessage;
 import de.example.exampletdd.activityinterface.OnClickButtons;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
@@ -28,8 +27,8 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         final ActionBar actionBar = this.getActionBar();
 
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_USE_LOGO, ActionBar.DISPLAY_USE_LOGO);
-        // actionBar.setTitle(this.getResources().getString(R.string.header_action_bar));
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE, ActionBar.DISPLAY_SHOW_TITLE);
+        actionBar.setTitle(this.getString(R.string.header_action_bar));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Better using xml files? How to deal with savedInstanceState with xml files?
@@ -67,6 +66,9 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
                     "de.example.exampletdd.WeatherInformationPreferencesActivity"));
             this.startActivity(intent);
             return true;
+        case R.id.weather_menu_get:
+            this.onClickGetWeather();
+            return true;
         default:
             break;
         }
@@ -81,8 +83,8 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         newFragment.show(this.getFragmentManager(), "errorDialog");
     }
 
-    public void onClickGetWeather(final View v) {
-        this.onclickButtons.onClickGetWeather(v);
+    public void onClickGetWeather() {
+        this.onclickButtons.onClickGetWeather();
     }
 
 }

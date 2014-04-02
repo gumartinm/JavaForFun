@@ -64,7 +64,7 @@ public class WeatherInformationDataFragmentDeprecated extends Fragment implement
     }
 
     @Override
-    public void onClickGetWeather(final View v) {
+    public void onClickGetWeather() {
 
         final IJPOSWeatherParser JPOSWeatherParser = new JPOSWeatherParser();
         final WeatherService weatherService = new WeatherService(
