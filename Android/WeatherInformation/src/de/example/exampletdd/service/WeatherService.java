@@ -33,12 +33,13 @@ public class WeatherService {
     }
 
     public String createURIAPICityCountry(final String cityCountry,
-            final String urlAPI, final String APIVersion) {
+            final String urlAPI, final String APIVersion, final String units) {
 
         final MessageFormat formatURIAPI = new MessageFormat(urlAPI, Locale.ENGLISH);
-        final Object[] values = new Object[2];
+        final Object[] values = new Object[3];
         values[0] = APIVersion;
         values[1] = cityCountry;
+        values[2] = units;
 
         return formatURIAPI.format(values);
     }

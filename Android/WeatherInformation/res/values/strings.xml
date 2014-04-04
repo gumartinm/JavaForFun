@@ -7,7 +7,7 @@
     <string name="action_get_weather">Get weather</string>
     <string name="button_weather">Get weather</string>
     <string name="uri_api_coord">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}</string>
-    <string name="uri_api_city">http://api.openweathermap.org/data/{0}/weather?q={1}</string>
+    <string name="uri_api_city">http://api.openweathermap.org/data/{0}/weather?q={1}&amp;lang={2}</string>
     <string name="uri_api_icon">http://openweathermap.org/img/w/{0}.png</string>
     <string name="api_version">2.5</string>
     <string name="text_default_city">London,uk</string>
@@ -33,6 +33,8 @@
     <string name="weather_preferences_units_key">weather_preferences_units</string>
     <string name="weather_preferences_units_fahrenheit">Fahrenheit</string>
     <string name="weather_preferences_units_celsius">Celsius</string>
-    <string name="weather_preferences_units">Units of measurement</string>
+    <string name="weather_preferences_units">Unit of measurement for temperature</string>
+    <string name="weather_preferences_language_key">weather_preferences_language</string>
+    <string name="weather_preferences_language">Language</string>
 
 </resources>

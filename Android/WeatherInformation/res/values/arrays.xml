@@ -8,4 +8,54 @@
         <item>Celsius</item>
         <item>Fahrenheit</item>
     </string-array>
+    <string-array name="weather_preferences_language_value">
+        <item>ar</item>
+        <item>bg</item>
+        <item>zh_cn</item>
+        <item>zh_tw</item>
+        <item>cz</item>
+        <item>nl</item>
+        <item>en</item>
+        <item>fi</item>
+        <item>fr</item>
+        <item>gl</item>
+        <item>de</item>
+        <item>it</item>
+        <item>mk</item>
+        <item>pl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>ru</item>
+        <item>sk</item>
+        <item>sp</item>
+        <item>se</item>
+        <item>tr</item>
+        <item>ua</item>
+        <item>vi</item>
+    </string-array>
+    <string-array name="weather_preferences_language_human_value">
+        <item>Arabic</item>
+        <item>Bulgarian</item>
+        <item>Chinese Simplified</item>
+        <item>Chinese Traditional</item>
+        <item>Czech</item>
+        <item>Dutch</item>
+        <item>English</item>
+        <item>Finnish</item>
+        <item>French</item>
+        <item>Galician</item>
+        <item>German</item>
+        <item>Italian</item>
+        <item>Macedonian</item>
+        <item>Polish</item>
+        <item>Portuguese</item>
+        <item>Romanian</item>
+        <item>Russian</item>
+        <item>Slovak</item>
+        <item>Spanish</item>
+        <item>Swedish</item>
+        <item>Turkish</item>
+        <item>Ukrainian</item>
+        <item>Vietnamese</item>
+    </string-array>
 </resources>

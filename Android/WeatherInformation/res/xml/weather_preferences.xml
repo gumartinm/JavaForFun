@@ -9,5 +9,14 @@
         android:selectable="true"
         android:persistent="true"
         android:defaultValue="Celsius" />
+    <ListPreference
+        android:entries="@array/weather_preferences_language_human_value"
+        android:entryValues="@array/weather_preferences_language_value"
+        android:key="@string/weather_preferences_language_key"
+        android:title="@string/weather_preferences_language"
+        android:defaultValue="en"
+        android:persistent="true"
+        android:selectable="true"
+        android:summary="English"/>
 
 </PreferenceScreen>

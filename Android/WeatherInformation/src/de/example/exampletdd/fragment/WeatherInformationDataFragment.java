@@ -46,6 +46,7 @@ import de.example.exampletdd.service.WeatherService;
 
 public class WeatherInformationDataFragment extends Fragment implements OnClickButtons {
     private boolean isFahrenheit;
+    private String language;
     private static final String WEATHER_DATA_FILE = "weatherdata.file";
     private static final String TAG = "WeatherInformationDataFragment";
 
@@ -54,6 +55,13 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         super.onCreate(savedInstanceState);
 
         this.getActivity().deleteFile(WEATHER_DATA_FILE);
+
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this.getActivity());
+        final String keyPreference = this.getResources().getString(
+                R.string.weather_preferences_language_key);
+        this.language = sharedPreferences.getString(
+                keyPreference, "");
     }
 
     @Override
@@ -161,19 +169,29 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
     public void onResume() {
         super.onResume();
 
-
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity());
 
-        final String unitsKey = this.getResources().getString(
+        String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_units_key);
-        final String units = sharedPreferences.getString(unitsKey, "");
+        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         final String celsius = this.getResources().getString(
                 R.string.weather_preferences_units_celsius);
-        if (units.equals(celsius)) {
+        if (unitsPreferenceValue.equals(celsius)) {
             this.isFahrenheit = false;
         } else {
             this.isFahrenheit = true;
+        }
+
+        keyPreference = this.getResources().getString(
+                R.string.weather_preferences_language_key);
+        final String languagePreferenceValue = sharedPreferences.getString(
+                keyPreference, "");
+        if (!languagePreferenceValue.equals(this.language)) {
+            this.language = languagePreferenceValue;
+            this.onClickGetWeather();
+
+            return;
         }
 
         WeatherData weatherData = null;
@@ -259,13 +277,22 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         private WeatherData doInBackgroundThrowable(final Object... params)
                 throws ClientProtocolException, MalformedURLException,
                 URISyntaxException, IOException, JSONException {
+            final SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(WeatherInformationDataFragment.this
+                            .getActivity());
+
+            final String keyPreference = WeatherInformationDataFragment.this
+                    .getActivity().getString(
+                            R.string.weather_preferences_language_key);
+            final String languagePreferenceValue = sharedPreferences.getString(keyPreference, "");
+
             final String cityCountry = (String) params[0];
             final String urlAPICity = WeatherInformationDataFragment.this.getResources()
                     .getString(R.string.uri_api_city);
             final String APIVersion = WeatherInformationDataFragment.this.getResources()
                     .getString(R.string.api_version);
             String url = this.weatherService.createURIAPICityCountry(
-                    cityCountry, urlAPICity, APIVersion);
+                    cityCountry, urlAPICity, APIVersion, languagePreferenceValue);
 
 
             final String jsonData = this.weatherHTTPClient.retrieveJSONDataFromAPI(new URL(url));

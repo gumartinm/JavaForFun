@@ -17,13 +17,17 @@ implements OnSharedPreferenceChangeListener {
         // Load the preferences from an XML resource
         this.addPreferencesFromResource(R.xml.weather_preferences);
 
-        final String unitsKey = this.getResources().getString(
+        String keyPreference = this.getActivity().getString(
                 R.string.weather_preferences_units_key);
-        final Preference connectionPref = this.findPreference(unitsKey);
-        this.getPreferenceManager().getSharedPreferences()
-                .getString(unitsKey, "");
+        Preference connectionPref = this.findPreference(keyPreference);
         connectionPref.setSummary(this.getPreferenceManager()
-                .getSharedPreferences().getString(unitsKey, ""));
+                .getSharedPreferences().getString(keyPreference, ""));
+
+        keyPreference = this.getActivity().getString(
+                R.string.weather_preferences_language_key);
+        connectionPref = this.findPreference(keyPreference);
+        connectionPref.setSummary(this.getPreferenceManager()
+                .getSharedPreferences().getString(keyPreference, ""));
     }
 
     @Override
@@ -44,10 +48,17 @@ implements OnSharedPreferenceChangeListener {
     @Override
     public void onSharedPreferenceChanged(
             final SharedPreferences sharedPreferences, final String key) {
-        final String unitsKey = this.getResources().getString(
+        String keyValue = this.getActivity().getString(
                 R.string.weather_preferences_units_key);
 
-        if (key.equals(unitsKey)) {
+        if (key.equals(keyValue)) {
+            final Preference connectionPref = this.findPreference(key);
+            connectionPref.setSummary(sharedPreferences.getString(key, ""));
+        }
+
+        keyValue = this.getActivity().getString(
+                R.string.weather_preferences_language_key);
+        if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
         }
