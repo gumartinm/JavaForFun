@@ -39,8 +39,14 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
 
         jsonObject = jsonWeatherData.getJSONObject("main");
         final double temp = jsonObject.getDouble("temp");
-        final double minTemp = jsonObject.getDouble("temp_min");
-        final double maxTemp = jsonObject.getDouble("temp_max");
+        double minTemp = 0;
+        try {
+            minTemp = jsonObject.getDouble("temp_min");
+        } catch (final JSONException e) {}
+        double maxTemp = 0;
+        try {
+            maxTemp = jsonObject.getDouble("temp_max");
+        } catch (final JSONException e) {}
         final double humidity = jsonObject.getDouble("humidity");
         final double pressure = jsonObject.getDouble("pressure");
         final WeatherData.Main main = new WeatherData.Main(temp, minTemp,
