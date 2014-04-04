@@ -1,7 +1,10 @@
 package de.example.exampletdd.model;
 
+import java.io.Serializable;
 
-public class WeatherData {
+
+public class WeatherData implements Serializable {
+    private static final long serialVersionUID = -9174787242150282821L;
     private final Main main;
     private final Wind wind;
     private final Rain rain;
@@ -149,7 +152,8 @@ public class WeatherData {
         return this.iconData;
     }
 
-    public static class Main {
+    public static class Main implements Serializable {
+        private static final long serialVersionUID = -1632181871917583409L;
         private final double temp;
         // Minimum temperature
         private final double minTemp;
@@ -201,7 +205,8 @@ public class WeatherData {
         }
     }
 
-    public static class Wind {
+    public static class Wind implements Serializable {
+        private static final long serialVersionUID = -5960066625859236765L;
         // Wind speed in mps
         private final double speed;
         // Wind direction in degrees (meteorological)
@@ -253,7 +258,8 @@ public class WeatherData {
         }
     }
 
-    public static class Rain {
+    public static class Rain implements Serializable {
+        private static final long serialVersionUID = 8975457888483866531L;
         // Period
         private final String time;
         // Precipitation volume for period
@@ -282,7 +288,8 @@ public class WeatherData {
 
     }
 
-    public static class Coord {
+    public static class Coord implements Serializable {
+        private static final long serialVersionUID = 1462850471835376903L;
         // City location
         private final double longitude;
         private final double latitude;
@@ -309,7 +316,8 @@ public class WeatherData {
         }
     }
 
-    public static class DataReceivingTime {
+    public static class DataReceivingTime implements Serializable {
+        private static final long serialVersionUID = 1953087163647283008L;
         // Time of data receiving in unixtime GMT
         private final double time;
 
@@ -330,7 +338,8 @@ public class WeatherData {
         }
     }
 
-    public static class StationName {
+    public static class StationName implements Serializable {
+        private static final long serialVersionUID = -1064381425887709851L;
         private final String name;
 
         public StationName(final String name) {
@@ -349,7 +358,8 @@ public class WeatherData {
         }
     }
 
-    public static class System {
+    public static class System implements Serializable {
+        private static final long serialVersionUID = 6066763201061358078L;
         private final String country;
         // Unixtime GMT
         private final long sunRiseTime;
@@ -392,7 +402,8 @@ public class WeatherData {
         }
     }
 
-    public static class Clouds {
+    public static class Clouds implements Serializable {
+        private static final long serialVersionUID = 8787321588449154348L;
         // Cloudiness in %
         private final double cloudiness;
 
@@ -413,7 +424,8 @@ public class WeatherData {
         }
     }
 
-    public static class Weather {
+    public static class Weather implements Serializable {
+        private static final long serialVersionUID = 6386458126182895773L;
         private final int weatherId;
         private final String main;
         private final String description;

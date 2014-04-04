@@ -1,6 +1,12 @@
 package de.example.exampletdd.fragment;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.StreamCorruptedException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -15,6 +21,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,7 +46,15 @@ import de.example.exampletdd.service.WeatherService;
 
 public class WeatherInformationDataFragment extends Fragment implements OnClickButtons {
     private boolean isFahrenheit;
+    private static final String WEATHER_DATA_FILE = "weatherdata.file";
+    private static final String TAG = "WeatherInformationDataFragment";
 
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        this.getActivity().deleteFile(WEATHER_DATA_FILE);
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater,
@@ -60,7 +75,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         final WeatherDataAdapter adapter = new WeatherDataAdapter(this.getActivity(),
                 R.layout.weather_data_entry_list);
 
-        final Collection<WeatherDataEntry> entries = createEmptyEntriesList();
+        final Collection<WeatherDataEntry> entries = this.createEmptyEntriesList();
 
         adapter.addAll(entries);
         listWeatherView.setAdapter(adapter);
@@ -88,7 +103,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
         final double tempUnits = this.isFahrenheit ? 0 : 273.15;
 
-        final List<WeatherDataEntry> entries = createEmptyEntriesList();
+        final List<WeatherDataEntry> entries = this.createEmptyEntriesList();
 
         final ListView listWeatherView = (ListView) this.getActivity().findViewById(
                 R.id.weather_data_list_view);
@@ -131,7 +146,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
             final Bitmap icon = BitmapFactory.decodeByteArray(
                     weatherData.getIconData(), 0,
                     weatherData.getIconData().length);
-            final ImageView imageIcon = (ImageView) getActivity().findViewById(R.id.weather_picture);
+            final ImageView imageIcon = (ImageView) this.getActivity().findViewById(R.id.weather_picture);
             imageIcon.setImageBitmap(icon);
         }
 
@@ -146,6 +161,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
     public void onResume() {
         super.onResume();
 
+
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity());
 
@@ -158,6 +174,23 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
             this.isFahrenheit = false;
         } else {
             this.isFahrenheit = true;
+        }
+
+        WeatherData weatherData = null;
+        try {
+            weatherData = this.restoreDataFromFile();
+        } catch (final StreamCorruptedException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final FileNotFoundException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final IOException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final ClassNotFoundException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        }
+
+        if (weatherData != null) {
+            this.updateWeatherData(weatherData);
         }
     }
 
@@ -179,15 +212,15 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
             try {
                 weatherData = this.doInBackgroundThrowable(params);
             } catch (final ClientProtocolException e) {
-                Log.e(TAG, "WeatherHTTPClient exception: ", e);
+                Log.e(TAG, "doInBackground exception: ", e);
             } catch (final MalformedURLException e) {
-                Log.e(TAG, "Syntax URL exception: ", e);
+                Log.e(TAG, "doInBackground exception: ", e);
             } catch (final URISyntaxException e) {
-                Log.e(TAG, "WeatherHTTPClient exception: ", e);
+                Log.e(TAG, "doInBackground exception: ", e);
             } catch (final IOException e) {
-                Log.e(TAG, "WeatherHTTPClient exception: ", e);
+                Log.e(TAG, "doInBackground exception: ", e);
             } catch (final JSONException e) {
-                Log.e(TAG, "WeatherService exception: ", e);
+                Log.e(TAG, "doInBackground exception: ", e);
             } finally {
                 this.weatherHTTPClient.close();
             }
@@ -198,10 +231,17 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         @Override
         protected void onPostExecute(final WeatherData weatherData) {
             if (weatherData != null) {
-                WeatherInformationDataFragment.this.updateWeatherData(weatherData);
+                try {
+                    this.onPostExecuteThrowable(weatherData);
+                } catch (final IOException e) {
+                    ((ErrorMessage) WeatherInformationDataFragment.this
+                            .getActivity())
+                            .createErrorDialog(R.string.error_dialog_generic_error);
+                }
             } else {
-                ((ErrorMessage) WeatherInformationDataFragment.this.getActivity())
-                .createErrorDialog(R.string.error_dialog_generic_error);
+                ((ErrorMessage) WeatherInformationDataFragment.this
+                        .getActivity())
+                        .createErrorDialog(R.string.error_dialog_generic_error);
             }
 
             this.weatherHTTPClient.close();
@@ -245,6 +285,13 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
 
             return weatherData;
         }
+
+        private void onPostExecuteThrowable(final WeatherData weatherData)
+                throws FileNotFoundException, IOException {
+            WeatherInformationDataFragment.this.storeWeatherData(weatherData);
+
+            WeatherInformationDataFragment.this.updateWeatherData(weatherData);
+        }
     }
 
     private List<WeatherDataEntry> createEmptyEntriesList() {
@@ -262,5 +309,39 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         entries.add(new WeatherDataEntry(this.getString(R.string.text_field_humidity), null));
 
         return entries;
+    }
+
+    private void storeWeatherData(final WeatherData weatherData)
+            throws FileNotFoundException, IOException {
+        final OutputStream persistenceFile = this.getActivity().openFileOutput(
+                WEATHER_DATA_FILE, Context.MODE_PRIVATE);
+
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(persistenceFile);
+
+            oos.writeObject(weatherData);
+        } finally {
+            if (oos != null) {
+                oos.close();
+            }
+        }
+    }
+
+    private WeatherData restoreDataFromFile() throws StreamCorruptedException,
+    FileNotFoundException, IOException, ClassNotFoundException {
+        final InputStream persistenceFile = this.getActivity().openFileInput(
+                WEATHER_DATA_FILE);
+
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(persistenceFile);
+
+            return (WeatherData) ois.readObject();
+        } finally {
+            if (ois != null) {
+                ois.close();
+            }
+        }
     }
 }
