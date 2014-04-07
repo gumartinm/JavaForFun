@@ -7,4 +7,5 @@ import de.example.exampletdd.model.WeatherData;
 public interface IJPOSWeatherParser {
 
     WeatherData retrieveWeatherFromJPOS(final String jsonData) throws JSONException;
+
 }

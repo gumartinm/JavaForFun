@@ -37,18 +37,20 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.ErrorMessage;
-import de.example.exampletdd.activityinterface.OnClickButtons;
+import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.httpclient.WeatherHTTPClient;
+import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.model.WeatherData;
 import de.example.exampletdd.parser.IJPOSWeatherParser;
 import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.WeatherService;
 
-public class WeatherInformationDataFragment extends Fragment implements OnClickButtons {
-    private boolean isFahrenheit;
-    private String language;
+public class WeatherInformationDataFragment extends Fragment implements GetWeather {
     private static final String WEATHER_DATA_FILE = "weatherdata.file";
+    private static final String WEATHER_GEOCODING_FILE = "weathergeocoding.file";
     private static final String TAG = "WeatherInformationDataFragment";
+    private boolean mIsFahrenheit;
+    private String mLanguage;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -60,7 +62,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
                 .getDefaultSharedPreferences(this.getActivity());
         final String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_language_key);
-        this.language = sharedPreferences.getString(
+        this.mLanguage = sharedPreferences.getString(
                 keyPreference, "");
     }
 
@@ -90,26 +92,41 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
     }
 
     @Override
-    public void onClickGetWeather() {
+    public void getWeather() {
 
-        final IJPOSWeatherParser JPOSWeatherParser = new JPOSWeatherParser();
-        final WeatherService weatherService = new WeatherService(
-                JPOSWeatherParser);
-        final AndroidHttpClient httpClient = AndroidHttpClient
-                .newInstance("Android Weather Information Agent");
-        final WeatherHTTPClient HTTPweatherClient = new WeatherHTTPClient(
-                httpClient);
+        GeocodingData geocodingData = null;
+        try {
+            geocodingData = this.restoreGeocodingDataFromFile();
+        } catch (final StreamCorruptedException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final FileNotFoundException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final IOException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final ClassNotFoundException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        }
 
-        final WeatherTask weatherTask = new WeatherTask(HTTPweatherClient, weatherService);
+        if (geocodingData != null) {
+            final IJPOSWeatherParser JPOSWeatherParser = new JPOSWeatherParser();
+            final WeatherService weatherService = new WeatherService(
+                    JPOSWeatherParser);
+            final AndroidHttpClient httpClient = AndroidHttpClient
+                    .newInstance("Android Weather Information Agent");
+            final WeatherHTTPClient HTTPweatherClient = new WeatherHTTPClient(
+                    httpClient);
+
+            final WeatherTask weatherTask = new WeatherTask(HTTPweatherClient, weatherService);
 
 
-        weatherTask.execute("Candeleda,spain");
+            weatherTask.execute(geocodingData);
+        }
     }
 
     public void updateWeatherData(final WeatherData weatherData) {
         final DecimalFormat tempFormatter = new DecimalFormat("#####.#####");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
-        final double tempUnits = this.isFahrenheit ? 0 : 273.15;
+        final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
 
         final List<WeatherDataEntry> entries = this.createEmptyEntriesList();
 
@@ -178,25 +195,25 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         final String celsius = this.getResources().getString(
                 R.string.weather_preferences_units_celsius);
         if (unitsPreferenceValue.equals(celsius)) {
-            this.isFahrenheit = false;
+            this.mIsFahrenheit = false;
         } else {
-            this.isFahrenheit = true;
+            this.mIsFahrenheit = true;
         }
 
         keyPreference = this.getResources().getString(
                 R.string.weather_preferences_language_key);
         final String languagePreferenceValue = sharedPreferences.getString(
                 keyPreference, "");
-        if (!languagePreferenceValue.equals(this.language)) {
-            this.language = languagePreferenceValue;
-            this.onClickGetWeather();
+        if (!languagePreferenceValue.equals(this.mLanguage)) {
+            this.mLanguage = languagePreferenceValue;
+            this.getWeather();
 
             return;
         }
 
         WeatherData weatherData = null;
         try {
-            weatherData = this.restoreDataFromFile();
+            weatherData = this.restoreWeatherDataFromFile();
         } catch (final StreamCorruptedException e) {
             Log.e(TAG, "onResume exception: ", e);
         } catch (final FileNotFoundException e) {
@@ -213,7 +230,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
     }
 
     public class WeatherTask extends AsyncTask<Object, Void, WeatherData> {
-        private static final String TAG = "JSONWeatherTask";
+        private static final String TAG = "WeatherTask";
         private final WeatherHTTPClient weatherHTTPClient;
         private final WeatherService weatherService;
 
@@ -286,19 +303,19 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
                             R.string.weather_preferences_language_key);
             final String languagePreferenceValue = sharedPreferences.getString(keyPreference, "");
 
-            final String cityCountry = (String) params[0];
-            final String urlAPICity = WeatherInformationDataFragment.this.getResources()
-                    .getString(R.string.uri_api_city);
+            final GeocodingData geocodingData = (GeocodingData) params[0];
+            final String urlAPICoord = WeatherInformationDataFragment.this.getResources()
+                    .getString(R.string.uri_api_coord);
             final String APIVersion = WeatherInformationDataFragment.this.getResources()
                     .getString(R.string.api_version);
-            String url = this.weatherService.createURIAPICityCountry(
-                    cityCountry, urlAPICity, APIVersion, languagePreferenceValue);
+            String url = this.weatherService.createURIAPICoord(geocodingData.getLatitude(),
+                    geocodingData.getLongitude(), urlAPICoord, APIVersion, languagePreferenceValue);
 
 
             final String jsonData = this.weatherHTTPClient.retrieveJSONDataFromAPI(new URL(url));
 
 
-            final WeatherData weatherData = this.weatherService.retrieveWeather(jsonData);
+            final WeatherData weatherData = this.weatherService.retrieveDataFromJPOS(jsonData);
 
 
             final String icon = weatherData.getWeather().getIcon();
@@ -315,7 +332,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
 
         private void onPostExecuteThrowable(final WeatherData weatherData)
                 throws FileNotFoundException, IOException {
-            WeatherInformationDataFragment.this.storeWeatherData(weatherData);
+            WeatherInformationDataFragment.this.storeWeatherDataToFile(weatherData);
 
             WeatherInformationDataFragment.this.updateWeatherData(weatherData);
         }
@@ -338,7 +355,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         return entries;
     }
 
-    private void storeWeatherData(final WeatherData weatherData)
+    private void storeWeatherDataToFile(final WeatherData weatherData)
             throws FileNotFoundException, IOException {
         final OutputStream persistenceFile = this.getActivity().openFileOutput(
                 WEATHER_DATA_FILE, Context.MODE_PRIVATE);
@@ -355,7 +372,7 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
         }
     }
 
-    private WeatherData restoreDataFromFile() throws StreamCorruptedException,
+    private WeatherData restoreWeatherDataFromFile() throws StreamCorruptedException,
     FileNotFoundException, IOException, ClassNotFoundException {
         final InputStream persistenceFile = this.getActivity().openFileInput(
                 WEATHER_DATA_FILE);
@@ -365,6 +382,24 @@ public class WeatherInformationDataFragment extends Fragment implements OnClickB
             ois = new ObjectInputStream(persistenceFile);
 
             return (WeatherData) ois.readObject();
+        } finally {
+            if (ois != null) {
+                ois.close();
+            }
+        }
+    }
+
+    private GeocodingData restoreGeocodingDataFromFile()
+            throws StreamCorruptedException, FileNotFoundException,
+            IOException, ClassNotFoundException {
+        final InputStream persistenceFile = this.getActivity()
+                .openFileInput(WEATHER_GEOCODING_FILE);
+
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(persistenceFile);
+
+            return (GeocodingData) ois.readObject();
         } finally {
             if (ois != null) {
                 ois.close();

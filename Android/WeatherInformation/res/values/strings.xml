@@ -5,10 +5,12 @@
     <string name="action_settings">Settings</string>
     <string name="action_search">City,country</string>
     <string name="action_get_weather">Get weather</string>
-    <string name="button_weather">Get weather</string>
-    <string name="uri_api_coord">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}</string>
+    <string name="action_map">Select Location</string>
+    <string name="button_set_chosen_location">Set Location</string>
+    <string name="uri_api_coord">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}&amp;lang={3}&amp;cnt=1</string>
     <string name="uri_api_city">http://api.openweathermap.org/data/{0}/weather?q={1}&amp;lang={2}</string>
     <string name="uri_api_icon">http://openweathermap.org/img/w/{0}.png</string>
+    <string name="uri_api_geocoding">https://maps.googleapis.com/maps/api/geocode/json?latlng={0},{1}&amp;sensor=true</string>
     <string name="api_version">2.5</string>
     <string name="text_default_city">London,uk</string>
     <string name="text_field_city">City name</string>
@@ -28,6 +30,7 @@
     <string name="button_ok">OK</string>
     <string name="error_dialog_connection_tiemout">Connection error timeout</string>
     <string name="error_dialog_generic_error">Impossible to receive weather data.</string>
+    <string name="error_dialog_store_geocoding_data">Impossible to save current location.</string>
     <string name="icon_weather_description">Icon weather</string>
     <string name="header_action_bar">City,country</string>
     <string name="weather_preferences_units_key">weather_preferences_units</string>

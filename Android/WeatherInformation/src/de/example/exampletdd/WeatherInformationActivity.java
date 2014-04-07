@@ -10,12 +10,12 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import de.example.exampletdd.activityinterface.ErrorMessage;
-import de.example.exampletdd.activityinterface.OnClickButtons;
+import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.WeatherInformationDataFragment;
 
 public class WeatherInformationActivity extends Activity implements ErrorMessage {
-    private OnClickButtons onclickButtons;
+    private GetWeather mGetWeather;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         final WeatherInformationDataFragment weatherDataFragment = (WeatherInformationDataFragment) this
                 .getFragmentManager().findFragmentById(R.id.weather_data_frag);
 
-        this.onclickButtons = weatherDataFragment;
+        this.mGetWeather = weatherDataFragment;
 
     }
 
@@ -59,15 +59,23 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         super.onOptionsItemSelected(item);
+
+        Intent intent;
         switch (item.getItemId()) {
         case R.id.weather_menu_settings:
-            final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO").
+            intent = new Intent("de.example.exampletdd.WEATHERINFO").
             setComponent(new ComponentName("de.example.exampletdd",
                     "de.example.exampletdd.WeatherInformationPreferencesActivity"));
             this.startActivity(intent);
             return true;
         case R.id.weather_menu_get:
-            this.onClickGetWeather();
+            this.getWeather();
+            return true;
+        case R.id.weather_menu_map:
+            intent = new Intent("de.example.exampletdd.WEATHERINFO")
+            .setComponent(new ComponentName("de.example.exampletdd",
+                    "de.example.exampletdd.WeatherInformationMapActivity"));
+            this.startActivity(intent);
             return true;
         default:
             break;
@@ -83,8 +91,8 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         newFragment.show(this.getFragmentManager(), "errorDialog");
     }
 
-    public void onClickGetWeather() {
-        this.onclickButtons.onClickGetWeather();
+    public void getWeather() {
+        this.mGetWeather.getWeather();
     }
 
 }

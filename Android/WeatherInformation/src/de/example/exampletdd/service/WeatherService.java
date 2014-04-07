@@ -15,19 +15,21 @@ public class WeatherService {
         this.JPOSWeatherParser = JPOSWeatherParser;
     }
 
-    public WeatherData retrieveWeather(final String jsonData) throws JSONException {
+    public WeatherData retrieveDataFromJPOS(final String jsonData) throws JSONException {
         return this.JPOSWeatherParser.retrieveWeatherFromJPOS(jsonData);
     }
 
-    public String createURIAPICoord(final int latitude, final int longitude,
-            final String urlAPI, final String APIVersion) {
+    public String createURIAPICoord(final double latitude,
+            final double longitude, final String urlAPI,
+            final String APIVersion, final String language) {
 
         final MessageFormat formatURIAPI = new MessageFormat(urlAPI,
                 Locale.ENGLISH);
-        final Object[] values = new Object[3];
+        final Object[] values = new Object[4];
         values[0] = APIVersion;
         values[1] = latitude;
         values[2] = longitude;
+        values[3] = language;
 
         return formatURIAPI.format(values);
     }

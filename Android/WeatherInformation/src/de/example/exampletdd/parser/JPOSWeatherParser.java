@@ -39,14 +39,9 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
 
         jsonObject = jsonWeatherData.getJSONObject("main");
         final double temp = jsonObject.getDouble("temp");
-        double minTemp = 0;
-        try {
-            minTemp = jsonObject.getDouble("temp_min");
-        } catch (final JSONException e) {}
-        double maxTemp = 0;
-        try {
-            maxTemp = jsonObject.getDouble("temp_max");
-        } catch (final JSONException e) {}
+        final double minTemp = jsonObject.optDouble("temp_min", 0);
+
+        final double maxTemp = jsonObject.optDouble("temp_max", 0);
         final double humidity = jsonObject.getDouble("humidity");
         final double pressure = jsonObject.getDouble("pressure");
         final WeatherData.Main main = new WeatherData.Main(temp, minTemp,
@@ -55,18 +50,9 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         jsonObject = jsonWeatherData.getJSONObject("wind");
         final double speed = jsonObject.getDouble("speed");
         final double deg = jsonObject.getDouble("deg");
-        double gust = 0;
-        try {
-            gust = jsonObject.getDouble("gust");
-        } catch (final JSONException e) {}
-        double var_beg = 0;
-        try {
-            var_beg = jsonObject.getDouble("var_beg");
-        } catch (final JSONException e) {}
-        double var_end = 0;
-        try {
-            var_end = jsonObject.getDouble("var_end");
-        } catch (final JSONException e) {}
+        final double gust = jsonObject.optDouble("gust", 0);
+        final double var_beg = jsonObject.optDouble("var_beg", 0);
+        final double var_end = jsonObject.optDouble("var_end", 0);
         final WeatherData.Wind wind = new WeatherData.Wind(speed, deg, gust,
                 var_beg, var_end);
 
@@ -74,10 +60,7 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         final double cloudiness = jsonObject.getDouble("all");
         final WeatherData.Clouds clouds = new WeatherData.Clouds(cloudiness);
 
-        double time = 0;
-        try {
-            time = jsonObject.getDouble("time");
-        } catch (final JSONException e) {}
+        final double time = jsonObject.optDouble("time", 0);
         final WeatherData.DataReceivingTime dataReceivingTime =
                 new WeatherData.DataReceivingTime(time);
 
@@ -87,4 +70,5 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
                 .setClouds(clouds).setDataReceivingTime(dataReceivingTime)
                 .build();
     }
+
 }
