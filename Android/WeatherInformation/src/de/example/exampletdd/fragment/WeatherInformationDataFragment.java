@@ -11,11 +11,13 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -123,9 +125,12 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
         }
     }
 
+    @Override
     public void updateWeatherData(final WeatherData weatherData) {
-        final DecimalFormat tempFormatter = new DecimalFormat("#####.#####");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z");
+        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+        tempFormatter.applyPattern("#####.#####");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z", Locale.US);
+
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
 
         final List<WeatherDataEntry> entries = this.createEmptyEntriesList();

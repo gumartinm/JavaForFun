@@ -7,14 +7,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
-import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -25,7 +33,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.model.GeocodingData;
 
 public class WeatherInformationMapActivity extends Activity {
@@ -33,6 +40,7 @@ public class WeatherInformationMapActivity extends Activity {
     private static final String TAG = "WeatherInformationMapActivity";
     private GoogleMap mMap;
     private Marker mMarker;
+    private ExecutorService mExec;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -47,6 +55,9 @@ public class WeatherInformationMapActivity extends Activity {
         this.mMap.getUiSettings().setCompassEnabled(false);
         this.mMap.setOnMapLongClickListener(new LongClickListener());
         this.mMap.setOnMarkerClickListener(new MarkerClickListener());
+
+
+        this.mExec = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -74,40 +85,22 @@ public class WeatherInformationMapActivity extends Activity {
                     point).draggable(
                             true));
 
-            final DecimalFormat tempFormatter = new DecimalFormat("#####.#####");
             final TextView cityCountry = (TextView) WeatherInformationMapActivity.this
                     .findViewById(R.id.weather_map_citycountry_data);
-            final String latitude = tempFormatter.format(point.latitude);
-            final String longitude = tempFormatter.format(point.longitude);
-            cityCountry.setText(latitude + "," + longitude);
+            final String city = (geocodingData.getCity() == null) ? "city not found"
+                    : geocodingData.getCity();
+            final String country = (geocodingData.getCountry() == null) ? "country not found"
+                    : geocodingData.getCountry();
+            cityCountry.setText(city + "," + country);
         }
     }
 
-    public void setChosenLocation(final View view) {
-
-        if (this.mMarker == null) {
-            return;
+    @Override
+    public void onDestroy() {
+        if (this.mExec != null) {
+            this.mExec.shutdownNow();
         }
-
-        final LatLng coordinates = this.mMarker.getPosition();
-
-        final GeocodingData geocodingData = new GeocodingData.Builder()
-        .setLatitude(coordinates.latitude)
-        .setLongitude(coordinates.longitude).build();
-
-        try {
-            this.storeGeocodingDataToFile(geocodingData);
-        } catch (final IOException e) {
-            Log.e(TAG, "Store geocoding data exception: ", e);
-            this.createErrorDialog(R.string.error_dialog_store_geocoding_data);
-        }
-
-    }
-
-    public void createErrorDialog(final int title) {
-        final DialogFragment newFragment = ErrorDialogFragment
-                .newInstance(title);
-        newFragment.show(this.getFragmentManager(), "errorDialog");
+        super.onDestroy();
     }
 
     private void storeGeocodingDataToFile(final GeocodingData geocodingData)
@@ -146,6 +139,7 @@ public class WeatherInformationMapActivity extends Activity {
     }
 
     private class LongClickListener implements OnMapLongClickListener {
+        private static final String TAG = "LongClickListener";
 
         @Override
         public void onMapLongClick(final LatLng point) {
@@ -157,12 +151,71 @@ public class WeatherInformationMapActivity extends Activity {
                 WeatherInformationMapActivity.this.mMarker.setPosition(point);
             }
 
-            final DecimalFormat tempFormatter = new DecimalFormat("#####.#####");
-            final TextView cityCountry = (TextView) WeatherInformationMapActivity.this
-                    .findViewById(R.id.weather_map_citycountry_data);
-            final String latitude = tempFormatter.format(point.latitude);
-            final String longitude = tempFormatter.format(point.longitude);
-            cityCountry.setText(latitude + "," + longitude);
+            final Future<GeocodingData> task = WeatherInformationMapActivity.this.mExec
+                    .submit(new GeocoderTask(point.latitude, point.longitude));
+            try {
+                final GeocodingData geocodingData = task.get(5,
+                        TimeUnit.SECONDS);
+                final TextView cityCountry = (TextView) WeatherInformationMapActivity.this
+                        .findViewById(R.id.weather_map_citycountry_data);
+
+                final String city = (geocodingData.getCity() == null) ? "city not found"
+                        : geocodingData.getCity();
+                final String country = (geocodingData.getCountry() == null) ? "country not found"
+                        : geocodingData.getCountry();
+                cityCountry.setText(city + "," + country);
+
+                WeatherInformationMapActivity.this
+                        .storeGeocodingDataToFile(geocodingData);
+            } catch (final InterruptedException e) {
+                Log.e(TAG, "LongClickListener exception: ", e);
+                Thread.currentThread().interrupt();
+            } catch (final ExecutionException e) {
+                final Throwable cause = e.getCause();
+                Log.e(TAG, "LongClickListener exception: ", cause);
+            } catch (final TimeoutException e) {
+                Log.e(TAG, "LongClickListener exception: ", e);
+            } catch (final FileNotFoundException e) {
+                Log.e(TAG, "LongClickListener exception: ", e);
+            } catch (final IOException e) {
+                Log.e(TAG, "LongClickListener exception: ", e);
+            } finally {
+                task.cancel(true);
+            }
+
+        }
+    }
+
+    public class GeocoderTask implements Callable<GeocodingData> {
+        private final double latitude;
+        private final double longitude;
+
+        public GeocoderTask(final double latitude, final double longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        @Override
+        public GeocodingData call() throws Exception {
+            final Geocoder geocoder = new Geocoder(
+                    WeatherInformationMapActivity.this, Locale.getDefault());
+            final List<Address> addresses = geocoder.getFromLocation(
+                    this.latitude, this.longitude, 1);
+
+            if (addresses == null) {
+                return null;
+            }
+
+            if (addresses.size() <= 0) {
+                return null;
+            }
+
+            return new GeocodingData.Builder()
+            .setLatitude(this.latitude)
+            .setLongitude(this.longitude)
+            .setCity(addresses.get(0).getLocality())
+            .setCountry(addresses.get(0).getCountryName())
+            .build();
         }
     }
 

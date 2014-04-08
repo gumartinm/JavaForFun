@@ -37,18 +37,8 @@
         android:name="com.google.android.gms.maps.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonweather"
-        android:layout_below="@+id/weather_map_citycountry_data" />
-       
-    <Button
-        android:id="@+id/buttonweather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="setChosenLocation"
-        android:text="@string/button_set_chosen_location" />
-
+        android:layout_below="@+id/weather_map_citycountry_data" />   
  
 
 </RelativeLayout>

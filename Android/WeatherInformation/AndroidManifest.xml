@@ -30,6 +30,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="de.example.exampletdd.WeatherInformationActivity"
+            android:uiOptions="splitActionBarWhenNarrow"
             android:hardwareAccelerated="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
