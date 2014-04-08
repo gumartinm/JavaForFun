@@ -31,6 +31,7 @@
     <string name="error_dialog_connection_tiemout">Connection error timeout</string>
     <string name="error_dialog_generic_error">Impossible to receive weather data.</string>
     <string name="error_dialog_store_geocoding_data">Impossible to save current location.</string>
+    <string name="error_dialog_location_error">Impossible to receive city and country values.</string>
     <string name="icon_weather_description">Icon weather</string>
     <string name="header_action_bar">City,country</string>
     <string name="weather_preferences_units_key">weather_preferences_units</string>

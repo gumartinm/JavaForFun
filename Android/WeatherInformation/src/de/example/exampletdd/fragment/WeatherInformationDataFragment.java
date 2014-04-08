@@ -275,7 +275,7 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
         }
     }
 
-    public class WeatherTask extends AsyncTask<Object, Integer, WeatherData> {
+    public class WeatherTask extends AsyncTask<Object, Void, WeatherData> {
         private static final String TAG = "WeatherTask";
         private final WeatherHTTPClient weatherHTTPClient;
         private final WeatherService weatherService;
@@ -292,7 +292,7 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
         @Override
         protected void onPreExecute() {
             this.newFragment.show(WeatherInformationDataFragment.this.getActivity()
-                    .getFragmentManager(), "errorDialog");
+                    .getFragmentManager(), "progressDialog");
         }
 
         @Override
@@ -321,12 +321,15 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
 
         @Override
         protected void onPostExecute(final WeatherData weatherData) {
+            this.weatherHTTPClient.close();
+
             this.newFragment.dismiss();
 
             if (weatherData != null) {
                 try {
                     this.onPostExecuteThrowable(weatherData);
                 } catch (final IOException e) {
+                    Log.e(TAG, "WeatherTask onPostExecute exception: ", e);
                     ((ErrorMessage) WeatherInformationDataFragment.this
                             .getActivity())
                             .createErrorDialog(R.string.error_dialog_generic_error);
@@ -336,21 +339,14 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
                         .getActivity())
                         .createErrorDialog(R.string.error_dialog_generic_error);
             }
-
-            this.weatherHTTPClient.close();
         }
 
         @Override
         protected void onCancelled(final WeatherData weatherData) {
-            this.onCancelled();
+            this.weatherHTTPClient.close();
+
             ((ErrorMessage) WeatherInformationDataFragment.this.getActivity())
             .createErrorDialog(R.string.error_dialog_connection_tiemout);
-
-            this.weatherHTTPClient.close();
-        }
-
-        @Override
-        protected void onProgressUpdate(final Integer... progress) {
         }
 
         private WeatherData doInBackgroundThrowable(final Object... params)
