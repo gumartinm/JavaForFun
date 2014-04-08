@@ -38,6 +38,7 @@ public class ProgressDialogFragment extends DialogFragment {
             dialog.setMessage(message);
         }
         dialog.setCancelable(false);
+        this.setCancelable(false);
         dialog.setIndeterminate(true);
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
 
