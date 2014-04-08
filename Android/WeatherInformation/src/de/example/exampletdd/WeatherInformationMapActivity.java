@@ -87,9 +87,9 @@ public class WeatherInformationMapActivity extends Activity {
 
             final TextView cityCountry = (TextView) WeatherInformationMapActivity.this
                     .findViewById(R.id.weather_map_citycountry_data);
-            final String city = (geocodingData.getCity() == null) ? "city not found"
+            final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
                     : geocodingData.getCity();
-            final String country = (geocodingData.getCountry() == null) ? "country not found"
+            final String country = (geocodingData.getCountry() == null) ? this.getString(R.string.country_not_found)
                     : geocodingData.getCountry();
             cityCountry.setText(city + "," + country);
         }

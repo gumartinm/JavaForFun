@@ -22,6 +22,7 @@ import java.util.Locale;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -91,6 +92,43 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
 
         adapter.addAll(entries);
         listWeatherView.setAdapter(adapter);
+
+        if (savedInstanceState != null) {
+            // Restore state
+            final WeatherData weatherData = (WeatherData) savedInstanceState
+                    .getSerializable("weatherData");
+            try {
+                this.storeWeatherDataToFile(weatherData);
+            } catch (final IOException e) {
+                ((ErrorMessage) WeatherInformationDataFragment.this
+                        .getActivity())
+                        .createErrorDialog(R.string.error_dialog_generic_error);
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(final Bundle savedInstanceState) {
+
+        // Save state
+        WeatherData weatherData = null;
+        try {
+            weatherData = this.restoreWeatherDataFromFile();
+        } catch (final StreamCorruptedException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final FileNotFoundException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final IOException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        } catch (final ClassNotFoundException e) {
+            Log.e(TAG, "onResume exception: ", e);
+        }
+
+        if (weatherData != null) {
+            savedInstanceState.putSerializable("weatherData", weatherData);
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -127,9 +165,9 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
 
     @Override
     public void updateWeatherData(final WeatherData weatherData) {
-        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
         tempFormatter.applyPattern("#####.#####");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z", Locale.US);
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z", Locale.getDefault());
 
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
 
@@ -194,6 +232,7 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity());
 
+        // 1. Update units of measurement.
         String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_units_key);
         final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
@@ -205,17 +244,8 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
             this.mIsFahrenheit = true;
         }
 
-        keyPreference = this.getResources().getString(
-                R.string.weather_preferences_language_key);
-        final String languagePreferenceValue = sharedPreferences.getString(
-                keyPreference, "");
-        if (!languagePreferenceValue.equals(this.mLanguage)) {
-            this.mLanguage = languagePreferenceValue;
-            this.getWeather();
 
-            return;
-        }
-
+        // 2. Update current data on display.
         WeatherData weatherData = null;
         try {
             weatherData = this.restoreWeatherDataFromFile();
@@ -228,21 +258,41 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
         } catch (final ClassNotFoundException e) {
             Log.e(TAG, "onResume exception: ", e);
         }
-
         if (weatherData != null) {
             this.updateWeatherData(weatherData);
         }
+
+
+        // 3. If language changed, try to retrieve new data for new language
+        // (new strings with the chosen language)
+        keyPreference = this.getResources().getString(
+                R.string.weather_preferences_language_key);
+        final String languagePreferenceValue = sharedPreferences.getString(
+                keyPreference, "");
+        if (!languagePreferenceValue.equals(this.mLanguage)) {
+            this.mLanguage = languagePreferenceValue;
+            this.getWeather();
+        }
     }
 
-    public class WeatherTask extends AsyncTask<Object, Void, WeatherData> {
+    public class WeatherTask extends AsyncTask<Object, Integer, WeatherData> {
         private static final String TAG = "WeatherTask";
         private final WeatherHTTPClient weatherHTTPClient;
         private final WeatherService weatherService;
+        private final DialogFragment newFragment;
 
         public WeatherTask(final WeatherHTTPClient weatherHTTPClient,
                 final WeatherService weatherService) {
             this.weatherHTTPClient = weatherHTTPClient;
             this.weatherService = weatherService;
+            this.newFragment = ProgressDialogFragment
+                    .newInstance(R.string.weather_progress_getdata);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            this.newFragment.show(WeatherInformationDataFragment.this.getActivity()
+                    .getFragmentManager(), "errorDialog");
         }
 
         @Override
@@ -258,7 +308,8 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
             } catch (final URISyntaxException e) {
                 Log.e(TAG, "doInBackground exception: ", e);
             } catch (final IOException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
+                // logger infrastructure swallows UnknownHostException :/
+                Log.e(TAG, "doInBackground exception: " + e.getMessage(), e);
             } catch (final JSONException e) {
                 Log.e(TAG, "doInBackground exception: ", e);
             } finally {
@@ -270,6 +321,8 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
 
         @Override
         protected void onPostExecute(final WeatherData weatherData) {
+            this.newFragment.dismiss();
+
             if (weatherData != null) {
                 try {
                     this.onPostExecuteThrowable(weatherData);
@@ -294,6 +347,10 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
             .createErrorDialog(R.string.error_dialog_connection_tiemout);
 
             this.weatherHTTPClient.close();
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... progress) {
         }
 
         private WeatherData doInBackgroundThrowable(final Object... params)

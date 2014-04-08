@@ -33,7 +33,9 @@
         android:visible="true"
         android:checkable="false"
         android:enabled="true"
-        android:checked="false">
+        android:checked="false"
+        android:title="@string/action_map"
+        android:titleCondensed="@string/action_map">
     </item>
     
     
