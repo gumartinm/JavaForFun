@@ -12,6 +12,10 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
     public WeatherData retrieveWeatherFromJPOS(final String jsonData) throws JSONException {
         final JSONObject jsonWeatherData = new JSONObject(jsonData);
 
+        // TODO: return always objects. Using null values the app will be able
+        // to find out if there is or not data. In case of null value will
+        // not show anything on GUI (empty textbox for example)
+
         JSONObject jsonObject = jsonWeatherData.getJSONObject("coord");
         final double longitude = jsonObject.getDouble("lon");
         final double latitude = jsonObject.getDouble("lat");

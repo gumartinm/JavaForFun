@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import de.example.exampletdd.activityinterface.ErrorMessage;
 import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
-import de.example.exampletdd.fragment.WeatherInformationDataFragment;
+import de.example.exampletdd.fragment.overview.WeatherInformationOverviewFragment;
 import de.example.exampletdd.model.GeocodingData;
 
 public class WeatherInformationActivity extends Activity implements ErrorMessage {
@@ -30,7 +30,7 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_main);
+        this.setContentView(R.layout.weather_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.weather_preferences, false);
 
@@ -47,8 +47,8 @@ public class WeatherInformationActivity extends Activity implements ErrorMessage
         //      this.getFragmentManager().beginTransaction()
         //      .add(R.id.container, weatherDataFragment).commit();
         // }
-        final WeatherInformationDataFragment weatherDataFragment = (WeatherInformationDataFragment) this
-                .getFragmentManager().findFragmentById(R.id.weather_data_frag);
+        final WeatherInformationOverviewFragment weatherDataFragment = (WeatherInformationOverviewFragment) this
+                .getFragmentManager().findFragmentById(R.id.weather_overview_fragment);
 
         this.mGetWeather = weatherDataFragment;
     }

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
@@ -7,10 +8,10 @@
     tools:ignore="MergeRootFrame" >
 
     <fragment
-        android:id="@+id/weather_data_frag"
+        android:id="@+id/weather_overview_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="de.example.exampletdd.fragment.WeatherInformationDataFragment"
-        tools:layout="@layout/weather_data_list" />
+        class="de.example.exampletdd.fragment.overview.WeatherInformationOverviewFragment"
+        tools:layout="@layout/weather_main_list" />
 
 </FrameLayout>
