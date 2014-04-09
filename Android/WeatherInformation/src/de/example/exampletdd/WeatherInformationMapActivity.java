@@ -20,9 +20,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -50,13 +50,6 @@ public class WeatherInformationMapActivity extends Activity {
         this.mMap.setMyLocationEnabled(true);
         this.mMap.getUiSettings().setCompassEnabled(false);
         this.mMap.setOnMapLongClickListener(new LongClickListener());
-        this.mMap.setOnMarkerClickListener(new MarkerClickListener());
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         GeocodingData geocodingData = null;
         try {
@@ -75,9 +68,11 @@ public class WeatherInformationMapActivity extends Activity {
             final LatLng point = new LatLng(
                     geocodingData.getLatitude(), geocodingData.getLongitude());
             this.mMap.clear();
-            this.mMarker = this.mMap.addMarker(new MarkerOptions().position(
-                    point).draggable(
-                            true));
+            this.mMarker = this.mMap.addMarker(new MarkerOptions().position(point).draggable(true));
+
+            this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,15));
+            this.mMap.animateCamera(CameraUpdateFactory.zoomIn());
+            this.mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
             final TextView cityCountry = (TextView) WeatherInformationMapActivity.this
                     .findViewById(R.id.weather_map_citycountry_data);
@@ -128,16 +123,7 @@ public class WeatherInformationMapActivity extends Activity {
 
         @Override
         public void onMapLongClick(final LatLng point) {
-            if (WeatherInformationMapActivity.this.mMarker == null) {
-                WeatherInformationMapActivity.this.mMarker = WeatherInformationMapActivity.this.mMap
-                        .addMarker(new MarkerOptions().position(point).draggable(
-                                true));
-            } else {
-                WeatherInformationMapActivity.this.mMarker.setPosition(point);
-            }
-
             final GeocoderAsyncTask geocoderAsyncTask = new GeocoderAsyncTask();
-          
             geocoderAsyncTask.execute(point.latitude, point.longitude);
         }
     }
@@ -148,7 +134,8 @@ public class WeatherInformationMapActivity extends Activity {
 
         public GeocoderAsyncTask() {
             this.newFragment = ProgressDialogFragment
-                    .newInstance(R.string.weather_progress_getdata);
+                    .newInstance(R.string.progress_dialog_get_remote_data,
+                            WeatherInformationMapActivity.this.getString(R.string.progress_dialog_generic_message));
         }
 
         @Override
@@ -198,6 +185,7 @@ public class WeatherInformationMapActivity extends Activity {
 
         private void onPostExecuteThrowable(final GeocodingData geocodingData)
                 throws FileNotFoundException, IOException {
+
             WeatherInformationMapActivity.this.storeGeocodingDataToFile(geocodingData);
 
             final String city = (geocodingData.getCity() == null) ?
@@ -206,11 +194,18 @@ public class WeatherInformationMapActivity extends Activity {
             final String country = (geocodingData.getCountry() == null) ?
                     WeatherInformationMapActivity.this.getString(R.string.country_not_found)
                     : geocodingData.getCountry();
-
             final TextView cityCountry = (TextView) WeatherInformationMapActivity.this
-                    .findViewById(R.id.weather_map_citycountry_data);
-
+                                    .findViewById(R.id.weather_map_citycountry_data);
             cityCountry.setText(city + "," + country);
+
+            final LatLng point = new LatLng(geocodingData.getLatitude(), geocodingData.getLongitude());
+            if (WeatherInformationMapActivity.this.mMarker == null) {
+                WeatherInformationMapActivity.this.mMarker =
+                        WeatherInformationMapActivity.this.mMap.addMarker
+                            (new MarkerOptions().position(point).draggable(true));
+            } else {
+                WeatherInformationMapActivity.this.mMarker.setPosition(point);
+            }
         }
 
         private GeocodingData getGeocodingData(final double latitude, final double longitude) throws IOException {
@@ -231,16 +226,6 @@ public class WeatherInformationMapActivity extends Activity {
                     .setCity(addresses.get(0).getLocality())
                     .setCountry(addresses.get(0).getCountryName())
                     .build();
-        }
-
-    }
-
-    private class MarkerClickListener implements OnMarkerClickListener {
-
-        @Override
-        public boolean onMarkerClick(final Marker marker) {
-            marker.getPosition();
-            return false;
         }
 
     }

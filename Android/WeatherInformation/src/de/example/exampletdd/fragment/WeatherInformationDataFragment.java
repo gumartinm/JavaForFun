@@ -210,11 +210,12 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
             entries.set(6, new WeatherDataEntry(this.getString(R.string.text_field_cloudiness), tempFormatter.format(cloudiness)));
         }
 
-        if (weatherData.getIconData() != null) {
+        if (weatherData.getWeather().getIcon() != null) {
             final Bitmap icon = BitmapFactory.decodeByteArray(
                     weatherData.getIconData(), 0,
                     weatherData.getIconData().length);
-            final ImageView imageIcon = (ImageView) this.getActivity().findViewById(R.id.weather_picture);
+            final ImageView imageIcon = (ImageView) this.getActivity()
+                    .findViewById(R.id.weather_picture);
             imageIcon.setImageBitmap(icon);
         }
 
@@ -285,8 +286,10 @@ public class WeatherInformationDataFragment extends Fragment implements GetWeath
                 final WeatherService weatherService) {
             this.weatherHTTPClient = weatherHTTPClient;
             this.weatherService = weatherService;
-            this.newFragment = ProgressDialogFragment
-                    .newInstance(R.string.weather_progress_getdata);
+            this.newFragment = ProgressDialogFragment.newInstance(
+                    R.string.progress_dialog_get_remote_data,
+                    WeatherInformationDataFragment.this
+                    .getString(R.string.progress_dialog_generic_message));
         }
 
         @Override

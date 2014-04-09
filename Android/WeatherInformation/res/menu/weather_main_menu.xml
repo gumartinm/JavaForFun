@@ -28,7 +28,7 @@
     </item>
     <item
         android:id="@+id/weather_menu_map"
-        android:icon="@drawable/ic_action_map"
+        android:icon="@drawable/ic_action_place"
         android:showAsAction="ifRoom|withText"
         android:visible="true"
         android:checkable="false"
