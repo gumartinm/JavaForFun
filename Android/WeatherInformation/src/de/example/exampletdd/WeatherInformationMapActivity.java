@@ -70,9 +70,9 @@ public class WeatherInformationMapActivity extends Activity {
             this.mMap.clear();
             this.mMarker = this.mMap.addMarker(new MarkerOptions().position(point).draggable(true));
 
-            this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point,15));
+            this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 5));
             this.mMap.animateCamera(CameraUpdateFactory.zoomIn());
-            this.mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+            this.mMap.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 
             final TextView cityCountry = (TextView) WeatherInformationMapActivity.this
                     .findViewById(R.id.weather_map_citycountry_data);
