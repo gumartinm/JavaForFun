@@ -24,7 +24,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
+import android.app.ListFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -34,9 +34,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.ErrorMessage;
@@ -49,7 +50,8 @@ import de.example.exampletdd.parser.IJPOSWeatherParser;
 import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.WeatherService;
 
-public class WeatherInformationOverviewFragment extends Fragment implements GetWeather {
+public class WeatherInformationOverviewFragment extends ListFragment implements
+GetWeather {
     private static final String WEATHER_DATA_FILE = "weatherdata.file";
     private static final String WEATHER_GEOCODING_FILE = "weathergeocoding.file";
     private static final String TAG = "WeatherInformationOverviewFragment";
@@ -71,31 +73,42 @@ public class WeatherInformationOverviewFragment extends Fragment implements GetW
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater,
-            final ViewGroup container, final Bundle savedInstanceState) {
-        // TODO: In activity_main.xml you can see: tools:layout="@layout/weather_data_list"
-        // So, probably this line is not required. I guess you can do the same
-        // by xml or by means of this code. Test it!!!
-        final View rootView = inflater.inflate(R.layout.weather_main_list,
-                container, false);
-
-        return rootView;
-    }
-
-    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
-                R.id.weather_main_list_view);
+        final ListView listWeatherView = this.getListView();
 
-        final WeatherOverviewAdapter adapter = new WeatherOverviewAdapter(this.getActivity(),
-                R.layout.weather_main_entry_list);
+        listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
+        listWeatherView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
 
-        final Collection<WeatherOverviewEntry> entries = this.createEmptyEntriesList();
+            @Override
+            public boolean onCreateActionMode(final ActionMode mode,
+                    final Menu menu) {
+                return false;
+            }
 
-        adapter.addAll(entries);
-        listWeatherView.setAdapter(adapter);
+            @Override
+            public boolean onPrepareActionMode(final ActionMode mode,
+                    final Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(final ActionMode mode,
+                    final MenuItem item) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(final ActionMode mode) {
+            }
+
+            @Override
+            public void onItemCheckedStateChanged(
+                    final ActionMode mode, final int position,
+                    final long id, final boolean checked) {
+            }
+        });
 
         if (savedInstanceState != null) {
             // Restore state
@@ -109,6 +122,20 @@ public class WeatherInformationOverviewFragment extends Fragment implements GetW
                         .createErrorDialog(R.string.error_dialog_generic_error);
             }
         }
+
+        this.setHasOptionsMenu(false);
+
+        final WeatherOverviewAdapter adapter = new WeatherOverviewAdapter(
+                this.getActivity(), R.layout.weather_main_entry_list);
+
+        final Collection<WeatherOverviewEntry> entries = this
+                .createEmptyEntriesList();
+
+        this.setListAdapter(null);
+        adapter.addAll(entries);
+        this.setListAdapter(adapter);
+        this.setListShown(true);
+        this.setListShownNoAnimation(true);
     }
 
     @Override
@@ -170,40 +197,45 @@ public class WeatherInformationOverviewFragment extends Fragment implements GetW
     @Override
     public void updateWeatherData(final WeatherData weatherData) {
         final List<WeatherOverviewEntry> entries = this.createEmptyEntriesList();
-        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
-                R.id.weather_main_list_view);
         final WeatherOverviewAdapter adapter = new WeatherOverviewAdapter(this.getActivity(),
                 R.layout.weather_main_entry_list);
 
-        Bitmap picture = null;
+        // Bitmap picture = null;
+        //
+        // if (weatherData.getWeather().getIcon() != null) {
+        // picture= BitmapFactory.decodeByteArray(
+        // weatherData.getIconData(), 0,
+        // weatherData.getIconData().length);
+        // }
 
-        if (weatherData.getWeather().getIcon() != null) {
-            picture= BitmapFactory.decodeByteArray(
-                    weatherData.getIconData(), 0,
-                    weatherData.getIconData().length);
-        }
-
+        final Bitmap picture = BitmapFactory.decodeResource(
+                this.getResources(), R.drawable.ic_02d);
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
-        tempFormatter.applyPattern("#####.#####");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd", Locale.getDefault());
+        tempFormatter.applyPattern("#####.##");
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d", Locale.getDefault());
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
-        double conversion = weatherData.getMain().getTemp();
-        conversion = conversion - tempUnits;
+        double temp = weatherData.getMain().getTemp();
+        temp = temp - tempUnits;
+        double maxTemp = weatherData.getMain().getMaxTemp();
+        maxTemp = maxTemp - tempUnits;
+        double minTemp = weatherData.getMain().getMinTemp();
+        minTemp = minTemp - tempUnits;
 
         final Calendar now = Calendar.getInstance();
         if (weatherData.getWeather() != null) {
             for (int i = 0; i<15; i++) {
                 final Date day = now.getTime();
-                entries.set(i, new WeatherOverviewEntry(
-                        "DATE: " + dateFormat.format(day),
-                        tempFormatter.format(conversion), picture));
-                now.add(Calendar.DAY_OF_MONTH, -1);
+                entries.set(i, new WeatherOverviewEntry(dateFormat.format(day),
+                        tempFormatter.format(temp), tempFormatter
+                        .format(maxTemp), tempFormatter
+                        .format(minTemp), picture));
+                now.add(Calendar.DAY_OF_MONTH, 1);
             }
         }
 
-        listWeatherView.setAdapter(null);
+        this.setListAdapter(null);
         adapter.addAll(entries);
-        listWeatherView.setAdapter(adapter);
+        this.setListAdapter(adapter);
     }
 
     @Override
@@ -381,14 +413,14 @@ public class WeatherInformationOverviewFragment extends Fragment implements GetW
 
     private List<WeatherOverviewEntry> createEmptyEntriesList() {
         final List<WeatherOverviewEntry> entries = new ArrayList<WeatherOverviewEntry>();
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd", Locale.getDefault());
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d", Locale.getDefault());
 
         final Calendar now = Calendar.getInstance();
         for (int i = 0; i<15; i++) {
             final Date day = now.getTime();
-            entries.add(i, new WeatherOverviewEntry(
-                    "DATE: " + dateFormat.format(day), null, null));
-            now.add(Calendar.DAY_OF_MONTH, -1);
+            entries.add(i, new WeatherOverviewEntry(dateFormat.format(day),
+                    null, null, null, null));
+            now.add(Calendar.DAY_OF_MONTH, 1);
         }
 
         return entries;

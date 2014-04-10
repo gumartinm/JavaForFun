@@ -4,20 +4,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    
-
     <TextView
         android:id="@+id/weather_main_entry_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/weather_main_entry_temperature"
         android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/weather_main_entry_temperature"
-        android:layout_alignBottom="@+id/weather_main_entry_temperature"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textStyle="bold"
-        android:textSize="14sp"
+        android:text="Date"
         android:textAlignment="center"
-        android:text="Date" />
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/weather_main_entry_temperature"
@@ -25,19 +23,17 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/weather_main_entry_image"
         android:layout_alignTop="@+id/weather_main_entry_image"
-        android:layout_toRightOf="@+id/weather_main_entry_date"
+        android:layout_centerHorizontal="true"
         android:text="Temperature"
         android:textAlignment="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="14sp"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="normal" />
-    
     
     <ImageView
         android:id="@+id/weather_main_entry_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/weather_main_entry_temperature"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/icon_weather_description"
         android:orientation="vertical"
