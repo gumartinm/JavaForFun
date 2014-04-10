@@ -1,4 +1,4 @@
-package de.example.exampletdd.fragment;
+package de.example.exampletdd.fragment.specific;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,11 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import de.example.exampletdd.R;
+import de.example.exampletdd.fragment.specific.WeatherSpecificDataEntry;
 
-public class WeatherDataAdapter extends ArrayAdapter<WeatherDataEntry> {
+public class WeatherSpecificDataAdapter extends ArrayAdapter<WeatherSpecificDataEntry> {
     private final int resource;
 
-    public WeatherDataAdapter(final Context context, final int resource) {
+    public WeatherSpecificDataAdapter(final Context context, final int resource) {
         super(context, 0);
 
         this.resource = resource;
@@ -26,7 +27,7 @@ public class WeatherDataAdapter extends ArrayAdapter<WeatherDataEntry> {
         // efficiency
         final View view = this.getWorkingView(convertView);
         final ViewHolder viewHolder = this.getViewHolder(view);
-        final WeatherDataEntry entry = this.getItem(position);
+        final WeatherSpecificDataEntry entry = this.getItem(position);
 
 
         // Setting the text view

@@ -2,7 +2,7 @@ package de.example.exampletdd;
 
 import android.app.Activity;
 import android.os.Bundle;
-import de.example.exampletdd.fragment.WeatherInformationPreferencesFragment;
+import de.example.exampletdd.fragment.preferences.WeatherInformationPreferencesFragment;
 
 public class WeatherInformationPreferencesActivity extends Activity {
 

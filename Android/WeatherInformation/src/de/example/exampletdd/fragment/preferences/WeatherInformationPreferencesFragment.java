@@ -1,4 +1,4 @@
-package de.example.exampletdd.fragment;
+package de.example.exampletdd.fragment.preferences;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;

@@ -25,7 +25,9 @@ import org.json.JSONException;
 
 import android.app.DialogFragment;
 import android.app.ListFragment;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,15 +36,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.AbsListView.MultiChoiceModeListener;
+import android.view.View;
 import android.widget.ListView;
 import de.example.exampletdd.R;
-import de.example.exampletdd.activityinterface.ErrorMessage;
 import de.example.exampletdd.activityinterface.GetWeather;
+import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.ProgressDialogFragment;
+import de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment;
 import de.example.exampletdd.httpclient.WeatherHTTPClient;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.model.WeatherData;
@@ -79,36 +79,6 @@ GetWeather {
         final ListView listWeatherView = this.getListView();
 
         listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
-        listWeatherView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-
-            @Override
-            public boolean onCreateActionMode(final ActionMode mode,
-                    final Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(final ActionMode mode,
-                    final Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(final ActionMode mode,
-                    final MenuItem item) {
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(final ActionMode mode) {
-            }
-
-            @Override
-            public void onItemCheckedStateChanged(
-                    final ActionMode mode, final int position,
-                    final long id, final boolean checked) {
-            }
-        });
 
         if (savedInstanceState != null) {
             // Restore state
@@ -117,9 +87,9 @@ GetWeather {
             try {
                 this.storeWeatherDataToFile(weatherData);
             } catch (final IOException e) {
-                ((ErrorMessage) WeatherInformationOverviewFragment.this
-                        .getActivity())
-                        .createErrorDialog(R.string.error_dialog_generic_error);
+                final DialogFragment newFragment = ErrorDialogFragment
+                        .newInstance(R.string.error_dialog_generic_error);
+                newFragment.show(this.getFragmentManager(), "errorDialog");
             }
         }
 
@@ -136,6 +106,22 @@ GetWeather {
         this.setListAdapter(adapter);
         this.setListShown(true);
         this.setListShownNoAnimation(true);
+    }
+
+    @Override
+    public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+        final WeatherInformationSpecificDataFragment fragment = (WeatherInformationSpecificDataFragment) getFragmentManager()
+                .findFragmentById(R.id.weather_specific_data__fragment);
+        if (fragment == null) {
+            // handset layout
+            final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO").
+                    setComponent(new ComponentName("de.example.exampletdd",
+                            "de.example.exampletdd.specific.WeatherInformationSpecificDataActivity"));
+            WeatherInformationOverviewFragment.this.getActivity().startActivity(intent);
+        } else {
+            // tablet layout
+            fragment.getWeather();
+        }
     }
 
     @Override
@@ -194,7 +180,6 @@ GetWeather {
         }
     }
 
-    @Override
     public void updateWeatherData(final WeatherData weatherData) {
         final List<WeatherOverviewEntry> entries = this.createEmptyEntriesList();
         final WeatherOverviewAdapter adapter = new WeatherOverviewAdapter(this.getActivity(),
@@ -345,14 +330,14 @@ GetWeather {
                     this.onPostExecuteThrowable(weatherData);
                 } catch (final IOException e) {
                     Log.e(TAG, "WeatherTask onPostExecute exception: ", e);
-                    ((ErrorMessage) WeatherInformationOverviewFragment.this
-                            .getActivity())
-                            .createErrorDialog(R.string.error_dialog_generic_error);
+                    final DialogFragment newFragment = ErrorDialogFragment
+                            .newInstance(R.string.error_dialog_generic_error);
+                    newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(), "errorDialog");
                 }
             } else {
-                ((ErrorMessage) WeatherInformationOverviewFragment.this
-                        .getActivity())
-                        .createErrorDialog(R.string.error_dialog_generic_error);
+                final DialogFragment newFragment = ErrorDialogFragment
+                        .newInstance(R.string.error_dialog_generic_error);
+                newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(), "errorDialog");
             }
         }
 
@@ -360,8 +345,9 @@ GetWeather {
         protected void onCancelled(final WeatherData weatherData) {
             this.weatherHTTPClient.close();
 
-            ((ErrorMessage) WeatherInformationOverviewFragment.this.getActivity())
-            .createErrorDialog(R.string.error_dialog_connection_tiemout);
+            final DialogFragment newFragment = ErrorDialogFragment
+                    .newInstance(R.string.error_dialog_connection_tiemout);
+            newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(), "errorDialog");
         }
 
         private WeatherData doInBackgroundThrowable(final Object... params)

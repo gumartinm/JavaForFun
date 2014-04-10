@@ -1,10 +1,10 @@
-package de.example.exampletdd.fragment;
+package de.example.exampletdd.fragment.specific;
 
-public class WeatherDataEntry {
+public class WeatherSpecificDataEntry {
     private final String header;
     private final String body;
 
-    public WeatherDataEntry(final String header, final String body) {
+    public WeatherSpecificDataEntry(final String header, final String body) {
         this.header = header;
         this.body = body;
     }
