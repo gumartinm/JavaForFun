@@ -2,7 +2,6 @@ package de.example.exampletdd;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StreamCorruptedException;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +28,6 @@ import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationMapActivity extends Activity {
-    private static final String TAG = "WeatherInformationMapActivity";
     private GoogleMap mMap;
     private Marker mMarker;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
@@ -49,18 +47,7 @@ public class WeatherInformationMapActivity extends Activity {
 
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
 
-        GeocodingData geocodingData = null;
-        try {
-            geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        }
+        final GeocodingData geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
 
         if (geocodingData != null) {
             final LatLng point = new LatLng(
@@ -150,7 +137,7 @@ public class WeatherInformationMapActivity extends Activity {
                 throws FileNotFoundException, IOException {
 
             WeatherInformationMapActivity.this.mWeatherServicePersistenceFile
-                    .storeGeocodingData(geocodingData);
+            .storeGeocodingData(geocodingData);
 
             final String city = (geocodingData.getCity() == null) ?
                     WeatherInformationMapActivity.this.getString(R.string.city_not_found)
@@ -165,7 +152,7 @@ public class WeatherInformationMapActivity extends Activity {
             final LatLng point = new LatLng(geocodingData.getLatitude(), geocodingData.getLongitude());
             if (WeatherInformationMapActivity.this.mMarker == null) {
                 WeatherInformationMapActivity.this.mMarker = WeatherInformationMapActivity.this.mMap.addMarker
-                                        (new MarkerOptions().position(point).draggable(true));
+                        (new MarkerOptions().position(point).draggable(true));
             } else {
                 WeatherInformationMapActivity.this.mMarker.setPosition(point);
             }

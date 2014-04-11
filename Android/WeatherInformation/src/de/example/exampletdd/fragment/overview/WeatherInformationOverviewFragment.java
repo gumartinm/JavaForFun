@@ -2,7 +2,6 @@ package de.example.exampletdd.fragment.overview;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StreamCorruptedException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -47,7 +46,6 @@ import de.example.exampletdd.service.WeatherService;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationOverviewFragment extends ListFragment implements GetWeather {
-    private static final String TAG = "WeatherInformationOverviewFragment";
     private boolean mIsFahrenheit;
     private String mLanguage;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
@@ -125,18 +123,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save state
-        WeatherData weatherData = null;
-        try {
-            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        }
+        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
 
         if (weatherData != null) {
             savedInstanceState.putSerializable("weatherData", weatherData);
@@ -148,19 +135,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
     @Override
     public void getWeather() {
 
-        GeocodingData geocodingData = null;
-        try {
-            geocodingData = this.mWeatherServicePersistenceFile
-                    .getGeocodingData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        }
+        final GeocodingData geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
 
         if (geocodingData != null) {
             final IJPOSWeatherParser JPOSWeatherParser = new JPOSWeatherParser();
@@ -242,18 +217,8 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
 
 
         // 2. Update current data on display.
-        WeatherData weatherData = null;
-        try {
-            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        }
+        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
+
         if (weatherData != null) {
             this.updateWeatherData(weatherData);
         }
@@ -390,7 +355,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         private void onPostExecuteThrowable(final WeatherData weatherData)
                 throws FileNotFoundException, IOException {
             WeatherInformationOverviewFragment.this.mWeatherServicePersistenceFile
-                    .storeWeatherData(weatherData);
+            .storeWeatherData(weatherData);
 
             WeatherInformationOverviewFragment.this.updateWeatherData(weatherData);
         }

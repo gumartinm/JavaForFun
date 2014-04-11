@@ -1,16 +1,11 @@
 package de.example.exampletdd;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StreamCorruptedException;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import de.example.exampletdd.activityinterface.GetWeather;
@@ -19,7 +14,6 @@ import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationActivity extends Activity {
-    private static final String TAG = "WeatherInformationActivity";
     private GetWeather mGetWeather;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
@@ -97,19 +91,9 @@ public class WeatherInformationActivity extends Activity {
 
         final ActionBar actionBar = this.getActionBar();
 
-        GeocodingData geocodingData = null;
-        try {
-            geocodingData = this.mWeatherServicePersistenceFile
-                    .getGeocodingData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        }
+        final GeocodingData geocodingData =
+                this.mWeatherServicePersistenceFile.getGeocodingData();
+
         if (geocodingData != null) {
             final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
                     : geocodingData.getCity();

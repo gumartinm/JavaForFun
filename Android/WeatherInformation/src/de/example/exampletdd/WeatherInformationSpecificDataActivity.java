@@ -1,20 +1,14 @@
 package de.example.exampletdd;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StreamCorruptedException;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationSpecificDataActivity extends Activity {
-    private static final String TAG = "WeatherInformationSpecificDataActivity";
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
@@ -47,19 +41,8 @@ public class WeatherInformationSpecificDataActivity extends Activity {
 
         final ActionBar actionBar = this.getActionBar();
 
-        GeocodingData geocodingData = null;
-        try {
-            geocodingData = this.mWeatherServicePersistenceFile
-                    .getGeocodingData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onCreate exception: ", e);
-        }
+        final GeocodingData geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
+
         if (geocodingData != null) {
             final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
                     : geocodingData.getCity();

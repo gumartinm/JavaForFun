@@ -42,7 +42,6 @@ public class GeocodingData implements Serializable {
     }
 
     private GeocodingData(final Builder builder) {
-        super();
         this.city = builder.mCity;
         this.country = builder.mCountry;
         this.latitude = builder.mLatitude;

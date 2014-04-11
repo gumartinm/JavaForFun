@@ -1,10 +1,12 @@
 package de.example.exampletdd.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
 
 
 public class WeatherData implements Serializable {
-    private static final long serialVersionUID = -9174787242150282821L;
+    private static final long serialVersionUID = -3521472950666173278L;
     private final Main main;
     private final Wind wind;
     private final Rain rain;
@@ -15,6 +17,7 @@ public class WeatherData implements Serializable {
     private final Clouds clouds;
     private final Weather weather;
     private byte[] iconData;
+    private final Date date;
 
 
     public static class Builder {
@@ -28,6 +31,7 @@ public class WeatherData implements Serializable {
         private System mSystem;
         private Clouds mClouds;
         private Weather mWeather;
+        private Date mDate;
 
 
         public Builder setMain(final Main main) {
@@ -76,6 +80,11 @@ public class WeatherData implements Serializable {
             return this;
         }
 
+        public Builder setDate(final Date date) {
+            this.mDate = date;
+            return this;
+        }
+
         public WeatherData build() {
             return new WeatherData(this);
         }
@@ -91,21 +100,22 @@ public class WeatherData implements Serializable {
         this.system = builder.mSystem;
         this.clouds = builder.mClouds;
         this.weather = builder.mWeather;
+        this.date = builder.mDate;
     }
 
 
     @Override
     public String toString() {
-        final StringBuilder builder2 = new StringBuilder();
-        builder2.append("WeatherData [main=").append(this.main)
-        .append(", wind=").append(this.wind).append(", rain=")
-        .append(this.rain).append(", coord=").append(this.coord)
-        .append(", dataReceivingTime=").append(this.dataReceivingTime)
-        .append(", stationName=").append(this.stationName)
-        .append(", system=").append(this.system).append(", clouds=")
-        .append(this.clouds).append(", weather=").append(this.weather)
-        .append("]");
-        return builder2.toString();
+        final StringBuilder builder = new StringBuilder();
+        builder.append("WeatherData [main=").append(main)
+        .append(", wind=").append(wind).append(", rain=").append(rain)
+        .append(", coord=").append(coord).append(", dataReceivingTime=")
+        .append(dataReceivingTime).append(", stationName=").append(stationName)
+        .append(", system=").append(system).append(", clouds=")
+        .append(clouds).append(", weather=").append(weather)
+        .append(", iconData=").append(Arrays.toString(iconData))
+        .append(", date=").append(date).append("]");
+        return builder.toString();
     }
 
     public Main getMain() {
@@ -150,6 +160,10 @@ public class WeatherData implements Serializable {
 
     public byte[] getIconData() {
         return this.iconData;
+    }
+
+    public Date getDate() {
+        return this.date;
     }
 
     public static class Main implements Serializable {

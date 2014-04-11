@@ -9,10 +9,12 @@ import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 
 import android.content.Context;
+import android.util.Log;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.model.WeatherData;
 
 public class WeatherServicePersistenceFile {
+    private static final String TAG = "WeatherServicePersistenceFile";
     private static final String WEATHER_DATA_FILE = "weatherdata.file";
     private static final String WEATHER_GEOCODING_FILE = "weathergeocoding.file";
     private final Context context;
@@ -38,7 +40,25 @@ public class WeatherServicePersistenceFile {
         }
     }
 
-    public GeocodingData getGeocodingData()
+    public GeocodingData getGeocodingData() {
+        GeocodingData geocodingData = null;
+
+        try {
+            geocodingData = this.getGeocodingDataThrowable();
+        } catch (final StreamCorruptedException e) {
+            Log.e(TAG, "getGeocodingData exception: ", e);
+        } catch (final FileNotFoundException e) {
+            Log.e(TAG, "getGeocodingData exception: ", e);
+        } catch (final IOException e) {
+            Log.e(TAG, "getGeocodingData exception: ", e);
+        } catch (final ClassNotFoundException e) {
+            Log.e(TAG, "getGeocodingData exception: ", e);
+        }
+
+        return geocodingData;
+    }
+
+    private GeocodingData getGeocodingDataThrowable()
             throws StreamCorruptedException, FileNotFoundException,
             IOException, ClassNotFoundException {
         final InputStream persistenceFile = this.context.openFileInput(
@@ -77,7 +97,25 @@ public class WeatherServicePersistenceFile {
         }
     }
 
-    public WeatherData getWeatherData()
+    public WeatherData getWeatherData() {
+        WeatherData weatherData = null;
+
+        try {
+            weatherData = getWeatherDataThrowable();
+        } catch (final StreamCorruptedException e) {
+            Log.e(TAG, "getWeatherData exception: ", e);
+        } catch (final FileNotFoundException e) {
+            Log.e(TAG, "getWeatherData exception: ", e);
+        } catch (final IOException e) {
+            Log.e(TAG, "getWeatherData exception: ", e);
+        } catch (final ClassNotFoundException e) {
+            Log.e(TAG, "getWeatherData exception: ", e);
+        }
+
+        return weatherData;
+    }
+
+    private WeatherData getWeatherDataThrowable()
             throws StreamCorruptedException,
             FileNotFoundException, IOException, ClassNotFoundException {
         final InputStream persistenceFile = this.context.openFileInput(

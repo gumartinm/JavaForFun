@@ -1,8 +1,6 @@
 package de.example.exampletdd.fragment.specific;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StreamCorruptedException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -19,7 +17,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +29,6 @@ import de.example.exampletdd.model.WeatherData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationSpecificDataFragment extends Fragment implements GetWeather {
-    private static final String TAG = "WeatherInformationDataFragment";
     private boolean mIsFahrenheit;
     private String mLanguage;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
@@ -94,18 +90,8 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save state
-        WeatherData weatherData = null;
-        try {
-            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        }
+        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
+
 
         if (weatherData != null) {
             savedInstanceState.putSerializable("weatherData", weatherData);
@@ -116,18 +102,8 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
 
     @Override
     public void getWeather() {
-        WeatherData weatherData = null;
-        try {
-            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        }
+        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
+
         if (weatherData != null) {
             this.updateWeatherData(weatherData);
         }
@@ -216,18 +192,8 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
 
 
         // 2. Update current data on display.
-        WeatherData weatherData = null;
-        try {
-            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
-        } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final FileNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final IOException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "onResume exception: ", e);
-        }
+        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
+
         if (weatherData != null) {
             this.updateWeatherData(weatherData);
         }
