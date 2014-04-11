@@ -2,8 +2,6 @@ package de.example.exampletdd;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.StreamCorruptedException;
 
 import android.app.ActionBar;
@@ -13,10 +11,11 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment;
 import de.example.exampletdd.model.GeocodingData;
+import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationSpecificDataActivity extends Activity {
-    private static final String WEATHER_GEOCODING_FILE = "weathergeocoding.file";
     private static final String TAG = "WeatherInformationSpecificDataActivity";
+    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -39,6 +38,7 @@ public class WeatherInformationSpecificDataActivity extends Activity {
             .add(R.id.container, fragment).commit();
         }
 
+        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
     }
 
     @Override
@@ -49,7 +49,8 @@ public class WeatherInformationSpecificDataActivity extends Activity {
 
         GeocodingData geocodingData = null;
         try {
-            geocodingData = this.restoreGeocodingDataFromFile();
+            geocodingData = this.mWeatherServicePersistenceFile
+                    .getGeocodingData();
         } catch (final StreamCorruptedException e) {
             Log.e(TAG, "onCreate exception: ", e);
         } catch (final FileNotFoundException e) {
@@ -67,23 +68,5 @@ public class WeatherInformationSpecificDataActivity extends Activity {
             actionBar.setTitle(city + "," + country);
         }
 
-    }
-
-    private GeocodingData restoreGeocodingDataFromFile()
-            throws StreamCorruptedException, FileNotFoundException,
-            IOException, ClassNotFoundException {
-        final InputStream persistenceFile = this.openFileInput(
-                WEATHER_GEOCODING_FILE);
-
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(persistenceFile);
-
-            return (GeocodingData) ois.readObject();
-        } finally {
-            if (ois != null) {
-                ois.close();
-            }
-        }
     }
 }

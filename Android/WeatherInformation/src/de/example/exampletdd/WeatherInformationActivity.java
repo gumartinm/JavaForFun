@@ -2,8 +2,6 @@ package de.example.exampletdd;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.StreamCorruptedException;
 
 import android.app.ActionBar;
@@ -18,11 +16,12 @@ import android.view.MenuItem;
 import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.overview.WeatherInformationOverviewFragment;
 import de.example.exampletdd.model.GeocodingData;
+import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationActivity extends Activity {
-    private static final String WEATHER_GEOCODING_FILE = "weathergeocoding.file";
     private static final String TAG = "WeatherInformationActivity";
     private GetWeather mGetWeather;
+    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -44,10 +43,13 @@ public class WeatherInformationActivity extends Activity {
         //      this.getFragmentManager().beginTransaction()
         //      .add(R.id.container, weatherDataFragment).commit();
         // }
-        final WeatherInformationOverviewFragment weatherDataFragment = (WeatherInformationOverviewFragment) this
+        final WeatherInformationOverviewFragment weatherOverviewFragment = (WeatherInformationOverviewFragment) this
                 .getFragmentManager().findFragmentById(R.id.weather_overview_fragment);
 
-        this.mGetWeather = weatherDataFragment;
+        this.mGetWeather = weatherOverviewFragment;
+
+        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(
+                this);
     }
 
     @Override
@@ -97,7 +99,8 @@ public class WeatherInformationActivity extends Activity {
 
         GeocodingData geocodingData = null;
         try {
-            geocodingData = this.restoreGeocodingDataFromFile();
+            geocodingData = this.mWeatherServicePersistenceFile
+                    .getGeocodingData();
         } catch (final StreamCorruptedException e) {
             Log.e(TAG, "onCreate exception: ", e);
         } catch (final FileNotFoundException e) {
@@ -120,23 +123,5 @@ public class WeatherInformationActivity extends Activity {
 
     public void getWeather() {
         this.mGetWeather.getWeather();
-    }
-
-    private GeocodingData restoreGeocodingDataFromFile()
-            throws StreamCorruptedException, FileNotFoundException,
-            IOException, ClassNotFoundException {
-        final InputStream persistenceFile = this.openFileInput(
-                WEATHER_GEOCODING_FILE);
-
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(persistenceFile);
-
-            return (GeocodingData) ois.readObject();
-        } finally {
-            if (ois != null) {
-                ois.close();
-            }
-        }
     }
 }

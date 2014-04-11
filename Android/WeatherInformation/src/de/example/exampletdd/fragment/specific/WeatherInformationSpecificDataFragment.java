@@ -2,10 +2,6 @@ package de.example.exampletdd.fragment.specific;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -18,7 +14,6 @@ import java.util.Locale;
 
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,18 +29,20 @@ import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.model.WeatherData;
+import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationSpecificDataFragment extends Fragment implements GetWeather {
-    private static final String WEATHER_DATA_FILE = "weatherdata.file";
     private static final String TAG = "WeatherInformationDataFragment";
     private boolean mIsFahrenheit;
     private String mLanguage;
+    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.getActivity().deleteFile(WEATHER_DATA_FILE);
+        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(
+                this.getActivity());
 
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity());
@@ -84,7 +81,7 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
             final WeatherData weatherData = (WeatherData) savedInstanceState
                     .getSerializable("weatherData");
             try {
-                this.storeWeatherDataToFile(weatherData);
+                this.mWeatherServicePersistenceFile.storeWeatherData(weatherData);
             } catch (final IOException e) {
                 final DialogFragment newFragment = ErrorDialogFragment
                         .newInstance(R.string.error_dialog_generic_error);
@@ -99,7 +96,7 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
         // Save state
         WeatherData weatherData = null;
         try {
-            weatherData = this.restoreWeatherDataFromFile();
+            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
         } catch (final StreamCorruptedException e) {
             Log.e(TAG, "onResume exception: ", e);
         } catch (final FileNotFoundException e) {
@@ -121,7 +118,7 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
     public void getWeather() {
         WeatherData weatherData = null;
         try {
-            weatherData = this.restoreWeatherDataFromFile();
+            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
         } catch (final StreamCorruptedException e) {
             Log.e(TAG, "onResume exception: ", e);
         } catch (final FileNotFoundException e) {
@@ -221,7 +218,7 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
         // 2. Update current data on display.
         WeatherData weatherData = null;
         try {
-            weatherData = this.restoreWeatherDataFromFile();
+            weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
         } catch (final StreamCorruptedException e) {
             Log.e(TAG, "onResume exception: ", e);
         } catch (final FileNotFoundException e) {
@@ -263,39 +260,5 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
         entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_humidity), null));
 
         return entries;
-    }
-
-    private void storeWeatherDataToFile(final WeatherData weatherData)
-            throws FileNotFoundException, IOException {
-        final OutputStream persistenceFile = this.getActivity().openFileOutput(
-                WEATHER_DATA_FILE, Context.MODE_PRIVATE);
-
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(persistenceFile);
-
-            oos.writeObject(weatherData);
-        } finally {
-            if (oos != null) {
-                oos.close();
-            }
-        }
-    }
-
-    private WeatherData restoreWeatherDataFromFile() throws StreamCorruptedException,
-    FileNotFoundException, IOException, ClassNotFoundException {
-        final InputStream persistenceFile = this.getActivity().openFileInput(
-                WEATHER_DATA_FILE);
-
-        ObjectInputStream ois = null;
-        try {
-            ois = new ObjectInputStream(persistenceFile);
-
-            return (WeatherData) ois.readObject();
-        } finally {
-            if (ois != null) {
-                ois.close();
-            }
-        }
     }
 }
