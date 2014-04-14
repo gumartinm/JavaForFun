@@ -16,14 +16,14 @@ import org.apache.http.client.methods.HttpGet;
 
 import android.net.http.AndroidHttpClient;
 
-public class WeatherHTTPClient {
+public class CustomHTTPClient {
     private final AndroidHttpClient httpClient;
 
-    public WeatherHTTPClient(final AndroidHttpClient httpClient) {
+    public CustomHTTPClient(final AndroidHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    public String retrieveJSONDataFromAPI(final URL url)
+    public String retrieveDataAsString(final URL url)
             throws URISyntaxException, ClientProtocolException, IOException {
 
         final ResponseHandler<String> handler = new ResponseHandler<String>() {
@@ -35,13 +35,10 @@ public class WeatherHTTPClient {
                 if (response != null) {
                     final HttpEntity entity = response.getEntity();
                     if (entity != null) {
-                        // Not receiving encoding :(
-                        // final String contentEncoding = entity
-                        // .getContentEncoding()
-                        // .getValue();
-                        final ByteArrayOutputStream buffer = WeatherHTTPClient.this
+                        final ContentType contentType = ContentType.getOrDefault(entity);
+                        final ByteArrayOutputStream buffer = CustomHTTPClient.this
                                 .sortResponse(response);
-                        return new String(buffer.toByteArray(), "UTF-8");
+                        return new String(buffer.toByteArray(), contentType.getCharset());
                     }
 
                     throw new IOException("There is no entity");
@@ -57,7 +54,7 @@ public class WeatherHTTPClient {
         return this.httpClient.execute(httpGet, handler);
     }
 
-    public ByteArrayOutputStream retrieveDataFromAPI(final URL url)
+    public ByteArrayOutputStream retrieveRawData(final URL url)
             throws URISyntaxException, ClientProtocolException, IOException {
         final ResponseHandler<ByteArrayOutputStream> handler = new ResponseHandler<ByteArrayOutputStream>() {
 
@@ -69,7 +66,7 @@ public class WeatherHTTPClient {
                 if (response != null) {
                     final HttpEntity entity = response.getEntity();
                     if (entity != null) {
-                        return WeatherHTTPClient.this.sortResponse(response);
+                        return CustomHTTPClient.this.sortResponse(response);
                     }
 
                     throw new IOException("There is no entity");

@@ -106,6 +106,6 @@ public class WeatherInformationActivity extends Activity {
 
 
     public void getWeather() {
-        this.mGetWeather.getWeather();
+        this.mGetWeather.getRemoteWeatherInformation();
     }
 }

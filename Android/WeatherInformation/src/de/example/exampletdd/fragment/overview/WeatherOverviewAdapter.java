@@ -30,17 +30,12 @@ public class WeatherOverviewAdapter extends ArrayAdapter<WeatherOverviewEntry> {
         final WeatherOverviewEntry entry = this.getItem(position);
 
 
-        // Setting the text view
+        // Setting date
         viewHolder.dateView.setText(entry.getDate());
-        String maxTemp = "";
-        if (entry.getMaxTemp() != null) {
-            maxTemp = entry.getMaxTemp() + "º";
-        }
-        String minTemp = "";
-        if (entry.getMinTemp() != null) {
-            minTemp = "/" + entry.getMinTemp() + "º";
-        }
-        viewHolder.temperatureView.setText(maxTemp + minTemp);
+
+        // Setting temperature max/min
+        viewHolder.temperatureView.setText(entry.getMaxTemp() + "/" + entry.getMinTemp());
+
         // Set image view
         viewHolder.pictureView.setImageBitmap(entry.getPicture());
 

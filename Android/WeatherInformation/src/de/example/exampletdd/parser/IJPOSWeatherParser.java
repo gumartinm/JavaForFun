@@ -1,11 +1,17 @@
 package de.example.exampletdd.parser;
 
-import org.json.JSONException;
+import java.io.IOException;
 
-import de.example.exampletdd.model.WeatherData;
+import com.fasterxml.jackson.core.JsonParseException;
+
+import de.example.exampletdd.model.currentweather.CurrentWeatherData;
+import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
 
 public interface IJPOSWeatherParser {
 
-    WeatherData retrieveWeatherFromJPOS(final String jsonData) throws JSONException;
+    public CurrentWeatherData retrieveCurrentWeatherDataFromJPOS(final String jsonData)
+            throws JsonParseException, IOException;
 
+    public ForecastWeatherData retrieveForecastWeatherDataFromJPOS(final String jsonData)
+            throws JsonParseException, IOException;
 }

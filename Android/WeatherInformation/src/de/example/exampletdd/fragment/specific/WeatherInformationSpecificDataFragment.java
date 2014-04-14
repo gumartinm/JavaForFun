@@ -25,27 +25,36 @@ import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
-import de.example.exampletdd.model.WeatherData;
+import de.example.exampletdd.model.currentweather.CurrentWeatherData;
+import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationSpecificDataFragment extends Fragment implements GetWeather {
     private boolean mIsFahrenheit;
-    private String mLanguage;
+    private long mChosenDay;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final Bundle extras = this.getActivity().getIntent().getExtras();
+
+        if (extras != null) {
+            this.mChosenDay = extras.getLong("CHOSEN_DAY", 0);
+        } else {
+            this.mChosenDay = 0;
+        }
+
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(
                 this.getActivity());
 
-        final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(this.getActivity());
-        final String keyPreference = this.getResources().getString(
-                R.string.weather_preferences_language_key);
-        this.mLanguage = sharedPreferences.getString(
-                keyPreference, "");
+        // final SharedPreferences sharedPreferences = PreferenceManager
+        // .getDefaultSharedPreferences(this.getActivity());
+        // final String keyPreference = this.getResources().getString(
+        // R.string.weather_preferences_language_key);
+        // this.mLanguage = sharedPreferences.getString(
+        // keyPreference, "");
     }
 
     @Override
@@ -74,14 +83,21 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
 
         if (savedInstanceState != null) {
             // Restore state
-            final WeatherData weatherData = (WeatherData) savedInstanceState
-                    .getSerializable("weatherData");
-            try {
-                this.mWeatherServicePersistenceFile.storeWeatherData(weatherData);
-            } catch (final IOException e) {
-                final DialogFragment newFragment = ErrorDialogFragment
-                        .newInstance(R.string.error_dialog_generic_error);
-                newFragment.show(this.getFragmentManager(), "errorDialog");
+            final ForecastWeatherData forecastWeatherData = (ForecastWeatherData) savedInstanceState
+                    .getSerializable("ForecastWeatherData");
+            final CurrentWeatherData currentWeatherData = (CurrentWeatherData) savedInstanceState
+                    .getSerializable("CurrentWeatherData");
+
+            if ((forecastWeatherData != null) && (currentWeatherData != null)) {
+                try {
+                    this.mWeatherServicePersistenceFile
+                    .storeForecastWeatherData(forecastWeatherData);
+                    this.mWeatherServicePersistenceFile.storeCurrentWeatherData(currentWeatherData);
+                } catch (final IOException e) {
+                    final DialogFragment newFragment = ErrorDialogFragment
+                            .newInstance(R.string.error_dialog_generic_error);
+                    newFragment.show(this.getFragmentManager(), "errorDialog");
+                }
             }
         }
     }
@@ -90,26 +106,44 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save state
-        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
+        final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
+                .getForecastWeatherData();
 
+        final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
+                .getCurrentWeatherData();
 
-        if (weatherData != null) {
-            savedInstanceState.putSerializable("weatherData", weatherData);
+        if ((forecastWeatherData != null) && (currentWeatherData != null)) {
+            savedInstanceState.putSerializable("ForecastWeatherData", forecastWeatherData);
+            savedInstanceState.putSerializable("CurrentWeatherData", currentWeatherData);
         }
 
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
-    public void getWeather() {
-        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
+    public void getWeatherByDay(final int chosenDay) {
+        if (chosenDay == 0) {
+            final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
+                    .getCurrentWeatherData();
 
-        if (weatherData != null) {
-            this.updateWeatherData(weatherData);
+            if (currentWeatherData != null) {
+                this.updateCurrentWeatherData(currentWeatherData);
+            }
+        } else {
+            final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
+                    .getForecastWeatherData();
+            if (forecastWeatherData != null) {
+                this.updateForecastWeatherData(forecastWeatherData, chosenDay);
+            }
         }
     }
 
-    public void updateWeatherData(final WeatherData weatherData) {
+    @Override
+    public void getRemoteWeatherInformation() {
+        // Nothing to do.
+    }
+
+    public void updateCurrentWeatherData(final CurrentWeatherData currentWeatherData) {
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
         tempFormatter.applyPattern("#####.#####");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z", Locale.getDefault());
@@ -124,47 +158,131 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
         final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(this.getActivity(),
                 R.layout.weather_data_entry_list);
 
-        if (weatherData.getWeather() != null) {
-            entries.set(0, new WeatherSpecificDataEntry(this.getString(R.string.text_field_description), weatherData.getWeather()
-                    .getDescription()));
-            double conversion = weatherData.getMain().getTemp();
-            conversion = conversion - tempUnits;
-            entries.set(1, new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem), tempFormatter.format(conversion)));
-            conversion = weatherData.getMain().getMaxTemp();
-            conversion = conversion - tempUnits;
-            entries.set(2, new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem_max), tempFormatter.format(conversion)));
-            conversion = weatherData.getMain().getMinTemp();
-            conversion = conversion - tempUnits;
-            entries.set(3, new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem_min), tempFormatter.format(conversion)));
+        if (currentWeatherData.getWeather().size() > 0) {
+            entries.set(0, new WeatherSpecificDataEntry(this.getString(R.string.text_field_description),
+                    currentWeatherData.getWeather().get(0).getDescription()));
         }
 
-        if (weatherData.getSystem() != null) {
-            long unixTime = weatherData.getSystem().getSunRiseTime();
-            Date unixDate = new Date(unixTime * 1000L);
-            String dateFormatUnix = dateFormat.format(unixDate);
-            entries.set(4, new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_rise), dateFormatUnix));
-
-            unixTime = weatherData.getSystem().getSunSetTime();
-            unixDate = new Date(unixTime * 1000L);
-            dateFormatUnix = dateFormat.format(unixDate);
-            entries.set(5, new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_set), dateFormatUnix));
+        if (currentWeatherData.getMain().getTemp() != null) {
+            double conversion = (Double) currentWeatherData.getMain().getTemp();
+            conversion = conversion - tempUnits;
+            entries.set(1, new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem),
+                    tempFormatter.format(conversion)));
         }
 
-        if (weatherData.getClouds() != null) {
-            final double cloudiness = weatherData.getClouds().getCloudiness();
-            entries.set(6, new WeatherSpecificDataEntry(this.getString(R.string.text_field_cloudiness), tempFormatter.format(cloudiness)));
+        if (currentWeatherData.getMain().getTemp_max() != null) {
+            double conversion = (Double) currentWeatherData.getMain().getTemp_max();
+            conversion = conversion - tempUnits;
+            entries.set(2, new WeatherSpecificDataEntry(
+                    this.getString(R.string.text_field_tem_max), tempFormatter.format(conversion)));
         }
 
-        if (weatherData.getWeather().getIcon() != null) {
+        if (currentWeatherData.getMain().getTemp_max() != null) {
+            double conversion = (Double) currentWeatherData.getMain().getTemp_min();
+            conversion = conversion - tempUnits;
+            entries.set(3, new WeatherSpecificDataEntry(
+                    this.getString(R.string.text_field_tem_min), tempFormatter.format(conversion)));
+        }
+
+
+        if (currentWeatherData.getSys().getSunrise() != null) {
+            final long unixTime = (Long) currentWeatherData.getSys().getSunrise();
+            final Date unixDate = new Date(unixTime * 1000L);
+            final String dateFormatUnix = dateFormat.format(unixDate);
+            entries.set(4,
+                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_rise),
+                            dateFormatUnix));
+        }
+
+        if (currentWeatherData.getSys().getSunset() != null) {
+            final long unixTime = (Long) currentWeatherData.getSys().getSunset();
+            final Date unixDate = new Date(unixTime * 1000L);
+            final String dateFormatUnix = dateFormat.format(unixDate);
+            entries.set(5, new WeatherSpecificDataEntry(
+                    this.getString(R.string.text_field_sun_set), dateFormatUnix));
+        }
+
+        if (currentWeatherData.getClouds().getAll() != null) {
+            final double cloudiness = (Double) currentWeatherData.getClouds().getAll();
+            entries.set(6,
+                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_cloudiness),
+                            tempFormatter.format(cloudiness)));
+        }
+
+        if (currentWeatherData.getIconData() != null) {
             final Bitmap icon = BitmapFactory.decodeByteArray(
-                    weatherData.getIconData(), 0,
-                    weatherData.getIconData().length);
+                    currentWeatherData.getIconData(), 0,
+                    currentWeatherData.getIconData().length);
             final ImageView imageIcon = (ImageView) this.getActivity()
                     .findViewById(R.id.weather_picture);
             imageIcon.setImageBitmap(icon);
         }
 
 
+
+        listWeatherView.setAdapter(null);
+        adapter.addAll(entries);
+        listWeatherView.setAdapter(adapter);
+    }
+
+    public void updateForecastWeatherData(final ForecastWeatherData forecastWeatherData,
+            final int chosenDay) {
+        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale
+                .getDefault());
+        tempFormatter.applyPattern("#####.#####");
+        final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
+
+        final List<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
+        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
+                R.id.weather_data_list_view);
+        final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
+                this.getActivity(), R.layout.weather_data_entry_list);
+
+
+        final int forecastSize = forecastWeatherData.getList().size();
+        if (chosenDay > forecastSize) {
+            // Nothing to do.
+            return;
+        }
+
+
+        final de.example.exampletdd.model.forecastweather.List forecast = forecastWeatherData
+                .getList().get((chosenDay - 1));
+
+        if (forecast.getWeather().size() > 0) {
+            entries.set(0,
+                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_description),
+                    forecast.getWeather().get(0).getDescription()));
+        }
+
+        if (forecast.getTemp().getDay() != null) {
+            double conversion = (Double) forecast.getTemp().getDay();
+            conversion = conversion - tempUnits;
+            entries.set(1, new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem),
+                    tempFormatter.format(conversion)));
+        }
+
+        if (forecast.getTemp().getMax() != null) {
+            double conversion = (Double) forecast.getTemp().getMax();
+            conversion = conversion - tempUnits;
+            entries.set(2, new WeatherSpecificDataEntry(
+                    this.getString(R.string.text_field_tem_max), tempFormatter.format(conversion)));
+        }
+
+        if (forecast.getTemp().getMin() != null) {
+            double conversion = (Double) forecast.getTemp().getMin();
+            conversion = conversion - tempUnits;
+            entries.set(3, new WeatherSpecificDataEntry(
+                    this.getString(R.string.text_field_tem_min), tempFormatter.format(conversion)));
+        }
+
+
+        if (forecast.getClouds() != null) {
+            final double cloudiness = (Double) forecast.getClouds();
+            entries.set(6,
+                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_cloudiness),
+                            tempFormatter.format(cloudiness)));
+        }
 
         listWeatherView.setAdapter(null);
         adapter.addAll(entries);
@@ -179,7 +297,7 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
                 .getDefaultSharedPreferences(this.getActivity());
 
         // 1. Update units of measurement.
-        String keyPreference = this.getResources().getString(
+        final String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_units_key);
         final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         final String celsius = this.getResources().getString(
@@ -191,24 +309,33 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
         }
 
 
-        // 2. Update current data on display.
-        final WeatherData weatherData = this.mWeatherServicePersistenceFile.getWeatherData();
+        // 2. Update weather data on display.
+        if (this.mChosenDay == 0) {
+            final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
+                    .getCurrentWeatherData();
 
-        if (weatherData != null) {
-            this.updateWeatherData(weatherData);
+            if (currentWeatherData != null) {
+                this.updateCurrentWeatherData(currentWeatherData);
+            }
+        } else {
+            final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
+                    .getForecastWeatherData();
+            if (forecastWeatherData != null) {
+                this.updateForecastWeatherData(forecastWeatherData, (int) this.mChosenDay);
+            }
         }
 
 
         // 3. If language changed, try to retrieve new data for new language
         // (new strings with the chosen language)
-        keyPreference = this.getResources().getString(
-                R.string.weather_preferences_language_key);
-        final String languagePreferenceValue = sharedPreferences.getString(
-                keyPreference, "");
-        if (!languagePreferenceValue.equals(this.mLanguage)) {
-            this.mLanguage = languagePreferenceValue;
-            this.getWeather();
-        }
+        // keyPreference = this.getResources().getString(
+        // R.string.weather_preferences_language_key);
+        // final String languagePreferenceValue = sharedPreferences.getString(
+        // keyPreference, "");
+        // if (!languagePreferenceValue.equals(this.mLanguage)) {
+        // this.mLanguage = languagePreferenceValue;
+        // this.getWeather();
+        // }
     }
 
     private List<WeatherSpecificDataEntry> createEmptyEntriesList() {

@@ -7,9 +7,9 @@
     <string name="action_get_weather">Get weather</string>
     <string name="action_map">Select Location</string>
     <string name="button_set_chosen_location">Set Location</string>
-    <string name="uri_api_coord">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}&amp;lang={3}&amp;cnt=1</string>
-    <string name="uri_api_city">http://api.openweathermap.org/data/{0}/weather?q={1}&amp;lang={2}</string>
-    <string name="uri_api_icon">http://openweathermap.org/img/w/{0}.png</string>
+    <string name="uri_api_weather_today">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}&amp;cnt=1</string>
+    <string name="uri_api_weather_icon">http://openweathermap.org/img/w/{0}.png</string>
+    <string name="uri_api_weather_forecast">http://api.openweathermap.org/data/{0}/forecast/daily?lat={1}&amp;lon={2}&amp;cnt={3}&amp;mode=json</string>
     <string name="uri_api_geocoding">https://maps.googleapis.com/maps/api/geocode/json?latlng={0},{1}&amp;sensor=true</string>
     <string name="api_version">2.5</string>
     <string name="text_default_city">London,uk</string>
