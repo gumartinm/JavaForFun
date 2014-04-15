@@ -64,8 +64,8 @@ public class WeatherInformationActivity extends Activity {
         Intent intent;
         switch (item.getItemId()) {
         case R.id.weather_menu_settings:
-            intent = new Intent("de.example.exampletdd.WEATHERINFO").
-            setComponent(new ComponentName("de.example.exampletdd",
+            intent = new Intent("de.example.exampletdd.WEATHERINFO")
+            .setComponent(new ComponentName("de.example.exampletdd",
                     "de.example.exampletdd.WeatherInformationPreferencesActivity"));
             this.startActivity(intent);
             return true;
@@ -74,8 +74,14 @@ public class WeatherInformationActivity extends Activity {
             return true;
         case R.id.weather_menu_map:
             intent = new Intent("de.example.exampletdd.WEATHERINFO")
+                    .setComponent(new ComponentName("de.example.exampletdd",
+                            "de.example.exampletdd.WeatherInformationMapActivity"));
+            this.startActivity(intent);
+            return true;
+        case R.id.weather_menu_current:
+            intent = new Intent("de.example.exampletdd.WEATHERINFO")
             .setComponent(new ComponentName("de.example.exampletdd",
-                    "de.example.exampletdd.WeatherInformationMapActivity"));
+                    "de.example.exampletdd.WeatherInformationCurrentDataActivity"));
             this.startActivity(intent);
             return true;
         default:

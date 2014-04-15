@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_search">City,country</string>
     <string name="action_get_weather">Get weather</string>
+    <string name="action_current_weather">Current weather</string>
     <string name="action_map">Select Location</string>
     <string name="button_set_chosen_location">Set Location</string>
     <string name="uri_api_weather_today">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}&amp;cnt=1</string>

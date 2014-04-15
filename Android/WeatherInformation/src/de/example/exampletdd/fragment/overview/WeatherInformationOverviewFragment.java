@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,7 +40,6 @@ import de.example.exampletdd.fragment.ProgressDialogFragment;
 import de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.model.currentweather.CurrentWeatherData;
 import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
 import de.example.exampletdd.parser.IJPOSWeatherParser;
 import de.example.exampletdd.parser.JPOSWeatherParser;
@@ -71,6 +69,8 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
+
         final ListView listWeatherView = this.getListView();
 
         listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
@@ -79,14 +79,11 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             // Restore state
             final ForecastWeatherData forecastWeatherData = (ForecastWeatherData) savedInstanceState
                     .getSerializable("ForecastWeatherData");
-            final CurrentWeatherData currentWeatherData = (CurrentWeatherData) savedInstanceState
-                    .getSerializable("CurrentWeatherData");
 
-            if ((forecastWeatherData != null) && (currentWeatherData != null)) {
+            if (forecastWeatherData != null) {
                 try {
                     this.mWeatherServicePersistenceFile
                     .storeForecastWeatherData(forecastWeatherData);
-                    this.mWeatherServicePersistenceFile.storeCurrentWeatherData(currentWeatherData);
                 } catch (final IOException e) {
                     final DialogFragment newFragment = ErrorDialogFragment
                             .newInstance(R.string.error_dialog_generic_error);
@@ -117,11 +114,11 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO").
                     setComponent(new ComponentName("de.example.exampletdd",
                             "de.example.exampletdd.WeatherInformationSpecificDataActivity"));
-            intent.putExtra("CHOSEN_DAY", id);
+            intent.putExtra("CHOSEN_DAY", (int) id);
             WeatherInformationOverviewFragment.this.getActivity().startActivity(intent);
         } else {
             // tablet layout
-            fragment.getWeatherByDay(position);
+            fragment.getWeatherByDay((int) id);
         }
     }
 
@@ -132,12 +129,8 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
 
-        final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
-                .getCurrentWeatherData();
-
-        if ((forecastWeatherData != null) && (currentWeatherData != null)) {
+        if (forecastWeatherData != null) {
             savedInstanceState.putSerializable("ForecastWeatherData", forecastWeatherData);
-            savedInstanceState.putSerializable("CurrentWeatherData", currentWeatherData);
         }
 
         super.onSaveInstanceState(savedInstanceState);
@@ -157,7 +150,8 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             final CustomHTTPClient HTTPweatherClient = new CustomHTTPClient(
                     httpClient);
 
-            final WeatherTask weatherTask = new WeatherTask(HTTPweatherClient, weatherService);
+            final ForecastWeatherTask weatherTask = new ForecastWeatherTask(HTTPweatherClient,
+                    weatherService);
 
 
             weatherTask.execute(geocodingData);
@@ -169,7 +163,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         // Nothing to do.
     }
 
-    public void updateForecastWeatherData(final WeatherData weatherData) {
+    public void updateForecastWeatherData(final ForecastWeatherData forecastWeatherData) {
         final List<WeatherOverviewEntry> entries = new ArrayList<WeatherOverviewEntry>();
         final WeatherOverviewAdapter adapter = new WeatherOverviewAdapter(this.getActivity(),
                 R.layout.weather_main_entry_list);
@@ -182,70 +176,33 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
         final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";
 
-        final CurrentWeatherData currentWeatherData = weatherData.getCurrentWeatherData();
-
-        String formatMaxTemp;
-        String formatMinTemp;
-
-        if (currentWeatherData.getMain().getTemp_max() != null) {
-            double maxTemp = (Double) currentWeatherData.getMain().getTemp_max();
-            maxTemp = maxTemp - tempUnits;
-            formatMaxTemp = tempFormatter.format(maxTemp) + symbol;
-        } else {
-            formatMaxTemp = "no data";
-        }
-        if (currentWeatherData.getMain().getTemp_min() != null) {
-            double minTemp = (Double) currentWeatherData.getMain().getTemp_min();
-            minTemp = minTemp - tempUnits;
-            formatMinTemp = tempFormatter.format(minTemp) + symbol;
-        } else {
-            formatMinTemp = "no data";
-        }
-
-        entries.add(new WeatherOverviewEntry(dateFormat.format(currentWeatherData.getDate()),
-                formatMaxTemp, formatMinTemp, picture));
-
-
-        final ForecastWeatherData forecastWeatherData = weatherData.getForecastWeatherData();
 
         final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentWeatherData.getDate());
+        for (final de.example.exampletdd.model.forecastweather.List forecast : forecastWeatherData
+                .getList()) {
 
-        final int forecastSize = forecastWeatherData.getList().size();
-        final int chosenForecastDays = 14;
-        final int index = forecastSize < chosenForecastDays ? forecastSize : chosenForecastDays;
-        for (int i = 0; i < index; i++) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
 
-            final de.example.exampletdd.model.forecastweather.List forecast = forecastWeatherData
-                    .getList().get(i);
+            final Long forecastUNIXDate = (Long) forecast.getDt();
+            calendar.setTimeInMillis(forecastUNIXDate * 1000L);
+            final Date dayTime = calendar.getTime();
+            final String dayText = dateFormat.format(dayTime);
 
+            Double maxTemp = null;
             if (forecast.getTemp().getMax() != null) {
-                double maxTemp = (Double) forecast.getTemp().getMax();
+                maxTemp = (Double) forecast.getTemp().getMax();
                 maxTemp = maxTemp - tempUnits;
-                formatMaxTemp = tempFormatter.format(maxTemp) + symbol;
-            } else {
-                formatMaxTemp = "no data";
             }
 
+            Double minTemp = null;
             if (forecast.getTemp().getMin() != null) {
-                double minTemp = (Double) forecast.getTemp().getMin();
+                minTemp = (Double) forecast.getTemp().getMin();
                 minTemp = minTemp - tempUnits;
-                formatMinTemp = tempFormatter.format(minTemp) + symbol;
-            } else {
-                formatMinTemp = "no data";
             }
 
-            final Date day = calendar.getTime();
-            entries.add(new WeatherOverviewEntry(dateFormat.format(day), formatMaxTemp,
-                    formatMinTemp, picture));
-        }
-
-        final int leftDays = chosenForecastDays - index;
-        for (int i = 0; i < leftDays; i++) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            final Date day = calendar.getTime();
-            entries.add(new WeatherOverviewEntry(dateFormat.format(day), "no data", "no data", picture));
+            if ((maxTemp != null) && (minTemp != null)) {
+                entries.add(new WeatherOverviewEntry(dayText, tempFormatter.format(maxTemp)
+                        + symbol, tempFormatter.format(minTemp) + symbol, picture));
+            }
         }
 
         this.setListAdapter(null);
@@ -276,11 +233,8 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         // 2. Update forecast weather data on display.
         final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
-        final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
-                .getCurrentWeatherData();
-        if ((forecastWeatherData != null) && (currentWeatherData != null)) {
-            final WeatherData weatherData = new WeatherData(forecastWeatherData, currentWeatherData);
-            this.updateForecastWeatherData(weatherData);
+        if (forecastWeatherData != null) {
+            this.updateForecastWeatherData(forecastWeatherData);
         }
 
 
@@ -296,13 +250,13 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         // }
     }
 
-    public class WeatherTask extends AsyncTask<Object, Void, WeatherData> {
-        private static final String TAG = "WeatherTask";
+    public class ForecastWeatherTask extends AsyncTask<Object, Void, ForecastWeatherData> {
+        private static final String TAG = "ForecastWeatherTask";
         private final CustomHTTPClient weatherHTTPClient;
         private final WeatherServiceParser weatherService;
         private final DialogFragment newFragment;
 
-        public WeatherTask(final CustomHTTPClient weatherHTTPClient,
+        public ForecastWeatherTask(final CustomHTTPClient weatherHTTPClient,
                 final WeatherServiceParser weatherService) {
             this.weatherHTTPClient = weatherHTTPClient;
             this.weatherService = weatherService;
@@ -319,11 +273,11 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         }
 
         @Override
-        protected WeatherData doInBackground(final Object... params) {
-            WeatherData weatherData = null;
+        protected ForecastWeatherData doInBackground(final Object... params) {
+            ForecastWeatherData forecastWeatherData = null;
 
             try {
-                weatherData = this.doInBackgroundThrowable(params);
+                forecastWeatherData = this.doInBackgroundThrowable(params);
             } catch (final ClientProtocolException e) {
                 Log.e(TAG, "doInBackground exception: ", e);
             } catch (final MalformedURLException e) {
@@ -339,11 +293,11 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
                 this.weatherHTTPClient.close();
             }
 
-            return weatherData;
+            return forecastWeatherData;
         }
 
         @Override
-        protected void onPostExecute(final WeatherData weatherData) {
+        protected void onPostExecute(final ForecastWeatherData weatherData) {
             this.weatherHTTPClient.close();
 
             this.newFragment.dismiss();
@@ -365,7 +319,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         }
 
         @Override
-        protected void onCancelled(final WeatherData weatherData) {
+        protected void onCancelled(final ForecastWeatherData weatherData) {
             this.weatherHTTPClient.close();
 
             final DialogFragment newFragment = ErrorDialogFragment
@@ -373,7 +327,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(), "errorDialog");
         }
 
-        private WeatherData doInBackgroundThrowable(final Object... params)
+        private ForecastWeatherData doInBackgroundThrowable(final Object... params)
                 throws ClientProtocolException, MalformedURLException,
                 URISyntaxException, JsonParseException, IOException {
             // final SharedPreferences sharedPreferences = PreferenceManager
@@ -391,72 +345,26 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             final GeocodingData geocodingData = (GeocodingData) params[0];
 
 
-            final Calendar now = Calendar.getInstance();
             final String APIVersion = WeatherInformationOverviewFragment.this.getResources()
                     .getString(R.string.api_version);
             // 2. Forecast
-            String urlAPI = WeatherInformationOverviewFragment.this.getResources()
+            final String urlAPI = WeatherInformationOverviewFragment.this.getResources()
                     .getString(R.string.uri_api_weather_forecast);
-            String url = this.weatherService.createURIAPIForecastWeather(urlAPI, APIVersion,
+            final String url = this.weatherService.createURIAPIForecastWeather(urlAPI, APIVersion,
                     geocodingData.getLatitude(), geocodingData.getLongitude(), "14");
-            String jsonData = this.weatherHTTPClient.retrieveDataAsString(new URL(url));
+            final String jsonData = this.weatherHTTPClient.retrieveDataAsString(new URL(url));
             final ForecastWeatherData forecastWeatherData = this.weatherService
                     .retrieveForecastWeatherDataFromJPOS(jsonData);
-            final Iterator<de.example.exampletdd.model.forecastweather.List> iterator =
-                    forecastWeatherData.getList().iterator();
-            while (iterator.hasNext()) {
-                final de.example.exampletdd.model.forecastweather.List forecast = iterator.next();
 
-                final Long forecastUNIXDate = (Long) forecast.getDt();
-                final Calendar forecastCalendar = Calendar.getInstance();
-                forecastCalendar.setTimeInMillis(forecastUNIXDate * 1000L);
-                if (now.compareTo(forecastCalendar) == 1) {
-                    iterator.remove();
-                }
-            }
-
-
-            // 3. Today
-            urlAPI = WeatherInformationOverviewFragment.this.getResources().getString(
-                    R.string.uri_api_weather_today);
-            url = this.weatherService.createURIAPITodayWeather(urlAPI, APIVersion,
-                    geocodingData.getLatitude(), geocodingData.getLongitude());
-            jsonData = this.weatherHTTPClient.retrieveDataAsString(new URL(url));
-            final CurrentWeatherData currentWeatherData = this.weatherService
-                    .retrieveCurrentWeatherDataFromJPOS(jsonData);
-            currentWeatherData.setDate(now.getTime());
-
-            final WeatherData weatherData = new WeatherData(forecastWeatherData, currentWeatherData);
-
-            return weatherData;
+            return forecastWeatherData;
         }
 
-        private void onPostExecuteThrowable(final WeatherData weatherData)
+        private void onPostExecuteThrowable(final ForecastWeatherData forecastWeatherData)
                 throws FileNotFoundException, IOException {
             WeatherInformationOverviewFragment.this.mWeatherServicePersistenceFile
-            .storeForecastWeatherData(weatherData.getForecastWeatherData());
-            WeatherInformationOverviewFragment.this.mWeatherServicePersistenceFile
-            .storeCurrentWeatherData(weatherData.getCurrentWeatherData());
+                    .storeForecastWeatherData(forecastWeatherData);
 
-            WeatherInformationOverviewFragment.this.updateForecastWeatherData(weatherData);
-        }
-    }
-
-    private class WeatherData {
-        private final ForecastWeatherData forecastWeatherData;
-        private final CurrentWeatherData currentWeatherData;
-
-        private WeatherData(final ForecastWeatherData forecastWeatherData, final CurrentWeatherData currentWeatherData) {
-            this.forecastWeatherData = forecastWeatherData;
-            this.currentWeatherData = currentWeatherData;
-        }
-
-        private ForecastWeatherData getForecastWeatherData() {
-            return this.forecastWeatherData;
-        }
-
-        private CurrentWeatherData getCurrentWeatherData() {
-            return this.currentWeatherData;
+            WeatherInformationOverviewFragment.this.updateForecastWeatherData(forecastWeatherData);
         }
     }
 }

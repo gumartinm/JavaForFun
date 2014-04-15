@@ -4,13 +4,13 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="de.example.exampletdd.WeatherInformationSpecificDataActivity"
+    tools:context="de.example.exampletdd.WeatherInformationCurrentDataActivity"
     tools:ignore="MergeRootFrame" >
 
      <fragment
         android:id="@+id/weather_specific_data_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment" />
+        class="de.example.exampletdd.fragment.current.WeatherInformationCurrentDataFragment" />
 
 </FrameLayout>
