@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    android:id="@+id/weather_specific_data"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context="de.example.exampletdd.WeatherInformationSpecificDataActivity"
     tools:ignore="MergeRootFrame" >
+
+    <ImageView
+        android:id="@+id/weather_specific_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/icon_weather_description"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_launcher" />
 
      <fragment
         android:id="@+id/weather_specific_data_fragment"
@@ -13,4 +23,4 @@
         android:layout_height="match_parent"
         class="de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment" />
 
-</FrameLayout>
+</LinearLayout>

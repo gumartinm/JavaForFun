@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.location.Address;
@@ -67,6 +68,15 @@ public class WeatherInformationMapActivity extends Activity {
                     : geocodingData.getCountry();
             cityCountry.setText(city + "," + country);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final ActionBar actionBar = this.getActionBar();
+
+        actionBar.setTitle("Mark your location");
     }
 
     private class LongClickListener implements OnMapLongClickListener {

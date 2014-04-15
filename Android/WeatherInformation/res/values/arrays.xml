@@ -58,4 +58,14 @@
         <item>Ukrainian</item>
         <item>Vietnamese</item>
     </string-array>
+    <string-array name="weather_preferences_day_forecast">
+        <item>5</item>
+        <item>10</item>
+        <item>14</item>
+    </string-array>
+    <string-array name="weather_preferences_day_forecast_human_value">
+        <item>5-Day Forecast</item>
+        <item>10-Day Forecast</item>
+        <item>14-Day Forecast</item>
+    </string-array>
 </resources>

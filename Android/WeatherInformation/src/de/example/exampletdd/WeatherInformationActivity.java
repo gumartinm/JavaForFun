@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -15,7 +16,6 @@ import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationActivity extends Activity {
     private GetWeather mGetWeather;
-    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -42,8 +42,6 @@ public class WeatherInformationActivity extends Activity {
 
         this.mGetWeather = weatherOverviewFragment;
 
-        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(
-                this);
     }
 
     @Override
@@ -74,8 +72,8 @@ public class WeatherInformationActivity extends Activity {
             return true;
         case R.id.weather_menu_map:
             intent = new Intent("de.example.exampletdd.WEATHERINFO")
-                    .setComponent(new ComponentName("de.example.exampletdd",
-                            "de.example.exampletdd.WeatherInformationMapActivity"));
+            .setComponent(new ComponentName("de.example.exampletdd",
+                    "de.example.exampletdd.WeatherInformationMapActivity"));
             this.startActivity(intent);
             return true;
         case R.id.weather_menu_current:
@@ -97,8 +95,8 @@ public class WeatherInformationActivity extends Activity {
 
         final ActionBar actionBar = this.getActionBar();
 
-        final GeocodingData geocodingData =
-                this.mWeatherServicePersistenceFile.getGeocodingData();
+        final WeatherServicePersistenceFile weatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
+        final GeocodingData geocodingData = weatherServicePersistenceFile.getGeocodingData();
 
         if (geocodingData != null) {
             final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
@@ -107,6 +105,22 @@ public class WeatherInformationActivity extends Activity {
                     : geocodingData.getCountry();
             actionBar.setTitle(city + "," + country);
         }
+
+
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        final String keyPreference = this.getResources().getString(
+                R.string.weather_preferences_day_forecast_key);
+        final String value = sharedPreferences.getString(keyPreference, "");
+        String humanValue = "";
+        if (value.equals("5")) {
+            humanValue = "5-Day Forecast";
+        } else if (value.equals("10")) {
+            humanValue = "10-Day Forecast";
+        } else if (value.equals("14")) {
+            humanValue = "14-Day Forecast";
+        }
+        actionBar.setSubtitle(humanValue);
 
     }
 

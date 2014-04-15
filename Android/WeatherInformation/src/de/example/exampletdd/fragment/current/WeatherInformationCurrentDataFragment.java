@@ -10,7 +10,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +17,7 @@ import java.util.Locale;
 import org.apache.http.client.ClientProtocolException;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
+import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,9 +26,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -48,7 +44,7 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.WeatherServiceParser;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
-public class WeatherInformationCurrentDataFragment extends Fragment {
+public class WeatherInformationCurrentDataFragment extends ListFragment {
     private boolean mIsFahrenheit;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
@@ -68,22 +64,11 @@ public class WeatherInformationCurrentDataFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.weather_data_list, container, false);
-
-        return rootView;
-    }
-
-    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
-                R.id.weather_data_list_view);
-
-        final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
-                this.getActivity(), R.layout.weather_data_entry_list);
+        final ListView listWeatherView = this.getListView();
+        listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
 
         if (savedInstanceState != null) {
             // Restore state
@@ -101,10 +86,17 @@ public class WeatherInformationCurrentDataFragment extends Fragment {
             }
         }
 
-        final Collection<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
+        this.setHasOptionsMenu(false);
 
-        adapter.addAll(entries);
-        listWeatherView.setAdapter(adapter);
+        final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
+                this.getActivity(), R.layout.weather_data_entry_list);
+
+
+        this.setEmptyText("No data available");
+
+        this.setListAdapter(adapter);
+        this.setListShown(true);
+        this.setListShownNoAnimation(true);
 
     }
 
@@ -134,15 +126,9 @@ public class WeatherInformationCurrentDataFragment extends Fragment {
             this.updateCurrentWeatherData(currentWeatherData);
         } else {
             // 2.1 Empty list by default
-            final List<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
-
-            final ListView listWeatherView = (ListView) this.getActivity().findViewById(
-                    R.id.weather_data_list_view);
-
             final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
                     this.getActivity(), R.layout.weather_data_entry_list);
-            adapter.addAll(entries);
-            listWeatherView.setAdapter(adapter);
+            this.setListAdapter(adapter);
 
             // 2.2. Try to update weather data on display with remote
             // information.
@@ -188,9 +174,6 @@ public class WeatherInformationCurrentDataFragment extends Fragment {
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
 
         final List<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
-
-        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
-                R.id.weather_data_list_view);
 
         final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
                 this.getActivity(), R.layout.weather_data_entry_list);
@@ -254,9 +237,8 @@ public class WeatherInformationCurrentDataFragment extends Fragment {
             imageIcon.setImageBitmap(icon);
         }
 
-        listWeatherView.setAdapter(null);
         adapter.addAll(entries);
-        listWeatherView.setAdapter(adapter);
+        this.setListAdapter(adapter);
     }
 
     public class CurrentWeatherTask extends AsyncTask<Object, Void, CurrentWeatherData> {
@@ -379,7 +361,7 @@ public class WeatherInformationCurrentDataFragment extends Fragment {
                 throws FileNotFoundException, IOException {
 
             WeatherInformationCurrentDataFragment.this.mWeatherServicePersistenceFile
-                    .storeCurrentWeatherData(currentWeatherData);
+            .storeCurrentWeatherData(currentWeatherData);
 
             WeatherInformationCurrentDataFragment.this.updateCurrentWeatherData(currentWeatherData);
         }

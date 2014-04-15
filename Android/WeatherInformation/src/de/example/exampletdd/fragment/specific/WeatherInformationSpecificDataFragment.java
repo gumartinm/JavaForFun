@@ -4,18 +4,14 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
+import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.GetWeather;
@@ -23,7 +19,7 @@ import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
-public class WeatherInformationSpecificDataFragment extends Fragment implements GetWeather {
+public class WeatherInformationSpecificDataFragment extends ListFragment implements GetWeather {
     private boolean mIsFahrenheit;
     private int mChosenDay;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
@@ -52,28 +48,20 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater,
-            final ViewGroup container, final Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.weather_data_list,
-                container, false);
-
-        return rootView;
-    }
-
-    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
-                R.id.weather_data_list_view);
+        final ListView listWeatherView = this.getListView();
+        listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
 
         final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(this.getActivity(),
                 R.layout.weather_data_entry_list);
 
-        final Collection<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
+        this.setEmptyText("No data available");
 
-        adapter.addAll(entries);
-        listWeatherView.setAdapter(adapter);
+        this.setListAdapter(adapter);
+        this.setListShown(true);
+        this.setListShownNoAnimation(true);
 
         if (savedInstanceState != null) {
             // Restore state
@@ -132,8 +120,7 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
 
         final List<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
-        final ListView listWeatherView = (ListView) this.getActivity().findViewById(
-                R.id.weather_data_list_view);
+
         final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
                 this.getActivity(), R.layout.weather_data_entry_list);
 
@@ -176,9 +163,8 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
                             tempFormatter.format(cloudiness)));
         }
 
-        listWeatherView.setAdapter(null);
         adapter.addAll(entries);
-        listWeatherView.setAdapter(adapter);
+        this.setListAdapter(adapter);
     }
 
     @Override
@@ -207,6 +193,11 @@ public class WeatherInformationSpecificDataFragment extends Fragment implements 
                 .getForecastWeatherData();
         if (forecastWeatherData != null) {
             this.updateForecastWeatherData(forecastWeatherData, this.mChosenDay);
+        } else {
+            // 2.1 Empty list by default
+            final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
+                    this.getActivity(), R.layout.weather_data_entry_list);
+            this.setListAdapter(adapter);
         }
 
 

@@ -28,6 +28,20 @@ implements OnSharedPreferenceChangeListener {
         connectionPref = this.findPreference(keyPreference);
         connectionPref.setSummary(this.getPreferenceManager()
                 .getSharedPreferences().getString(keyPreference, ""));
+
+        keyPreference = this.getActivity().getString(
+                R.string.weather_preferences_day_forecast_key);
+        connectionPref = this.findPreference(keyPreference);
+        final String value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        String humanValue = "";
+        if (value.equals("5")) {
+            humanValue = "5-Day Forecast";
+        } else if (value.equals("10")) {
+            humanValue = "10-Day Forecast";
+        } else if (value.equals("14")) {
+            humanValue = "14-Day Forecast";
+        }
+        connectionPref.setSummary(humanValue);
     }
 
     @Override
@@ -54,6 +68,7 @@ implements OnSharedPreferenceChangeListener {
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
+            return;
         }
 
         keyValue = this.getActivity().getString(
@@ -61,6 +76,24 @@ implements OnSharedPreferenceChangeListener {
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
             connectionPref.setSummary(sharedPreferences.getString(key, ""));
+            return;
+        }
+
+        keyValue = this.getActivity().getString(
+                R.string.weather_preferences_day_forecast_key);
+        if (key.equals(keyValue)) {
+            final Preference connectionPref = this.findPreference(key);
+            final String value = sharedPreferences.getString(key, "");
+            String humanValue = "";
+            if (value.equals("5")) {
+                humanValue = "5-Day Forecast";
+            } else if (value.equals("10")) {
+                humanValue = "10-Day Forecast";
+            } else if (value.equals("14")) {
+                humanValue = "14-Day Forecast";
+            }
+            connectionPref.setSummary(humanValue);
+            return;
         }
 
     }

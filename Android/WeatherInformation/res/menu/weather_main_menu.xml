@@ -11,7 +11,7 @@
         android:visible="true"
         android:checkable="false"
         android:enabled="true"
-        android:icon="@drawable/ic_action_import_export"
+        android:icon="@drawable/ic_action_refresh"
         android:showAsAction="ifRoom|withText">
     </item>
     <item

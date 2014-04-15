@@ -48,18 +48,18 @@ import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherInformationOverviewFragment extends ListFragment implements GetWeather {
     private boolean mIsFahrenheit;
+    private String mDayForecast;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // final SharedPreferences sharedPreferences = PreferenceManager
-        // .getDefaultSharedPreferences(this.getActivity());
-        // final String keyPreference = this.getResources().getString(
-        // R.string.weather_preferences_language_key);
-        // this.mLanguage = sharedPreferences.getString(
-        // keyPreference, "");
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this.getActivity());
+        final String keyPreference = this.getResources().getString(
+                R.string.weather_preferences_day_forecast_key);
+        this.mDayForecast = sharedPreferences.getString(keyPreference, "");
 
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this.getActivity());
         this.mWeatherServicePersistenceFile.removeForecastWeatherData();
@@ -69,10 +69,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
-
         final ListView listWeatherView = this.getListView();
-
         listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
 
         if (savedInstanceState != null) {
@@ -218,7 +215,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
                 .getDefaultSharedPreferences(this.getActivity());
 
         // 1. Update units of measurement.
-        final String keyPreference = this.getResources().getString(
+        String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_units_key);
         final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         final String celsius = this.getResources().getString(
@@ -229,25 +226,19 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             this.mIsFahrenheit = true;
         }
 
+        // 2. Update number day forecast.
+        keyPreference = this.getResources().getString(
+                R.string.weather_preferences_day_forecast_key);
+        this.mDayForecast = sharedPreferences.getString(keyPreference, "");
 
-        // 2. Update forecast weather data on display.
+
+        // 3. Update forecast weather data on display.
         final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
         if (forecastWeatherData != null) {
             this.updateForecastWeatherData(forecastWeatherData);
         }
 
-
-        // 3. If language changed, try to retrieve new data for new language
-        // (new strings with the chosen language)
-        // keyPreference = this.getResources().getString(
-        // R.string.weather_preferences_language_key);
-        // final String languagePreferenceValue = sharedPreferences.getString(
-        // keyPreference, "");
-        // if (!languagePreferenceValue.equals(this.mLanguage)) {
-        // this.mLanguage = languagePreferenceValue;
-        // this.getWeather();
-        // }
     }
 
     public class ForecastWeatherTask extends AsyncTask<Object, Void, ForecastWeatherData> {
@@ -351,7 +342,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             final String urlAPI = WeatherInformationOverviewFragment.this.getResources()
                     .getString(R.string.uri_api_weather_forecast);
             final String url = this.weatherService.createURIAPIForecastWeather(urlAPI, APIVersion,
-                    geocodingData.getLatitude(), geocodingData.getLongitude(), "14");
+                    geocodingData.getLatitude(), geocodingData.getLongitude(), WeatherInformationOverviewFragment.this.mDayForecast);
             final String jsonData = this.weatherHTTPClient.retrieveDataAsString(new URL(url));
             final ForecastWeatherData forecastWeatherData = this.weatherService
                     .retrieveForecastWeatherDataFromJPOS(jsonData);
@@ -362,7 +353,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         private void onPostExecuteThrowable(final ForecastWeatherData forecastWeatherData)
                 throws FileNotFoundException, IOException {
             WeatherInformationOverviewFragment.this.mWeatherServicePersistenceFile
-                    .storeForecastWeatherData(forecastWeatherData);
+            .storeForecastWeatherData(forecastWeatherData);
 
             WeatherInformationOverviewFragment.this.updateForecastWeatherData(forecastWeatherData);
         }
