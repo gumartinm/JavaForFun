@@ -3,7 +3,10 @@ package de.example.exampletdd.fragment.specific;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -127,6 +130,13 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
 
         final de.example.exampletdd.model.forecastweather.List forecast = forecastWeatherData
                 .getList().get((chosenDay));
+
+        final SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE - MMM d", Locale.getDefault());
+        final Calendar calendar = Calendar.getInstance();
+        final Long forecastUNIXDate = (Long) forecast.getDt();
+        calendar.setTimeInMillis(forecastUNIXDate * 1000L);
+        final Date date = calendar.getTime();
+        this.getActivity().getActionBar().setSubtitle(dayFormatter.format(date).toUpperCase());
 
         if (forecast.getWeather().size() > 0) {
             entries.set(0,

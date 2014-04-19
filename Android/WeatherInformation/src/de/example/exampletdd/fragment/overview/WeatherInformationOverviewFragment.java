@@ -165,11 +165,12 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         final WeatherOverviewAdapter adapter = new WeatherOverviewAdapter(this.getActivity(),
                 R.layout.weather_main_entry_list);
 
-        final Bitmap picture = BitmapFactory.decodeResource(
-                this.getResources(), R.drawable.ic_02d);
+
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
         tempFormatter.applyPattern("#####.##");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d", Locale.getDefault());
+        final SimpleDateFormat dayNameFormatter = new SimpleDateFormat("EEE", Locale.getDefault());
+        final SimpleDateFormat monthAndDayNumberormatter = new SimpleDateFormat("MMM d",
+                Locale.getDefault());
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
         final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";
 
@@ -178,11 +179,24 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         for (final de.example.exampletdd.model.forecastweather.List forecast : forecastWeatherData
                 .getList()) {
 
+            Bitmap picture;
+
+            if ((forecast.getWeather().size() > 0) &&
+                    (forecast.getWeather().get(0).getIcon() != null) &&
+                    (IconsList.getIcon(forecast.getWeather().get(0).getIcon()) != null)) {
+                final String icon = forecast.getWeather().get(0).getIcon();
+                picture = BitmapFactory.decodeResource(this.getResources(), IconsList.getIcon(icon)
+                        .getResourceDrawable());
+            } else {
+                picture = BitmapFactory.decodeResource(this.getResources(),
+                        R.drawable.weather_severe_alert);
+            }
 
             final Long forecastUNIXDate = (Long) forecast.getDt();
             calendar.setTimeInMillis(forecastUNIXDate * 1000L);
             final Date dayTime = calendar.getTime();
-            final String dayText = dateFormat.format(dayTime);
+            final String dayTextName = dayNameFormatter.format(dayTime);
+            final String monthAndDayNumberText = monthAndDayNumberormatter.format(dayTime);
 
             Double maxTemp = null;
             if (forecast.getTemp().getMax() != null) {
@@ -197,8 +211,9 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             }
 
             if ((maxTemp != null) && (minTemp != null)) {
-                entries.add(new WeatherOverviewEntry(dayText, tempFormatter.format(maxTemp)
-                        + symbol, tempFormatter.format(minTemp) + symbol, picture));
+                entries.add(new WeatherOverviewEntry(dayTextName, monthAndDayNumberText,
+                        tempFormatter.format(maxTemp) + symbol, tempFormatter.format(minTemp) + symbol,
+                        picture));
             }
         }
 

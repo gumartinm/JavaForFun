@@ -3,21 +3,28 @@ package de.example.exampletdd.fragment.overview;
 import android.graphics.Bitmap;
 
 public class WeatherOverviewEntry {
-    private final String date;
+    private final String dateName;
+    private final String dateNumber;
     private final String maxTemp;
     private final String minTemp;
     private final Bitmap picture;
 
-    public WeatherOverviewEntry(final String date, final String maxTemp, final String minTemp,
+    public WeatherOverviewEntry(final String dateName, final String dateNumber,
+            final String maxTemp, final String minTemp,
             final Bitmap picture) {
-        this.date = date;
+        this.dateName = dateName;
+        this.dateNumber = dateNumber;
         this.maxTemp = maxTemp;
         this.minTemp = minTemp;
         this.picture = picture;
     }
 
-    public String getDate() {
-        return this.date;
+    public String getDateName() {
+        return this.dateName;
+    }
+
+    public String getDateNumber() {
+        return this.dateNumber;
     }
 
     public String getMaxTemp() {

@@ -60,30 +60,29 @@ public class WeatherInformationActivity extends Activity {
         super.onOptionsItemSelected(item);
 
         Intent intent;
-        switch (item.getItemId()) {
-        case R.id.weather_menu_settings:
+        final int itemId = item.getItemId();
+        if (itemId == R.id.weather_menu_settings) {
             intent = new Intent("de.example.exampletdd.WEATHERINFO")
             .setComponent(new ComponentName("de.example.exampletdd",
                     "de.example.exampletdd.WeatherInformationPreferencesActivity"));
             this.startActivity(intent);
             return true;
-        case R.id.weather_menu_get:
+        } else if (itemId == R.id.weather_menu_get) {
             this.getWeather();
             return true;
-        case R.id.weather_menu_map:
+        } else if (itemId == R.id.weather_menu_map) {
             intent = new Intent("de.example.exampletdd.WEATHERINFO")
             .setComponent(new ComponentName("de.example.exampletdd",
                     "de.example.exampletdd.WeatherInformationMapActivity"));
             this.startActivity(intent);
             return true;
-        case R.id.weather_menu_current:
+        } else if (itemId == R.id.weather_menu_current) {
             intent = new Intent("de.example.exampletdd.WEATHERINFO")
             .setComponent(new ComponentName("de.example.exampletdd",
-                    "de.example.exampletdd.WeatherInformationCurrentDataActivity"));
+                    "de.example.exampletdd.TestScrollActivity"));
             this.startActivity(intent);
             return true;
-        default:
-            break;
+        } else {
         }
 
         return super.onOptionsItemSelected(item);

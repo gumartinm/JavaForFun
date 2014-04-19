@@ -31,10 +31,12 @@ public class WeatherOverviewAdapter extends ArrayAdapter<WeatherOverviewEntry> {
 
 
         // Setting date
-        viewHolder.dateView.setText(entry.getDate());
+        viewHolder.dateNameView.setText(entry.getDateName());
+        viewHolder.dateNumberView.setText(entry.getDateNumber());
 
         // Setting temperature max/min
-        viewHolder.temperatureView.setText(entry.getMaxTemp() + "/" + entry.getMinTemp());
+        viewHolder.temperatureMaxView.setText(entry.getMaxTemp());
+        viewHolder.temperatureMinView.setText(entry.getMinTemp());
 
         // Set image view
         viewHolder.pictureView.setImageBitmap(entry.getPicture());
@@ -71,10 +73,14 @@ public class WeatherOverviewAdapter extends ArrayAdapter<WeatherOverviewEntry> {
         if((null == tag) || !(tag instanceof ViewHolder)) {
             viewHolder = new ViewHolder();
 
-            viewHolder.dateView = (TextView) workingView
-                    .findViewById(R.id.weather_main_entry_date);
-            viewHolder.temperatureView = (TextView) workingView
-                    .findViewById(R.id.weather_main_entry_temperature);
+            viewHolder.dateNameView = (TextView) workingView
+                    .findViewById(R.id.weather_main_entry_date_name);
+            viewHolder.dateNumberView = (TextView) workingView
+                    .findViewById(R.id.weather_main_entry_date_number);
+            viewHolder.temperatureMaxView = (TextView) workingView
+                    .findViewById(R.id.weather_main_entry_temperature_max);
+            viewHolder.temperatureMinView = (TextView) workingView
+                    .findViewById(R.id.weather_main_entry_temperature_min);
             viewHolder.pictureView = (ImageView) workingView
                     .findViewById(R.id.weather_main_entry_image);
 
@@ -92,8 +98,10 @@ public class WeatherOverviewAdapter extends ArrayAdapter<WeatherOverviewEntry> {
      * Since views are recycled, these references will never change
      */
     private static class ViewHolder {
-        public TextView dateView;
-        public TextView temperatureView;
+        public TextView dateNameView;
+        public TextView dateNumberView;
+        public TextView temperatureMaxView;
+        public TextView temperatureMinView;
         public ImageView pictureView;
     }
 

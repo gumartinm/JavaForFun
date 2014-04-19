@@ -2,31 +2,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="15dp"
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/weather_main_entry_date"
+        android:id="@+id/weather_main_entry_date_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/weather_main_entry_temperature"
+        android:layout_above="@+id/weather_main_entry_date_number"
         android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/weather_main_entry_temperature"
-        android:text="Date"
+        android:layout_alignBottom="@+id/weather_main_entry_temperature_max"
+        android:layout_alignTop="@+id/weather_main_entry_temperature_max"
+        android:text="SUN"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textStyle="bold" />
-
     <TextView
-        android:id="@+id/weather_main_entry_temperature"
+        android:id="@+id/weather_main_entry_date_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/weather_main_entry_image"
-        android:layout_alignTop="@+id/weather_main_entry_image"
-        android:layout_centerHorizontal="true"
-        android:text="Temperature"
+        android:layout_alignBottom="@+id/weather_main_entry_temperature_min"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/weather_main_entry_temperature_min"
+        android:text="APR 23"
         android:textAlignment="center"
         android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="normal" />
+
+    <TextView
+        android:id="@+id/weather_main_entry_temperature_max"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/weather_main_entry_image"
+        android:layout_centerHorizontal="true"
+        android:text="12ºC"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/weather_time_of_day_color_title"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+    
+    <TextView
+        android:id="@+id/weather_main_entry_temperature_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/weather_main_entry_temperature_max"
+        android:layout_alignBottom="@+id/weather_main_entry_image"
+        android:layout_centerHorizontal="true"
+        android:text="5ºC"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/weather_time_of_day_color_title"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textStyle="normal" />
     
