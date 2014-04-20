@@ -26,6 +26,7 @@ import android.graphics.BitmapFactory;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -50,6 +51,7 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
     private boolean mIsFahrenheit;
     private String mDayForecast;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
+    private Parcelable mListState;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -87,6 +89,8 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
                     newFragment.show(this.getFragmentManager(), "errorDialog");
                 }
             }
+
+            this.mListState = savedInstanceState.getParcelable("ListState");
         }
 
         this.setHasOptionsMenu(false);
@@ -129,6 +133,9 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         if (forecastWeatherData != null) {
             savedInstanceState.putSerializable("ForecastWeatherData", forecastWeatherData);
         }
+
+        this.mListState = this.getListView().onSaveInstanceState();
+        savedInstanceState.putParcelable("ListState", this.mListState);
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -250,7 +257,10 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         // 3. Update forecast weather data on display.
         final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
-        if (forecastWeatherData != null) {
+        if ((this.mListState != null) && (forecastWeatherData != null)) {
+            this.updateForecastWeatherData(forecastWeatherData);
+            this.getListView().onRestoreInstanceState(this.mListState);
+        } else if (forecastWeatherData != null) {
             this.updateForecastWeatherData(forecastWeatherData);
         }
 
@@ -336,16 +346,6 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         private ForecastWeatherData doInBackgroundThrowable(final Object... params)
                 throws ClientProtocolException, MalformedURLException,
                 URISyntaxException, JsonParseException, IOException {
-            // final SharedPreferences sharedPreferences = PreferenceManager
-            // .getDefaultSharedPreferences(WeatherInformationOverviewFragment.this
-            // .getActivity());
-            //
-            // final String keyPreference =
-            // WeatherInformationOverviewFragment.this
-            // .getActivity().getString(
-            // R.string.weather_preferences_language_key);
-            // final String languagePreferenceValue =
-            // sharedPreferences.getString(keyPreference, "");
 
             // 1. Coordinates
             final GeocodingData geocodingData = (GeocodingData) params[0];

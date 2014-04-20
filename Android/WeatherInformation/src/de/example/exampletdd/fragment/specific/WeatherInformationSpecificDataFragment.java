@@ -70,6 +70,8 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
                     newFragment.show(this.getFragmentManager(), "errorDialog");
                 }
             }
+
+            this.mChosenDay = savedInstanceState.getInt("Chosen day");
         }
     }
 
@@ -83,6 +85,8 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
         if (forecastWeatherData != null) {
             savedInstanceState.putSerializable("ForecastWeatherData", forecastWeatherData);
         }
+
+        savedInstanceState.putInt("Chosend day", this.mChosenDay);
 
         super.onSaveInstanceState(savedInstanceState);
     }

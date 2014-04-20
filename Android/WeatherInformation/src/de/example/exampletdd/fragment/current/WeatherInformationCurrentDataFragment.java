@@ -8,10 +8,8 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
@@ -26,7 +24,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -34,8 +31,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import de.example.exampletdd.R;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.ProgressDialogFragment;
-import de.example.exampletdd.fragment.specific.WeatherSpecificDataAdapter;
-import de.example.exampletdd.fragment.specific.WeatherSpecificDataEntry;
+import de.example.exampletdd.fragment.overview.IconsList;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.model.currentweather.CurrentWeatherData;
@@ -139,72 +135,111 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
                 Locale.getDefault());
 
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
+        final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";
 
-        final List<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
+        final int[] layouts = new int[3];
+        layouts[0] = R.layout.weather_current_data_entry_first;
+        layouts[1] = R.layout.weather_current_data_entry_second;
+        layouts[2] = R.layout.weather_current_data_entry_fifth;
+        final WeatherCurrentDataAdapter adapter = new WeatherCurrentDataAdapter(this.getActivity(),
+                layouts);
 
-        final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
-                this.getActivity(), R.layout.weather_data_entry_list);
 
-        if (currentWeatherData.getWeather().size() > 0) {
-            entries.set(0,
-                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_description),
-                            currentWeatherData.getWeather().get(0).getDescription()));
-        }
-
-        if (currentWeatherData.getMain().getTemp() != null) {
-            double conversion = (Double) currentWeatherData.getMain().getTemp();
-            conversion = conversion - tempUnits;
-            entries.set(1, new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem),
-                    tempFormatter.format(conversion)));
-        }
-
+        String tempMax = "";
         if (currentWeatherData.getMain().getTemp_max() != null) {
             double conversion = (Double) currentWeatherData.getMain().getTemp_max();
             conversion = conversion - tempUnits;
-            entries.set(2, new WeatherSpecificDataEntry(
-                    this.getString(R.string.text_field_tem_max), tempFormatter.format(conversion)));
+            tempMax = tempFormatter.format(conversion) + symbol;
         }
-
-        if (currentWeatherData.getMain().getTemp_max() != null) {
+        String tempMin = "";
+        if (currentWeatherData.getMain().getTemp_min() != null) {
             double conversion = (Double) currentWeatherData.getMain().getTemp_min();
             conversion = conversion - tempUnits;
-            entries.set(3, new WeatherSpecificDataEntry(
-                    this.getString(R.string.text_field_tem_min), tempFormatter.format(conversion)));
+            tempMin = tempFormatter.format(conversion) + symbol;
         }
+        Bitmap picture;
+        if ((currentWeatherData.getWeather().size() > 0)
+                && (currentWeatherData.getWeather().get(0).getIcon() != null)
+                && (IconsList.getIcon(currentWeatherData.getWeather().get(0).getIcon()) != null)) {
+            final String icon = currentWeatherData.getWeather().get(0).getIcon();
+            picture = BitmapFactory.decodeResource(this.getResources(), IconsList.getIcon(icon)
+                    .getResourceDrawable());
+        } else {
+            picture = BitmapFactory.decodeResource(this.getResources(),
+                    R.drawable.weather_severe_alert);
+        }
+        final WeatherCurrentDataEntryFirst entryFirst = new WeatherCurrentDataEntryFirst(tempMax,
+                tempMin, picture);
+        adapter.add(entryFirst);
 
+        String description = "no description available";
+        if (currentWeatherData.getWeather().size() > 0) {
+            description = currentWeatherData.getWeather().get(0).getDescription();
+        }
+        final WeatherCurrentDataEntrySecond entrySecond = new WeatherCurrentDataEntrySecond(
+                description);
+        adapter.add(entrySecond);
+
+        String humidityValue = "";
+        if ((currentWeatherData.getMain() != null)
+                && (currentWeatherData.getMain().getHumidity() != null)) {
+            final double conversion = (Double) currentWeatherData.getMain().getHumidity();
+            humidityValue = tempFormatter.format(conversion);
+        }
+        String pressureValue = "";
+        if ((currentWeatherData.getMain() != null)
+                && (currentWeatherData.getMain().getPressure() != null)) {
+            final double conversion = (Double) currentWeatherData.getMain().getPressure();
+            pressureValue = tempFormatter.format(conversion);
+        }
+        String windValue = "";
+        if ((currentWeatherData.getWind() != null)
+                && (currentWeatherData.getWind().getSpeed() != null)) {
+            final double conversion = (Double) currentWeatherData.getWind().getSpeed();
+            windValue = tempFormatter.format(conversion);
+        }
+        String rainValue = "";
+        if ((currentWeatherData.getRain() != null)
+                && (currentWeatherData.getRain().get3h() != null)) {
+            final double conversion = (Double) currentWeatherData.getRain().get3h();
+            rainValue = tempFormatter.format(conversion);
+        }
+        String cloudsValue = "";
+        if ((currentWeatherData.getClouds() != null)
+                && (currentWeatherData.getClouds().getAll() != null)) {
+            final double conversion = (Double) currentWeatherData.getClouds().getAll();
+            cloudsValue = tempFormatter.format(conversion);
+        }
+        String snowValue = "";
+        if ((currentWeatherData.getSnow() != null)
+                && (currentWeatherData.getSnow().get3h() != null)) {
+            final double conversion = (Double) currentWeatherData.getSnow().get3h();
+            snowValue = tempFormatter.format(conversion);
+        }
+        String feelsLike = "";
+        if (currentWeatherData.getMain().getTemp() != null) {
+            double conversion = (Double) currentWeatherData.getMain().getTemp();
+            conversion = conversion - tempUnits;
+            feelsLike = tempFormatter.format(conversion);
+        }
+        String sunRiseTime = "";
         if (currentWeatherData.getSys().getSunrise() != null) {
             final long unixTime = (Long) currentWeatherData.getSys().getSunrise();
             final Date unixDate = new Date(unixTime * 1000L);
-            final String dateFormatUnix = dateFormat.format(unixDate);
-            entries.set(4,
-                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_rise),
-                            dateFormatUnix));
+            sunRiseTime = dateFormat.format(unixDate);
         }
-
+        String sunSetTime = "";
         if (currentWeatherData.getSys().getSunset() != null) {
             final long unixTime = (Long) currentWeatherData.getSys().getSunset();
             final Date unixDate = new Date(unixTime * 1000L);
-            final String dateFormatUnix = dateFormat.format(unixDate);
-            entries.set(5, new WeatherSpecificDataEntry(
-                    this.getString(R.string.text_field_sun_set), dateFormatUnix));
+            sunSetTime = dateFormat.format(unixDate);
         }
+        final WeatherCurrentDataEntryFifth entryFifth = new WeatherCurrentDataEntryFifth(
+                sunRiseTime, sunSetTime, humidityValue, pressureValue, windValue, rainValue,
+                feelsLike, symbol, snowValue, cloudsValue);
+        adapter.add(entryFifth);
 
-        if (currentWeatherData.getClouds().getAll() != null) {
-            final double cloudiness = (Double) currentWeatherData.getClouds().getAll();
-            entries.set(6,
-                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_cloudiness),
-                            tempFormatter.format(cloudiness)));
-        }
 
-        if (currentWeatherData.getIconData() != null) {
-            final Bitmap icon = BitmapFactory.decodeByteArray(currentWeatherData.getIconData(), 0,
-                    currentWeatherData.getIconData().length);
-            final ImageView imageIcon = (ImageView) this.getActivity().findViewById(
-                    R.id.weather_picture);
-            imageIcon.setImageBitmap(icon);
-        }
-
-        adapter.addAll(entries);
         this.setListAdapter(adapter);
     }
 
@@ -342,27 +377,5 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
 
             weatherTask.execute(geocodingData);
         }
-    }
-
-    private List<WeatherSpecificDataEntry> createEmptyEntriesList() {
-        final List<WeatherSpecificDataEntry> entries = new ArrayList<WeatherSpecificDataEntry>();
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_description),
-                null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem_max), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem_min), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_rise), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_set), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_cloudiness),
-                null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_rain_time),
-                null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_rain_amount),
-                null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_wind_speed),
-                null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_humidity), null));
-
-        return entries;
     }
 }

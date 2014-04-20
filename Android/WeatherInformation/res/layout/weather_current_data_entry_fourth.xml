@@ -15,18 +15,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Thermometer -->
-                <ImageView
-                    android:id="@+id/thermometer_morn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_below="@+id/weather_morn"
-                    android:layout_alignParentLeft="true"
-                    android:orientation="vertical"
-                    android:contentDescription="Image"
-                    android:src="@drawable/thermometer"
-                    android:background="?android:attr/activatedBackgroundIndicator"/>
-
                 <!-- Temperature -->
                 <TextView
                     android:id="@+id/weather_morn_temperature"
@@ -36,8 +24,7 @@
                     android:textAlignment="center"
                     android:gravity="center|center_vertical"
                     android:layout_below="@+id/weather_morn"
-                    android:layout_toRightOf="@id/thermometer_morn"
-                    android:layout_alignTop="@id/thermometer_morn"
+                    android:layout_centerInParent="true"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
@@ -51,6 +38,7 @@
                     android:textAlignment="center"
                     android:gravity="center"
                     android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </RelativeLayout>
@@ -60,17 +48,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             
-            <!-- Thermometer -->
-            <ImageView
-                android:id="@+id/thermometer_day"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_below="@+id/weather_day"
-                android:layout_alignParentLeft="true"
-                android:orientation="vertical"
-                android:contentDescription="Image"
-                android:src="@drawable/thermometer"
-                android:background="?android:attr/activatedBackgroundIndicator"/>
             
             <!-- Temperature -->
             <TextView
@@ -81,8 +58,7 @@
                  android:textAlignment="center"
                  android:gravity="center|center_vertical"
                  android:layout_below="@+id/weather_day"
-                 android:layout_toRightOf="@id/thermometer_day"
-                 android:layout_alignTop="@id/thermometer_day"
+                 android:layout_centerInParent="true"
                  android:textAppearance="?android:attr/textAppearanceMedium"
                  android:textStyle="bold" />
 
@@ -92,6 +68,7 @@
                  android:layout_width="140dp"
                  android:layout_height="wrap_content"
                  android:layout_alignParentTop="true"
+                 android:layout_centerInParent="true"
                  android:gravity="center"
                  android:selectAllOnFocus="true"
                  android:text="DAY"
@@ -109,17 +86,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Thermometer -->
-                <ImageView
-                    android:id="@+id/thermometer_eve"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_below="@+id/weather_eve"
-                    android:layout_alignParentLeft="true"
-                    android:orientation="vertical"
-                    android:contentDescription="Image"
-                    android:src="@drawable/thermometer"
-                    android:background="?android:attr/activatedBackgroundIndicator"/>
+
 
                 <!-- Temperature -->
                 <TextView
@@ -130,8 +97,7 @@
                     android:textAlignment="center"
                     android:gravity="center|center_vertical"
                     android:layout_below="@+id/weather_eve"
-                    android:layout_toRightOf="@id/thermometer_eve"
-                    android:layout_alignTop="@id/thermometer_eve"
+                    android:layout_centerInParent="true"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
@@ -143,6 +109,7 @@
                     android:text="EVENING"
                     android:textColor="@color/weather_time_of_day_color_title"
                     android:textAlignment="center"
+                    android:layout_centerInParent="true"
                     android:gravity="center"
                     android:layout_alignParentTop="true"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -155,17 +122,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Thermometer -->
-                <ImageView
-                    android:id="@+id/thermometer_night"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_below="@+id/weather_night"
-                    android:layout_alignParentLeft="true"
-                    android:orientation="vertical"
-                    android:contentDescription="Image"
-                    android:src="@drawable/thermometer"
-                    android:background="?android:attr/activatedBackgroundIndicator"/>
 
                 <!-- Temperature -->
                 <TextView
@@ -176,8 +132,7 @@
                     android:textAlignment="center"
                     android:gravity="center|center_vertical"
                     android:layout_below="@+id/weather_night"
-                    android:layout_toRightOf="@id/thermometer_night"
-                    android:layout_alignTop="@id/thermometer_night"
+                    android:layout_centerInParent="true"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold" />
 
@@ -191,6 +146,7 @@
                     android:textAlignment="center"
                     android:gravity="center"
                     android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </RelativeLayout>

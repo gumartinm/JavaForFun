@@ -9,14 +9,6 @@
     tools:context="de.example.exampletdd.WeatherInformationCurrentDataActivity"
     tools:ignore="MergeRootFrame" >
 
-    <ImageView
-        android:id="@+id/weather_current_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/icon_weather_description"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_launcher" />
-
      <fragment
         android:id="@+id/weather_current_data_fragment"
         android:layout_width="match_parent"
