@@ -4,21 +4,22 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import android.app.DialogFragment;
 import android.app.ListFragment;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
+import de.example.exampletdd.fragment.overview.IconsList;
 import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
@@ -41,13 +42,6 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
 
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(
                 this.getActivity());
-
-        // final SharedPreferences sharedPreferences = PreferenceManager
-        // .getDefaultSharedPreferences(this.getActivity());
-        // final String keyPreference = this.getResources().getString(
-        // R.string.weather_preferences_language_key);
-        // this.mLanguage = sharedPreferences.getString(
-        // keyPreference, "");
     }
 
     @Override
@@ -57,14 +51,9 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
         final ListView listWeatherView = this.getListView();
         listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
 
-        final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(this.getActivity(),
-                R.layout.weather_data_entry_list);
-
         this.setEmptyText("No data available");
 
-        this.setListAdapter(adapter);
-        this.setListShown(true);
-        this.setListShownNoAnimation(true);
+        this.setListShownNoAnimation(false);
 
         if (savedInstanceState != null) {
             // Restore state
@@ -121,11 +110,16 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
                 .getDefault());
         tempFormatter.applyPattern("#####.#####");
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
+        final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";
 
-        final List<WeatherSpecificDataEntry> entries = this.createEmptyEntriesList();
 
-        final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
-                this.getActivity(), R.layout.weather_data_entry_list);
+        final int[] layouts = new int[4];
+        layouts[0] = R.layout.weather_current_data_entry_first;
+        layouts[1] = R.layout.weather_current_data_entry_second;
+        layouts[2] = R.layout.weather_current_data_entry_third;
+        layouts[3] = R.layout.weather_current_data_entry_fourth;
+        final WeatherCurrentDataAdapter adapter = new WeatherCurrentDataAdapter(this.getActivity(),
+                layouts);
 
 
         final de.example.exampletdd.model.forecastweather.List forecast = forecastWeatherData
@@ -138,42 +132,99 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
         final Date date = calendar.getTime();
         this.getActivity().getActionBar().setSubtitle(dayFormatter.format(date).toUpperCase());
 
-        if (forecast.getWeather().size() > 0) {
-            entries.set(0,
-                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_description),
-                            forecast.getWeather().get(0).getDescription()));
-        }
 
-        if (forecast.getTemp().getDay() != null) {
-            double conversion = (Double) forecast.getTemp().getDay();
-            conversion = conversion - tempUnits;
-            entries.set(1, new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem),
-                    tempFormatter.format(conversion)));
-        }
-
+        String tempMax = "";
         if (forecast.getTemp().getMax() != null) {
             double conversion = (Double) forecast.getTemp().getMax();
             conversion = conversion - tempUnits;
-            entries.set(2, new WeatherSpecificDataEntry(
-                    this.getString(R.string.text_field_tem_max), tempFormatter.format(conversion)));
+            tempMax = tempFormatter.format(conversion) + symbol;
         }
-
+        String tempMin = "";
         if (forecast.getTemp().getMin() != null) {
             double conversion = (Double) forecast.getTemp().getMin();
             conversion = conversion - tempUnits;
-            entries.set(3, new WeatherSpecificDataEntry(
-                    this.getString(R.string.text_field_tem_min), tempFormatter.format(conversion)));
+            tempMin = tempFormatter.format(conversion) + symbol;
         }
-
-
-        if (forecast.getClouds() != null) {
-            final double cloudiness = (Double) forecast.getClouds();
-            entries.set(6,
-                    new WeatherSpecificDataEntry(this.getString(R.string.text_field_cloudiness),
-                            tempFormatter.format(cloudiness)));
+        Bitmap picture;
+        if ((forecast.getWeather().size() > 0) && (forecast.getWeather().get(0).getIcon() != null)
+                && (IconsList.getIcon(forecast.getWeather().get(0).getIcon()) != null)) {
+            final String icon = forecast.getWeather().get(0).getIcon();
+            picture = BitmapFactory.decodeResource(this.getResources(), IconsList.getIcon(icon)
+                    .getResourceDrawable());
+        } else {
+            picture = BitmapFactory.decodeResource(this.getResources(),
+                    R.drawable.weather_severe_alert);
         }
+        final WeatherCurrentDataEntryFirst entryFirst = new WeatherCurrentDataEntryFirst(tempMax,
+                tempMin, picture);
+        adapter.add(entryFirst);
 
-        adapter.addAll(entries);
+        String description = "no description available";
+        if (forecast.getWeather().size() > 0) {
+            description = forecast.getWeather().get(0).getDescription();
+        }
+        final WeatherCurrentDataEntrySecond entrySecond = new WeatherCurrentDataEntrySecond(
+                description);
+        adapter.add(entrySecond);
+
+
+        String humidityValue = "";
+        if (forecast.getHumidity() != null) {
+            final double conversion = (Double) forecast.getHumidity();
+            humidityValue = tempFormatter.format(conversion);
+        }
+        String pressureValue = "";
+        if (forecast.getPressure() != null) {
+            final double conversion = (Double) forecast.getPressure();
+            pressureValue = tempFormatter.format(conversion);
+        }
+        String windValue = "";
+        if (forecast.getSpeed() != null) {
+            final double conversion = (Double) forecast.getSpeed();
+            windValue = tempFormatter.format(conversion);
+        }
+        String rainValue = "";
+        if (forecast.getRain() != null) {
+            final double conversion = (Double) forecast.getRain();
+            rainValue = tempFormatter.format(conversion);
+        }
+        String cloudsValue = "";
+        if (forecast.getRain() != null) {
+            final double conversion = (Double) forecast.getClouds();
+            cloudsValue = tempFormatter.format(conversion);
+        }
+        final WeatherCurrentDataEntryThird entryThird = new WeatherCurrentDataEntryThird(
+                humidityValue, pressureValue, windValue, rainValue, cloudsValue);
+        adapter.add(entryThird);
+
+        String tempDay = "";
+        if (forecast.getTemp().getDay() != null) {
+            double conversion = (Double) forecast.getTemp().getDay();
+            conversion = conversion - tempUnits;
+            tempDay = tempFormatter.format(conversion) + symbol;
+        }
+        String tempMorn = "";
+        if (forecast.getTemp().getMorn() != null) {
+            double conversion = (Double) forecast.getTemp().getMorn();
+            conversion = conversion - tempUnits;
+            tempMorn = tempFormatter.format(conversion) + symbol;
+        }
+        String tempEve = "";
+        if (forecast.getTemp().getEve() != null) {
+            double conversion = (Double) forecast.getTemp().getEve();
+            conversion = conversion - tempUnits;
+            tempEve = tempFormatter.format(conversion) + symbol;
+        }
+        String tempNight = "";
+        if (forecast.getTemp().getNight() != null) {
+            double conversion = (Double) forecast.getTemp().getNight();
+            conversion = conversion - tempUnits;
+            tempNight = tempFormatter.format(conversion) + symbol;
+        }
+        final WeatherCurrentDataEntryFourth entryFourth = new WeatherCurrentDataEntryFourth(
+                tempMorn, tempDay, tempEve, tempNight);
+        adapter.add(entryFourth);
+
         this.setListAdapter(adapter);
     }
 
@@ -198,46 +249,10 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
 
 
         // 2. Update weather data on display.
-
         final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
         if (forecastWeatherData != null) {
             this.updateForecastWeatherData(forecastWeatherData, this.mChosenDay);
-        } else {
-            // 2.1 Empty list by default
-            final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
-                    this.getActivity(), R.layout.weather_data_entry_list);
-            this.setListAdapter(adapter);
         }
-
-
-
-        // 3. If language changed, try to retrieve new data for new language
-        // (new strings with the chosen language)
-        // keyPreference = this.getResources().getString(
-        // R.string.weather_preferences_language_key);
-        // final String languagePreferenceValue = sharedPreferences.getString(
-        // keyPreference, "");
-        // if (!languagePreferenceValue.equals(this.mLanguage)) {
-        // this.mLanguage = languagePreferenceValue;
-        // this.getWeather();
-        // }
-    }
-
-    private List<WeatherSpecificDataEntry> createEmptyEntriesList() {
-        final List<WeatherSpecificDataEntry> entries = new ArrayList<WeatherSpecificDataEntry>();
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_description), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem_max), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_tem_min), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_rise), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_sun_set), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_cloudiness), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_rain_time), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_rain_amount), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_wind_speed), null));
-        entries.add(new WeatherSpecificDataEntry(this.getString(R.string.text_field_humidity), null));
-
-        return entries;
     }
 }

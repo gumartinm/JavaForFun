@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/weather_current_data_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textAlignment="textStart"
+        android:paddingBottom="50dp"
+        android:paddingRight="50dp"
+        android:paddingLeft="50dp"
+        android:text="Light rain"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/weather_time_of_day_color_title"
+        android:textStyle="bold" />
+    
+</LinearLayout>

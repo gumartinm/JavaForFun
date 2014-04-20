@@ -37,8 +37,8 @@ public class WeatherInformationCurrentDataActivity extends Activity {
                     .getString(R.string.city_not_found) : geocodingData.getCity();
                     final String country = (geocodingData.getCountry() == null) ? this
                             .getString(R.string.country_not_found) : geocodingData.getCountry();
-                            actionBar.setTitle("Current weather data information");
-                            actionBar.setSubtitle(city + "," + country);
+                            actionBar.setTitle(city + "," + country);
+                            actionBar.setSubtitle("CURRENTLY");
         }
 
     }

@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import de.example.exampletdd.R;
-import de.example.exampletdd.fragment.specific.WeatherSpecificDataEntry;
 
 public class WeatherSpecificDataAdapter extends ArrayAdapter<WeatherSpecificDataEntry> {
     private final int resource;

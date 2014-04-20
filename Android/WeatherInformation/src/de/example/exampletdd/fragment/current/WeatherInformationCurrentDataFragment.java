@@ -52,13 +52,6 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // final SharedPreferences sharedPreferences = PreferenceManager
-        // .getDefaultSharedPreferences(this.getActivity());
-        // final String keyPreference = this.getResources().getString(
-        // R.string.weather_preferences_language_key);
-        // this.mLanguage = sharedPreferences.getString(
-        // keyPreference, "");
-
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this.getActivity());
         this.mWeatherServicePersistenceFile.removeCurrentWeatherData();
     }
@@ -88,16 +81,9 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
 
         this.setHasOptionsMenu(false);
 
-        final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
-                this.getActivity(), R.layout.weather_data_entry_list);
-
-
         this.setEmptyText("No data available");
 
-        this.setListAdapter(adapter);
-        this.setListShown(true);
-        this.setListShownNoAnimation(true);
-
+        this.setListShownNoAnimation(false);
     }
 
     @Override
@@ -125,28 +111,9 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
         if (currentWeatherData != null) {
             this.updateCurrentWeatherData(currentWeatherData);
         } else {
-            // 2.1 Empty list by default
-            final WeatherSpecificDataAdapter adapter = new WeatherSpecificDataAdapter(
-                    this.getActivity(), R.layout.weather_data_entry_list);
-            this.setListAdapter(adapter);
-
-            // 2.2. Try to update weather data on display with remote
-            // information.
+            // 3. Try to update weather data on display with remote
             this.getRemoteCurrentWeatherInformation();
         }
-
-
-
-        // 3. If language changed, try to retrieve new data for new language
-        // (new strings with the chosen language)
-        // keyPreference = this.getResources().getString(
-        // R.string.weather_preferences_language_key);
-        // final String languagePreferenceValue = sharedPreferences.getString(
-        // keyPreference, "");
-        // if (!languagePreferenceValue.equals(this.mLanguage)) {
-        // this.mLanguage = languagePreferenceValue;
-        // this.getWeather();
-        // }
     }
 
     @Override
@@ -297,6 +264,7 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
                 try {
                     this.onPostExecuteThrowable(currentWeatherData);
                 } catch (final IOException e) {
+                    WeatherInformationCurrentDataFragment.this.setListShown(true);
                     Log.e(TAG, "WeatherTask onPostExecute exception: ", e);
                     final DialogFragment newFragment = ErrorDialogFragment
                             .newInstance(R.string.error_dialog_generic_error);
@@ -305,6 +273,7 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
                             "errorDialog");
                 }
             } else {
+                WeatherInformationCurrentDataFragment.this.setListShown(true);
                 final DialogFragment newFragment = ErrorDialogFragment
                         .newInstance(R.string.error_dialog_generic_error);
                 newFragment.show(WeatherInformationCurrentDataFragment.this.getFragmentManager(),
@@ -325,16 +294,6 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
         private CurrentWeatherData doInBackgroundThrowable(final Object... params)
                 throws ClientProtocolException, MalformedURLException, URISyntaxException,
                 JsonParseException, IOException {
-            // final SharedPreferences sharedPreferences = PreferenceManager
-            // .getDefaultSharedPreferences(WeatherInformationCurrentDataFragment.this
-            // .getActivity());
-            //
-            // final String keyPreference =
-            // WeatherInformationCurrentDataFragment.this
-            // .getActivity().getString(
-            // R.string.weather_preferences_language_key);
-            // final String languagePreferenceValue =
-            // sharedPreferences.getString(keyPreference, "");
 
             // 1. Coordinates
             final GeocodingData geocodingData = (GeocodingData) params[0];

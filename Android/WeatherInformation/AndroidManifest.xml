@@ -86,11 +86,6 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="de.example.exampletdd.TestScrollActivity"
-            android:label="@string/title_activity_test_scroll"
-            android:parentActivityName="de.example.exampletdd.WeatherInformationActivity" >
-        </activity>
-        <activity
             android:name="de.example.exampletdd.MasterDetailListActivity"
             android:label="@string/title_masterdetail_list" >
         </activity>

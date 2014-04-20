@@ -47,7 +47,6 @@
     <string name="country_not_found">country not found</string>
     <string name="progress_dialog_get_remote_data">Downloading remote data</string>
     <string name="progress_dialog_generic_message">Please wait&#8230;</string>
-    <string name="title_activity_test_scroll">TestScrollActivity</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>

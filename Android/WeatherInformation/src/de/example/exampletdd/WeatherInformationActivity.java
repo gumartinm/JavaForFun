@@ -79,7 +79,7 @@ public class WeatherInformationActivity extends Activity {
         } else if (itemId == R.id.weather_menu_current) {
             intent = new Intent("de.example.exampletdd.WEATHERINFO")
             .setComponent(new ComponentName("de.example.exampletdd",
-                    "de.example.exampletdd.TestScrollActivity"));
+                    "de.example.exampletdd.WeatherInformationCurrentDataActivity"));
             this.startActivity(intent);
             return true;
         } else {

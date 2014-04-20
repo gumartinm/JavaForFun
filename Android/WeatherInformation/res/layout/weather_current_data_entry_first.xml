@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="50dp"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/weather_current_data_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/icon_weather_description"
+        android:scaleType="fitCenter"
+        android:maxHeight="580dp"
+        android:maxWidth="580dp"
+        android:minHeight="80dp"
+        android:minWidth="80dp"
+        android:src="@drawable/weather_showers" />
+    
+    <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:orientation="vertical" >
+    
+        <TextView
+            android:id="@+id/weather_current_data_temp_max"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:paddingLeft="20dp"
+            android:text="55ºC"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/weather_current_data_temp_min"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:paddingLeft="20dp"
+            android:text="55ºC"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="normal" />
+    
+     </LinearLayout>
+
+</LinearLayout>
