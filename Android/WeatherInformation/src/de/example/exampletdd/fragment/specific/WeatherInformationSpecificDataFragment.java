@@ -110,8 +110,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
 
     public void updateForecastWeatherData(final ForecastWeatherData forecastWeatherData,
             final int chosenDay) {
-        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale
-                .getDefault());
+        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.#####");
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
         final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";
@@ -129,7 +128,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
         final de.example.exampletdd.model.forecastweather.List forecast = forecastWeatherData
                 .getList().get((chosenDay));
 
-        final SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE - MMM d", Locale.getDefault());
+        final SimpleDateFormat dayFormatter = new SimpleDateFormat("EEEE - MMM d", Locale.US);
         final Calendar calendar = Calendar.getInstance();
         final Long forecastUNIXDate = (Long) forecast.getDt();
         calendar.setTimeInMillis(forecastUNIXDate * 1000L);

@@ -173,11 +173,10 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
                 R.layout.weather_main_entry_list);
 
 
-        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
+        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.##");
-        final SimpleDateFormat dayNameFormatter = new SimpleDateFormat("EEE", Locale.getDefault());
-        final SimpleDateFormat monthAndDayNumberormatter = new SimpleDateFormat("MMM d",
-                Locale.getDefault());
+        final SimpleDateFormat dayNameFormatter = new SimpleDateFormat("EEE", Locale.US);
+        final SimpleDateFormat monthAndDayNumberormatter = new SimpleDateFormat("MMM d", Locale.US);
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
         final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";
 

@@ -169,8 +169,7 @@ public class WeatherInformationMapActivity extends Activity {
         }
 
         private GeocodingData getGeocodingData(final double latitude, final double longitude) throws IOException {
-            final Geocoder geocoder = new Geocoder(
-                    WeatherInformationMapActivity.this, Locale.getDefault());
+            final Geocoder geocoder = new Geocoder(WeatherInformationMapActivity.this, Locale.US);
             final List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
             if (addresses == null) {

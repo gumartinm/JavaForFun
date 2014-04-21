@@ -128,11 +128,9 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
 
 
     public void updateCurrentWeatherData(final CurrentWeatherData currentWeatherData) {
-        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale
-                .getDefault());
+        final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.#####");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z",
-                Locale.getDefault());
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z", Locale.US);
 
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
         final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";
