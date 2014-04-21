@@ -37,18 +37,6 @@
         android:title="@string/action_map"
         android:titleCondensed="@string/action_map">
     </item>
-    <item
-        android:id="@+id/weather_menu_current"
-        android:menuCategory="system"
-        android:title="@string/action_current_weather"
-        android:titleCondensed="@string/action_current_weather"
-        android:checked="false"
-        android:visible="true"
-        android:checkable="false"
-        android:enabled="true"
-        android:icon="@drawable/ic_action_import_export"
-        android:showAsAction="ifRoom">
-    </item>
     
 
 </menu>

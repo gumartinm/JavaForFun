@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import de.example.exampletdd.activityinterface.GetWeather;
-import de.example.exampletdd.fragment.overview.WeatherInformationOverviewFragment;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
@@ -37,10 +36,10 @@ public class WeatherInformationActivity extends Activity {
         //      this.getFragmentManager().beginTransaction()
         //      .add(R.id.container, weatherDataFragment).commit();
         // }
-        final WeatherInformationOverviewFragment weatherOverviewFragment = (WeatherInformationOverviewFragment) this
-                .getFragmentManager().findFragmentById(R.id.weather_overview_fragment);
+        //        final WeatherInformationOverviewFragment weatherOverviewFragment = (WeatherInformationOverviewFragment) this
+        //                .getFragmentManager().findFragmentById(R.id.weather_overview_fragment);
 
-        this.mGetWeather = weatherOverviewFragment;
+        //        this.mGetWeather = weatherOverviewFragment;
 
     }
 
@@ -76,12 +75,12 @@ public class WeatherInformationActivity extends Activity {
                     "de.example.exampletdd.WeatherInformationMapActivity"));
             this.startActivity(intent);
             return true;
-        } else if (itemId == R.id.weather_menu_current) {
-            intent = new Intent("de.example.exampletdd.WEATHERINFO")
-            .setComponent(new ComponentName("de.example.exampletdd",
-                    "de.example.exampletdd.WeatherInformationCurrentDataActivity"));
-            this.startActivity(intent);
-            return true;
+            //        } else if (itemId == R.id.weather_menu_current) {
+            //            intent = new Intent("de.example.exampletdd.WEATHERINFO")
+            //            .setComponent(new ComponentName("de.example.exampletdd",
+            //                    "de.example.exampletdd.WeatherInformationCurrentDataActivity"));
+            //            this.startActivity(intent);
+            //            return true;
         } else {
         }
 

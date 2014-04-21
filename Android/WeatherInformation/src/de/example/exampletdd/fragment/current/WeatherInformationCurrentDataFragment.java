@@ -15,7 +15,6 @@ import java.util.Locale;
 import org.apache.http.client.ClientProtocolException;
 
 import android.app.DialogFragment;
-import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,13 +22,13 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.widget.ListView;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.R;
-import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.ProgressDialogFragment;
 import de.example.exampletdd.fragment.overview.IconsList;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
@@ -68,9 +67,9 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
                 try {
                     this.mWeatherServicePersistenceFile.storeCurrentWeatherData(currentWeatherData);
                 } catch (final IOException e) {
-                    final DialogFragment newFragment = ErrorDialogFragment
-                            .newInstance(R.string.error_dialog_generic_error);
-                    newFragment.show(this.getFragmentManager(), "errorDialog");
+                    //                    final DialogFragment newFragment = ErrorDialogFragment
+                    //                            .newInstance(R.string.error_dialog_generic_error);
+                    //                    newFragment.show(this.getFragmentManager(), "errorDialog");
                 }
             }
         }
@@ -299,18 +298,18 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
                 } catch (final IOException e) {
                     WeatherInformationCurrentDataFragment.this.setListShown(true);
                     Log.e(TAG, "WeatherTask onPostExecute exception: ", e);
-                    final DialogFragment newFragment = ErrorDialogFragment
-                            .newInstance(R.string.error_dialog_generic_error);
-                    newFragment.show(
-                            WeatherInformationCurrentDataFragment.this.getFragmentManager(),
-                            "errorDialog");
+                    //                    final DialogFragment newFragment = ErrorDialogFragment
+                    //                            .newInstance(R.string.error_dialog_generic_error);
+                    //                    newFragment.show(
+                    //                            WeatherInformationCurrentDataFragment.this.getFragmentManager(),
+                    //                            "errorDialog");
                 }
             } else {
                 WeatherInformationCurrentDataFragment.this.setListShown(true);
-                final DialogFragment newFragment = ErrorDialogFragment
-                        .newInstance(R.string.error_dialog_generic_error);
-                newFragment.show(WeatherInformationCurrentDataFragment.this.getFragmentManager(),
-                        "errorDialog");
+                //                final DialogFragment newFragment = ErrorDialogFragment
+                //                        .newInstance(R.string.error_dialog_generic_error);
+                //                newFragment.show(WeatherInformationCurrentDataFragment.this.getFragmentManager(),
+                //                        "errorDialog");
             }
         }
 
@@ -318,10 +317,10 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
         protected void onCancelled(final CurrentWeatherData currentWeatherData) {
             this.weatherHTTPClient.close();
 
-            final DialogFragment newFragment = ErrorDialogFragment
-                    .newInstance(R.string.error_dialog_connection_tiemout);
-            newFragment.show(WeatherInformationCurrentDataFragment.this.getFragmentManager(),
-                    "errorDialog");
+            //            final DialogFragment newFragment = ErrorDialogFragment
+            //                    .newInstance(R.string.error_dialog_connection_tiemout);
+            //            newFragment.show(WeatherInformationCurrentDataFragment.this.getFragmentManager(),
+            //                    "errorDialog");
         }
 
         private CurrentWeatherData doInBackgroundThrowable(final Object... params)
