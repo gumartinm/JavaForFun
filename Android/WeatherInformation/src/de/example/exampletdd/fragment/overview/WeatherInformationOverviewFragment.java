@@ -16,7 +16,8 @@ import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 
-import android.app.DialogFragment;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +36,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.GetWeather;
+import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.ProgressDialogFragment;
+import de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
@@ -80,9 +84,9 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
                     this.mWeatherServicePersistenceFile
                     .storeForecastWeatherData(forecastWeatherData);
                 } catch (final IOException e) {
-                    //                    final DialogFragment newFragment = ErrorDialogFragment
-                    //                            .newInstance(R.string.error_dialog_generic_error);
-                    //                    newFragment.show(this.getFragmentManager(), "errorDialog");
+                    final DialogFragment newFragment = ErrorDialogFragment
+                            .newInstance(R.string.error_dialog_generic_error);
+                    newFragment.show(this.getFragmentManager(), "errorDialog");
                 }
             }
 
@@ -104,19 +108,19 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
 
     @Override
     public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-        //        final WeatherInformationSpecificDataFragment fragment = (WeatherInformationSpecificDataFragment) this.getFragmentManager()
-        //                .findFragmentById(R.id.weather_specific_data__fragment);
-        //        if (fragment == null) {
-        //            // handset layout
-        //            final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO").
-        //                    setComponent(new ComponentName("de.example.exampletdd",
-        //                            "de.example.exampletdd.WeatherInformationSpecificDataActivity"));
-        //            intent.putExtra("CHOSEN_DAY", (int) id);
-        //            WeatherInformationOverviewFragment.this.getActivity().startActivity(intent);
-        //        } else {
-        //            // tablet layout
-        //            fragment.getWeatherByDay((int) id);
-        //        }
+        final WeatherInformationSpecificDataFragment fragment = (WeatherInformationSpecificDataFragment) this
+                .getFragmentManager().findFragmentById(R.id.weather_specific_data__fragment);
+        if (fragment == null) {
+            // handset layout
+            final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO")
+            .setComponent(new ComponentName("de.example.exampletdd",
+                    "de.example.exampletdd.WeatherInformationSpecificDataActivity"));
+            intent.putExtra("CHOSEN_DAY", (int) id);
+            WeatherInformationOverviewFragment.this.getActivity().startActivity(intent);
+        } else {
+            // tablet layout
+            fragment.getWeatherByDay((int) id);
+        }
     }
 
     @Override
@@ -279,8 +283,8 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
 
         @Override
         protected void onPreExecute() {
-            this.newFragment.show(WeatherInformationOverviewFragment.this.getActivity()
-                    .getFragmentManager(), "progressDialog");
+            this.newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(),
+                    "progressDialog");
         }
 
         @Override

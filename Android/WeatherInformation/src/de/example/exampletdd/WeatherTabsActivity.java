@@ -12,17 +12,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.current.WeatherInformationCurrentDataFragment;
 import de.example.exampletdd.fragment.overview.WeatherInformationOverviewFragment;
@@ -30,37 +22,32 @@ import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherTabsActivity extends FragmentActivity {
-    static final int NUM_ITEMS = 2;
-
-    MyAdapter mAdapter;
-
-    ViewPager mPager;
-
+    private static final int NUM_ITEMS = 2;
+    private MyAdapter mAdapter;
+    private ViewPager mPager;
     private GetWeather mGetWeather;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_pager);
+        this.setContentView(R.layout.fragment_pager);
 
-        mAdapter = new MyAdapter(getSupportFragmentManager());
+        this.mAdapter = new MyAdapter(this.getSupportFragmentManager());
 
-        mPager = (ViewPager)findViewById(R.id.pager);
-        mPager.setAdapter(mAdapter);
+        this.mPager = (ViewPager)this.findViewById(R.id.pager);
+        this.mPager.setAdapter(this.mAdapter);
 
 
-        mPager.setOnPageChangeListener(
+        this.mPager.setOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
                     @Override
                     public void onPageSelected(final int position) {
-                        // When swiping between pages, select the
-                        // corresponding tab.
-                        getActionBar().setSelectedNavigationItem(position);
+                        WeatherTabsActivity.this.getActionBar().setSelectedNavigationItem(position);
                     }
                 });
 
 
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = this.getActionBar();
 
         PreferenceManager.setDefaultValues(this, R.xml.weather_preferences, false);
 
@@ -74,21 +61,17 @@ public class WeatherTabsActivity extends FragmentActivity {
 
             @Override
             public void onTabSelected(final Tab tab, final FragmentTransaction ft) {
-                // When the tab is selected, switch to the
-                // corresponding page in the ViewPager.
-                mPager.setCurrentItem(tab.getPosition());
+                WeatherTabsActivity.this.mPager.setCurrentItem(tab.getPosition());
 
             }
 
             @Override
             public void onTabUnselected(final Tab tab, final FragmentTransaction ft) {
-                // TODO Auto-generated method stub
 
             }
 
             @Override
             public void onTabReselected(final Tab tab, final FragmentTransaction ft) {
-                // TODO Auto-generated method stub
 
             }
 
@@ -96,7 +79,6 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         actionBar.addTab(actionBar.newTab().setText("CURRENTLY").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("FORECAST").setTabListener(tabListener));
-
     }
 
     @Override
@@ -163,13 +145,13 @@ public class WeatherTabsActivity extends FragmentActivity {
         final String value = sharedPreferences.getString(keyPreference, "");
         String humanValue = "";
         if (value.equals("5")) {
-            humanValue = "5-Day Forecast";
+            humanValue = "5 DAY FORECAST";
         } else if (value.equals("10")) {
-            humanValue = "10-Day Forecast";
+            humanValue = "10 DAY FORECAST";
         } else if (value.equals("14")) {
-            humanValue = "14-Day Forecast";
+            humanValue = "14 DAY FORECAST";
         }
-        actionBar.setSubtitle(humanValue);
+        actionBar.getTabAt(1).setText(humanValue);
 
     }
 
@@ -200,65 +182,4 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         }
     }
-
-    public static class ArrayListFragment extends ListFragment {
-        int mNum;
-
-        /**
-         * Create a new instance of CountingFragment, providing "num"
-         * as an argument.
-         */
-        static ArrayListFragment newInstance(final int num) {
-            final ArrayListFragment f = new ArrayListFragment();
-
-            // Supply num input as an argument.
-            final Bundle args = new Bundle();
-            args.putInt("num", num);
-            f.setArguments(args);
-
-            return f;
-        }
-
-        /**
-         * When creating, retrieve this instance's number from its arguments.
-         */
-        @Override
-        public void onCreate(final Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            mNum = getArguments() != null ? getArguments().getInt("num") : 1;
-        }
-
-        /**
-         * The Fragment's UI is just a simple text view showing its
-         * instance number.
-         */
-        @Override
-        public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                final Bundle savedInstanceState) {
-            final View v = inflater.inflate(R.layout.fragment_pager_list, container, false);
-            final View tv = v.findViewById(R.id.text);
-            ((TextView)tv).setText("Fragment #" + mNum);
-            return v;
-        }
-
-        @Override
-        public void onActivityCreated(final Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            final String[] chesses = new String[5];
-            chesses[0] = "cheese 1";
-            chesses[1] = "cheese 2";
-            chesses[2] = "cheese 3";
-            chesses[3] = "cheese 4";
-            chesses[4] = "cheese 5";
-            setListAdapter(new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1, chesses));
-        }
-
-        @Override
-        public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-            Log.i("FragmentList", "Item clicked: " + id);
-        }
-    }
-
-
 }

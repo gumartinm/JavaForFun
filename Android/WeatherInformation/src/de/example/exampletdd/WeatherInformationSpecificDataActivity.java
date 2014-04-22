@@ -1,12 +1,12 @@
 package de.example.exampletdd;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
-public class WeatherInformationSpecificDataActivity extends Activity {
+public class WeatherInformationSpecificDataActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {

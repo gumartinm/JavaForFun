@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.DialogFragment;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -28,7 +28,7 @@ import de.example.exampletdd.fragment.ProgressDialogFragment;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
-public class WeatherInformationMapActivity extends Activity {
+public class WeatherInformationMapActivity extends FragmentActivity {
     private GoogleMap mMap;
     private Marker mMarker;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
@@ -100,7 +100,8 @@ public class WeatherInformationMapActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
-            this.newFragment.show(WeatherInformationMapActivity.this.getFragmentManager(), "progressDialog");
+            this.newFragment.show(WeatherInformationMapActivity.this.getSupportFragmentManager(),
+                    "progressDialog");
         }
 
         @Override
@@ -125,7 +126,8 @@ public class WeatherInformationMapActivity extends Activity {
 
             if (geocodingData == null) {
                 final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
-                newFragment.show(WeatherInformationMapActivity.this.getFragmentManager(), "errorDialog");
+                newFragment.show(WeatherInformationMapActivity.this.getSupportFragmentManager(),
+                        "errorDialog");
 
                 return;
             }
@@ -135,11 +137,13 @@ public class WeatherInformationMapActivity extends Activity {
             } catch (final FileNotFoundException e) {
                 Log.e(TAG, "GeocoderAsyncTask onPostExecute exception: ", e);
                 final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
-                newFragment.show(WeatherInformationMapActivity.this.getFragmentManager(), "errorDialog");
+                newFragment.show(WeatherInformationMapActivity.this.getSupportFragmentManager(),
+                        "errorDialog");
             } catch (final IOException e) {
                 Log.e(TAG, "GeocoderAsyncTask onPostExecute exception: ", e);
                 final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
-                newFragment.show(WeatherInformationMapActivity.this.getFragmentManager(), "errorDialog");
+                newFragment.show(WeatherInformationMapActivity.this.getSupportFragmentManager(),
+                        "errorDialog");
             }
         }
 

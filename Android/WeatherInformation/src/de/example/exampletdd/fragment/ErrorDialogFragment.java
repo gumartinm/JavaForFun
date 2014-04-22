@@ -2,9 +2,9 @@ package de.example.exampletdd.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import de.example.exampletdd.R;
 
 public class ErrorDialogFragment extends DialogFragment {

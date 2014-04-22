@@ -75,12 +75,6 @@ public class WeatherInformationActivity extends Activity {
                     "de.example.exampletdd.WeatherInformationMapActivity"));
             this.startActivity(intent);
             return true;
-            //        } else if (itemId == R.id.weather_menu_current) {
-            //            intent = new Intent("de.example.exampletdd.WEATHERINFO")
-            //            .setComponent(new ComponentName("de.example.exampletdd",
-            //                    "de.example.exampletdd.WeatherInformationCurrentDataActivity"));
-            //            this.startActivity(intent);
-            //            return true;
         } else {
         }
 

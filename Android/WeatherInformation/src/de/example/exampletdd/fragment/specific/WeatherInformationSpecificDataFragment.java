@@ -8,13 +8,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import android.app.DialogFragment;
-import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.ListFragment;
 import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.activityinterface.GetWeather;
