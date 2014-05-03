@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.current.WeatherInformationCurrentDataFragment;
 import de.example.exampletdd.fragment.overview.WeatherInformationOverviewFragment;
 import de.example.exampletdd.model.GeocodingData;
@@ -25,7 +24,6 @@ public class WeatherTabsActivity extends FragmentActivity {
     private static final int NUM_ITEMS = 2;
     private MyAdapter mAdapter;
     private ViewPager mPager;
-    private GetWeather mGetWeather;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -79,6 +77,10 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         actionBar.addTab(actionBar.newTab().setText("CURRENTLY").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("FORECAST").setTabListener(tabListener));
+
+        final Intent intent = new Intent(this, WeatherInformationBatch.class);
+        intent.putExtra("UPDATE_RATE_TIME", 60);
+        this.startService(intent);
     }
 
     @Override
@@ -103,9 +105,6 @@ public class WeatherTabsActivity extends FragmentActivity {
             .setComponent(new ComponentName("de.example.exampletdd",
                     "de.example.exampletdd.WeatherInformationPreferencesActivity"));
             this.startActivity(intent);
-            return true;
-        } else if (itemId == R.id.weather_menu_get) {
-            this.getWeather();
             return true;
         } else if (itemId == R.id.weather_menu_map) {
             intent = new Intent("de.example.exampletdd.WEATHERINFO")
@@ -155,9 +154,10 @@ public class WeatherTabsActivity extends FragmentActivity {
 
     }
 
-
-    public void getWeather() {
-        this.mGetWeather.getRemoteWeatherInformation();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.stopService(new Intent(this, WeatherInformationBatch.class));
     }
 
     public class MyAdapter extends FragmentPagerAdapter {
@@ -175,8 +175,7 @@ public class WeatherTabsActivity extends FragmentActivity {
             if (position == 0) {
                 return new WeatherInformationCurrentDataFragment();
             } else {
-                final WeatherInformationOverviewFragment fragment = new WeatherInformationOverviewFragment();
-                WeatherTabsActivity.this.mGetWeather = fragment;
+                final Fragment fragment = new WeatherInformationOverviewFragment();
                 return fragment;
             }
 

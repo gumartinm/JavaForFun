@@ -1,10 +1,6 @@
 package de.example.exampletdd.fragment.overview;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -14,15 +10,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.http.client.ClientProtocolException;
-
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.http.AndroidHttpClient;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -31,27 +26,19 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-
-import com.fasterxml.jackson.core.JsonParseException;
-
 import de.example.exampletdd.R;
-import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
-import de.example.exampletdd.fragment.ProgressDialogFragment;
 import de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment;
-import de.example.exampletdd.httpclient.CustomHTTPClient;
-import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
-import de.example.exampletdd.parser.IJPOSWeatherParser;
-import de.example.exampletdd.parser.JPOSWeatherParser;
-import de.example.exampletdd.service.WeatherServiceParser;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
-public class WeatherInformationOverviewFragment extends ListFragment implements GetWeather {
+public class WeatherInformationOverviewFragment extends ListFragment {
+    private static final String TAG = "WeatherInformationOverviewFragment";
     private boolean mIsFahrenheit;
     private String mDayForecast;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
     private Parcelable mListState;
+    private BroadcastReceiver mReceiver;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -64,7 +51,30 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
         this.mDayForecast = sharedPreferences.getString(keyPreference, "");
 
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this.getActivity());
-        this.mWeatherServicePersistenceFile.removeForecastWeatherData();
+
+        this.mReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(final Context context, final Intent intent) {
+                // This method will be run in the main thread.
+                final String action = intent.getAction();
+                if (action.equals("de.example.exampletdd.UPDATEOVERVIEWWEATHER")) {
+                    Log.i(TAG, "WeatherInformationOverviewFragment Update Weather Data");
+                    final ForecastWeatherData forecastWeatherData =
+                            WeatherInformationOverviewFragment.this.mWeatherServicePersistenceFile
+                            .getForecastWeatherData();
+                    if (forecastWeatherData != null) {
+                        WeatherInformationOverviewFragment.this
+                        .updateForecastWeatherData(forecastWeatherData);
+                    }
+
+                }
+            }
+        };
+
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction("de.example.exampletdd.UPDATEOVERVIEWWEATHER");
+        this.getActivity().registerReceiver(this.mReceiver, filter);
     }
 
     @Override
@@ -141,33 +151,12 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
     }
 
     @Override
-    public void getRemoteWeatherInformation() {
-
-        final GeocodingData geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
-
-        if (geocodingData != null) {
-            final IJPOSWeatherParser JPOSWeatherParser = new JPOSWeatherParser();
-            final WeatherServiceParser weatherService = new WeatherServiceParser(
-                    JPOSWeatherParser);
-            final AndroidHttpClient httpClient = AndroidHttpClient
-                    .newInstance("Android Weather Information Agent");
-            final CustomHTTPClient HTTPweatherClient = new CustomHTTPClient(
-                    httpClient);
-
-            final ForecastWeatherTask weatherTask = new ForecastWeatherTask(HTTPweatherClient,
-                    weatherService);
-
-
-            weatherTask.execute(geocodingData);
-        }
+    public void onDestroy() {
+        super.onDestroy();
+        this.getActivity().unregisterReceiver(this.mReceiver);
     }
 
-    @Override
-    public void getWeatherByDay(final int chosenDay) {
-        // Nothing to do.
-    }
-
-    public void updateForecastWeatherData(final ForecastWeatherData forecastWeatherData) {
+    private void updateForecastWeatherData(final ForecastWeatherData forecastWeatherData) {
         final List<WeatherOverviewEntry> entries = new ArrayList<WeatherOverviewEntry>();
         final WeatherOverviewAdapter adapter = new WeatherOverviewAdapter(this.getActivity(),
                 R.layout.weather_main_entry_list);
@@ -263,113 +252,5 @@ public class WeatherInformationOverviewFragment extends ListFragment implements 
             this.updateForecastWeatherData(forecastWeatherData);
         }
 
-    }
-
-    public class ForecastWeatherTask extends AsyncTask<Object, Void, ForecastWeatherData> {
-        private static final String TAG = "ForecastWeatherTask";
-        private final CustomHTTPClient weatherHTTPClient;
-        private final WeatherServiceParser weatherService;
-        private final DialogFragment newFragment;
-
-        public ForecastWeatherTask(final CustomHTTPClient weatherHTTPClient,
-                final WeatherServiceParser weatherService) {
-            this.weatherHTTPClient = weatherHTTPClient;
-            this.weatherService = weatherService;
-            this.newFragment = ProgressDialogFragment.newInstance(
-                    R.string.progress_dialog_get_remote_data,
-                    WeatherInformationOverviewFragment.this
-                    .getString(R.string.progress_dialog_generic_message));
-        }
-
-        @Override
-        protected void onPreExecute() {
-            this.newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(),
-                    "progressDialog");
-        }
-
-        @Override
-        protected ForecastWeatherData doInBackground(final Object... params) {
-            ForecastWeatherData forecastWeatherData = null;
-
-            try {
-                forecastWeatherData = this.doInBackgroundThrowable(params);
-            } catch (final ClientProtocolException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
-            } catch (final MalformedURLException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
-            } catch (final URISyntaxException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
-            } catch (final JsonParseException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
-            } catch (final IOException e) {
-                // logger infrastructure swallows UnknownHostException :/
-                Log.e(TAG, "doInBackground exception: " + e.getMessage(), e);
-            } finally {
-                this.weatherHTTPClient.close();
-            }
-
-            return forecastWeatherData;
-        }
-
-        @Override
-        protected void onPostExecute(final ForecastWeatherData weatherData) {
-            this.weatherHTTPClient.close();
-
-            this.newFragment.dismiss();
-
-            if (weatherData != null) {
-                try {
-                    this.onPostExecuteThrowable(weatherData);
-                } catch (final IOException e) {
-                    Log.e(TAG, "WeatherTask onPostExecute exception: ", e);
-                    //                    final DialogFragment newFragment = ErrorDialogFragment
-                    //                            .newInstance(R.string.error_dialog_generic_error);
-                    //                    newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(), "errorDialog");
-                }
-            } else {
-                //                final DialogFragment newFragment = ErrorDialogFragment
-                //                        .newInstance(R.string.error_dialog_generic_error);
-                //                newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(), "errorDialog");
-            }
-        }
-
-        @Override
-        protected void onCancelled(final ForecastWeatherData weatherData) {
-            this.weatherHTTPClient.close();
-
-            //            final DialogFragment newFragment = ErrorDialogFragment
-            //                    .newInstance(R.string.error_dialog_connection_tiemout);
-            //            newFragment.show(WeatherInformationOverviewFragment.this.getFragmentManager(), "errorDialog");
-        }
-
-        private ForecastWeatherData doInBackgroundThrowable(final Object... params)
-                throws ClientProtocolException, MalformedURLException,
-                URISyntaxException, JsonParseException, IOException {
-
-            // 1. Coordinates
-            final GeocodingData geocodingData = (GeocodingData) params[0];
-
-
-            final String APIVersion = WeatherInformationOverviewFragment.this.getResources()
-                    .getString(R.string.api_version);
-            // 2. Forecast
-            final String urlAPI = WeatherInformationOverviewFragment.this.getResources()
-                    .getString(R.string.uri_api_weather_forecast);
-            final String url = this.weatherService.createURIAPIForecastWeather(urlAPI, APIVersion,
-                    geocodingData.getLatitude(), geocodingData.getLongitude(), WeatherInformationOverviewFragment.this.mDayForecast);
-            final String jsonData = this.weatherHTTPClient.retrieveDataAsString(new URL(url));
-            final ForecastWeatherData forecastWeatherData = this.weatherService
-                    .retrieveForecastWeatherDataFromJPOS(jsonData);
-
-            return forecastWeatherData;
-        }
-
-        private void onPostExecuteThrowable(final ForecastWeatherData forecastWeatherData)
-                throws FileNotFoundException, IOException {
-            WeatherInformationOverviewFragment.this.mWeatherServicePersistenceFile
-            .storeForecastWeatherData(forecastWeatherData);
-
-            WeatherInformationOverviewFragment.this.updateForecastWeatherData(forecastWeatherData);
-        }
     }
 }

@@ -17,13 +17,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.widget.ListView;
 import de.example.exampletdd.R;
-import de.example.exampletdd.activityinterface.GetWeather;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.overview.IconsList;
 import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
-public class WeatherInformationSpecificDataFragment extends ListFragment implements GetWeather {
+public class WeatherInformationSpecificDataFragment extends ListFragment {
     private boolean mIsFahrenheit;
     private int mChosenDay;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
@@ -91,7 +90,6 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    @Override
     public void getWeatherByDay(final int chosenDay) {
 
         final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
@@ -100,11 +98,6 @@ public class WeatherInformationSpecificDataFragment extends ListFragment impleme
             this.updateForecastWeatherData(forecastWeatherData, chosenDay);
         }
 
-    }
-
-    @Override
-    public void getRemoteWeatherInformation() {
-        // Nothing to do.
     }
 
 

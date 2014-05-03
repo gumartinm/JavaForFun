@@ -24,7 +24,12 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-
+    
+    <uses-permission android:name="de.example.exampletdd.UPDATEOVERVIEWWEATHER" />
+    <uses-permission android:name="de.example.exampletdd.UPDATECURRENTWEATHER" />
+    <uses-permission android:name="de.example.exampletdd.UPDATETIMERATEWEATHERBATCH" />
+    <uses-permission android:name="de.example.exampletdd.UPDATEGEOCODINGWEATHERBATCH" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -73,7 +78,8 @@
         </activity>
         <activity
             android:name="de.example.exampletdd.WeatherInformationSpecificDataActivity"
-            android:parentActivityName="de.example.exampletdd.WeatherTabsActivity" >
+            android:parentActivityName="de.example.exampletdd.WeatherTabsActivity"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONSPECIFICDATA" />
 
@@ -82,13 +88,20 @@
         </activity>
         <activity
             android:name="de.example.exampletdd.WeatherInformationCurrentDataActivity"
-            android:parentActivityName="de.example.exampletdd.WeatherInformationActivity" >
+            android:parentActivityName="de.example.exampletdd.WeatherInformationActivity"
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONCURRENTDATA" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <service
+            android:name=".WeatherInformationBatch"
+            android:process=":weatherinformationbatch"
+            android:exported="false" />
+        
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

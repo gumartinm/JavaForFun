@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -79,6 +80,15 @@ public class WeatherInformationMapActivity extends FragmentActivity {
         actionBar.setTitle("Mark your location");
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        final Intent updateOverviewWeather = new Intent(
+                "de.example.exampletdd.UPDATEGEOCODINGWEATHERBATCH");
+        this.sendBroadcast(updateOverviewWeather);
+    }
+
     private class LongClickListener implements OnMapLongClickListener {
 
         @Override
@@ -150,8 +160,7 @@ public class WeatherInformationMapActivity extends FragmentActivity {
         private void onPostExecuteThrowable(final GeocodingData geocodingData)
                 throws FileNotFoundException, IOException {
 
-            WeatherInformationMapActivity.this.mWeatherServicePersistenceFile
-            .storeGeocodingData(geocodingData);
+            WeatherInformationMapActivity.this.mWeatherServicePersistenceFile.storeGeocodingData(geocodingData);
 
             final String city = (geocodingData.getCity() == null) ?
                     WeatherInformationMapActivity.this.getString(R.string.city_not_found)

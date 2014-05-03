@@ -3,18 +3,6 @@
     
     
     <item
-        android:id="@+id/weather_menu_get"
-        android:menuCategory="system"
-        android:title="@string/action_get_weather"
-        android:titleCondensed="@string/action_get_weather"
-        android:checked="false"
-        android:visible="true"
-        android:checkable="false"
-        android:enabled="true"
-        android:icon="@drawable/ic_action_refresh"
-        android:showAsAction="ifRoom">
-    </item>
-    <item
         android:id="@+id/weather_menu_settings"
         android:menuCategory="system"
         android:title="@string/action_settings"
