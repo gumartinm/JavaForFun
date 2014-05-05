@@ -63,4 +63,44 @@ public class GeocodingData implements Serializable {
     public double getLongitude() {
         return this.longitude;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((this.city == null) ? 0 : this.city.hashCode());
+        result = (prime * result) + ((this.country == null) ? 0 : this.country.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(this.latitude);
+        result = (prime * result) + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(this.longitude);
+        result = (prime * result) + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (this.getClass() != obj.getClass())
+            return false;
+        final GeocodingData other = (GeocodingData) obj;
+        if (this.city == null) {
+            if (other.city != null)
+                return false;
+        } else if (!this.city.equals(other.city))
+            return false;
+        if (this.country == null) {
+            if (other.country != null)
+                return false;
+        } else if (!this.country.equals(other.country))
+            return false;
+        if (Double.doubleToLongBits(this.latitude) != Double.doubleToLongBits(other.latitude))
+            return false;
+        if (Double.doubleToLongBits(this.longitude) != Double.doubleToLongBits(other.longitude))
+            return false;
+        return true;
+    }
 }

@@ -39,8 +39,8 @@
     <string name="weather_preferences_units_fahrenheit">Fahrenheit</string>
     <string name="weather_preferences_units_celsius">Celsius</string>
     <string name="weather_preferences_units">Unit of measurement for temperature</string>
-    <string name="weather_preferences_language_key">weather_preferences_language</string>
-    <string name="weather_preferences_language">Language</string>
+    <string name="weather_preferences_update_time_rate_key">weather_preferences_update_time_rate</string>
+    <string name="weather_preferences_update_time_rate">Update Time Rate</string>
     <string name="weather_preferences_day_forecast_key">weather_preferences_day_forecast</string>
     <string name="weather_preferences_day_forecast">Forecast days number</string>
     <string name="city_not_found">city not found</string>

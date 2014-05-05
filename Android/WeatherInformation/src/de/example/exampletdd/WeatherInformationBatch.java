@@ -6,21 +6,15 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.ClientProtocolException;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -38,82 +32,38 @@ public class WeatherInformationBatch extends Service {
     private static final String TAG = "WeatherInformationBatch";
     private static final String resultsNumber = "14";
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
-    private ScheduledExecutorService mUpdateWeatherTask;
-    private int mUpdateTimeRate;
-
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            // This method will be run in the main thread of this service.
-            final String action = intent.getAction();
-            if (action.equals("de.example.exampletdd.UPDATETIMERATEWEATHERBATCH")) {
-                final Bundle extras = intent.getExtras();
-                WeatherInformationBatch.this.mUpdateTimeRate = extras.getInt("UPDATE_RATE_TIME", 60);
-
-                WeatherInformationBatch.this.updateWeather();
-            }
-
-            if (action.equals("de.example.exampletdd.UPDATEGEOCODINGWEATHERBATCH")) {
-                WeatherInformationBatch.this.updateWeather();
-            }
-        }
-    };
 
     @Override
     public IBinder onBind(final Intent intent) {
+        Log.i(TAG, "WeatherInformationBatch onBind");
         return null;
     }
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        final Bundle extras = intent.getExtras();
-        this.mUpdateTimeRate = extras.getInt("UPDATE_RATE_TIME", 60);
+        Log.i(TAG, "WeatherInformationBatch onStartCommand");
 
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
 
         this.updateWeather();
 
-
-        final IntentFilter filter = new IntentFilter();
-        filter.addAction("de.example.exampletdd.UPDATETIMERATEWEATHERBATCH");
-        filter.addAction("de.example.exampletdd.UPDATEGEOCODINGWEATHERBATCH");
-        this.registerReceiver(this.mReceiver, filter);
-
-        return Service.START_REDELIVER_INTENT;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(this.mReceiver);
-        if (this.mUpdateWeatherTask != null) {
-            this.mUpdateWeatherTask.shutdownNow();
-        }
+        Log.i(TAG, "WeatherInformationBatch onDestroy");
     }
 
     private void updateWeather() {
-        if (this.mUpdateWeatherTask != null) {
-            this.mUpdateWeatherTask.shutdownNow();
-        }
-
-        this.mUpdateWeatherTask = Executors.newScheduledThreadPool(1);
-        this.mUpdateWeatherTask.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    WeatherInformationBatch.this.updateWeatherTask();
-                } catch (final Throwable e) {
-                    Log.i(TAG, "updateWeather, unexpected exception: ", e);
-                }
-            }
-        }, 0, this.mUpdateTimeRate, TimeUnit.SECONDS);
-    }
-
-    private void updateWeatherTask() {
         final GeocodingData geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
 
+        Log.i(TAG, "WeatherInformationBatch updateWeather");
+
         if (geocodingData != null) {
+            Log.i(TAG, "WeatherInformationBatch updateWeather, geocodingData not null");
+
             final IJPOSWeatherParser JPOSWeatherParser = new JPOSWeatherParser();
             final WeatherServiceParser weatherService = new WeatherServiceParser(JPOSWeatherParser);
             final AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android Weather Information Agent");
@@ -226,10 +176,12 @@ public class WeatherInformationBatch extends Service {
             // Update weather views.
             final Intent updateCurrentWeather = new Intent(
                     "de.example.exampletdd.UPDATECURRENTWEATHER");
-            WeatherInformationBatch.this.sendBroadcast(updateCurrentWeather);
+            LocalBroadcastManager.getInstance(WeatherInformationBatch.this).sendBroadcast(
+                    updateCurrentWeather);
             final Intent updateOverviewWeather = new Intent(
                     "de.example.exampletdd.UPDATEOVERVIEWWEATHER");
-            WeatherInformationBatch.this.sendBroadcast(updateOverviewWeather);
+            LocalBroadcastManager.getInstance(WeatherInformationBatch.this).sendBroadcast(
+                    updateOverviewWeather);
 
         }
     }

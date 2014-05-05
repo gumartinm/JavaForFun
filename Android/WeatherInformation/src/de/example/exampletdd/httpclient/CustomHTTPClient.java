@@ -82,7 +82,11 @@ public class CustomHTTPClient {
         return this.httpClient.execute(httpGet, handler);
     }
 
-    public ByteArrayOutputStream sortResponse(final HttpResponse httpResponse)
+    public void close() {
+        this.httpClient.close();
+    }
+
+    private ByteArrayOutputStream sortResponse(final HttpResponse httpResponse)
             throws IOException {
 
         if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -98,10 +102,6 @@ public class CustomHTTPClient {
 
         throw new IOException("Unexpected response code: "
                 + httpResponse.getStatusLine().getStatusCode());
-    }
-
-    public void close() {
-        this.httpClient.close();
     }
 
     private ByteArrayOutputStream readInputStream (final InputStream inputStream) throws IOException {

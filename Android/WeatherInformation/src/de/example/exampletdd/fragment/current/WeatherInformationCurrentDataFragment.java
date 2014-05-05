@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.ListView;
 import de.example.exampletdd.R;
@@ -57,10 +58,6 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
                 }
             }
         };
-
-        final IntentFilter filter = new IntentFilter();
-        filter.addAction("de.example.exampletdd.UPDATECURRENTWEATHER");
-        this.getActivity().registerReceiver(this.mReceiver, filter);
     }
 
     @Override
@@ -87,20 +84,25 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
         }
 
         this.setHasOptionsMenu(false);
-
         this.setEmptyText("No data available");
-
-        this.setListShownNoAnimation(false);
+        this.setListShown(true);
+        this.setListShownNoAnimation(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        // 1. Register receiver
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction("de.example.exampletdd.UPDATECURRENTWEATHER");
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(this.mReceiver,
+                filter);
+
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity());
 
-        // 1. Update units of measurement.
+        // 2. Update units of measurement.
         final String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_units_key);
         final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
@@ -112,12 +114,18 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
             this.mIsFahrenheit = true;
         }
 
-        // 2. Try to restore old information
+        // 3. Try to restore old information
         final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
                 .getCurrentWeatherData();
         if (currentWeatherData != null) {
             this.updateCurrentWeatherData(currentWeatherData);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(this.mReceiver);
     }
 
     @Override
@@ -134,16 +142,10 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.getActivity().unregisterReceiver(this.mReceiver);
-    }
-
     public void updateCurrentWeatherData(final CurrentWeatherData currentWeatherData) {
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.#####");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss Z", Locale.US);
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.US);
 
         final double tempUnits = this.mIsFahrenheit ? 0 : 273.15;
         final String symbol = this.mIsFahrenheit ? "ºF" : "ºC";

@@ -2,17 +2,22 @@ package de.example.exampletdd;
 
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
+import android.app.AlarmManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import de.example.exampletdd.fragment.current.WeatherInformationCurrentDataFragment;
@@ -21,9 +26,12 @@ import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherTabsActivity extends FragmentActivity {
+    private static final String TAG = "WeatherTabsActivity";
     private static final int NUM_ITEMS = 2;
     private MyAdapter mAdapter;
     private ViewPager mPager;
+    private GeocodingData mGeocodingData;
+    private int mUpdateTimeRate;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -78,9 +86,21 @@ public class WeatherTabsActivity extends FragmentActivity {
         actionBar.addTab(actionBar.newTab().setText("CURRENTLY").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("FORECAST").setTabListener(tabListener));
 
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final String keyPreference = this.getString(R.string.weather_preferences_update_time_rate_key);
+        final String updateTimeRate = sharedPreferences.getString(keyPreference, "");
+        final int timeRate = Integer.valueOf(updateTimeRate);
+        Log.i(TAG, "WeatherTabsActivity onCreate, timeRate: " + timeRate);
+
+        final AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        // TODO: better use some string instead of .class? In case I change the service class
+        // this could be a problem (I guess)
         final Intent intent = new Intent(this, WeatherInformationBatch.class);
-        intent.putExtra("UPDATE_RATE_TIME", 60);
-        this.startService(intent);
+        final PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
+                + (timeRate * 1000), (timeRate * 1000), alarmIntent);
     }
 
     @Override
@@ -118,6 +138,17 @@ public class WeatherTabsActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            this.mGeocodingData = (GeocodingData) savedInstanceState
+                    .getSerializable("GEOCODINGDATA");
+            this.mUpdateTimeRate = savedInstanceState.getInt("UPDATE_TIME_RATE");
+        }
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
 
     @Override
     public void onResume() {
@@ -139,8 +170,7 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        final String keyPreference = this.getResources().getString(
-                R.string.weather_preferences_day_forecast_key);
+        String keyPreference = this.getString(R.string.weather_preferences_day_forecast_key);
         final String value = sharedPreferences.getString(keyPreference, "");
         String humanValue = "";
         if (value.equals("5")) {
@@ -152,15 +182,50 @@ public class WeatherTabsActivity extends FragmentActivity {
         }
         actionBar.getTabAt(1).setText(humanValue);
 
+
+
+        if (geocodingData != null) {
+            if ((this.mGeocodingData == null) || (!this.mGeocodingData.equals(geocodingData))) {
+                Log.i(TAG, "WeatherTabsActivity onResume, startService");
+                this.mGeocodingData = geocodingData;
+                final Intent intent = new Intent(this, WeatherInformationBatch.class);
+                this.startService(intent);
+            }
+        }
+
+        keyPreference = this.getString(R.string.weather_preferences_update_time_rate_key);
+        final String updateTimeRate = sharedPreferences.getString(keyPreference, "");
+        final int timeRate = Integer.valueOf(updateTimeRate);
+        if (this.mUpdateTimeRate != timeRate) {
+            Log.i(TAG, "WeatherTabsActivity onResume, updateTimeRate: " + timeRate);
+            this.mUpdateTimeRate = timeRate;
+            final AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+            // TODO: better use some string instead of .class? In case I change the service class
+            // this could be a problem (I guess)
+            final Intent intent = new Intent(this, WeatherInformationBatch.class);
+            final PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
+                    + (timeRate * 1000), (timeRate * 1000), alarmIntent);
+        }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onSaveInstanceState(final Bundle savedInstanceState) {
+        savedInstanceState.putSerializable("GEOCODINGDATA", this.mGeocodingData);
+        savedInstanceState.putInt("UPDATE_TIME_RATE", this.mUpdateTimeRate);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, "WeatherTabsActivity onStop");
         this.stopService(new Intent(this, WeatherInformationBatch.class));
     }
 
-    public class MyAdapter extends FragmentPagerAdapter {
+    private class MyAdapter extends FragmentPagerAdapter {
         public MyAdapter(final FragmentManager fm) {
             super(fm);
         }

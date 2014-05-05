@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
@@ -78,15 +77,6 @@ public class WeatherInformationMapActivity extends FragmentActivity {
         final ActionBar actionBar = this.getActionBar();
 
         actionBar.setTitle("Mark your location");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        final Intent updateOverviewWeather = new Intent(
-                "de.example.exampletdd.UPDATEGEOCODINGWEATHERBATCH");
-        this.sendBroadcast(updateOverviewWeather);
     }
 
     private class LongClickListener implements OnMapLongClickListener {

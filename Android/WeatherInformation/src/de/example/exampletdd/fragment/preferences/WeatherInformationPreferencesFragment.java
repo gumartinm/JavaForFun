@@ -24,16 +24,29 @@ implements OnSharedPreferenceChangeListener {
                 .getSharedPreferences().getString(keyPreference, ""));
 
         keyPreference = this.getActivity().getString(
-                R.string.weather_preferences_language_key);
+                R.string.weather_preferences_update_time_rate_key);
         connectionPref = this.findPreference(keyPreference);
-        connectionPref.setSummary(this.getPreferenceManager()
-                .getSharedPreferences().getString(keyPreference, ""));
+        String value = this.getPreferenceManager().getSharedPreferences()
+                .getString(keyPreference, "");
+        String humanValue = "";
+        if (value.equals("60")) {
+            humanValue = "1 minute";
+        } else if (value.equals("120")) {
+            humanValue = "2 minutes";
+        } else if (value.equals("300")) {
+            humanValue = "5 minutes";
+        } else if (value.equals("600")) {
+            humanValue = "10 minutes";
+        } else if (value.equals("900")) {
+            humanValue = "15 minutes";
+        }
+        connectionPref.setSummary(humanValue);
 
         keyPreference = this.getActivity().getString(
                 R.string.weather_preferences_day_forecast_key);
         connectionPref = this.findPreference(keyPreference);
-        final String value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
-        String humanValue = "";
+        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        humanValue = "";
         if (value.equals("5")) {
             humanValue = "5-Day Forecast";
         } else if (value.equals("10")) {
@@ -71,11 +84,23 @@ implements OnSharedPreferenceChangeListener {
             return;
         }
 
-        keyValue = this.getActivity().getString(
-                R.string.weather_preferences_language_key);
+        keyValue = this.getActivity().getString(R.string.weather_preferences_update_time_rate_key);
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
-            connectionPref.setSummary(sharedPreferences.getString(key, ""));
+            final String value = sharedPreferences.getString(key, "");
+            String humanValue = "";
+            if (value.equals("60")) {
+                humanValue = "1 minute";
+            } else if (value.equals("120")) {
+                humanValue = "2 minutes";
+            } else if (value.equals("300")) {
+                humanValue = "5 minutes";
+            } else if (value.equals("600")) {
+                humanValue = "10 minutes";
+            } else if (value.equals("900")) {
+                humanValue = "15 minutes";
+            }
+            connectionPref.setSummary(humanValue);
             return;
         }
 

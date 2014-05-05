@@ -10,14 +10,14 @@
         android:persistent="true"
         android:defaultValue="Celsius" />
     <ListPreference
-        android:entries="@array/weather_preferences_language_human_value"
-        android:entryValues="@array/weather_preferences_language_value"
-        android:key="@string/weather_preferences_language_key"
-        android:title="@string/weather_preferences_language"
-        android:defaultValue="en"
+        android:entries="@array/weather_preferences_update_time_rate_human_value"
+        android:entryValues="@array/weather_preferences_update_time_rate"
+        android:key="@string/weather_preferences_update_time_rate_key"
+        android:title="@string/weather_preferences_update_time_rate"
+        android:defaultValue="60"
         android:persistent="true"
         android:selectable="true"
-        android:summary="English"/>
+        android:summary="1 minute"/>
     <ListPreference
         android:key="@string/weather_preferences_day_forecast_key"
         android:title="@string/weather_preferences_day_forecast"

@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -35,7 +36,7 @@ import de.example.exampletdd.service.WeatherServicePersistenceFile;
 public class WeatherInformationOverviewFragment extends ListFragment {
     private static final String TAG = "WeatherInformationOverviewFragment";
     private boolean mIsFahrenheit;
-    private String mDayForecast;
+    private int mDayForecast;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
     private Parcelable mListState;
     private BroadcastReceiver mReceiver;
@@ -48,7 +49,8 @@ public class WeatherInformationOverviewFragment extends ListFragment {
                 .getDefaultSharedPreferences(this.getActivity());
         final String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_day_forecast_key);
-        this.mDayForecast = sharedPreferences.getString(keyPreference, "");
+        final String dayForecast = sharedPreferences.getString(keyPreference, "");
+        this.mDayForecast = Integer.valueOf(dayForecast);
 
         this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this.getActivity());
 
@@ -71,10 +73,6 @@ public class WeatherInformationOverviewFragment extends ListFragment {
                 }
             }
         };
-
-        final IntentFilter filter = new IntentFilter();
-        filter.addAction("de.example.exampletdd.UPDATEOVERVIEWWEATHER");
-        this.getActivity().registerReceiver(this.mReceiver, filter);
     }
 
     @Override
@@ -109,7 +107,7 @@ public class WeatherInformationOverviewFragment extends ListFragment {
                 this.getActivity(), R.layout.weather_main_entry_list);
 
 
-        this.setEmptyText("Press download to receive weather information");
+        this.setEmptyText("No data available");
 
         this.setListAdapter(adapter);
         this.setListShown(true);
@@ -117,20 +115,51 @@ public class WeatherInformationOverviewFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-        final WeatherInformationSpecificDataFragment fragment = (WeatherInformationSpecificDataFragment) this
-                .getFragmentManager().findFragmentById(R.id.weather_specific_data__fragment);
-        if (fragment == null) {
-            // handset layout
-            final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO")
-            .setComponent(new ComponentName("de.example.exampletdd",
-                    "de.example.exampletdd.WeatherInformationSpecificDataActivity"));
-            intent.putExtra("CHOSEN_DAY", (int) id);
-            WeatherInformationOverviewFragment.this.getActivity().startActivity(intent);
+    public void onResume() {
+        super.onResume();
+
+        // 1. Register receiver.
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction("de.example.exampletdd.UPDATEOVERVIEWWEATHER");
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(this.mReceiver, filter);
+
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this.getActivity());
+
+        // 2. Update units of measurement.
+        String keyPreference = this.getResources()
+                .getString(R.string.weather_preferences_units_key);
+        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
+        final String celsius = this.getResources().getString(
+                R.string.weather_preferences_units_celsius);
+        if (unitsPreferenceValue.equals(celsius)) {
+            this.mIsFahrenheit = false;
         } else {
-            // tablet layout
-            fragment.getWeatherByDay((int) id);
+            this.mIsFahrenheit = true;
         }
+
+        // 3. Update number day forecast.
+        keyPreference = this.getResources()
+                .getString(R.string.weather_preferences_day_forecast_key);
+        final String dayForecast = sharedPreferences.getString(keyPreference, "");
+        this.mDayForecast = Integer.valueOf(dayForecast);
+
+        // 4. Update forecast weather data on display.
+        final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
+                .getForecastWeatherData();
+        if ((this.mListState != null) && (forecastWeatherData != null)) {
+            this.updateForecastWeatherData(forecastWeatherData);
+            this.getListView().onRestoreInstanceState(this.mListState);
+        } else if (forecastWeatherData != null) {
+            this.updateForecastWeatherData(forecastWeatherData);
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(this.mReceiver);
     }
 
     @Override
@@ -151,9 +180,20 @@ public class WeatherInformationOverviewFragment extends ListFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.getActivity().unregisterReceiver(this.mReceiver);
+    public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+        final WeatherInformationSpecificDataFragment fragment = (WeatherInformationSpecificDataFragment) this
+                .getFragmentManager().findFragmentById(R.id.weather_specific_data__fragment);
+        if (fragment == null) {
+            // handset layout
+            final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO")
+            .setComponent(new ComponentName("de.example.exampletdd",
+                    "de.example.exampletdd.WeatherInformationSpecificDataActivity"));
+            intent.putExtra("CHOSEN_DAY", (int) id);
+            WeatherInformationOverviewFragment.this.getActivity().startActivity(intent);
+        } else {
+            // tablet layout
+            fragment.getWeatherByDay((int) id);
+        }
     }
 
     private void updateForecastWeatherData(final ForecastWeatherData forecastWeatherData) {
@@ -171,6 +211,7 @@ public class WeatherInformationOverviewFragment extends ListFragment {
 
 
         final Calendar calendar = Calendar.getInstance();
+        int count = this.mDayForecast;
         for (final de.example.exampletdd.model.forecastweather.List forecast : forecastWeatherData
                 .getList()) {
 
@@ -210,47 +251,15 @@ public class WeatherInformationOverviewFragment extends ListFragment {
                         tempFormatter.format(maxTemp) + symbol, tempFormatter.format(minTemp) + symbol,
                         picture));
             }
+
+            count = count - 1;
+            if (count == 0) {
+                break;
+            }
         }
 
         this.setListAdapter(null);
         adapter.addAll(entries);
         this.setListAdapter(adapter);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(this.getActivity());
-
-        // 1. Update units of measurement.
-        String keyPreference = this.getResources().getString(
-                R.string.weather_preferences_units_key);
-        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        final String celsius = this.getResources().getString(
-                R.string.weather_preferences_units_celsius);
-        if (unitsPreferenceValue.equals(celsius)) {
-            this.mIsFahrenheit = false;
-        } else {
-            this.mIsFahrenheit = true;
-        }
-
-        // 2. Update number day forecast.
-        keyPreference = this.getResources().getString(
-                R.string.weather_preferences_day_forecast_key);
-        this.mDayForecast = sharedPreferences.getString(keyPreference, "");
-
-
-        // 3. Update forecast weather data on display.
-        final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
-                .getForecastWeatherData();
-        if ((this.mListState != null) && (forecastWeatherData != null)) {
-            this.updateForecastWeatherData(forecastWeatherData);
-            this.getListView().onRestoreInstanceState(this.mListState);
-        } else if (forecastWeatherData != null) {
-            this.updateForecastWeatherData(forecastWeatherData);
-        }
-
     }
 }
