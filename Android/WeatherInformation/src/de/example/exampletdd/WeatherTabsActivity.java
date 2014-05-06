@@ -21,11 +21,9 @@ import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.service.WeatherServicePersistenceFile;
 
 public class WeatherTabsActivity extends FragmentActivity {
-    private static final String TAG = "WeatherTabsActivity";
     private static final int NUM_ITEMS = 2;
     private MyAdapter mAdapter;
     private ViewPager mPager;
-    private GeocodingData mGeocodingData;
     private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
 
     @Override
@@ -33,6 +31,7 @@ public class WeatherTabsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.fragment_pager);
 
+        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
         this.mAdapter = new MyAdapter(this.getSupportFragmentManager());
 
         this.mPager = (ViewPager)this.findViewById(R.id.pager);
@@ -150,8 +149,10 @@ public class WeatherTabsActivity extends FragmentActivity {
     @Override
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            this.mGeocodingData = (GeocodingData) savedInstanceState
-                    .getSerializable("GEOCODINGDATA");
+            final WeatherInformationApplication application = (WeatherInformationApplication) this
+                    .getApplication();
+            application.setGeocodingData((GeocodingData) savedInstanceState
+                    .getSerializable("GEOCODINGDATA"));
         }
 
         super.onRestoreInstanceState(savedInstanceState);
@@ -190,8 +191,24 @@ public class WeatherTabsActivity extends FragmentActivity {
         }
         actionBar.getTabAt(1).setText(humanValue);
 
-        final Intent intent = new Intent(this, WeatherInformationBatch.class);
-        this.startService(intent);
+        final WeatherInformationApplication application = (WeatherInformationApplication) this
+                .getApplication();
+        if (application.getGeocodingData() != null) {
+            // If there is previous value.
+            final GeocodingData geocodingDataFile = this.mWeatherServicePersistenceFile
+                    .getGeocodingData();
+            if (!application.getGeocodingData().equals(geocodingDataFile)) {
+                // Just update when value changed.
+                application.setGeocodingData(geocodingDataFile);
+                final Intent intent = new Intent(this, WeatherInformationBatch.class);
+                this.startService(intent);
+            }
+        } else {
+            // There is no previous value.
+            application.setGeocodingData(this.mWeatherServicePersistenceFile.getGeocodingData());
+            final Intent intent = new Intent(this, WeatherInformationBatch.class);
+            this.startService(intent);
+        }
 
         //        if (geocodingData != null) {
         //            if ((this.mGeocodingData == null) || (!this.mGeocodingData.equals(geocodingData))) {
@@ -221,7 +238,9 @@ public class WeatherTabsActivity extends FragmentActivity {
 
     @Override
     public void onSaveInstanceState(final Bundle savedInstanceState) {
-        savedInstanceState.putSerializable("GEOCODINGDATA", this.mGeocodingData);
+        final WeatherInformationApplication application = (WeatherInformationApplication) this
+                .getApplication();
+        savedInstanceState.putSerializable("GEOCODINGDATA", application.getGeocodingData());
 
         super.onSaveInstanceState(savedInstanceState);
     }
