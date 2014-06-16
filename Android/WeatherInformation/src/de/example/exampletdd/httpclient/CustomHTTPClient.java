@@ -35,10 +35,14 @@ public class CustomHTTPClient {
                 if (response != null) {
                     final HttpEntity entity = response.getEntity();
                     if (entity != null) {
-                        final ContentType contentType = ContentType.getOrDefault(entity);
-                        final ByteArrayOutputStream buffer = CustomHTTPClient.this
-                                .sortResponse(response);
-                        return new String(buffer.toByteArray(), contentType.getCharset());
+                        try {
+                            final ContentType contentType = ContentType.getOrDefault(entity);
+                            final ByteArrayOutputStream buffer = CustomHTTPClient.this
+                                    .sortResponse(response);
+                            return new String(buffer.toByteArray(), contentType.getCharset());
+                        } finally {
+                            entity.consumeContent();
+                        }
                     }
 
                     throw new IOException("There is no entity");
@@ -66,7 +70,11 @@ public class CustomHTTPClient {
                 if (response != null) {
                     final HttpEntity entity = response.getEntity();
                     if (entity != null) {
-                        return CustomHTTPClient.this.sortResponse(response);
+                        try {
+                            return CustomHTTPClient.this.sortResponse(response);
+                        } finally {
+                            entity.consumeContent();
+                        }
                     }
 
                     throw new IOException("There is no entity");
@@ -86,22 +94,21 @@ public class CustomHTTPClient {
         this.httpClient.close();
     }
 
-    private ByteArrayOutputStream sortResponse(final HttpResponse httpResponse)
-            throws IOException {
+    private ByteArrayOutputStream sortResponse(final HttpResponse httpResponse) throws IOException {
 
-        if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            final HttpEntity entity = httpResponse.getEntity();
-            if (entity != null) {
-                try {
-                    return this.readInputStream(entity.getContent());
-                } finally {
-                    entity.consumeContent();
-                }
-            }
+        if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            throw new IOException("Unexpected response code: "
+                    + httpResponse.getStatusLine().getStatusCode());
         }
 
-        throw new IOException("Unexpected response code: "
-                + httpResponse.getStatusLine().getStatusCode());
+        final HttpEntity entity = httpResponse.getEntity();
+        final InputStream inputStream = entity.getContent();
+        try {
+            return this.readInputStream(inputStream);
+        } finally {
+            inputStream.close();
+        }
+
     }
 
     private ByteArrayOutputStream readInputStream (final InputStream inputStream) throws IOException {
@@ -109,13 +116,9 @@ public class CustomHTTPClient {
         final int bufferSize = 1024;
         final byte[] buffer = new byte[bufferSize];
 
-        try {
-            int len = 0;
-            while ((len = inputStream.read(buffer)) != -1) {
-                byteBuffer.write(buffer, 0, len);
-            }
-        }finally {
-            inputStream.close();
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
         }
 
         return byteBuffer;
