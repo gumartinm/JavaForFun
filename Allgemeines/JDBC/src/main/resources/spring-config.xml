@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+ 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+                <property name="user" value="root"/>
+                <property name="password" value=""/>
+                <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+                <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/n2a?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
+                <property name="initialPoolSize" value="5"/>
+                <property name="maxPoolSize" value="35"/>
+                <property name="minPoolSize" value="10"/>
+                <property name="acquireIncrement" value="1"/>
+                <property name="acquireRetryAttempts" value="5"/>
+                <property name="acquireRetryDelay" value="1000"/>
+                <property name="automaticTestTable" value="con_test"/>
+                <property name="checkoutTimeout" value="5000"/>
+    </bean>
+	
+    <bean id="transactionExample" class="de.spring.example.web.TransactionExample"> 
+        <property name="dataSource" ref="dataSource"/>
+        <property name="nestedTransactionExample" ref="testB"/>
+    </bean>
+    
+    <bean id="nestedTransactionExample" class="de.spring.example.web.NestedTransactionExample"> 
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+</beans>
