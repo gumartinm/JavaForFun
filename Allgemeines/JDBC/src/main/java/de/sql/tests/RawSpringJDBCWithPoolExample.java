@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsertOperations;
 import org.springframework.jdbc.core.simple.SimpleJdbcOperations;
@@ -53,6 +54,9 @@ public class RawSpringJDBCWithPoolExample {
         final SimpleJdbcInsertOperations simpleJdbcInsert = new SimpleJdbcInsert(dataSource);
         simpleJdbcInsert.withTableName("ad");
         simpleJdbcInsert.execute(parameters);
+        
+        // 7. Using Spring SimpleJdbcCall
+        final SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(dataSource);
 
         // Now we close the whole pool :)
         ((ComboPooledDataSource)dataSource).close();
