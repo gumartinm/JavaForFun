@@ -1,4 +1,4 @@
-output from example:
+TryWithResourcesMain, output from example:
 
 BEGIN FIRST EXAMPLE
 ResourceSecond: doSomething
