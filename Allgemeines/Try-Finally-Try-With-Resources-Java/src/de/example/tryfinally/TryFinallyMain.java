@@ -1,6 +1,6 @@
 package de.example.tryfinally;
 
-public class Main {
+public class TryFinallyMain {
     static String result;
 
     public static void main(final String[] args) {
