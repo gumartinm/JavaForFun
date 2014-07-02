@@ -9,8 +9,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 
+import javax.sql.RowSetEvent;
+import javax.sql.RowSetListener;
+import javax.sql.rowset.CachedRowSet;
+import javax.sql.rowset.FilteredRowSet;
+import javax.sql.rowset.JdbcRowSet;
+import javax.sql.rowset.JoinRowSet;
+import javax.sql.rowset.RowSetFactory;
+import javax.sql.rowset.RowSetProvider;
+import javax.sql.rowset.WebRowSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 public class RawJDBCExample {
     private static final Logger logger = LoggerFactory.getLogger(RawJDBCExample.class);
@@ -54,6 +66,12 @@ public class RawJDBCExample {
             logger.info("Execute callable statement");
             callableStatement(connection);
             logger.info("Callable statement executed successfully");          
+            
+            
+            // 6. Execute some query: JDBC rowset
+            logger.info("Execute JDBC rowset");
+            JDBCrowSet(connection);
+            logger.info("JDBC rowset executed successfully");
             
         } finally {
         	// It does not implement AutoCloseable
@@ -157,6 +175,7 @@ public class RawJDBCExample {
     		// Go ahead and execute the call to the stored procedure
     		cstmt1.executeUpdate();
     		final String adCode = cstmt1.getString("AD_CODE");
+    		logger.info("AD_CODE: " + adCode);
         
     		cstmt2.setInt("AD_ID", 666);
     		cstmt2.setString("AD_DESCRIPTION", "My ad");
@@ -164,6 +183,82 @@ public class RawJDBCExample {
     		cstmt2.registerOutParameter("AD_DESCRIPTION", Types.VARCHAR);
     		// Go ahead and execute the call to the stored function
     		cstmt2.executeUpdate();
+    	}
+    }
+    
+    private static void JDBCrowSet(final Connection connection) throws SQLException {
+    	
+//    	Java 1.6 way. With Java 1.8 IDE complains because JdbcRowSetImpl is not API :/
+//    	try (final JdbcRowSet jdbcRowSet = new JdbcRowSetImpl(connection))
+//    	{
+//    		jdbcRowSet.setType(ResultSet.TYPE_SCROLL_INSENSITIVE);
+//        	String queryString = "SELECT * FROM AD";
+//    		jdbcRowSet.setCommand(queryString);
+//    		jdbcRowSet.execute();
+//    		// This could be a nice feature, I guess.
+//    		jdbcRowSet.addRowSetListener(new ExampleListener());
+//
+//    		while (jdbcRowSet.next()) {
+//    			// Generating cursor Moved event
+//    			logger.info("AD_ID: " + jdbcRowSet.getString(1));
+//    			logger.info("AD_CODE: " + jdbcRowSet.getString(2));
+//    		}
+//    	}
+    	
+    	// Java > 1.6
+    	final RowSetFactory rowSetFactory = RowSetProvider.newFactory();
+        try (final JdbcRowSet jdbcRowSet = rowSetFactory.createJdbcRowSet())
+    	{
+        	// With Java > 1.6 there is no way of using some Connection if
+        	// we do not use new JdbcRowSetImpl(Connection) :(
+        	jdbcRowSet.setUrl(DB_URL);
+        	jdbcRowSet.setUsername("root");
+        	jdbcRowSet.setPassword("");
+    		jdbcRowSet.setType(ResultSet.TYPE_SCROLL_INSENSITIVE);
+    		jdbcRowSet.setCommand("SELECT * FROM AD");
+    		jdbcRowSet.execute();
+    		// This could be a nice feature (I guess) I can not find the same
+    		// feature in the "traditional" ResultSet
+    		jdbcRowSet.addRowSetListener(new ExampleListener());
+
+    		while (jdbcRowSet.next()) {
+    			// Generating cursor Moved event
+    			logger.info("AD_ID: " + jdbcRowSet.getString(1));
+    			logger.info("AD_CODE: " + jdbcRowSet.getString(2));
+    		}
+    	}
+        
+        
+        try (final CachedRowSet cachedRowSet = rowSetFactory.createCachedRowSet();
+        	 final FilteredRowSet filteredRowSet = rowSetFactory.createFilteredRowSet();
+        	 final JoinRowSet joinRowSet = rowSetFactory.createJoinRowSet();
+        	 final WebRowSet webRowSet = rowSetFactory.createWebRowSet())
+    	{
+        	// I do not know what they are all for :(
+    	}
+    }
+    
+    /**
+     * For JdbcRowSet.addRowSetListener
+     */
+    private static class ExampleListener implements RowSetListener {
+
+    	@Override
+    	public void cursorMoved(final RowSetEvent event) {
+    		logger.info("Cursor Moved Listener");
+    		logger.info(event.toString());
+    	}
+
+    	@Override
+    	public void rowChanged(final RowSetEvent event) {
+    		logger.info("Cursor Changed Listener");
+    		logger.info(event.toString());
+    	}
+
+    	@Override
+    	public void rowSetChanged(final RowSetEvent event) {
+    		logger.info("RowSet changed Listener");
+    		logger.info(event.toString());
     	}
     }
 }
