@@ -1,0 +1,109 @@
+output from example:
+
+BEGIN FIRST EXAMPLE
+ResourceSecond: doSomething
+ResourceFirst: doSomething
+I am the close of ResourceSecond
+I am the close of ResourceFirst
+Exception from some resource: 
+java.lang.RuntimeException: ResourceFirst doSomething RuntimeException!!!
+	at de.example.tryfinally.TryWithResourcesMain$ResourceFirst.doSomething(TryWithResourcesMain.java:35)
+	at de.example.tryfinally.TryWithResourcesMain.main(TryWithResourcesMain.java:13)
+	Suppressed: java.lang.Exception: ResourceSecond close Exception!!!
+		at de.example.tryfinally.TryWithResourcesMain$ResourceSecond.close(TryWithResourcesMain.java:62)
+		at de.example.tryfinally.TryWithResourcesMain.main(TryWithResourcesMain.java:14)
+	Suppressed: java.lang.Exception: ResourceFirst close Exception!!!
+		at de.example.tryfinally.TryWithResourcesMain$ResourceFirst.close(TryWithResourcesMain.java:42)
+		at de.example.tryfinally.TryWithResourcesMain.main(TryWithResourcesMain.java:14)
+END FIRST EXAMPLE
+
+
+
+So, it is nicer than C# because you can see the hidden exceptions.
+As in C# it keeps running the close methods even if some of them throw exception!!!
+
+SO, THE BEST WAY TO CLOSE DEVICES IN JAVA IS USING TRY-WITH-RESOURCES!!!!!
+OTHERWISE YOU ARE GOING TO WRITE LOADS OF CODE IF YOU WANT TO DO THE SAME!!!!
+
+
+1 .BEFORE JAVA 7; some Java SMART developers (the most of them do not even know they have to release
+resources...) always did something like this:
+	
+	MyResourceOne resourceOne;
+	MyResourceTwo resourceTwo;
+	try {
+		*** WHATEVER YOU DO WITH YOUR RESOURCES ***
+	} finally {
+		if (resourceOne != null) {
+			closeQuietly(resourceOne);
+		}
+		if (resourceTwo != null) {
+			closeQuietly(resourceTwo);
+		}
+	}
+
+	private void closeQuietly(final Closeable resource ) {
+		try {
+			if (resource != null) {
+				resource.close();
+		    }
+		} catch(final IOException e) {
+			logger.error( "Exception while closing resource ", e);
+		}
+	}
+
+IMHO swallowing exceptions is not nice... Perhaps for some particular things it could be interesting
+but in general NEVER SWALLOW EXCEPTIONS LIKE THAT!!!
+
+
+2. Other ways I have seen:
+
+	MyResourceOne resourceOne;
+	MyResourceTwo resourceTwo;
+	try {
+		*** WHATEVER YOU DO WITH YOUR RESOURCES ***
+	} finally {
+		if (resourceOne != null) {
+			resourceOne.close();
+		}
+		if (resourceTwo != null) {
+			resourceTwo.close();
+		}
+	}
+
+The problem with this way is, if resourceOne.close() throws exception I am not going to call resourceTwo.close() :(
+Even if this guy says the opposite: http://stackoverflow.com/a/18496449 (IMHO THAT ANSWER SUCKS!!!!)
+
+
+3. Before Java 1.7 this was the only "nice" way (IMHO)
+
+
+	MyResourceOne resourceOne = new MyResourceOne();
+
+	try {
+		*** WHATEVER YOU DO WITH YOUR RESOURCE ONE ***
+		MyResourceTwo resourceTwo = new MyResourceTwo();
+		try {
+			*** WHATEVER YOU DO WITH YOUR RESOURCE TWO ***
+		} finally {
+			resourceTwo.close();
+		}
+	} finally {
+		resourceOne.close();
+	}
+It is really close to RAII C++. I am always closing resources and I do not swallow exceptions :)
+You could achieve this solution through using multiple methods (instead of one with nested try/finally blocks);
+for example one nice solution would be with the Execute Around idiom and closures.
+
+IMHO since Java 1.7 and the TRY-WITH-RESOURCES there is no doubt what everybody should use. Besides, we
+do not need anymore the Execute Around idiom AFAIU.
+But perhaps with the Execute Around idiom the code in some case could be clearer. For simple things I guess
+the best is the TRY-WITH-RESOURCE; for complicated ones (see Spring JDBC) the Exceute Around idiom would be better
+(I guess)
+
+http://stackoverflow.com/questions/12552863/correct-idiom-for-managing-multiple-chained-resources-in-try-with-resources-bloc
+http://stackoverflow.com/a/12665271  <---- This answer is the best. I do not wonder that guy comes from C++ :)
+http://stackoverflow.com/a/18496449  <---- This answer sucks.
+
+http://stackoverflow.com/questions/341971/what-is-the-execute-around-idiom
+http://stackoverflow.com/questions/481446/throws-exception-in-finally-blocks  <--- Swallowing exceptions... :/
