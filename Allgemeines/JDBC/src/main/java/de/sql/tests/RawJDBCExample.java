@@ -56,6 +56,7 @@ public class RawJDBCExample {
             logger.info("Callable statement executed successfully");          
             
         } finally {
+        	// It does not implement AutoCloseable
         	connection.close();
         }
     }
@@ -65,57 +66,33 @@ public class RawJDBCExample {
     	 * I MAY USE THE SAME Statement MORE THAN ONCE!!! :)
     	 */
     	
-    	Statement statement = null;
-    	ResultSet answer = null;
-    	try {
-    		statement = connection.createStatement();
-    		answer = statement.executeQuery("SELECT * FROM AD");
-    		// Loop through ResultSet a row at a time
-    		while (answer.next()) {
-    			final int adID = answer.getInt("AD_ID");
-    			final int adCode = answer.getInt("AD_CODE");
-    			final String description = answer.getString("DESCRIPTION");
-    			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
-    		}
-    	} finally {
-    		if (answer != null) {
-                // Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
-                // This is a cursor in program memory not in DBMS!!!
-                try {
-                    answer.close(); // Cursor
-                } catch (final SQLException e) {
-                    logger.error("Error while closing cursor: ", e);
-                }
-            }
-    	}
-    	
-    	
-    	try {
-    		answer = statement.executeQuery("SELECT * FROM AD");
-    		// Loop through ResultSet a row at a time
-    		while (answer.next()) {
-    			final int adID = answer.getInt("AD_ID");
-    			final int adCode = answer.getInt("AD_CODE");
-    			final String description = answer.getString("DESCRIPTION");
-    			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
-    		}
-    	} finally {
-    		if (answer != null) {
-                // Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
-                // This is a cursor in program memory not in DBMS!!!
-                try {
-                    answer.close(); // Cursor
-                } catch (final SQLException e) {
-                    logger.error("Error while closing cursor: ", e);
-                }
-            }
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (final SQLException e) {
-                    logger.error("Error while closing statement: ", e);
-                }
-            }
+    	try (final Statement statement = connection.createStatement())
+    	{
+    		try (final ResultSet answer = statement.executeQuery("SELECT * FROM AD"))
+    		{
+        		// Loop through ResultSet a row at a time
+        		while (answer.next()) {
+        			final int adID = answer.getInt("AD_ID");
+        			final int adCode = answer.getInt("AD_CODE");
+        			final String description = answer.getString("DESCRIPTION");
+        			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
+        		}
+        	}
+        	// Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
+            // This is a cursor in program memory not in DBMS!!!
+    		
+    		try (final ResultSet answer = statement.executeQuery("SELECT * FROM AD"))
+    		{
+        		// Loop through ResultSet a row at a time
+        		while (answer.next()) {
+        			final int adID = answer.getInt("AD_ID");
+        			final int adCode = answer.getInt("AD_CODE");
+        			final String description = answer.getString("DESCRIPTION");
+        			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
+        		}
+        	}
+        	// Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
+            // This is a cursor in program memory not in DBMS!!!
     	}
     }
     
@@ -124,58 +101,36 @@ public class RawJDBCExample {
     	 * I MAY USE THE SAME PreparedStatement MORE THAN ONCE!!! :)
     	 */
     	
-    	PreparedStatement preparedStatement = null;
-    	ResultSet answer = null;
-    	try {
-    		preparedStatement = connection.prepareStatement("SELECT * FROM AD");
-    		answer = preparedStatement.executeQuery();
-    		// Loop through ResultSet a row at a time
-    		while (answer.next()) {
-    			final int adID = answer.getInt("AD_ID");
-    			final int adCode = answer.getInt("AD_CODE");
-    			final String description = answer.getString("DESCRIPTION");
-    			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
-    		}
-    	} finally {
-    		if (answer != null) {
-                // Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
-                // This is a cursor in program memory not in DBMS!!!
-                try {
-                    answer.close(); // Cursor
-                } catch (final SQLException e) {
-                    logger.error("Error while closing cursor: ", e);
-                }
-            }
+    	try (final PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM AD"))
+    	{
+    		try (final ResultSet answer = preparedStatement.executeQuery())
+        	{
+        		// Loop through ResultSet a row at a time
+        		while (answer.next()) {
+        			final int adID = answer.getInt("AD_ID");
+        			final int adCode = answer.getInt("AD_CODE");
+        			final String description = answer.getString("DESCRIPTION");
+        			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
+        		}
+        	}
+        	// Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
+            // This is a cursor in program memory not in DBMS!!! (It is being closed by the try-catch-with-resources)
+        	
+        	
+        	try (final ResultSet answer = preparedStatement.executeQuery())
+        	{
+        		// Loop through ResultSet a row at a time
+        		while (answer.next()) {
+        			final int adID = answer.getInt("AD_ID");
+        			final int adCode = answer.getInt("AD_CODE");
+        			final String description = answer.getString("DESCRIPTION");
+        			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
+        		}
+        	}
+        	// Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
+            // This is a cursor in program memory not in DBMS!!! (It is being closed by the try-catch-with-resources)	
     	}
     	
-    	
-    	try {
-    		answer = preparedStatement.executeQuery();
-    		// Loop through ResultSet a row at a time
-    		while (answer.next()) {
-    			final int adID = answer.getInt("AD_ID");
-    			final int adCode = answer.getInt("AD_CODE");
-    			final String description = answer.getString("DESCRIPTION");
-    			logger.info("AD_ID: " + adID + " AD_CODE: " + adCode + " DESCRIPTION: " + description);
-    		}
-    	} finally {
-    		if (answer != null) {
-                // Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS "DECLARE CURSOR" OF SQL
-                // This is a cursor in program memory not in DBMS!!!
-                try {
-                    answer.close(); // Cursor
-                } catch (final SQLException e) {
-                    logger.error("Error while closing cursor: ", e);
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                	preparedStatement.close();
-                } catch (final SQLException e) {
-                    logger.error("Error while closing statement: ", e);
-                }
-            }
-    	}
     }
     
     private static void callableStatement(final Connection connection) throws SQLException {
@@ -189,19 +144,16 @@ public class RawJDBCExample {
          *    (IN OFFICE INTEGER)
          *        RETURNS VARCHAR(10)
          */
+    	// Stored procedure:
+		final String str1 = "{CALL CHANGE_REGION(?, ?, ?)}";
+		// Stored function:
+		final String str2 = "{? = CALL GET_REGION(?)}";
     	
-    	CallableStatement cstmt1 = null;
-    	CallableStatement cstmt2 = null;
-    	try {
-    		// Stored procedure:
-    		final String str1 = "{CALL CHANGE_REGION(?, ?, ?)}";
-    		// Stored function:
-    		final String str2 = "{? = CALL GET_REGION(?)}";
-        
-    		// Prepare the two statements
-    		cstmt1 = connection.prepareCall(str1);
-    		cstmt2 = connection.prepareCall(str2);
-        
+
+    	try(// Prepare the two statements
+    		final CallableStatement cstmt1 = connection.prepareCall(str1);
+    		final CallableStatement cstmt2 = connection.prepareCall(str2))
+    	{
     		// Go ahead and execute the call to the stored procedure
     		cstmt1.executeUpdate();
     		final String adCode = cstmt1.getString("AD_CODE");
@@ -212,17 +164,6 @@ public class RawJDBCExample {
     		cstmt2.registerOutParameter("AD_DESCRIPTION", Types.VARCHAR);
     		// Go ahead and execute the call to the stored function
     		cstmt2.executeUpdate();
-    	} finally {
-            try {
-            	cstmt1.close();
-            } catch (final SQLException e) {
-                logger.error("Error while closing statement: ", e);
-            }
-            try {
-            	cstmt2.close();
-            } catch (final SQLException e) {
-                logger.error("Error while closing statement: ", e);
-            }
     	}
     }
 }

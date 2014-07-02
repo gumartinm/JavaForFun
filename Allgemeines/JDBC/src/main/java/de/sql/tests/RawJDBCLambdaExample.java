@@ -69,8 +69,6 @@ public class RawJDBCLambdaExample {
         // Explicitly close the cursor and connection. NOTE: IT IS NOT THE SAME AS
         // "DECLARE CURSOR" OF SQL. This is a cursor in program memory not in DBMS!!!
         // answer.close(); // Cursor
-
-        // NOTE: in this case I do not care if we hide Exceptions while closing!!!
     }
 
     /**
