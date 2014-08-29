@@ -19,13 +19,13 @@ import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.overview.IconsList;
-import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
-import de.example.exampletdd.service.WeatherServicePersistenceFile;
+import de.example.exampletdd.model.forecastweather.Forecast;
+import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherInformationSpecificDataFragment extends ListFragment {
     private boolean mIsFahrenheit;
     private int mChosenDay;
-    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
+    private ServicePersistenceStorage mWeatherServicePersistenceFile;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment {
             this.mChosenDay = 0;
         }
 
-        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(
+        this.mWeatherServicePersistenceFile = new ServicePersistenceStorage(
                 this.getActivity());
     }
 
@@ -56,7 +56,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment {
 
         if (savedInstanceState != null) {
             // Restore state
-            final ForecastWeatherData forecastWeatherData = (ForecastWeatherData) savedInstanceState
+            final Forecast forecastWeatherData = (Forecast) savedInstanceState
                     .getSerializable("ForecastWeatherData");
 
             if (forecastWeatherData != null) {
@@ -78,7 +78,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment {
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save state
-        final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
+        final Forecast forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
 
         if (forecastWeatherData != null) {
@@ -92,7 +92,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment {
 
     public void getWeatherByDay(final int chosenDay) {
 
-        final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
+        final Forecast forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
         if (forecastWeatherData != null) {
             this.updateForecastWeatherData(forecastWeatherData, chosenDay);
@@ -101,7 +101,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment {
     }
 
 
-    public void updateForecastWeatherData(final ForecastWeatherData forecastWeatherData,
+    public void updateForecastWeatherData(final Forecast forecastWeatherData,
             final int chosenDay) {
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.#####");
@@ -245,7 +245,7 @@ public class WeatherInformationSpecificDataFragment extends ListFragment {
 
 
         // 2. Update weather data on display.
-        final ForecastWeatherData forecastWeatherData = this.mWeatherServicePersistenceFile
+        final Forecast forecastWeatherData = this.mWeatherServicePersistenceFile
                 .getForecastWeatherData();
         if (forecastWeatherData != null) {
             this.updateForecastWeatherData(forecastWeatherData, this.mChosenDay);

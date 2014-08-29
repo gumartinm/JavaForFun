@@ -4,7 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.service.WeatherServicePersistenceFile;
+import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherInformationCurrentDataActivity extends Activity {
 
@@ -29,7 +29,7 @@ public class WeatherInformationCurrentDataActivity extends Activity {
 
         actionBar.setTitle("Current weather information");
 
-        final WeatherServicePersistenceFile weatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
+        final ServicePersistenceStorage weatherServicePersistenceFile = new ServicePersistenceStorage(this);
         final GeocodingData geocodingData = weatherServicePersistenceFile.getGeocodingData();
 
         if (geocodingData != null) {

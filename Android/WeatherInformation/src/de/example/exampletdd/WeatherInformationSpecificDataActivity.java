@@ -4,7 +4,7 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.service.WeatherServicePersistenceFile;
+import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherInformationSpecificDataActivity extends FragmentActivity {
 
@@ -27,7 +27,7 @@ public class WeatherInformationSpecificDataActivity extends FragmentActivity {
 
         final ActionBar actionBar = this.getActionBar();
 
-        final WeatherServicePersistenceFile weatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
+        final ServicePersistenceStorage weatherServicePersistenceFile = new ServicePersistenceStorage(this);
         final GeocodingData geocodingData = weatherServicePersistenceFile.getGeocodingData();
 
         if (geocodingData != null) {

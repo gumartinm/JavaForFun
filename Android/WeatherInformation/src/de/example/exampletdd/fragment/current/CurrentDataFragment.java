@@ -24,20 +24,20 @@ import android.widget.ListView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.overview.IconsList;
-import de.example.exampletdd.model.currentweather.CurrentWeatherData;
-import de.example.exampletdd.service.WeatherServicePersistenceFile;
+import de.example.exampletdd.model.currentweather.Current;
+import de.example.exampletdd.service.ServicePersistenceStorage;
 
-public class WeatherInformationCurrentDataFragment extends ListFragment {
+public class CurrentDataFragment extends ListFragment {
     private static final String TAG = "WeatherInformationCurrentDataFragment";
     private boolean mIsFahrenheit;
-    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
+    private ServicePersistenceStorage mWeatherServicePersistenceFile;
     private BroadcastReceiver mReceiver;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this.getActivity());
+        this.mWeatherServicePersistenceFile = new ServicePersistenceStorage(this.getActivity());
 
         this.mReceiver = new BroadcastReceiver() {
 
@@ -47,11 +47,11 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
                 final String action = intent.getAction();
                 if (action.equals("de.example.exampletdd.UPDATECURRENTWEATHER")) {
                     Log.i(TAG, "WeatherInformationCurrentDataFragment Update Weather Data");
-                    final CurrentWeatherData currentWeatherData =
-                            WeatherInformationCurrentDataFragment.this.mWeatherServicePersistenceFile
+                    final Current currentWeatherData =
+                            CurrentDataFragment.this.mWeatherServicePersistenceFile
                             .getCurrentWeatherData();
                     if (currentWeatherData != null) {
-                        WeatherInformationCurrentDataFragment.this
+                        CurrentDataFragment.this
                         .updateCurrentWeatherData(currentWeatherData);
                     }
 
@@ -69,7 +69,7 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
 
         if (savedInstanceState != null) {
             // Restore state
-            final CurrentWeatherData currentWeatherData = (CurrentWeatherData) savedInstanceState
+            final Current currentWeatherData = (Current) savedInstanceState
                     .getSerializable("CurrentWeatherData");
 
             if (currentWeatherData != null) {
@@ -115,7 +115,7 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
         }
 
         // 3. Try to restore old information
-        final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
+        final Current currentWeatherData = this.mWeatherServicePersistenceFile
                 .getCurrentWeatherData();
         if (currentWeatherData != null) {
             this.updateCurrentWeatherData(currentWeatherData);
@@ -132,7 +132,7 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save state
-        final CurrentWeatherData currentWeatherData = this.mWeatherServicePersistenceFile
+        final Current currentWeatherData = this.mWeatherServicePersistenceFile
                 .getCurrentWeatherData();
 
         if (currentWeatherData != null) {
@@ -142,7 +142,7 @@ public class WeatherInformationCurrentDataFragment extends ListFragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public void updateCurrentWeatherData(final CurrentWeatherData currentWeatherData) {
+    public void updateCurrentWeatherData(final Current currentWeatherData) {
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.#####");
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.US);

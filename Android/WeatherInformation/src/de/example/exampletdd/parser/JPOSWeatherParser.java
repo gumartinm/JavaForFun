@@ -10,23 +10,23 @@ import com.fasterxml.jackson.core.JsonToken;
 
 import de.example.exampletdd.model.currentweather.Clouds;
 import de.example.exampletdd.model.currentweather.Coord;
-import de.example.exampletdd.model.currentweather.CurrentWeatherData;
+import de.example.exampletdd.model.currentweather.Current;
 import de.example.exampletdd.model.currentweather.Main;
 import de.example.exampletdd.model.currentweather.Rain;
 import de.example.exampletdd.model.currentweather.Sys;
 import de.example.exampletdd.model.currentweather.Wind;
 import de.example.exampletdd.model.forecastweather.City;
-import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
+import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.model.forecastweather.Temp;
 
-public class JPOSWeatherParser implements IJPOSWeatherParser {
+public class JPOSWeatherParser implements IJPOSParser {
 
     @Override
-    public CurrentWeatherData retrieveCurrentWeatherDataFromJPOS(final String jsonData)
+    public Current retrieveCurrenFromJPOS(final String jsonData)
             throws JsonParseException, IOException {
         final JsonFactory f = new JsonFactory();
 
-        final CurrentWeatherData currentWeatherData = new CurrentWeatherData();
+        final Current currentWeatherData = new Current();
         currentWeatherData.setClouds(new Clouds());
         currentWeatherData.setCoord(new Coord());
         currentWeatherData.setMain(new Main());
@@ -43,11 +43,11 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
     }
 
     @Override
-    public ForecastWeatherData retrieveForecastWeatherDataFromJPOS(final String jsonData)
+    public Forecast retrieveForecastFromJPOS(final String jsonData)
             throws JsonParseException, IOException {
         final JsonFactory f = new JsonFactory();
 
-        final ForecastWeatherData forecastWeatherData = new ForecastWeatherData();
+        final Forecast forecastWeatherData = new Forecast();
         forecastWeatherData
         .setList(new ArrayList<de.example.exampletdd.model.forecastweather.List>(15));
         final City city = new City();
@@ -60,7 +60,7 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         return forecastWeatherData;
     }
 
-    private void getCurrentWeatherData(final CurrentWeatherData currentWeatherData,
+    private void getCurrentWeatherData(final Current currentWeatherData,
             final JsonParser jParser) throws JsonParseException, IOException {
         if (jParser.nextToken() == JsonToken.START_OBJECT) {
 
@@ -87,7 +87,7 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         }
     }
 
-    private void getCurrentWeatherDataObjects(final CurrentWeatherData currentWeatherData,
+    private void getCurrentWeatherDataObjects(final Current currentWeatherData,
             final JsonParser jParser, final String fieldname) throws JsonParseException,
             IOException {
         if (fieldname == "coord") {
@@ -224,7 +224,7 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         }
     }
 
-    private void getForecastWeatherData(final ForecastWeatherData forecastWeatherData,
+    private void getForecastWeatherData(final Forecast forecastWeatherData,
             final JsonParser jParser) throws JsonParseException, IOException {
         if (jParser.nextToken() == JsonToken.START_OBJECT) {
 
@@ -251,7 +251,7 @@ public class JPOSWeatherParser implements IJPOSWeatherParser {
         }
     }
 
-    private void getForecastWeatherDataObjects(final ForecastWeatherData forecastWeatherData,
+    private void getForecastWeatherDataObjects(final Forecast forecastWeatherData,
             final JsonParser jParser, final String fieldname) throws JsonParseException,
             IOException {
 

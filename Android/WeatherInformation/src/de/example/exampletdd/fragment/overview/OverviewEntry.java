@@ -2,14 +2,14 @@ package de.example.exampletdd.fragment.overview;
 
 import android.graphics.Bitmap;
 
-public class WeatherOverviewEntry {
+public class OverviewEntry {
     private final String dateName;
     private final String dateNumber;
     private final String maxTemp;
     private final String minTemp;
     private final Bitmap picture;
 
-    public WeatherOverviewEntry(final String dateName, final String dateNumber,
+    public OverviewEntry(final String dateName, final String dateNumber,
             final String maxTemp, final String minTemp,
             final Bitmap picture) {
         this.dateName = dateName;

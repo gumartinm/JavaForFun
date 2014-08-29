@@ -12,15 +12,15 @@ import java.io.StreamCorruptedException;
 import android.content.Context;
 import android.util.Log;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.model.currentweather.CurrentWeatherData;
-import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
+import de.example.exampletdd.model.currentweather.Current;
+import de.example.exampletdd.model.forecastweather.Forecast;
 
 /**
  * TODO: show some error message when there is no enough space for saving files. :/
  *
  */
-public class WeatherServicePersistenceFile {
-    private static final String TAG = "WeatherServicePersistenceFile";
+public class ServicePersistenceStorage {
+    private static final String TAG = "ServicePersistenceStorage";
     private static final String CURRENT_WEATHER_DATA_FILE = "current_weatherdata.file";
     private static final String CURRENT_WEATHER_DATA_TEMPORARY_FILE = "current_weatherdata.tmp.file";
     private static final String FORECAST_WEATHER_DATA_FILE = "forecast_weatherdata.file";
@@ -29,7 +29,7 @@ public class WeatherServicePersistenceFile {
     private static final String WEATHER_GEOCODING_TEMPORARY_FILE = "weathergeocoding.tmp.file";
     private final Context context;
 
-    public WeatherServicePersistenceFile(final Context context) {
+    public ServicePersistenceStorage(final Context context) {
         this.context = context;
     }
 
@@ -92,7 +92,7 @@ public class WeatherServicePersistenceFile {
         this.context.deleteFile(WEATHER_GEOCODING_FILE);
     }
 
-    public void storeCurrentWeatherData(final CurrentWeatherData currentWeatherData)
+    public void storeCurrentWeatherData(final Current currentWeatherData)
             throws FileNotFoundException, IOException {
         final OutputStream persistenceFile = this.context.openFileOutput(
                 CURRENT_WEATHER_DATA_FILE, Context.MODE_PRIVATE);
@@ -111,8 +111,8 @@ public class WeatherServicePersistenceFile {
         this.renameFile(CURRENT_WEATHER_DATA_TEMPORARY_FILE, CURRENT_WEATHER_DATA_FILE);
     }
 
-    public CurrentWeatherData getCurrentWeatherData() {
-        CurrentWeatherData currentWeatherData = null;
+    public Current getCurrentWeatherData() {
+        Current currentWeatherData = null;
 
         try {
             currentWeatherData = this.getCurrentWeatherDataThrowable();
@@ -129,7 +129,7 @@ public class WeatherServicePersistenceFile {
         return currentWeatherData;
     }
 
-    private CurrentWeatherData getCurrentWeatherDataThrowable()
+    private Current getCurrentWeatherDataThrowable()
             throws StreamCorruptedException,
             FileNotFoundException, IOException, ClassNotFoundException {
         final InputStream persistenceFile = this.context.openFileInput(
@@ -139,7 +139,7 @@ public class WeatherServicePersistenceFile {
         try {
             ois = new ObjectInputStream(persistenceFile);
 
-            return (CurrentWeatherData) ois.readObject();
+            return (Current) ois.readObject();
         } finally {
             if (ois != null) {
                 ois.close();
@@ -151,7 +151,7 @@ public class WeatherServicePersistenceFile {
         this.context.deleteFile(CURRENT_WEATHER_DATA_FILE);
     }
 
-    public void storeForecastWeatherData(final ForecastWeatherData forecastWeatherData)
+    public void storeForecastWeatherData(final Forecast forecastWeatherData)
             throws FileNotFoundException, IOException {
         final OutputStream persistenceFile = this.context.openFileOutput(FORECAST_WEATHER_DATA_FILE,
                 Context.MODE_PRIVATE);
@@ -170,8 +170,8 @@ public class WeatherServicePersistenceFile {
         this.renameFile(FORECAST_WEATHER_DATA_TEMPORARY_FILE, FORECAST_WEATHER_DATA_FILE);
     }
 
-    public ForecastWeatherData getForecastWeatherData() {
-        ForecastWeatherData forecastWeatherData = null;
+    public Forecast getForecastWeatherData() {
+        Forecast forecastWeatherData = null;
 
         try {
             forecastWeatherData = this.getForecastWeatherDataThrowable();
@@ -188,7 +188,7 @@ public class WeatherServicePersistenceFile {
         return forecastWeatherData;
     }
 
-    private ForecastWeatherData getForecastWeatherDataThrowable() throws StreamCorruptedException,
+    private Forecast getForecastWeatherDataThrowable() throws StreamCorruptedException,
     FileNotFoundException, IOException, ClassNotFoundException {
         final InputStream persistenceFile = this.context.openFileInput(FORECAST_WEATHER_DATA_FILE);
 
@@ -196,7 +196,7 @@ public class WeatherServicePersistenceFile {
         try {
             ois = new ObjectInputStream(persistenceFile);
 
-            return (ForecastWeatherData) ois.readObject();
+            return (Forecast) ois.readObject();
         } finally {
             if (ois != null) {
                 ois.close();

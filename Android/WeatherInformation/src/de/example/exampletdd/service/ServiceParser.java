@@ -6,25 +6,25 @@ import java.util.Locale;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
-import de.example.exampletdd.model.currentweather.CurrentWeatherData;
-import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
-import de.example.exampletdd.parser.IJPOSWeatherParser;
+import de.example.exampletdd.model.currentweather.Current;
+import de.example.exampletdd.model.forecastweather.Forecast;
+import de.example.exampletdd.parser.IJPOSParser;
 
-public class WeatherServiceParser {
-    private final IJPOSWeatherParser JPOSWeatherParser;
+public class ServiceParser {
+    private final IJPOSParser JPOSParser;
 
-    public WeatherServiceParser(final IJPOSWeatherParser JPOSWeatherParser) {
-        this.JPOSWeatherParser = JPOSWeatherParser;
+    public ServiceParser(final IJPOSParser JPOSWeatherParser) {
+        this.JPOSParser = JPOSWeatherParser;
     }
 
-    public CurrentWeatherData retrieveCurrentWeatherDataFromJPOS(final String jsonData)
+    public Current retrieveCurrentWeatherDataFromJPOS(final String jsonData)
             throws JsonParseException, IOException {
-        return this.JPOSWeatherParser.retrieveCurrentWeatherDataFromJPOS(jsonData);
+        return this.JPOSParser.retrieveCurrenFromJPOS(jsonData);
     }
 
-    public ForecastWeatherData retrieveForecastWeatherDataFromJPOS(final String jsonData)
+    public Forecast retrieveForecastWeatherDataFromJPOS(final String jsonData)
             throws JsonParseException, IOException {
-        return this.JPOSWeatherParser.retrieveForecastWeatherDataFromJPOS(jsonData);
+        return this.JPOSParser.retrieveForecastFromJPOS(jsonData);
     }
 
     public String createURIAPIForecastWeather(final String urlAPI, final String APIVersion,

@@ -15,23 +15,23 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import de.example.exampletdd.fragment.current.WeatherInformationCurrentDataFragment;
-import de.example.exampletdd.fragment.overview.WeatherInformationOverviewFragment;
+import de.example.exampletdd.fragment.current.CurrentDataFragment;
+import de.example.exampletdd.fragment.overview.OverviewFragment;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.service.WeatherServicePersistenceFile;
+import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherTabsActivity extends FragmentActivity {
     private static final int NUM_ITEMS = 2;
     private MyAdapter mAdapter;
     private ViewPager mPager;
-    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
+    private ServicePersistenceStorage mWeatherServicePersistenceFile;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.fragment_pager);
 
-        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
+        this.mWeatherServicePersistenceFile = new ServicePersistenceStorage(this);
         this.mAdapter = new MyAdapter(this.getSupportFragmentManager());
 
         this.mPager = (ViewPager)this.findViewById(R.id.pager);
@@ -165,7 +165,7 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         final ActionBar actionBar = this.getActionBar();
 
-        final WeatherServicePersistenceFile weatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
+        final ServicePersistenceStorage weatherServicePersistenceFile = new ServicePersistenceStorage(this);
         final GeocodingData geocodingData = weatherServicePersistenceFile.getGeocodingData();
 
         if (geocodingData != null) {
@@ -258,9 +258,9 @@ public class WeatherTabsActivity extends FragmentActivity {
         @Override
         public Fragment getItem(final int position) {
             if (position == 0) {
-                return new WeatherInformationCurrentDataFragment();
+                return new CurrentDataFragment();
             } else {
-                final Fragment fragment = new WeatherInformationOverviewFragment();
+                final Fragment fragment = new OverviewFragment();
                 return fragment;
             }
 

@@ -19,16 +19,16 @@ import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.model.currentweather.CurrentWeatherData;
-import de.example.exampletdd.model.forecastweather.ForecastWeatherData;
+import de.example.exampletdd.model.currentweather.Current;
+import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.parser.JPOSWeatherParser;
-import de.example.exampletdd.service.WeatherServiceParser;
-import de.example.exampletdd.service.WeatherServicePersistenceFile;
+import de.example.exampletdd.service.ServiceParser;
+import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherInformationBatch extends IntentService {
     private static final String TAG = "WeatherInformationBatch";
     private static final String resultsNumber = "14";
-    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
+    private ServicePersistenceStorage mWeatherServicePersistenceFile;
 
 
     public WeatherInformationBatch() {
@@ -38,7 +38,7 @@ public class WeatherInformationBatch extends IntentService {
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         Log.i(TAG, "WeatherInformationBatch onStartCommand");
-        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
+        this.mWeatherServicePersistenceFile = new ServicePersistenceStorage(this);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -51,7 +51,7 @@ public class WeatherInformationBatch extends IntentService {
 
         if (geocodingData != null) {
             Log.i(TAG, "WeatherInformationBatch onHandleIntent, geocodingData not null");
-            final WeatherServiceParser weatherService = new WeatherServiceParser(new JPOSWeatherParser());
+            final ServiceParser weatherService = new ServiceParser(new JPOSWeatherParser());
             final CustomHTTPClient weatherHTTPClient = new CustomHTTPClient(
                     AndroidHttpClient.newInstance("Android Weather Information Agent"));
 
@@ -77,7 +77,7 @@ public class WeatherInformationBatch extends IntentService {
     }
 
     private WeatherData doInBackgroundThrowable(final GeocodingData geocodingData,
-            final CustomHTTPClient weatherHTTPClient, final WeatherServiceParser weatherService)
+            final CustomHTTPClient weatherHTTPClient, final ServiceParser weatherService)
                     throws ClientProtocolException, MalformedURLException, URISyntaxException,
                     JsonParseException, IOException {
 
@@ -90,7 +90,7 @@ public class WeatherInformationBatch extends IntentService {
         String url = weatherService.createURIAPITodayWeather(urlAPI, APIVersion,
                 geocodingData.getLatitude(), geocodingData.getLongitude());
         String jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
-        final CurrentWeatherData currentWeatherData = weatherService
+        final Current currentWeatherData = weatherService
                 .retrieveCurrentWeatherDataFromJPOS(jsonData);
         final Calendar now = Calendar.getInstance();
         currentWeatherData.setDate(now.getTime());
@@ -101,7 +101,7 @@ public class WeatherInformationBatch extends IntentService {
         url = weatherService.createURIAPIForecastWeather(urlAPI, APIVersion,
                 geocodingData.getLatitude(), geocodingData.getLongitude(), resultsNumber);
         jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
-        final ForecastWeatherData forecastWeatherData = weatherService
+        final Forecast forecastWeatherData = weatherService
                 .retrieveForecastWeatherDataFromJPOS(jsonData);
 
         return new WeatherData(forecastWeatherData, currentWeatherData);
@@ -128,20 +128,20 @@ public class WeatherInformationBatch extends IntentService {
     }
 
     private class WeatherData {
-        private final ForecastWeatherData mForecastWeatherData;
-        private final CurrentWeatherData mCurrentWeatherData;
+        private final Forecast mForecastWeatherData;
+        private final Current mCurrentWeatherData;
 
-        public WeatherData(final ForecastWeatherData mForecastWeatherData,
-                final CurrentWeatherData mCurrentWeatherData) {
+        public WeatherData(final Forecast mForecastWeatherData,
+                final Current mCurrentWeatherData) {
             this.mForecastWeatherData = mForecastWeatherData;
             this.mCurrentWeatherData = mCurrentWeatherData;
         }
 
-        public ForecastWeatherData getForecastWeatherData() {
+        public Forecast getForecastWeatherData() {
             return this.mForecastWeatherData;
         }
 
-        public CurrentWeatherData getCurrentWeatherData() {
+        public Current getCurrentWeatherData() {
             return this.mCurrentWeatherData;
         }
     }

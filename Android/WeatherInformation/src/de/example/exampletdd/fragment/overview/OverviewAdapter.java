@@ -9,10 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import de.example.exampletdd.R;
 
-public class WeatherOverviewAdapter extends ArrayAdapter<WeatherOverviewEntry> {
+public class OverviewAdapter extends ArrayAdapter<OverviewEntry> {
     private final int resource;
 
-    public WeatherOverviewAdapter(final Context context, final int resource) {
+    public OverviewAdapter(final Context context, final int resource) {
         super(context, 0);
 
         this.resource = resource;
@@ -27,7 +27,7 @@ public class WeatherOverviewAdapter extends ArrayAdapter<WeatherOverviewEntry> {
         // efficiency
         final View view = this.getWorkingView(convertView);
         final ViewHolder viewHolder = this.getViewHolder(view);
-        final WeatherOverviewEntry entry = this.getItem(position);
+        final OverviewEntry entry = this.getItem(position);
 
 
         // Setting date

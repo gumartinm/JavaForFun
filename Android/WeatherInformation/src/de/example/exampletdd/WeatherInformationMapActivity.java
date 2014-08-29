@@ -26,12 +26,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.ProgressDialogFragment;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.service.WeatherServicePersistenceFile;
+import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherInformationMapActivity extends FragmentActivity {
     private GoogleMap mMap;
     private Marker mMarker;
-    private WeatherServicePersistenceFile mWeatherServicePersistenceFile;
+    private ServicePersistenceStorage mWeatherServicePersistenceFile;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class WeatherInformationMapActivity extends FragmentActivity {
         this.mMap.getUiSettings().setCompassEnabled(false);
         this.mMap.setOnMapLongClickListener(new LongClickListener());
 
-        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
+        this.mWeatherServicePersistenceFile = new ServicePersistenceStorage(this);
 
         final GeocodingData geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
 
