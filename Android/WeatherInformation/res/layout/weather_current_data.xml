@@ -13,6 +13,6 @@
         android:id="@+id/weather_current_data_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="de.example.exampletdd.fragment.current.CurrentDataFragment" />
+        class="de.example.exampletdd.fragment.current.CurrentFragment" />
 
 </LinearLayout>

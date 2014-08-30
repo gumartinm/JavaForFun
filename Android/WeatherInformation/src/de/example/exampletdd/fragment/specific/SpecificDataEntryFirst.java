@@ -2,12 +2,12 @@ package de.example.exampletdd.fragment.specific;
 
 import android.graphics.Bitmap;
 
-public class WeatherCurrentDataEntryFirst {
+public class SpecificDataEntryFirst {
     private final Bitmap picture;
     private final String tempMax;
     private final String tempMin;
 
-    public WeatherCurrentDataEntryFirst(final String tempMax, final String tempMin,
+    public SpecificDataEntryFirst(final String tempMax, final String tempMin,
             final Bitmap picture) {
         this.tempMax = tempMax;
         this.tempMin = tempMin;

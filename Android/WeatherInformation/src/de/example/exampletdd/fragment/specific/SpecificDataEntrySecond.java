@@ -1,9 +1,9 @@
-package de.example.exampletdd.fragment.current;
+package de.example.exampletdd.fragment.specific;
 
-public class WeatherCurrentDataEntrySecond {
+public class SpecificDataEntrySecond {
     private final String weatherDescription;
 
-    public WeatherCurrentDataEntrySecond(final String weatherDescription) {
+    public SpecificDataEntrySecond(final String weatherDescription) {
         this.weatherDescription = weatherDescription;
     }
 

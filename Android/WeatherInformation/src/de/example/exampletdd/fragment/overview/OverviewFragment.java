@@ -34,11 +34,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.R;
 import de.example.exampletdd.WeatherInformationApplication;
-import de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment;
+import de.example.exampletdd.fragment.specific.SpecificFragment;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.GeocodingData;
 import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.parser.JPOSWeatherParser;
+import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.ServiceParser;
 
 public class OverviewFragment extends ListFragment {
@@ -61,10 +62,11 @@ public class OverviewFragment extends ListFragment {
             // Restore UI state
             final Forecast forecast = (Forecast) savedInstanceState.getSerializable("Forecast");
 
-            // TODO: Could it be better to store in global data forecast even if it is null value?
+            // TODO: Could it be better to store in global forecast data even if it is null value?
             //       So, perhaps do not check for null value and always store in global variable.
             if (forecast != null) {
-                final WeatherInformationApplication application = (WeatherInformationApplication) getActivity().getApplication();
+                final WeatherInformationApplication application =
+                		(WeatherInformationApplication) getActivity().getApplication();
                 application.setForecast(forecast);
             }
 
@@ -95,12 +97,13 @@ public class OverviewFragment extends ListFragment {
             return;
         }
 
-        final WeatherInformationApplication application = (WeatherInformationApplication) getActivity().getApplication();
+        final WeatherInformationApplication application =
+        		(WeatherInformationApplication) getActivity().getApplication();
         final Forecast forecast = application.getForecast();
 
         // TODO: Also check whether data is fresh (like I do on WindowsPhone 8) using data base
         if (forecast != null /* && dataIsFresh() */) {
-            this.updateForecastWeatherData(forecast);
+            this.updateUI(forecast);
         } else {
             // Load remote data (aynchronous)
             // Gets the data from the web.
@@ -113,6 +116,7 @@ public class OverviewFragment extends ListFragment {
         }
 
         // TODO: could mListState be an old value? It is just updated in onActivityCreated method... :/
+        // What is this for? And be careful, it runs at the same time as updateUI!!! :(
         if (this.mListState != null) {
             this.getListView().onRestoreInstanceState(this.mListState);
         }
@@ -122,9 +126,12 @@ public class OverviewFragment extends ListFragment {
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save UI state
-        final WeatherInformationApplication application = (WeatherInformationApplication) getActivity().getApplication();
+        final WeatherInformationApplication application =
+        		(WeatherInformationApplication) getActivity().getApplication();
         final Forecast forecast = application.getForecast();
 
+        // TODO: Could it be better to save forecast data even if it is null value?
+        //       So, perhaps do not check for null value.
         if (forecast != null) {
             savedInstanceState.putSerializable("Forecast", forecast);
         }
@@ -137,41 +144,41 @@ public class OverviewFragment extends ListFragment {
 
     @Override
     public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-        final WeatherInformationSpecificDataFragment fragment = (WeatherInformationSpecificDataFragment) this
-                .getFragmentManager().findFragmentById(R.id.weather_specific_data__fragment);
+        final SpecificFragment fragment = (SpecificFragment) this
+                .getFragmentManager().findFragmentById(R.id.weather_specific_fragment);
         if (fragment == null) {
             // handset layout
             final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO")
             .setComponent(new ComponentName("de.example.exampletdd",
-                    "de.example.exampletdd.WeatherInformationSpecificDataActivity"));
+                    "de.example.exampletdd.SpecificActivity"));
             intent.putExtra("CHOSEN_DAY", (int) id);
             OverviewFragment.this.getActivity().startActivity(intent);
         } else {
             // tablet layout
-            fragment.getWeatherByDay((int) id);
+            fragment.updateUIByChosenDay((int) id);
         }
     }
 
-    private void updateForecastWeatherData(final Forecast forecastWeatherData) {
+    private void updateUI(final Forecast forecastWeatherData) {
 
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getActivity());
 
-
+        // TODO: repeating the same code in Overview, Specific and Current!!!
         // 1. Update units of measurement.
-        boolean mIsFahrenheit = false;
+        boolean isFahrenheit = false;
         String keyPreference = this.getResources()
                 .getString(R.string.weather_preferences_units_key);
         final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "Celsius");
         final String celsius = this.getResources().getString(
                 R.string.weather_preferences_units_celsius);
         if (unitsPreferenceValue.equals(celsius)) {
-            mIsFahrenheit = false;
+            isFahrenheit = false;
         } else {
-            mIsFahrenheit = true;
+            isFahrenheit = true;
         }
-        final double tempUnits = mIsFahrenheit ? 0 : 273.15;
-        final String symbol = mIsFahrenheit ? "ºF" : "ºC";
+        final double tempUnits = isFahrenheit ? 0 : 273.15;
+        final String symbol = isFahrenheit ? "ºF" : "ºC";
 
 
         // 2. Update number day forecast.
@@ -182,7 +189,7 @@ public class OverviewFragment extends ListFragment {
         mDayForecast = Integer.valueOf(dayForecast);
 
 
-        // 3. Date format
+        // 3. Formatters
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.##");
         final SimpleDateFormat dayNameFormatter = new SimpleDateFormat("EEE", Locale.US);
@@ -249,7 +256,7 @@ public class OverviewFragment extends ListFragment {
     }
 
 
-    public class OverviewTask extends AsyncTask<GeocodingData, Void, Forecast> {
+    private class OverviewTask extends AsyncTask<GeocodingData, Void, Forecast> {
         final CustomHTTPClient weatherHTTPClient;
         final ServiceParser weatherService;
 
@@ -261,26 +268,26 @@ public class OverviewFragment extends ListFragment {
         @Override
         protected Forecast doInBackground(final GeocodingData... params) {
             Log.i(TAG, "OverviewFragment doInBackground");
-            Forecast weatherData = null;
+            Forecast forecast = null;
 
             try {
-                weatherData = this.doInBackgroundThrowable(params[0], weatherHTTPClient, weatherService);
+                forecast = this.doInBackgroundThrowable(params[0], weatherHTTPClient, weatherService);
             } catch (final JsonParseException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
+                Log.e(TAG, "OverviewTask doInBackground exception: ", e);
             } catch (final ClientProtocolException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
+                Log.e(TAG, "OverviewTask doInBackground exception: ", e);
             } catch (final MalformedURLException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
+                Log.e(TAG, "OverviewTask doInBackground exception: ", e);
             } catch (final URISyntaxException e) {
-                Log.e(TAG, "doInBackground exception: ", e);
+                Log.e(TAG, "OverviewTask doInBackground exception: ", e);
             } catch (final IOException e) {
                 // logger infrastructure swallows UnknownHostException :/
-                Log.e(TAG, "doInBackground exception: " + e.getMessage(), e);
+                Log.e(TAG, "OverviewTask doInBackground exception: " + e.getMessage(), e);
             } finally {
                 weatherHTTPClient.close();
             }
 
-            return weatherData;
+            return forecast;
         }
 
         private Forecast doInBackgroundThrowable(final GeocodingData geocodingData,
@@ -290,19 +297,20 @@ public class OverviewFragment extends ListFragment {
             final String APIVersion = getResources().getString(R.string.api_version);
             final String urlAPI = getResources().getString(R.string.uri_api_weather_forecast);
             // TODO: number as resource
-            final String url = serviceParser.createURIAPIForecastWeather(urlAPI, APIVersion,
+            final String url = serviceParser.createURIAPIForecast(urlAPI, APIVersion,
                     geocodingData.getLatitude(), geocodingData.getLongitude(), "14");
             final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
 
-            return serviceParser.retrieveForecastWeatherDataFromJPOS(jsonData);
+            return serviceParser.retrieveForecastFromJPOS(jsonData);
         }
 
         @Override
         protected void onPostExecute(final Forecast forecast) {
-            // Call UpdateUI on the UI thread.
-            updateForecastWeatherData(forecast);
+            // Call updateUI on the UI thread.
+            updateUI(forecast);
 
-            final WeatherInformationApplication application = (WeatherInformationApplication) getActivity().getApplication();
+            final WeatherInformationApplication application =
+            		(WeatherInformationApplication) getActivity().getApplication();
             application.setForecast(forecast);
 
             // TODO: update last time update using data base (like I do on Windows Phone 8)

@@ -1,13 +1,13 @@
 package de.example.exampletdd.fragment.specific;
 
-public class WeatherCurrentDataEntryThird {
+public class SpecificDataEntryThird {
     private final String humidityValue;
     private final String pressureValue;
     private final String windValue;
     private final String rainValue;
     private final String cloudsValue;
 
-    public WeatherCurrentDataEntryThird(final String humidityValue, final String pressureValue,
+    public SpecificDataEntryThird(final String humidityValue, final String pressureValue,
             final String windValue, final String rainValue, final String cloudsValue) {
         this.humidityValue = humidityValue;
         this.pressureValue = pressureValue;

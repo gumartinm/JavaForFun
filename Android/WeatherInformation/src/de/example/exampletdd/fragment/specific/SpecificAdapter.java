@@ -9,14 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import de.example.exampletdd.R;
 
-public class WeatherCurrentDataAdapter extends ArrayAdapter<Object> {
+public class SpecificAdapter extends ArrayAdapter<Object> {
     private static final int FIRST = 0;
     private static final int SECOND = 1;
     private static final int THIRD = 2;
     private static final int FOURTH = 3;
     private final int[] resources;
 
-    public WeatherCurrentDataAdapter(final Context context, final int[] resources) {
+    public SpecificAdapter(final Context context, final int[] resources) {
         super(context, 0);
 
         this.resources = resources;
@@ -32,19 +32,19 @@ public class WeatherCurrentDataAdapter extends ArrayAdapter<Object> {
         if (viewType == FIRST) {
 
             final ViewFirstHolder viewHolder = this.getViewFirstHolder(view);
-            final WeatherCurrentDataEntryFirst entry = (WeatherCurrentDataEntryFirst) this
+            final SpecificDataEntryFirst entry = (SpecificDataEntryFirst) this
                     .getItem(position);
             viewHolder.picture.setImageBitmap(entry.getPicture());
             viewHolder.tempMax.setText(entry.getTempMax());
             viewHolder.tempMin.setText(entry.getTempMin());
         } else if (viewType == SECOND) {
             final ViewSecondHolder viewHolder = this.getViewSecondHolder(view);
-            final WeatherCurrentDataEntrySecond entry = (WeatherCurrentDataEntrySecond) this
+            final SpecificDataEntrySecond entry = (SpecificDataEntrySecond) this
                     .getItem(position);
             viewHolder.weatherDescription.setText(entry.getWeatherDescription());
         } else if (viewType == THIRD) {
             final ViewThirdHolder viewHolder = this.getViewThirdHolder(view);
-            final WeatherCurrentDataEntryThird entry = (WeatherCurrentDataEntryThird) this
+            final SpecificDataEntryThird entry = (SpecificDataEntryThird) this
                     .getItem(position);
             viewHolder.humidityValue.setText(entry.getHumidityValue());
             viewHolder.pressureValue.setText(entry.getPressureValue());
@@ -53,7 +53,7 @@ public class WeatherCurrentDataAdapter extends ArrayAdapter<Object> {
             viewHolder.windValue.setText(entry.getWindValue());
         } else if (viewType == FOURTH) {
             final ViewFourthHolder viewHolder = this.getViewFourthHolder(view);
-            final WeatherCurrentDataEntryFourth entry = (WeatherCurrentDataEntryFourth) this
+            final SpecificDataEntryFourth entry = (SpecificDataEntryFourth) this
                     .getItem(position);
             viewHolder.dayTemp.setText(entry.getDayTemp());
             viewHolder.morningTemp.setText(entry.getEveTemp());

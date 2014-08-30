@@ -76,7 +76,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.example.exampletdd.WeatherInformationSpecificDataActivity"
+            android:name="de.example.exampletdd.SpecificActivity"
             android:parentActivityName="de.example.exampletdd.WeatherTabsActivity"
             android:exported="false" >
             <intent-filter>

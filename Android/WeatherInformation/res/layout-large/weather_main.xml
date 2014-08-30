@@ -14,9 +14,9 @@
         class="de.example.exampletdd.fragment.overview.OverviewFragment" />
     
     <fragment
-        android:id="@+id/weather_specific_data__fragment"
+        android:id="@+id/weather_specific_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="de.example.exampletdd.fragment.specific.WeatherInformationSpecificDataFragment" />
+        class="de.example.exampletdd.fragment.specific.SpecificFragment" />
 
 </FrameLayout>

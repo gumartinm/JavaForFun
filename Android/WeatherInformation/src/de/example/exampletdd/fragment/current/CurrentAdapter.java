@@ -9,13 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import de.example.exampletdd.R;
 
-public class WeatherCurrentDataAdapter extends ArrayAdapter<Object> {
+public class CurrentAdapter extends ArrayAdapter<Object> {
     private static final int FIRST = 0;
     private static final int SECOND = 1;
     private static final int THIRD = 2;
     private final int[] resources;
 
-    public WeatherCurrentDataAdapter(final Context context, final int[] resources) {
+    public CurrentAdapter(final Context context, final int[] resources) {
         super(context, 0);
 
         this.resources = resources;
@@ -31,19 +31,19 @@ public class WeatherCurrentDataAdapter extends ArrayAdapter<Object> {
         if (viewType == FIRST) {
 
             final ViewFirstHolder viewHolder = this.getViewFirstHolder(view);
-            final WeatherCurrentDataEntryFirst entry = (WeatherCurrentDataEntryFirst) this
+            final CurrentDataEntryFirst entry = (CurrentDataEntryFirst) this
                     .getItem(position);
             viewHolder.picture.setImageBitmap(entry.getPicture());
             viewHolder.tempMax.setText(entry.getTempMax());
             viewHolder.tempMin.setText(entry.getTempMin());
         } else if (viewType == SECOND) {
             final ViewSecondHolder viewHolder = this.getViewSecondHolder(view);
-            final WeatherCurrentDataEntrySecond entry = (WeatherCurrentDataEntrySecond) this
+            final CurrentDataEntrySecond entry = (CurrentDataEntrySecond) this
                     .getItem(position);
             viewHolder.weatherDescription.setText(entry.getWeatherDescription());
         } else if (viewType == THIRD) {
             final ViewThirdHolder viewHolder = this.getViewThirdHolder(view);
-            final WeatherCurrentDataEntryFifth entry = (WeatherCurrentDataEntryFifth) this
+            final CurrentDataEntryFifth entry = (CurrentDataEntryFifth) this
                     .getItem(position);
             viewHolder.humidityValue.setText(entry.getHumidityValue());
             viewHolder.pressureValue.setText(entry.getPressureValue());

@@ -15,24 +15,21 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import de.example.exampletdd.fragment.current.CurrentDataFragment;
+import de.example.exampletdd.fragment.current.CurrentFragment;
 import de.example.exampletdd.fragment.overview.OverviewFragment;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherTabsActivity extends FragmentActivity {
     private static final int NUM_ITEMS = 2;
-    private MyAdapter mAdapter;
+    private TabsAdapter mAdapter;
     private ViewPager mPager;
-    private ServicePersistenceStorage mWeatherServicePersistenceFile;
-
+    
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.fragment_pager);
 
-        this.mWeatherServicePersistenceFile = new ServicePersistenceStorage(this);
-        this.mAdapter = new MyAdapter(this.getSupportFragmentManager());
+        this.mAdapter = new TabsAdapter(this.getSupportFragmentManager());
 
         this.mPager = (ViewPager)this.findViewById(R.id.pager);
         this.mPager.setAdapter(this.mAdapter);
@@ -79,36 +76,6 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         actionBar.addTab(actionBar.newTab().setText("CURRENTLY").setTabListener(tabListener));
         actionBar.addTab(actionBar.newTab().setText("FORECAST").setTabListener(tabListener));
-
-        //        this.mWeatherServicePersistenceFile = new WeatherServicePersistenceFile(this);
-        //        if (savedInstanceState != null) {
-        //            this.mGeocodingData = (GeocodingData) savedInstanceState
-        //                    .getSerializable("GEOCODINGDATA");
-        //            final GeocodingData lastValue = this.mWeatherServicePersistenceFile.getGeocodingData();
-        //        } else {
-        //            this.mGeocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
-        //            final Intent intent = new Intent(this, WeatherInformationBatch.class);
-        //            if (this.mGeocodingData != null) {
-        //                this.startService(intent);
-        //            }
-        //        }
-
-
-
-        //        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        //        final String keyPreference = this.getString(R.string.weather_preferences_update_time_rate_key);
-        //        final String updateTimeRate = sharedPreferences.getString(keyPreference, "");
-        //        final int timeRate = Integer.valueOf(updateTimeRate);
-        //        Log.i(TAG, "WeatherTabsActivity onCreate, timeRate: " + timeRate);
-
-        //        final AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        // TODO: better use some string instead of .class? In case I change the service class
-        // this could be a problem (I guess)
-        //        final Intent intent = new Intent(this, WeatherInformationBatch.class);
-        //        final PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent,
-        //                PendingIntent.FLAG_UPDATE_CURRENT);
-        //        alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
-        //                + (timeRate * 1000), (timeRate * 1000), alarmIntent);
     }
 
     @Override
@@ -143,18 +110,12 @@ public class WeatherTabsActivity extends FragmentActivity {
         } else {
         }
 
+        // TODO: calling again super method?
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            final WeatherInformationApplication application = (WeatherInformationApplication) this
-                    .getApplication();
-            application.setGeocodingData((GeocodingData) savedInstanceState
-                    .getSerializable("GEOCODINGDATA"));
-        }
-
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -165,18 +126,18 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         final ActionBar actionBar = this.getActionBar();
 
-        final ServicePersistenceStorage weatherServicePersistenceFile = new ServicePersistenceStorage(this);
-        final GeocodingData geocodingData = weatherServicePersistenceFile.getGeocodingData();
-
+        // TODO: retrive data from data base (like I do on WindowsPhone 8)
+        // 1. Update title.
+        final GeocodingData geocodingData = new GeocodingData.Builder().build();
         if (geocodingData != null) {
-            final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
+        	final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
                     : geocodingData.getCity();
             final String country = (geocodingData.getCountry() == null) ? this.getString(R.string.country_not_found)
                     : geocodingData.getCountry();
-            actionBar.setTitle(city + "," + country);
+            actionBar.setTitle(city + "," + country);	
         }
 
-
+        // 2. Update forecast tab text.
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         final String keyPreference = this.getString(R.string.weather_preferences_day_forecast_key);
@@ -190,50 +151,6 @@ public class WeatherTabsActivity extends FragmentActivity {
             humanValue = "14 DAY FORECAST";
         }
         actionBar.getTabAt(1).setText(humanValue);
-
-        final WeatherInformationApplication application = (WeatherInformationApplication) this
-                .getApplication();
-        if (application.getGeocodingData() != null) {
-            // If there is previous value.
-            final GeocodingData geocodingDataFile = this.mWeatherServicePersistenceFile
-                    .getGeocodingData();
-            if (!application.getGeocodingData().equals(geocodingDataFile)) {
-                // Just update when value changed.
-                application.setGeocodingData(geocodingDataFile);
-                final Intent intent = new Intent(this, WeatherInformationBatch.class);
-                this.startService(intent);
-            }
-        } else {
-            // There is no previous value.
-            application.setGeocodingData(this.mWeatherServicePersistenceFile.getGeocodingData());
-            final Intent intent = new Intent(this, WeatherInformationBatch.class);
-            this.startService(intent);
-        }
-
-        //        if (geocodingData != null) {
-        //            if ((this.mGeocodingData == null) || (!this.mGeocodingData.equals(geocodingData))) {
-        //                Log.i(TAG, "WeatherTabsActivity onResume, startService");
-        //                this.mGeocodingData = geocodingData;
-        //                final Intent intent = new Intent(this, WeatherInformationBatch.class);
-        //                this.startService(intent);
-        //            }
-        //        }
-        //
-        //        keyPreference = this.getString(R.string.weather_preferences_update_time_rate_key);
-        //        final String updateTimeRate = sharedPreferences.getString(keyPreference, "");
-        //        final int timeRate = Integer.valueOf(updateTimeRate);
-        //        if (this.mUpdateTimeRate != timeRate) {
-        //            Log.i(TAG, "WeatherTabsActivity onResume, updateTimeRate: " + timeRate);
-        //            this.mUpdateTimeRate = timeRate;
-        //            final AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        //            // TODO: better use some string instead of .class? In case I change the service class
-        //            // this could be a problem (I guess)
-        //            final Intent intent = new Intent(this, WeatherInformationBatch.class);
-        //            final PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent,
-        //                    PendingIntent.FLAG_UPDATE_CURRENT);
-        //            alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
-        //                    + (timeRate * 1000), (timeRate * 1000), alarmIntent);
-        //        }
     }
 
     @Override
@@ -245,8 +162,8 @@ public class WeatherTabsActivity extends FragmentActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private class MyAdapter extends FragmentPagerAdapter {
-        public MyAdapter(final FragmentManager fm) {
+    private class TabsAdapter extends FragmentPagerAdapter {
+        public TabsAdapter(final FragmentManager fm) {
             super(fm);
         }
 
@@ -258,8 +175,10 @@ public class WeatherTabsActivity extends FragmentActivity {
         @Override
         public Fragment getItem(final int position) {
             if (position == 0) {
-                return new CurrentDataFragment();
+            	// TODO: new instance every time I click on tab?
+                return new CurrentFragment();
             } else {
+            	// TODO: new instance every time I click on tab?
                 final Fragment fragment = new OverviewFragment();
                 return fragment;
             }

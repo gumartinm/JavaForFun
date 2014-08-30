@@ -87,22 +87,22 @@ public class WeatherInformationBatch extends IntentService {
         // 1. Today
         String urlAPI = WeatherInformationBatch.this.getResources().getString(
                 R.string.uri_api_weather_today);
-        String url = weatherService.createURIAPITodayWeather(urlAPI, APIVersion,
+        String url = weatherService.createURIAPICurrent(urlAPI, APIVersion,
                 geocodingData.getLatitude(), geocodingData.getLongitude());
         String jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
         final Current currentWeatherData = weatherService
-                .retrieveCurrentWeatherDataFromJPOS(jsonData);
+                .retrieveCurrentFromJPOS(jsonData);
         final Calendar now = Calendar.getInstance();
         currentWeatherData.setDate(now.getTime());
 
         // 2. Forecast
         urlAPI = WeatherInformationBatch.this.getResources().getString(
                 R.string.uri_api_weather_forecast);
-        url = weatherService.createURIAPIForecastWeather(urlAPI, APIVersion,
+        url = weatherService.createURIAPIForecast(urlAPI, APIVersion,
                 geocodingData.getLatitude(), geocodingData.getLongitude(), resultsNumber);
         jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
         final Forecast forecastWeatherData = weatherService
-                .retrieveForecastWeatherDataFromJPOS(jsonData);
+                .retrieveForecastFromJPOS(jsonData);
 
         return new WeatherData(forecastWeatherData, currentWeatherData);
     }

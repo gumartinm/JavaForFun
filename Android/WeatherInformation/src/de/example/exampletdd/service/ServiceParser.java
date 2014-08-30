@@ -17,17 +17,17 @@ public class ServiceParser {
         this.JPOSParser = JPOSWeatherParser;
     }
 
-    public Current retrieveCurrentWeatherDataFromJPOS(final String jsonData)
+    public Current retrieveCurrentFromJPOS(final String jsonData)
             throws JsonParseException, IOException {
         return this.JPOSParser.retrieveCurrenFromJPOS(jsonData);
     }
 
-    public Forecast retrieveForecastWeatherDataFromJPOS(final String jsonData)
+    public Forecast retrieveForecastFromJPOS(final String jsonData)
             throws JsonParseException, IOException {
         return this.JPOSParser.retrieveForecastFromJPOS(jsonData);
     }
 
-    public String createURIAPIForecastWeather(final String urlAPI, final String APIVersion,
+    public String createURIAPIForecast(final String urlAPI, final String APIVersion,
             final double latitude, final double longitude, final String resultsNumber) {
 
         final MessageFormat formatURIAPI = new MessageFormat(urlAPI, Locale.US);
@@ -40,7 +40,7 @@ public class ServiceParser {
         return formatURIAPI.format(values);
     }
 
-    public String createURIAPITodayWeather(final String urlAPI, final String APIVersion,
+    public String createURIAPICurrent(final String urlAPI, final String APIVersion,
             final double latitude, final double longitude) {
 
         final MessageFormat formatURIAPI = new MessageFormat(urlAPI, Locale.US);

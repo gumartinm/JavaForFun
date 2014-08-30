@@ -4,9 +4,8 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import de.example.exampletdd.model.GeocodingData;
-import de.example.exampletdd.service.ServicePersistenceStorage;
 
-public class WeatherInformationSpecificDataActivity extends FragmentActivity {
+public class SpecificActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -27,16 +26,15 @@ public class WeatherInformationSpecificDataActivity extends FragmentActivity {
 
         final ActionBar actionBar = this.getActionBar();
 
-        final ServicePersistenceStorage weatherServicePersistenceFile = new ServicePersistenceStorage(this);
-        final GeocodingData geocodingData = weatherServicePersistenceFile.getGeocodingData();
-
+        // TODO: retrive data from data base (like I do on WindowsPhone 8)
+        // 1. Update title.
+        final GeocodingData geocodingData = new GeocodingData.Builder().build();
         if (geocodingData != null) {
-            final String city = (geocodingData.getCity() == null) ? this
-                    .getString(R.string.city_not_found) : geocodingData.getCity();
-                    final String country = (geocodingData.getCountry() == null) ? this
-                            .getString(R.string.country_not_found) : geocodingData.getCountry();
-                            actionBar.setTitle(city + "," + country);
-
+        	final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
+                    : geocodingData.getCity();
+            final String country = (geocodingData.getCountry() == null) ? this.getString(R.string.country_not_found)
+                    : geocodingData.getCountry();
+            actionBar.setTitle(city + "," + country);	
         }
     }
 }

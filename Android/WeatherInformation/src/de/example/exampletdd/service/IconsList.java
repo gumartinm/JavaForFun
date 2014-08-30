@@ -1,4 +1,4 @@
-package de.example.exampletdd.fragment.overview;
+package de.example.exampletdd.service;
 
 import java.util.HashMap;
 import java.util.Map;

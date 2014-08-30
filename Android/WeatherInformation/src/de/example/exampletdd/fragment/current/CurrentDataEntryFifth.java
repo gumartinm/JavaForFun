@@ -1,6 +1,6 @@
 package de.example.exampletdd.fragment.current;
 
-public class WeatherCurrentDataEntryFifth {
+public class CurrentDataEntryFifth {
     private final String sunRiseTime;
     private final String sunSetTime;
     private final String humidityValue;
@@ -12,7 +12,7 @@ public class WeatherCurrentDataEntryFifth {
     private final String feelsLikeUnits;
     private final String snowValue;
 
-    public WeatherCurrentDataEntryFifth(final String sunRiseTime, final String sunSetTime,
+    public CurrentDataEntryFifth(final String sunRiseTime, final String sunSetTime,
             final String humidityValue, final String pressureValue, final String windValue,
             final String rainValue, final String feelsLike, final String feelsLikeUnits,
             final String snowValue,
