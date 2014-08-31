@@ -37,8 +37,10 @@ public class SpecificFragment extends ListFragment {
         final Bundle extras = this.getActivity().getIntent().getExtras();
 
         if (extras != null) {
+        	// handset layout
             this.mChosenDay = extras.getInt("CHOSEN_DAY", 0);
         } else {
+        	// tablet layout
         	// Always 0 when tablet layout.
             this.mChosenDay = 0;
         }

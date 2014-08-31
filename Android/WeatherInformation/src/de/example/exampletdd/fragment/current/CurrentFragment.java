@@ -318,6 +318,12 @@ public class CurrentFragment extends ListFragment {
 
         @Override
         protected void onPostExecute(final Current current) {
+        	 
+        	if (current == null) {
+        		// Nothing to do
+        		return;
+        	}
+
             // Call updateUI on the UI thread.
         	updateUI(current);
 

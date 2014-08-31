@@ -306,6 +306,12 @@ public class OverviewFragment extends ListFragment {
 
         @Override
         protected void onPostExecute(final Forecast forecast) {
+ 
+        	if (forecast == null) {
+        		// Nothing to do
+        		return;
+        	}
+
             // Call updateUI on the UI thread.
             updateUI(forecast);
 
