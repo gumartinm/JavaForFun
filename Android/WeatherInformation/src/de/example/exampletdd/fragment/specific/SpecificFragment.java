@@ -13,19 +13,31 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ListFragment;
-import android.widget.ListView;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import de.example.exampletdd.R;
 import de.example.exampletdd.WeatherInformationApplication;
 import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.service.IconsList;
 
-public class SpecificFragment extends ListFragment {
+public class SpecificFragment extends Fragment {
     private int mChosenDay;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+    
+    	// Inflate the layout for this fragment
+        return inflater.inflate(R.layout.weather_specific_fragment, container, false);
     }
 
     @Override
@@ -41,7 +53,7 @@ public class SpecificFragment extends ListFragment {
             this.mChosenDay = extras.getInt("CHOSEN_DAY", 0);
         } else {
         	// tablet layout
-        	// Always 0 when tablet layout.
+        	// Always 0 when tablet layout (by default shows the first day)
             this.mChosenDay = 0;
         }
     }
@@ -49,9 +61,6 @@ public class SpecificFragment extends ListFragment {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        final ListView listWeatherView = this.getListView();
-        listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);     
 
         if (savedInstanceState != null) {
         	// Restore UI state
@@ -68,13 +77,6 @@ public class SpecificFragment extends ListFragment {
             this.mChosenDay = savedInstanceState.getInt("Chosen day");
             // TODO: Why don't I need mListState?
         }
-        
-        // TODO: Why don't I need Adapter?
-        
-        // TODO: string static resource
-        this.setEmptyText("No data available");
-        // TODO: Why is it different to Current and Overview fragments?
-        this.setListShownNoAnimation(false);
     }
 
     @Override
@@ -142,14 +144,6 @@ public class SpecificFragment extends ListFragment {
         
 
         // 3. Prepare data for UI.
-        final int[] layouts = new int[4];
-        layouts[0] = R.layout.weather_current_data_entry_first;
-        layouts[1] = R.layout.weather_current_data_entry_second;
-        layouts[2] = R.layout.weather_current_data_entry_third;
-        layouts[3] = R.layout.weather_current_data_entry_fourth;
-        final SpecificAdapter adapter = new SpecificAdapter(this.getActivity(), layouts);
-
-
         final de.example.exampletdd.model.forecastweather.List forecast = forecastWeatherData
                 .getList().get((chosenDay));
 
@@ -157,16 +151,14 @@ public class SpecificFragment extends ListFragment {
         final Calendar calendar = Calendar.getInstance();
         final Long forecastUNIXDate = (Long) forecast.getDt();
         calendar.setTimeInMillis(forecastUNIXDate * 1000L);
-        final Date date = calendar.getTime();
-        this.getActivity().getActionBar().setSubtitle(dayFormatter.format(date).toUpperCase());
-
+        final Date date = calendar.getTime();     
 
         String tempMax = "";
         if (forecast.getTemp().getMax() != null) {
             double conversion = (Double) forecast.getTemp().getMax();
             conversion = conversion - tempUnits;
             tempMax = tempFormatter.format(conversion) + symbol;
-        }
+        }        
         String tempMin = "";
         if (forecast.getTemp().getMin() != null) {
             double conversion = (Double) forecast.getTemp().getMin();
@@ -182,25 +174,22 @@ public class SpecificFragment extends ListFragment {
         } else {
             picture = BitmapFactory.decodeResource(this.getResources(),
                     R.drawable.weather_severe_alert);
-        }
-        final SpecificDataEntryFirst entryFirst = new SpecificDataEntryFirst(tempMax,
-                tempMin, picture);
-        adapter.add(entryFirst);
+        }       
 
+        // TODO: string resource
         String description = "no description available";
         if (forecast.getWeather().size() > 0) {
             description = forecast.getWeather().get(0).getDescription();
         }
-        final SpecificDataEntrySecond entrySecond = new SpecificDataEntrySecond(
-                description);
-        adapter.add(entrySecond);
+        final TextView descriptionView = (TextView) getActivity().findViewById(R.id.weather_specific_description);
+        descriptionView.setText(description);
 
-
+        // TODO: units!!!!
         String humidityValue = "";
         if (forecast.getHumidity() != null) {
             final double conversion = (Double) forecast.getHumidity();
             humidityValue = tempFormatter.format(conversion);
-        }
+        }        
         String pressureValue = "";
         if (forecast.getPressure() != null) {
             final double conversion = (Double) forecast.getPressure();
@@ -221,9 +210,6 @@ public class SpecificFragment extends ListFragment {
             final double conversion = (Double) forecast.getClouds();
             cloudsValue = tempFormatter.format(conversion);
         }
-        final SpecificDataEntryThird entryThird = new SpecificDataEntryThird(
-                humidityValue, pressureValue, windValue, rainValue, cloudsValue);
-        adapter.add(entryThird);
 
         String tempDay = "";
         if (forecast.getTemp().getDay() != null) {
@@ -242,21 +228,44 @@ public class SpecificFragment extends ListFragment {
             double conversion = (Double) forecast.getTemp().getEve();
             conversion = conversion - tempUnits;
             tempEve = tempFormatter.format(conversion) + symbol;
-        }
+        }   
         String tempNight = "";
         if (forecast.getTemp().getNight() != null) {
             double conversion = (Double) forecast.getTemp().getNight();
             conversion = conversion - tempUnits;
             tempNight = tempFormatter.format(conversion) + symbol;
-        }
-        final SpecificDataEntryFourth entryFourth = new SpecificDataEntryFourth(
-                tempMorn, tempDay, tempEve, tempNight);
-        adapter.add(entryFourth);
+        }   
 
 
         // 4. Update UI.
-        // TODO: Why am I not doing the same as in OverviewFragment?
-        this.setListAdapter(adapter);
+        this.getActivity().getActionBar().setSubtitle(dayFormatter.format(date).toUpperCase());
+        
+        final TextView tempMaxView = (TextView) getActivity().findViewById(R.id.weather_specific_temp_max);
+        tempMaxView.setText(tempMax);
+        final TextView tempMinView = (TextView) getActivity().findViewById(R.id.weather_specific_temp_min);
+        tempMinView.setText(tempMin);
+        final ImageView pictureView = (ImageView) getActivity().findViewById(R.id.weather_specific_picture);
+        pictureView.setImageBitmap(picture);    
+        
+        final TextView humidityValueView = (TextView) getActivity().findViewById(R.id.weather_specific_humidity_value);
+        humidityValueView.setText(humidityValue);
+        final TextView pressureValueView = (TextView) getActivity().findViewById(R.id.weather_specific_pressure_value);
+        pressureValueView.setText(pressureValue);
+        final TextView windValueView = (TextView) getActivity().findViewById(R.id.weather_specific_wind_value);
+        windValueView.setText(windValue);
+        final TextView rainValueView = (TextView) getActivity().findViewById(R.id.weather_specific_rain_value);
+        rainValueView.setText(rainValue);
+        final TextView cloudsValueView = (TextView) getActivity().findViewById(R.id.weather_specific_clouds_value);
+        cloudsValueView.setText(cloudsValue); 
+        
+        final TextView tempDayView = (TextView) getActivity().findViewById(R.id.weather_specific_day_temperature);
+        tempDayView.setText(tempDay);
+        final TextView tempMornView = (TextView) getActivity().findViewById(R.id.weather_specific_morn_temperature);
+        tempMornView.setText(tempMorn);
+        final TextView tempEveView = (TextView) getActivity().findViewById(R.id.weather_specific_eve_temperature);
+        tempEveView.setText(tempEve);
+        final TextView tempNightView = (TextView) getActivity().findViewById(R.id.weather_specific_night_temperature);
+        tempNightView.setText(tempNight);
     }
 
     @Override

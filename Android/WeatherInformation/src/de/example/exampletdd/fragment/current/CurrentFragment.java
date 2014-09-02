@@ -321,6 +321,7 @@ public class CurrentFragment extends ListFragment {
         	 
         	if (current == null) {
         		// Nothing to do
+        		// TODO: Should I show some error message? I am not doing it on WP8 Should I do it on WP8?
         		return;
         	}
 

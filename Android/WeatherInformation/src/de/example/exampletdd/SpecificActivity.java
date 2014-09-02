@@ -10,7 +10,7 @@ public class SpecificActivity extends FragmentActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.weather_specific_data);
+        this.setContentView(R.layout.weather_specific);
 
         final ActionBar actionBar = this.getActionBar();
 
