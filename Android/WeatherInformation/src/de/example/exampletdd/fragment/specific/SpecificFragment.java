@@ -75,7 +75,6 @@ public class SpecificFragment extends Fragment {
             }
 
             this.mChosenDay = savedInstanceState.getInt("Chosen day");
-            // TODO: Why don't I need mListState?
         }
     }
 
@@ -181,8 +180,6 @@ public class SpecificFragment extends Fragment {
         if (forecast.getWeather().size() > 0) {
             description = forecast.getWeather().get(0).getDescription();
         }
-        final TextView descriptionView = (TextView) getActivity().findViewById(R.id.weather_specific_description);
-        descriptionView.setText(description);
 
         // TODO: units!!!!
         String humidityValue = "";
@@ -246,6 +243,9 @@ public class SpecificFragment extends Fragment {
         tempMinView.setText(tempMin);
         final ImageView pictureView = (ImageView) getActivity().findViewById(R.id.weather_specific_picture);
         pictureView.setImageBitmap(picture);    
+        
+        final TextView descriptionView = (TextView) getActivity().findViewById(R.id.weather_specific_description);
+        descriptionView.setText(description);
         
         final TextView humidityValueView = (TextView) getActivity().findViewById(R.id.weather_specific_humidity_value);
         humidityValueView.setText(humidityValue);

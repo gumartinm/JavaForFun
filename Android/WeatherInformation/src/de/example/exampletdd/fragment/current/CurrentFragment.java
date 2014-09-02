@@ -20,9 +20,13 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.widget.ListView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
@@ -35,7 +39,7 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.ServiceParser;
 
-public class CurrentFragment extends ListFragment {
+public class CurrentFragment extends Fragment {
     private static final String TAG = "CurrentFragment";
 
     @Override
@@ -44,11 +48,16 @@ public class CurrentFragment extends ListFragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+    
+    	// Inflate the layout for this fragment
+        return inflater.inflate(R.layout.weather_current_fragment, container, false);
+    }
+    
+    @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        final ListView listWeatherView = this.getListView();
-        listWeatherView.setChoiceMode(ListView.CHOICE_MODE_NONE);
 
         if (savedInstanceState != null) {
         	// Restore UI state
@@ -61,17 +70,7 @@ public class CurrentFragment extends ListFragment {
             			(WeatherInformationApplication) getActivity().getApplication();
                 application.setCurrent(current);
             }
-            
-            // TODO: Why don't I need mListState?
         }
-
-        // TODO: Why don't I need Adapter?
-        
-        this.setHasOptionsMenu(false);
-        // TODO: string static resource
-        this.setEmptyText("No data available");
-        this.setListShown(true);
-        this.setListShownNoAnimation(true);
     }
 
     @Override
@@ -156,14 +155,6 @@ public class CurrentFragment extends ListFragment {
 
         
         // 3. Prepare data for UI.
-        final int[] layouts = new int[3];
-        layouts[0] = R.layout.weather_current_data_entry_first;
-        layouts[1] = R.layout.weather_current_data_entry_second;
-        layouts[2] = R.layout.weather_current_data_entry_fifth;
-        final CurrentAdapter adapter = new CurrentAdapter(this.getActivity(),
-                layouts);
-
-
         String tempMax = "";
         if (current.getMain().getTemp_max() != null) {
             double conversion = (Double) current.getMain().getTemp_max();
@@ -187,18 +178,14 @@ public class CurrentFragment extends ListFragment {
             picture = BitmapFactory.decodeResource(this.getResources(),
                     R.drawable.weather_severe_alert);
         }
-        final CurrentDataEntryFirst entryFirst = new CurrentDataEntryFirst(tempMax,
-                tempMin, picture);
-        adapter.add(entryFirst);
 
+        // TODO: static resource
         String description = "no description available";
         if (current.getWeather().size() > 0) {
             description = current.getWeather().get(0).getDescription();
         }
-        final CurrentDataEntrySecond entrySecond = new CurrentDataEntrySecond(
-                description);
-        adapter.add(entrySecond);
 
+        // TODO: units!!!!
         String humidityValue = "";
         if ((current.getMain() != null)
                 && (current.getMain().getHumidity() != null)) {
@@ -253,15 +240,38 @@ public class CurrentFragment extends ListFragment {
             final Date unixDate = new Date(unixTime * 1000L);
             sunSetTime = dateFormat.format(unixDate);
         }
-        final CurrentDataEntryFifth entryFifth = new CurrentDataEntryFifth(
-                sunRiseTime, sunSetTime, humidityValue, pressureValue, windValue, rainValue,
-                feelsLike, symbol, snowValue, cloudsValue);
-        adapter.add(entryFifth);
 
 
         // 4. Update UI.
-        // TODO: Why am I not doing the same as in OverviewFragment?
-        this.setListAdapter(adapter);
+        final TextView tempMaxView = (TextView) getActivity().findViewById(R.id.weather_current_temp_max);
+        tempMaxView.setText(tempMax);
+        final TextView tempMinView = (TextView) getActivity().findViewById(R.id.weather_current_temp_min);
+        tempMinView.setText(tempMin);
+        final ImageView pictureView = (ImageView) getActivity().findViewById(R.id.weather_current_picture);
+        pictureView.setImageBitmap(picture);    
+        
+        final TextView descriptionView = (TextView) getActivity().findViewById(R.id.weather_specific_description);
+        descriptionView.setText(description);
+        
+        final TextView humidityValueView = (TextView) getActivity().findViewById(R.id.weather_current_humidity_value);
+        humidityValueView.setText(humidityValue);
+        final TextView pressureValueView = (TextView) getActivity().findViewById(R.id.weather_current_pressure_value);
+        pressureValueView.setText(pressureValue);
+        final TextView windValueView = (TextView) getActivity().findViewById(R.id.weather_current_wind_value);
+        windValueView.setText(windValue);
+        final TextView rainValueView = (TextView) getActivity().findViewById(R.id.weather_current_rain_value);
+        rainValueView.setText(rainValue);
+        final TextView cloudsValueView = (TextView) getActivity().findViewById(R.id.weather_current_clouds_value);
+        cloudsValueView.setText(cloudsValue);
+        final TextView snowValueView = (TextView) getActivity().findViewById(R.id.weather_current_snow_value);
+        snowValueView.setText(snowValue);
+        final TextView feelsLikeView = (TextView) getActivity().findViewById(R.id.weather_current_feelslike_value);
+        feelsLikeView.setText(feelsLike);
+        
+        final TextView sunRiseTimeView = (TextView) getActivity().findViewById(R.id.weather_current_sunrise_value);
+        sunRiseTimeView.setText(sunRiseTime);
+        final TextView sunSetTimeView = (TextView) getActivity().findViewById(R.id.weather_current_sunset_value);
+        sunSetTimeView.setText(sunSetTime);
     }
     
     private class CurrentTask extends AsyncTask<GeocodingData, Void, Current> {
