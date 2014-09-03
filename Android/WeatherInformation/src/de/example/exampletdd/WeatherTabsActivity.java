@@ -102,9 +102,9 @@ public class WeatherTabsActivity extends FragmentActivity {
             this.startActivity(intent);
             return true;
         } else if (itemId == R.id.weather_menu_map) {
-            intent = new Intent("de.example.exampletdd.WEATHERINFO")
-            .setComponent(new ComponentName("de.example.exampletdd",
-                    "de.example.exampletdd.WeatherInformationMapActivity"));
+            intent = new Intent("de.example.exampletdd.WEATHERINFO").
+            		setComponent(new ComponentName("de.example.exampletdd",
+            				"de.example.exampletdd.MapActivity"));
             this.startActivity(intent);
             return true;
         } else {
@@ -125,7 +125,7 @@ public class WeatherTabsActivity extends FragmentActivity {
         super.onResume();
 
         final ActionBar actionBar = this.getActionBar();
-
+        
         // TODO: retrive data from data base (like I do on WindowsPhone 8)
         // 1. Update title.
         final GeocodingData geocodingData = new GeocodingData.Builder().build();
@@ -134,6 +134,7 @@ public class WeatherTabsActivity extends FragmentActivity {
                     : geocodingData.getCity();
             final String country = (geocodingData.getCountry() == null) ? this.getString(R.string.country_not_found)
                     : geocodingData.getCountry();
+            // TODO: I18N and comma :/
             actionBar.setTitle(city + "," + country);	
         }
 

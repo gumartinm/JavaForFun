@@ -328,7 +328,8 @@ public class CurrentFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final Current current) {
-        	 
+        	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
+        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
         	if (current == null) {
         		// Nothing to do
         		// TODO: Should I show some error message? I am not doing it on WP8 Should I do it on WP8?

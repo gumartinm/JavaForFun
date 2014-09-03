@@ -75,7 +75,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.example.exampletdd.WeatherInformationMapActivity"
+            android:name="de.example.exampletdd.MapActivity"
             android:parentActivityName="de.example.exampletdd.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONMAP" />

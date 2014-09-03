@@ -24,8 +24,6 @@ public class SpecificActivity extends FragmentActivity {
     public void onResume() {
         super.onResume();
 
-        final ActionBar actionBar = this.getActionBar();
-
         // TODO: retrive data from data base (like I do on WindowsPhone 8)
         // 1. Update title.
         final GeocodingData geocodingData = new GeocodingData.Builder().build();
@@ -34,6 +32,8 @@ public class SpecificActivity extends FragmentActivity {
                     : geocodingData.getCity();
             final String country = (geocodingData.getCountry() == null) ? this.getString(R.string.country_not_found)
                     : geocodingData.getCountry();
+            final ActionBar actionBar = this.getActionBar();
+            // TODO: I18N and comma :/
             actionBar.setTitle(city + "," + country);	
         }
     }
