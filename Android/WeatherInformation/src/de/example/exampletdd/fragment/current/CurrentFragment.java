@@ -88,8 +88,6 @@ public class CurrentFragment extends Fragment {
         		(WeatherInformationApplication) getActivity().getApplication();
         final Current current = application.getCurrent();
 
-        // TODO: Why don't I need mListState?
-
         // TODO: Also check whether data is fresh (like I do on WindowsPhone 8) using data base
         if (current != null /* && dataIsFresh() */) {
             this.updateUI(current);
@@ -103,8 +101,6 @@ public class CurrentFragment extends Fragment {
             task.execute(geocodingData);
             // TODO: make sure UI thread keeps running in parallel after that. I guess.
         }
-        
-        // TODO: Overview is doing things with mListState... Why not here?
     }
 
     @Override
@@ -121,8 +117,6 @@ public class CurrentFragment extends Fragment {
             savedInstanceState.putSerializable("Current", current);
         }
 
-        // TODO: Why don't I need mListState?
-        
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -274,6 +268,10 @@ public class CurrentFragment extends Fragment {
         sunSetTimeView.setText(sunSetTime);
     }
     
+    // TODO: How could I show just one progress dialog when I have two fragments in tabs
+    //       activity doing the same in background?
+    //       I mean, if OverviewTask shows one progress dialog and CurrentTask does the same I will have
+    //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
     private class CurrentTask extends AsyncTask<GeocodingData, Void, Current> {
         final CustomHTTPClient weatherHTTPClient;
         final ServiceParser weatherService;

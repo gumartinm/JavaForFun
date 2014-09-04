@@ -256,6 +256,10 @@ public class OverviewFragment extends ListFragment {
     }
 
 
+    // TODO: How could I show just one progress dialog when I have two fragments in tabs
+    //       activity doing the same in background?
+    //       I mean, if OverviewTask shows one progress dialog and CurrentTask does the same I will have
+    //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
     private class OverviewTask extends AsyncTask<GeocodingData, Void, Forecast> {
         final CustomHTTPClient weatherHTTPClient;
         final ServiceParser weatherService;
