@@ -42,18 +42,7 @@
         android:theme="@style/AppTheme"
         android:name="de.example.exampletdd.WeatherInformationApplication"
         android:supportsRtl="false">
-        <!--
-        <activity
-            android:name="de.example.exampletdd.WeatherInformationActivity"
-            android:hardwareAccelerated="false"
-            android:uiOptions="splitActionBarWhenNarrow" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        -->
         <activity
             android:name="de.example.exampletdd.WeatherTabsActivity"
             android:hardwareAccelerated="false"
