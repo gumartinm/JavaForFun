@@ -9,7 +9,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
+import android.content.IntentSender.SendIntentException;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,9 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -42,44 +45,49 @@ import de.example.exampletdd.model.WeatherLocation;
 import de.example.exampletdd.model.WeatherLocationDbHelper;
 import de.example.exampletdd.model.WeatherLocationDbQueries;
 
-/**
- * {@link http://developer.android.com/training/location/retrieve-current.html}
- *
- */
 public class MapActivity extends FragmentActivity implements
-							GooglePlayServicesClient.ConnectionCallbacks,
-							GooglePlayServicesClient.OnConnectionFailedListener {
+									GoogleApiClient.ConnectionCallbacks,
+									GoogleApiClient.OnConnectionFailedListener,
+									LocationListener {
 	private static final String TAG = "MapActivity";
-	private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+	// Request code to use when launching the resolution activity
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
     private WeatherLocation mRestoreUI;
        
     // Google Play Services Map
     private GoogleMap mMap;
-    // TODO: read and store from different threads
+    // TODO: read and store from different threads? Hopefully always from UI thread.
     private Marker mMarker;
     
     // Google Play Services Location
-    // Stores the current instantiation of the location client in this object
-    private LocationClient mLocationClient;
+    private GoogleApiClient mGoogleApiClient;
+    // Boolean to track whether the app is already resolving an error
+    // TODO: Store/read from UI thread?
+    private boolean mResolvingError;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.weather_map);
         
+        // Google Play Services
+        // Restore resolving error (for example if user rotates the screen)
+        // It must be done (I guess) before onRestoreInstanceState because its value
+        // is used by onStart method.
+        if (savedInstanceState != null) {
+        	mResolvingError = savedInstanceState.getBoolean("mResolvingError", false);
+        }
+        
         // Google Play Services Location
-        /*
-         * Create a new location client, using the enclosing class to
-         * handle callbacks.
-         */
-        mLocationClient = new LocationClient(this, this, this);
-        
-        
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+								.addApi(LocationServices.API)
+								.addConnectionCallbacks(this)
+								.addOnConnectionFailedListener(this)
+								.build();  
         
         // Google Play Services Map
         final MapFragment mapFragment = (MapFragment) this.getFragmentManager()
                 .findFragmentById(R.id.map);
-
         this.mMap = mapFragment.getMap();
         this.mMap.setMyLocationEnabled(false);
         this.mMap.getUiSettings().setCompassEnabled(false);
@@ -141,6 +149,12 @@ public class MapActivity extends FragmentActivity implements
             		build();
             savedInstanceState.putSerializable("WeatherLocation", location);
         }
+    	    	
+    	// Google Play Services
+    	// To keep track of the boolean across activity restarts (such as when
+    	// the user rotates the screen), save the boolean in the activity's saved
+    	// instance data using onSaveInstanceState():
+    	savedInstanceState.putBoolean("mResolvingError", this.mResolvingError);
         
     	super.onSaveInstanceState(savedInstanceState);
     }
@@ -150,23 +164,17 @@ public class MapActivity extends FragmentActivity implements
     }
     
     public void onClickGetLocation(final View v) {
+    	// TODO: Somehow I should show a progress dialog.
         // If Google Play Services is available
         if (servicesConnected()) {
 
-        	if (mLocationClient.isConnected()) {
-        		// Get the current location
-        		// TODO: DO NOT USE IT!!! http://stackoverflow.com/questions/17265722/locationclient-does-not-update-getlastlocation-on-emulator
-        		// USE THIS INSTEAD: http://developer.android.com/reference/com/google/android/gms/location/LocationClient.html#requestLocationUpdates(com.google.android.gms.location.LocationRequest, com.google.android.gms.location.LocationListener)
-        		final Location currentLocation = mLocationClient.getLastLocation();
-
-        		if (currentLocation != null) {
-        			// Display the current location in the UI
-        			this.getAddressAndUpdateUI(currentLocation.getLatitude(), currentLocation.getLongitude());
-        		} else {
-        			// Location is not available
-        			// TODO: string resource
-        			Toast.makeText(this, "Location is not available.", Toast.LENGTH_LONG).show();
-        		}
+        	if (this.mGoogleApiClient.isConnected()) {
+        		// TODO: Hopefully there will be results even if location did not change...
+        		final LocationRequest locationRequest = LocationRequest.create();
+            	locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            	locationRequest.setInterval(1000);
+        		final FusedLocationProviderApi fusedLocationApi = LocationServices.FusedLocationApi;
+        		fusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
         	} else {
         		// TODO: string resource
         		Toast.makeText(this, "You are not yet connected to Google Play Services.", Toast.LENGTH_LONG).show();
@@ -275,10 +283,10 @@ public class MapActivity extends FragmentActivity implements
             	}	
             }
 
-            return new WeatherLocation.Builder().
-            		setLatitude(latitude).setLongitude(longitude).
-            		setCity(city).setCountry(country).
-            		build();
+            return new WeatherLocation.Builder()
+            		.setLatitude(latitude).setLongitude(longitude)
+            		.setCity(city).setCountry(country)
+            		.build();
         }
 
     }
@@ -299,7 +307,11 @@ public class MapActivity extends FragmentActivity implements
     	
     }
     
-    /************************     Google Play Services     ************************/
+    /*****************************************************************************************************
+     * 
+     * 									Google Play Services 
+     * 
+     * ***************************************************************************************************/
     
     /**
      * Getting the address of the current location, using reverse geocoding only works if
@@ -310,27 +322,24 @@ public class MapActivity extends FragmentActivity implements
 
         // In Gingerbread and later, use Geocoder.isPresent() to see if a geocoder is available.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Geocoder.isPresent()) {
-            if (servicesConnected()) {
-
-                // Start the background task
-                final GetAddressTask geocoderAsyncTask = new GetAddressTask(this);
-                geocoderAsyncTask.execute(latitude, longitude);
-            }
+        	// Start the background task
+        	final GetAddressTask geocoderAsyncTask = new GetAddressTask(this);
+        	geocoderAsyncTask.execute(latitude, longitude);
         } else {
         	// No geocoder is present. Issue an error message.
         	// TODO: string resource
             Toast.makeText(this, "Cannot get address. No geocoder available.", Toast.LENGTH_LONG).show();
-        }    
-          
-        // Default values
-        final String city = this.getString(R.string.city_not_found);
-        final String country = this.getString(R.string.country_not_found); 
-        final WeatherLocation weatherLocation = new WeatherLocation.Builder().
-        		setLatitude(latitude).setLongitude(longitude).
-        		setCity(city).setCountry(country).
-        		build();
-        
-        updateUI(weatherLocation);
+            
+            // Default values
+            final String city = this.getString(R.string.city_not_found);
+            final String country = this.getString(R.string.country_not_found); 
+            final WeatherLocation weatherLocation = new WeatherLocation.Builder().
+            		setLatitude(latitude).setLongitude(longitude).
+            		setCity(city).setCountry(country).
+            		build();
+            
+            updateUI(weatherLocation);
+        }
     }
     
     /**
@@ -355,7 +364,7 @@ public class MapActivity extends FragmentActivity implements
             // Display an error dialog
             final Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode, this, 0);
             if (dialog != null) {
-                final GPlayServicesErrorDialogFragment errorFragment = new GPlayServicesErrorDialogFragment();
+                final GPlayServicesErrorDialogFragment errorFragment = new GPlayServicesErrorDialogFragment(this);
                 errorFragment.setDialog(dialog);
                 errorFragment.show(getSupportFragmentManager(), TAG);
             }
@@ -363,7 +372,14 @@ public class MapActivity extends FragmentActivity implements
         }
     }
     
-    /************************     Google Play Services Location     ************************/
+    /*****************************************************************************************************
+     * 
+     * 										Google Play Services 
+     * 
+     * 								GoogleApiClient.ConnectionCallbacks
+     * 								GoogleApiClient.OnConnectionFailedListener
+     * 
+     * ***************************************************************************************************/
     
     /*
      * Called when the Activity is started/restarted, even before it becomes visible.
@@ -376,7 +392,9 @@ public class MapActivity extends FragmentActivity implements
          * Connect the client. Don't re-start any requests here;
          * instead, wait for onResume()
          */
-        mLocationClient.connect();
+        if (!mResolvingError) {
+            mGoogleApiClient.connect();
+        }
     }
     
     /*
@@ -388,9 +406,18 @@ public class MapActivity extends FragmentActivity implements
 
         // Disconnecting the client invalidates it.
         // After disconnect() is called, the client is considered "dead".
-        mLocationClient.disconnect();
+        mGoogleApiClient.disconnect();
 
         super.onStop();
+    }
+    
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection has been interrupted.
+        // Disable any UI components that depend on Google APIs
+        // until onConnected() is called.
+    	
+    	// TODO: What to do here? The same as onDisconnected?
     }
     
 	@Override
@@ -400,43 +427,43 @@ public class MapActivity extends FragmentActivity implements
 		Toast.makeText(this, "Connected to Google Play Services.", Toast.LENGTH_SHORT).show();
 	}
 
-	@Override
-	public void onDisconnected() {
-		// TODO: What should the user do in this case? Perhaps this method is called after onStop() by mLocationClient.disconnect()
-		// TODO: string resource
-		Toast.makeText(this, "Client disconnected from Google Play Services.", Toast.LENGTH_SHORT).show();
-	}
-
     /*
      * Called by Location Services if the attempt to
      * Location Services fails.
      */
 	@Override
-	public void onConnectionFailed(final ConnectionResult connectionResult) {
+	public void onConnectionFailed(final ConnectionResult result) {
+		// TODO: Hopefully being called from UI see onDialogDismissed for concerns...
         /*
          * Google Play services can resolve some errors it detects.
          * If the error has a resolution, try sending an Intent to
          * start a Google Play services activity that can resolve
          * error.
          */
-        if (connectionResult.hasResolution()) {
+		if (mResolvingError) {
+            // Already attempting to resolve an error.
+            return;
+        } else if (result.hasResolution()) {
+        	mResolvingError = true;
             try {
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(
-                        this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                result.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
                 /*
                  * Thrown if Google Play services canceled the original
                  * PendingIntent
                  */
-            } catch (final IntentSender.SendIntentException e) {
-                // Log the error
+            } catch (final SendIntentException e) {
+            	// There was an error with the resolution intent. Try again.
+                mGoogleApiClient.connect();
             }
         } else {
+        	// Show dialog using GooglePlayServicesUtil.getErrorDialog()
             /*
              * If no resolution is available, display a dialog to the
              * user with the error.
              */
-            showErrorDialog(connectionResult.getErrorCode());
+            showErrorDialog(result.getErrorCode());
+            mResolvingError = true;
         }
 	}
 
@@ -454,27 +481,32 @@ public class MapActivity extends FragmentActivity implements
         switch (requestCode) {
 
             // If the request code matches the code sent in onConnectionFailed
-            case CONNECTION_FAILURE_RESOLUTION_REQUEST :
+            case REQUEST_RESOLVE_ERROR :
+            	mResolvingError = false;
             	switch (resultCode) {
-            	// If Google Play services resolved the problem
-            	case Activity.RESULT_OK:
-            		// Log the result
-            		Log.d(TAG, "Error resolved. Please re-try operation");
+            		// If Google Play services resolved the problem
+            		case Activity.RESULT_OK:
+            			// Log the result
+            			Log.d(TAG, "Error resolved. Please re-try operation");
             		
-            		// TODO: Should I call mLocationClient.connect() ? I GUESS SO!!!!
-            		// TODO: Display the result
-                    //mConnectionState.setText("Client connected");
-                    //mConnectionStatus.setText("Error resolved. Please re-try operation.");
-            		break;		
-            	// If any other result was returned by Google Play services
-            	default:
-            		// Log the result
-            		Log.d(TAG, "Google Play services: unable to resolve connection error.");
+            			// Make sure the app is not already connected or attempting to connect
+                        if (!mGoogleApiClient.isConnecting() && !mGoogleApiClient.isConnected()) {
+                            mGoogleApiClient.connect();
+                        }
+            			
+            			// TODO: Display the result?
+            			//mConnectionState.setText("Client connected");
+            			//mConnectionStatus.setText("Error resolved. Please re-try operation.");
+            			break;		
+            			// If any other result was returned by Google Play services
+            		default:
+            			// Log the result
+            			Log.d(TAG, "Google Play services: unable to resolve connection error.");
 
-                    // TODO: Display the result
-                    //mConnectionState.setText("Client disconnected";
-                    //mConnectionStatus.setText("Google Play services: unable to resolve connection error.");
-                    break;
+            			// TODO: Display the result?
+            			//mConnectionState.setText("Client disconnected";
+            			//mConnectionStatus.setText("Google Play services: unable to resolve connection error.");
+            			break;
                 }
             // If any other request code was received
             default:
@@ -489,19 +521,46 @@ public class MapActivity extends FragmentActivity implements
 
         // Get the error dialog from Google Play services
         final Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-            errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            errorCode, this, REQUEST_RESOLVE_ERROR);
 
         // If Google Play services can provide an error dialog
         if (errorDialog != null) {
 
             // Create a new DialogFragment in which to show the error dialog
-            final GPlayServicesErrorDialogFragment GPSErrorFragment = new GPlayServicesErrorDialogFragment();
+            final GPlayServicesErrorDialogFragment GPSErrorFragment = new GPlayServicesErrorDialogFragment(this);
 
             // Set the dialog in the DialogFragment
             GPSErrorFragment.setDialog(errorDialog);
 
             // Show the error dialog in the DialogFragment
-            GPSErrorFragment.show(this.getSupportFragmentManager(), TAG);
+            GPSErrorFragment.show(this.getSupportFragmentManager(), "GPlayServicesErrorDialog");
         }
     }
+    
+    /* Called from GPlayServicesErrorDialogFragment when the dialog is dismissed. */
+    public void onDialogDismissed() {
+        mResolvingError = false;
+    }
+    
+    /*****************************************************************************************************
+     *
+     * 							Google Play Services LocationListener
+     *
+     *****************************************************************************************************/
+	@Override
+	public void onLocationChanged(final Location location) {
+		// It was called from onClickGetLocation (UI thread) This method will run in the same thread (the UI thread)
+		// so, I do no think there should be any problem.
+
+		if (mGoogleApiClient.isConnected()) {
+			final FusedLocationProviderApi fusedLocationApi = LocationServices.FusedLocationApi;
+			// TODO: if user clicks many times onClickGetLocation I may not assure how many times
+			// onLocationChanged will be called. Is it a problem? AFAIK it isn't.
+			fusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+		}
+
+		// Display the current location in the UI
+		// TODO: May location not be null?
+		this.getAddressAndUpdateUI(location.getLatitude(), location.getLongitude());
+	}
 }

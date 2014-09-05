@@ -1,6 +1,9 @@
 package de.example.exampletdd.gms;
 
+import de.example.exampletdd.MapActivity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -9,14 +12,15 @@ import android.support.v4.app.DialogFragment;
  * showErrorDialog.
  */
 public class GPlayServicesErrorDialogFragment extends DialogFragment {
-
+	private final Context localContext;
     // Global field to contain the error dialog
     private Dialog mDialog;
 
     /**
      * Default constructor. Sets the dialog field to null
      */
-    public GPlayServicesErrorDialogFragment() {
+    public GPlayServicesErrorDialogFragment(final Context context) {
+    	this.localContext = context;
         mDialog = null;
     }
 
@@ -35,5 +39,12 @@ public class GPlayServicesErrorDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         return mDialog;
+    }
+    
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+    	// TODO: Hopefully being called from UI see onConnectionFailed for concerns...
+    	final MapActivity activity = (MapActivity) this.localContext;
+    	activity.onDialogDismissed();
     }
 }
