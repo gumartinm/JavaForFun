@@ -20,6 +20,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -167,7 +168,6 @@ public class MapActivity extends FragmentActivity implements
     	// TODO: Somehow I should show a progress dialog.
         // If Google Play Services is available
         if (servicesConnected()) {
-
         	if (this.mGoogleApiClient.isConnected()) {
         		// TODO: Hopefully there will be results even if location did not change...
         		final LocationRequest locationRequest = LocationRequest.create();
@@ -381,7 +381,7 @@ public class MapActivity extends FragmentActivity implements
      * 
      * ***************************************************************************************************/
     
-    /*
+    /**
      * Called when the Activity is started/restarted, even before it becomes visible.
      */
     @Override
@@ -397,7 +397,7 @@ public class MapActivity extends FragmentActivity implements
         }
     }
     
-    /*
+    /**
      * Called when the Activity is no longer visible at all.
      * Disconnect.
      */
@@ -412,22 +412,43 @@ public class MapActivity extends FragmentActivity implements
     }
     
     @Override
-    public void onConnectionSuspended(int cause) {
+    public void onConnectionSuspended(final int cause) {
         // The connection has been interrupted.
         // Disable any UI components that depend on Google APIs
         // until onConnected() is called.
     	
-    	// TODO: What to do here? The same as onDisconnected?
+    	// TODO: check out if this really works...
+    	
+    	final Button getLocationButton = (Button) this.findViewById(R.id.weather_map_button_getlocation);
+    	getLocationButton.setEnabled(false);
+    	
+    	String stringCause;
+    	switch(cause) {
+    		case GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST:
+    			// TODO: string resource
+    			stringCause = "Lost network.";
+    			break;
+    		case GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED:
+    			// TODO: string resource
+    			stringCause = "Disconnected service.";
+    			break;
+    		default:
+    			stringCause = "";
+    			break;		
+    	}
+    	// TODO: string resource
+    	Toast.makeText(this, "No connection to Google Play Services. " + stringCause, Toast.LENGTH_LONG).show();
     }
     
 	@Override
 	public void onConnected(final Bundle bundle) {
-		// TODO: Why should some user care about this? Could I skip this message?
+		final Button getLocationButton = (Button) this.findViewById(R.id.weather_map_button_getlocation);
+    	getLocationButton.setEnabled(true);
 		// TODO: string resource
 		Toast.makeText(this, "Connected to Google Play Services.", Toast.LENGTH_SHORT).show();
 	}
 
-    /*
+    /**
      * Called by Location Services if the attempt to
      * Location Services fails.
      */
@@ -467,7 +488,7 @@ public class MapActivity extends FragmentActivity implements
         }
 	}
 
-    /*
+    /**
      * Handle results returned to this Activity by other Activities started with
      * startActivityForResult(). In particular, the method onConnectionFailed() in
      * LocationUpdateRemover and LocationUpdateRequester may call startResolutionForResult() to

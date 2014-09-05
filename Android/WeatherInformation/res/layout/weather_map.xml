@@ -66,6 +66,7 @@
         android:layout_toEndOf="@+id/weather_map_aux"
         android:onClick="onClickGetLocation"
         android:textAlignment="center"
+        android:enabled="false"
         android:text="@string/weather_map_button_getlocation" />
 
 </RelativeLayout>
