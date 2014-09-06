@@ -17,7 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import de.example.exampletdd.fragment.current.CurrentFragment;
 import de.example.exampletdd.fragment.overview.OverviewFragment;
-import de.example.exampletdd.model.GeocodingData;
+import de.example.exampletdd.model.DatabaseQueries;
+import de.example.exampletdd.model.WeatherLocation;
 
 public class WeatherTabsActivity extends FragmentActivity {
     private static final int NUM_ITEMS = 2;
@@ -126,16 +127,12 @@ public class WeatherTabsActivity extends FragmentActivity {
 
         final ActionBar actionBar = this.getActionBar();
         
-        // TODO: retrive data from data base (like I do on WindowsPhone 8)
         // 1. Update title.
-        final GeocodingData geocodingData = new GeocodingData.Builder().build();
-        if (geocodingData != null) {
-        	final String city = (geocodingData.getCity() == null) ? this.getString(R.string.city_not_found)
-                    : geocodingData.getCity();
-            final String country = (geocodingData.getCountry() == null) ? this.getString(R.string.country_not_found)
-                    : geocodingData.getCountry();
+        final DatabaseQueries query = new DatabaseQueries(this);
+        final WeatherLocation weatherLocation = query.queryDataBase();
+        if (weatherLocation != null) {
             // TODO: I18N and comma :/
-            actionBar.setTitle(city + "," + country);	
+            actionBar.setTitle(weatherLocation.getCity() + "," + weatherLocation.getCountry());	
         }
 
         // 2. Update forecast tab text.
@@ -156,10 +153,6 @@ public class WeatherTabsActivity extends FragmentActivity {
 
     @Override
     public void onSaveInstanceState(final Bundle savedInstanceState) {
-        final WeatherInformationApplication application = (WeatherInformationApplication) this
-                .getApplication();
-        savedInstanceState.putSerializable("GEOCODINGDATA", application.getGeocodingData());
-
         super.onSaveInstanceState(savedInstanceState);
     }
 

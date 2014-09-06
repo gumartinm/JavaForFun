@@ -18,17 +18,17 @@ import android.util.Log;
 import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.httpclient.CustomHTTPClient;
-import de.example.exampletdd.model.GeocodingData;
+import de.example.exampletdd.model.WeatherLocation;
+import de.example.exampletdd.model.WeatherLocationDbHelper;
+import de.example.exampletdd.model.WeatherLocationDbQueries;
 import de.example.exampletdd.model.currentweather.Current;
 import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.ServiceParser;
-import de.example.exampletdd.service.ServicePersistenceStorage;
 
 public class WeatherInformationBatch extends IntentService {
     private static final String TAG = "WeatherInformationBatch";
     private static final String resultsNumber = "14";
-    private ServicePersistenceStorage mWeatherServicePersistenceFile;
 
 
     public WeatherInformationBatch() {
@@ -38,7 +38,6 @@ public class WeatherInformationBatch extends IntentService {
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         Log.i(TAG, "WeatherInformationBatch onStartCommand");
-        this.mWeatherServicePersistenceFile = new ServicePersistenceStorage(this);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -46,19 +45,18 @@ public class WeatherInformationBatch extends IntentService {
     @Override
     protected void onHandleIntent(final Intent intent) {
 
-        final GeocodingData geocodingData = this.mWeatherServicePersistenceFile.getGeocodingData();
         Log.i(TAG, "WeatherInformationBatch onHandleIntent");
 
-        if (geocodingData != null) {
+        final WeatherLocation weatherLocation = this.queryDataBase();
+        if (weatherLocation != null) {
             Log.i(TAG, "WeatherInformationBatch onHandleIntent, geocodingData not null");
             final ServiceParser weatherService = new ServiceParser(new JPOSWeatherParser());
             final CustomHTTPClient weatherHTTPClient = new CustomHTTPClient(
                     AndroidHttpClient.newInstance("Android Weather Information Agent"));
 
             try {
-                final WeatherData weatherData = this.doInBackgroundThrowable(geocodingData,
-                        weatherHTTPClient, weatherService);
-                this.onPostExecuteThrowable(weatherData);
+                this.doInBackgroundThrowable(weatherLocation,weatherHTTPClient, weatherService);
+                this.onPostExecuteThrowable();
             } catch (final JsonParseException e) {
                 Log.e(TAG, "doInBackground exception: ", e);
             } catch (final ClientProtocolException e) {
@@ -76,7 +74,7 @@ public class WeatherInformationBatch extends IntentService {
         }
     }
 
-    private WeatherData doInBackgroundThrowable(final GeocodingData geocodingData,
+    private void doInBackgroundThrowable(final WeatherLocation weatherLocation,
             final CustomHTTPClient weatherHTTPClient, final ServiceParser weatherService)
                     throws ClientProtocolException, MalformedURLException, URISyntaxException,
                     JsonParseException, IOException {
@@ -88,7 +86,7 @@ public class WeatherInformationBatch extends IntentService {
         String urlAPI = WeatherInformationBatch.this.getResources().getString(
                 R.string.uri_api_weather_today);
         String url = weatherService.createURIAPICurrent(urlAPI, APIVersion,
-                geocodingData.getLatitude(), geocodingData.getLongitude());
+        		weatherLocation.getLatitude(), weatherLocation.getLongitude());
         String jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
         final Current currentWeatherData = weatherService
                 .retrieveCurrentFromJPOS(jsonData);
@@ -99,21 +97,14 @@ public class WeatherInformationBatch extends IntentService {
         urlAPI = WeatherInformationBatch.this.getResources().getString(
                 R.string.uri_api_weather_forecast);
         url = weatherService.createURIAPIForecast(urlAPI, APIVersion,
-                geocodingData.getLatitude(), geocodingData.getLongitude(), resultsNumber);
+        		weatherLocation.getLatitude(), weatherLocation.getLongitude(), resultsNumber);
         jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
         final Forecast forecastWeatherData = weatherService
                 .retrieveForecastFromJPOS(jsonData);
-
-        return new WeatherData(forecastWeatherData, currentWeatherData);
     }
 
-    private void onPostExecuteThrowable(final WeatherData weatherData)
+    private void onPostExecuteThrowable()
             throws FileNotFoundException, IOException {
-
-        WeatherInformationBatch.this.mWeatherServicePersistenceFile
-        .storeCurrentWeatherData(weatherData.getCurrentWeatherData());
-        WeatherInformationBatch.this.mWeatherServicePersistenceFile
-        .storeForecastWeatherData(weatherData.getForecastWeatherData());
 
         // Update weather views.
         final Intent updateCurrentWeather = new Intent(
@@ -126,23 +117,16 @@ public class WeatherInformationBatch extends IntentService {
                 updateOverviewWeather);
 
     }
-
-    private class WeatherData {
-        private final Forecast mForecastWeatherData;
-        private final Current mCurrentWeatherData;
-
-        public WeatherData(final Forecast mForecastWeatherData,
-                final Current mCurrentWeatherData) {
-            this.mForecastWeatherData = mForecastWeatherData;
-            this.mCurrentWeatherData = mCurrentWeatherData;
-        }
-
-        public Forecast getForecastWeatherData() {
-            return this.mForecastWeatherData;
-        }
-
-        public Current getCurrentWeatherData() {
-            return this.mCurrentWeatherData;
-        }
+    
+    private WeatherLocation queryDataBase() {
+        
+    	// TODO: repeating the same code!!!
+        final WeatherLocationDbHelper dbHelper = new WeatherLocationDbHelper(this);
+        try {
+        	final WeatherLocationDbQueries queryDb = new WeatherLocationDbQueries(dbHelper); 	
+        	return queryDb.queryDataBase();
+        } finally {
+        	dbHelper.close();
+        } 
     }
 }

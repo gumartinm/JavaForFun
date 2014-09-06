@@ -1,6 +1,9 @@
 package de.example.exampletdd.model;
 
-import android.content.Context;
+import java.util.Calendar;
+import java.util.Date;
+
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,7 +20,7 @@ public class WeatherLocationDbQueries {
 		this.mDbHelper = dbHelper;
 	}
 	
-	public WeatherLocation queryDataBase(final Context context) {
+	public WeatherLocation queryDataBase() {
         final String selection = WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_SELECTED + " = ?";
         final String[] selectionArgs = { "1" };
         final String[] projection = {
@@ -36,19 +39,46 @@ public class WeatherLocationDbQueries {
 
         	@Override
         	public WeatherLocation doQuery(final Cursor cursor) {
-        		String city = cursor.getString(cursor.
+        		final Calendar calendar = Calendar.getInstance();
+        		
+        		final int id = cursor.getInt(cursor.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation._ID));
+        		final String city = cursor.getString(cursor.
         				getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_CITY));
-        		String country = cursor.getString(cursor.
+        		final String country = cursor.getString(cursor.
         				getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_COUNTRY));
-        		double latitude = cursor.getDouble(cursor.
+        		final boolean isSelected = (cursor.getInt(cursor
+        				.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_SELECTED)) == 0) ? false : true;	
+        		Date lastCurrentUIUpdate = null;
+        		if (!cursor.isNull(cursor
+        				.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_CURRENT_UI_UPDATE))) {
+            		final int UNIXTime = cursor.getInt(cursor
+            				.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_CURRENT_UI_UPDATE));
+            		calendar.setTimeInMillis((long)UNIXTime * 1000L);
+            		lastCurrentUIUpdate = calendar.getTime();
+        		}
+        		Date lasForecastUIUpdate = null;
+        		if (!cursor.isNull(cursor
+        				.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_FORECAST_UI_UPDATE))) {
+            		final int UNIXTime = cursor.getInt(cursor
+            				.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_FORECAST_UI_UPDATE));
+            		calendar.setTimeInMillis((long)UNIXTime * 1000L);
+            		lastCurrentUIUpdate = calendar.getTime();
+        		}
+        		final double latitude = cursor.getDouble(cursor.
         				getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE));
-        		double longitude = cursor.getDouble(cursor.
+        		final double longitude = cursor.getDouble(cursor.
         				getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE));
+        		
 	        	
-        		return new WeatherLocation.Builder().
-        				setCity(city).setCountry(country).
-        				setLatitude(latitude).setLongitude(longitude).
-        				build();
+        		return new WeatherLocation()
+        				.setId(id)
+        				.setCity(city)
+        				.setCountry(country)
+        				.setIsSelected(isSelected)
+        				.setLastCurrentUIUpdate(lastCurrentUIUpdate)
+        				.setLastForecastUIUpdate(lasForecastUIUpdate)
+        				.setLatitude(latitude)
+        				.setLongitude(longitude);
         	}
         };
 
@@ -56,7 +86,45 @@ public class WeatherLocationDbQueries {
         		WeatherLocationContract.WeatherLocation.TABLE_NAME, projection,
         		selectionArgs, selection, doQuery);
     }
-    
+	
+	public long insertIntoDataBase(final WeatherLocation weatherLocation) {
+		// Create a new map of values, where column names are the keys
+		final ContentValues values = new ContentValues();
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_CITY, weatherLocation.getCity());
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_COUNTRY, weatherLocation.getCountry());
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_SELECTED, weatherLocation.getIsSelected());
+		Date javaTime = weatherLocation.getLastCurrentUIUpdate();
+		if (javaTime != null) {
+			final int UNIXTime = (int) javaTime.getTime() / 1000;
+			values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_CURRENT_UI_UPDATE, UNIXTime);
+		}
+		javaTime = weatherLocation.getLastForecastUIUpdate();
+		if (javaTime != null) {
+			final int UNIXTime = (int) javaTime.getTime() / 1000;
+			values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_FORECAST_UI_UPDATE, UNIXTime);
+		}
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE, weatherLocation.getLatitude());
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE, weatherLocation.getLongitude());
+		
+		return this.insertIntoDataBase(WeatherLocationContract.WeatherLocation.TABLE_NAME, values);
+	}
+	
+	public void updateDataBase(final WeatherLocation weatherLocation) {
+		final String selection = WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_SELECTED + " = ?";
+        final String[] selectionArgs = { "1" };
+		// Create a new map of values, where column names are the keys
+		final ContentValues values = new ContentValues();
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_CITY, weatherLocation.getCity());
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_COUNTRY, weatherLocation.getCountry());
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_SELECTED, weatherLocation.getIsSelected());
+		values.putNull(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_CURRENT_UI_UPDATE);
+		values.putNull(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_FORECAST_UI_UPDATE);
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE, weatherLocation.getLatitude());
+		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE, weatherLocation.getLongitude());
+		
+		this.updateDataBase(WeatherLocationContract.WeatherLocation.TABLE_NAME, selectionArgs, selection, values);
+	}
+	
 	// TODO: May I perform another query after this method (after closing almost everything but mDbHelper)
 	private WeatherLocation queryDataBase(final String table,
 			final String[] projection, final String[] selectionArgs,
@@ -75,6 +143,27 @@ public class WeatherLocationDbQueries {
         	} finally {
         		cursor.close();
         	}
+        } finally {
+        	db.close();
+        }
+    }
+	
+	// TODO: May I perform another query after this method (after closing almost everything but mDbHelper)
+	private long insertIntoDataBase(final String table, final ContentValues values) {
+        final SQLiteDatabase db = this.mDbHelper.getWritableDatabase();
+        try {
+        	return db.insert(table, null, values);
+        } finally {
+        	db.close();
+        }
+    }
+	
+	// TODO: May I perform another query after this method (after closing almost everything but mDbHelper)
+	private long updateDataBase(final String table, final String[] selectionArgs,
+			final String selection, final ContentValues values) {
+        final SQLiteDatabase db = this.mDbHelper.getReadableDatabase();
+        try {
+        	return db.update(table, values, selection, selectionArgs);
         } finally {
         	db.close();
         }

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -30,22 +29,7 @@ public class SpecificFragment extends Fragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-    
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-    
-    	// Inflate the layout for this fragment
-        return inflater.inflate(R.layout.weather_specific_fragment, container, false);
-    }
-
-    @Override
-    public void onConfigurationChanged(final Configuration newConfig) {
-    	// I could do the same in onCreate because I allow rotations.
-    	// see: http://stackoverflow.com/a/11286961
-    	// Anyhow I wanted to try this way just for fun.
-    	
+        
         final Bundle extras = this.getActivity().getIntent().getExtras();
 
         if (extras != null) {
@@ -56,6 +40,14 @@ public class SpecificFragment extends Fragment {
         	// Always 0 when tablet layout (by default shows the first day)
             this.mChosenDay = 0;
         }
+    }
+    
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+    
+    	// Inflate the layout for this fragment
+        return inflater.inflate(R.layout.weather_specific_fragment, container, false);
     }
     
     @Override
@@ -74,7 +66,7 @@ public class SpecificFragment extends Fragment {
                 application.setForecast(forecast);
             }
 
-            this.mChosenDay = savedInstanceState.getInt("Chosen day");
+            this.mChosenDay = savedInstanceState.getInt("mChosenDay");
         }
     }
 
@@ -92,9 +84,7 @@ public class SpecificFragment extends Fragment {
             savedInstanceState.putSerializable("Forecast", forecast);
         }
 
-        savedInstanceState.putInt("Chosend day", this.mChosenDay);
-        
-        // TODO: Why don't I need mListState?
+        savedInstanceState.putInt("mChosenDay", this.mChosenDay);
 
         super.onSaveInstanceState(savedInstanceState);
     }

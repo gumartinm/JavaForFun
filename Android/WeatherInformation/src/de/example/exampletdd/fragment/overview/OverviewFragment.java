@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +37,8 @@ import de.example.exampletdd.R;
 import de.example.exampletdd.WeatherInformationApplication;
 import de.example.exampletdd.fragment.specific.SpecificFragment;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
-import de.example.exampletdd.model.GeocodingData;
+import de.example.exampletdd.model.DatabaseQueries;
+import de.example.exampletdd.model.WeatherLocation;
 import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
@@ -90,9 +92,9 @@ public class OverviewFragment extends ListFragment {
     public void onResume() {
         super.onResume();
 
-        // TODO: retrive data from data base (like I do on WindowsPhone 8)
-        final GeocodingData geocodingData = new GeocodingData.Builder().build();
-        if (geocodingData == null) {
+        final DatabaseQueries query = new DatabaseQueries(this.getActivity());
+        final WeatherLocation weatherLocation = query.queryDataBase();
+        if (weatherLocation == null) {
             // Nothing to do.
             return;
         }
@@ -101,17 +103,17 @@ public class OverviewFragment extends ListFragment {
         		(WeatherInformationApplication) getActivity().getApplication();
         final Forecast forecast = application.getForecast();
 
-        // TODO: Also check whether data is fresh (like I do on WindowsPhone 8) using data base
-        if (forecast != null /* && dataIsFresh() */) {
+        if (forecast != null && this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
             this.updateUI(forecast);
         } else {
             // Load remote data (aynchronous)
             // Gets the data from the web.
             final OverviewTask task = new OverviewTask(
+            		this,
                     new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
                     new ServiceParser(new JPOSWeatherParser()));
 
-            task.execute(geocodingData);
+            task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());
             // TODO: make sure thread UI keeps running in parallel after that. I guess.
         }
 
@@ -255,27 +257,46 @@ public class OverviewFragment extends ListFragment {
         this.setListAdapter(adapter);
     }
 
+    private boolean isDataFresh(final Date lastUpdate) {
+    	if (lastUpdate == null) {
+    		return false;
+    	}
+    	
+    	final Calendar calendar = Calendar.getInstance();
+    	final Date currentTime = calendar.getTime();
+    	if (((currentTime.getTime() - lastUpdate.getTime()) / 1000) < 30) {
+    		return true;
+    	}
+    	
+    	return false;
+    }
 
     // TODO: How could I show just one progress dialog when I have two fragments in tabs
     //       activity doing the same in background?
     //       I mean, if OverviewTask shows one progress dialog and CurrentTask does the same I will have
     //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
-    private class OverviewTask extends AsyncTask<GeocodingData, Void, Forecast> {
+    private class OverviewTask extends AsyncTask<Object, Void, Forecast> {
+    	private final Fragment localFragment;
         final CustomHTTPClient weatherHTTPClient;
         final ServiceParser weatherService;
 
-        public OverviewTask(final CustomHTTPClient weatherHTTPClient, final ServiceParser weatherService) {
+        public OverviewTask(final Fragment fragment, final CustomHTTPClient weatherHTTPClient,
+        		final ServiceParser weatherService) {
+        	this.localFragment = fragment;
             this.weatherHTTPClient = weatherHTTPClient;
             this.weatherService = weatherService;
         }
 
         @Override
-        protected Forecast doInBackground(final GeocodingData... params) {
+        protected Forecast doInBackground(final Object... params) {
             Log.i(TAG, "OverviewFragment doInBackground");
+            final double latitude = (Double) params[0];
+            final double longitude = (Double) params[1];
+
             Forecast forecast = null;
 
             try {
-                forecast = this.doInBackgroundThrowable(params[0], weatherHTTPClient, weatherService);
+                forecast = this.doInBackgroundThrowable(latitude, longitude, weatherHTTPClient, weatherService);
             } catch (final JsonParseException e) {
                 Log.e(TAG, "OverviewTask doInBackground exception: ", e);
             } catch (final ClientProtocolException e) {
@@ -294,15 +315,14 @@ public class OverviewFragment extends ListFragment {
             return forecast;
         }
 
-        private Forecast doInBackgroundThrowable(final GeocodingData geocodingData,
+        private Forecast doInBackgroundThrowable(final double latitude, final double longitude,
                 final CustomHTTPClient HTTPClient, final ServiceParser serviceParser)
                         throws URISyntaxException, ClientProtocolException, JsonParseException, IOException {
 
             final String APIVersion = getResources().getString(R.string.api_version);
             final String urlAPI = getResources().getString(R.string.uri_api_weather_forecast);
             // TODO: number as resource
-            final String url = serviceParser.createURIAPIForecast(urlAPI, APIVersion,
-                    geocodingData.getLatitude(), geocodingData.getLongitude(), "14");
+            final String url = serviceParser.createURIAPIForecast(urlAPI, APIVersion, latitude, longitude, "14");
             final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
 
             return serviceParser.retrieveForecastFromJPOS(jsonData);
@@ -325,7 +345,10 @@ public class OverviewFragment extends ListFragment {
             		(WeatherInformationApplication) getActivity().getApplication();
             application.setForecast(forecast);
 
-            // TODO: update last time update using data base (like I do on Windows Phone 8)
+            final DatabaseQueries query = new DatabaseQueries(this.localFragment.getActivity());
+            final WeatherLocation weatherLocation = query.queryDataBase();
+            weatherLocation.setLastForecastUIUpdate(new Date());
+            query.updateDataBase(weatherLocation);
         }
     }
 }

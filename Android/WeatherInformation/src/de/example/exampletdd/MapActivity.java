@@ -42,9 +42,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import de.example.exampletdd.fragment.ErrorDialogFragment;
 import de.example.exampletdd.fragment.ProgressDialogFragment;
 import de.example.exampletdd.gms.GPlayServicesErrorDialogFragment;
+import de.example.exampletdd.model.DatabaseQueries;
 import de.example.exampletdd.model.WeatherLocation;
-import de.example.exampletdd.model.WeatherLocationDbHelper;
-import de.example.exampletdd.model.WeatherLocationDbQueries;
 
 public class MapActivity extends FragmentActivity implements
 									GoogleApiClient.ConnectionCallbacks,
@@ -123,7 +122,8 @@ public class MapActivity extends FragmentActivity implements
         	// just once
         	this.mRestoreUI = null;
         } else {
-        	weatherLocation = queryDataBase();
+        	final DatabaseQueries query = new DatabaseQueries(this);
+        	weatherLocation = query.queryDataBase();
         }
         
         if (weatherLocation != null) {
@@ -144,10 +144,11 @@ public class MapActivity extends FragmentActivity implements
             double latitude = point.latitude;
             double longitude = point.longitude;
 
-            final WeatherLocation location = new WeatherLocation.Builder().
-            		setCity(cityString).setCountry(countryString).
-            		setLatitude(latitude).setLongitude(longitude).
-            		build();
+            final WeatherLocation location = new WeatherLocation()
+            		.setCity(cityString)
+            		.setCountry(countryString)
+            		.setLatitude(latitude)
+            		.setLongitude(longitude);
             savedInstanceState.putSerializable("WeatherLocation", location);
         }
     	    	
@@ -161,7 +162,28 @@ public class MapActivity extends FragmentActivity implements
     }
     
     public void onClickSaveLocation(final View v) {
-    	
+    	if (this.mMarker == null) {
+    		final LatLng position = this.mMarker.getPosition();
+    		
+    		final DatabaseQueries query = new DatabaseQueries(this);
+    		final WeatherLocation weatherLocation = query.queryDataBase();
+            if (weatherLocation != null) {
+            	query.updateDataBase(weatherLocation);
+            } else {
+                final TextView city = (TextView) this.findViewById(R.id.weather_map_city);
+                final TextView country = (TextView) this.findViewById(R.id.weather_map_country);
+                final String cityString = city.getText().toString();
+                final String countryString = country.getText().toString();
+                
+            	final WeatherLocation location = new WeatherLocation()
+            		.setCity(cityString)
+            		.setCountry(countryString)
+            		.setIsSelected(true)
+            		.setLatitude(position.latitude)
+            		.setLongitude(position.longitude);
+            	query.insertIntoDataBase(location);
+            }
+    	}
     }
     
     public void onClickGetLocation(final View v) {
@@ -174,23 +196,13 @@ public class MapActivity extends FragmentActivity implements
             	locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             	locationRequest.setInterval(1000);
         		final FusedLocationProviderApi fusedLocationApi = LocationServices.FusedLocationApi;
+        		// TODO: What if between mGoogleApiClient.isConnected() and this point mGoogleApiClient is disconnected? Android sucks?
         		fusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
         	} else {
         		// TODO: string resource
         		Toast.makeText(this, "You are not yet connected to Google Play Services.", Toast.LENGTH_LONG).show();
         	}
         }
-    }
-
-    private WeatherLocation queryDataBase() {
-        
-        final WeatherLocationDbHelper dbHelper = new WeatherLocationDbHelper(this);
-        try {
-        	final WeatherLocationDbQueries queryDb = new WeatherLocationDbQueries(dbHelper); 	
-        	return queryDb.queryDataBase(this);
-        } finally {
-        	dbHelper.close();
-        } 
     }
     
     private void updateUI(final WeatherLocation weatherLocation) {
@@ -217,6 +229,7 @@ public class MapActivity extends FragmentActivity implements
         private static final String TAG = "GetAddressTask";
         // Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
+        // TODO: siempre tuve problemas usando fragmentos y recreando activities (rotar, volver a activity, etc, etc)
         private final DialogFragment newFragment;
 
         private GetAddressTask(final Context context) {
@@ -283,10 +296,11 @@ public class MapActivity extends FragmentActivity implements
             	}	
             }
 
-            return new WeatherLocation.Builder()
-            		.setLatitude(latitude).setLongitude(longitude)
-            		.setCity(city).setCountry(country)
-            		.build();
+            return new WeatherLocation()
+            		.setLatitude(latitude)
+            		.setLongitude(longitude)
+            		.setCity(city)
+            		.setCountry(country);
         }
 
     }
@@ -333,10 +347,11 @@ public class MapActivity extends FragmentActivity implements
             // Default values
             final String city = this.getString(R.string.city_not_found);
             final String country = this.getString(R.string.country_not_found); 
-            final WeatherLocation weatherLocation = new WeatherLocation.Builder().
-            		setLatitude(latitude).setLongitude(longitude).
-            		setCity(city).setCountry(country).
-            		build();
+            final WeatherLocation weatherLocation = new WeatherLocation()
+            		.setLatitude(latitude)
+            		.setLongitude(longitude)
+            		.setCity(city)
+            		.setCountry(country);
             
             updateUI(weatherLocation);
         }
@@ -512,6 +527,7 @@ public class MapActivity extends FragmentActivity implements
             		
             			// Make sure the app is not already connected or attempting to connect
                         if (!mGoogleApiClient.isConnecting() && !mGoogleApiClient.isConnected()) {
+                			// TODO: What if between mGoogleApiClient.isConnected() and this point mGoogleApiClient is disconnected? Android sucks?
                             mGoogleApiClient.connect();
                         }
             			
@@ -577,6 +593,7 @@ public class MapActivity extends FragmentActivity implements
 			final FusedLocationProviderApi fusedLocationApi = LocationServices.FusedLocationApi;
 			// TODO: if user clicks many times onClickGetLocation I may not assure how many times
 			// onLocationChanged will be called. Is it a problem? AFAIK it isn't.
+			// TODO: What if between mGoogleApiClient.isConnected() and this point mGoogleApiClient is disconnected? Android sucks?
 			fusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 		}
 
