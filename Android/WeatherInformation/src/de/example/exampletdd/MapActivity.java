@@ -162,19 +162,26 @@ public class MapActivity extends FragmentActivity implements
     }
     
     public void onClickSaveLocation(final View v) {
-    	if (this.mMarker == null) {
+    	if (this.mMarker != null) {
     		final LatLng position = this.mMarker.getPosition();
     		
+    		final TextView city = (TextView) this.findViewById(R.id.weather_map_city);
+            final TextView country = (TextView) this.findViewById(R.id.weather_map_country);
+            final String cityString = city.getText().toString();
+            final String countryString = country.getText().toString();
+            
     		final DatabaseQueries query = new DatabaseQueries(this);
     		final WeatherLocation weatherLocation = query.queryDataBase();
             if (weatherLocation != null) {
+            	weatherLocation
+            	.setCity(cityString)
+            	.setCountry(countryString)
+            	.setLatitude(position.latitude)
+            	.setLongitude(position.longitude)
+            	.setLastCurrentUIUpdate(null)
+            	.setLastForecastUIUpdate(null);
             	query.updateDataBase(weatherLocation);
             } else {
-                final TextView city = (TextView) this.findViewById(R.id.weather_map_city);
-                final TextView country = (TextView) this.findViewById(R.id.weather_map_country);
-                final String cityString = city.getText().toString();
-                final String countryString = country.getText().toString();
-                
             	final WeatherLocation location = new WeatherLocation()
             		.setCity(cityString)
             		.setCountry(countryString)
@@ -213,13 +220,11 @@ public class MapActivity extends FragmentActivity implements
         country.setText(weatherLocation.getCountry());
 
         final LatLng point = new LatLng(weatherLocation.getLatitude(), weatherLocation.getLongitude());
-        this.mMap.clear();
-        if (this.mMarker == null) {
-        	this.mMarker = this.mMap.addMarker(new MarkerOptions().position(point).draggable(true));
-        } else {
+        if (this.mMarker != null) {
         	// Just one marker on map
-        	this.mMarker.setPosition(point);
+        	this.mMarker.remove();
         }
+        this.mMarker = this.mMap.addMarker(new MarkerOptions().position(point).draggable(true));
         this.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 5));
         this.mMap.animateCamera(CameraUpdateFactory.zoomIn());
         this.mMap.animateCamera(CameraUpdateFactory.zoomTo(8), 2000, null);
@@ -287,7 +292,7 @@ public class MapActivity extends FragmentActivity implements
             // Default values
             String city = this.localContext.getString(R.string.city_not_found);
             String country = this.localContext.getString(R.string.country_not_found); 
-            if (addresses == null || addresses.size() <= 0) {
+            if (addresses != null && addresses.size() > 0) {
             	if (addresses.get(0).getLocality() != null) {
             		city = addresses.get(0).getLocality();
             	}

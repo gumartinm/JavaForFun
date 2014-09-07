@@ -245,7 +245,7 @@ public class CurrentFragment extends Fragment {
         final ImageView pictureView = (ImageView) getActivity().findViewById(R.id.weather_current_picture);
         pictureView.setImageBitmap(picture);    
         
-        final TextView descriptionView = (TextView) getActivity().findViewById(R.id.weather_specific_description);
+        final TextView descriptionView = (TextView) getActivity().findViewById(R.id.weather_current_description);
         descriptionView.setText(description);
         
         final TextView humidityValueView = (TextView) getActivity().findViewById(R.id.weather_current_humidity_value);
@@ -274,9 +274,8 @@ public class CurrentFragment extends Fragment {
     		return false;
     	}
     	
-    	final Calendar calendar = Calendar.getInstance();
-    	final Date currentTime = calendar.getTime();
-    	if (((currentTime.getTime() - lastUpdate.getTime()) / 1000) < 30) {
+    	final Date currentTime = new Date();
+    	if (((currentTime.getTime() - lastUpdate.getTime())) < 120000L) {
     		return true;
     	}
     	

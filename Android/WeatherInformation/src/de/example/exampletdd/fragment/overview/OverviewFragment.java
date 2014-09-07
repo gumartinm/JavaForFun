@@ -103,7 +103,7 @@ public class OverviewFragment extends ListFragment {
         		(WeatherInformationApplication) getActivity().getApplication();
         final Forecast forecast = application.getForecast();
 
-        if (forecast != null && this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
+        if (forecast != null && this.isDataFresh(weatherLocation.getLastForecastUIUpdate())) {
             this.updateUI(forecast);
         } else {
             // Load remote data (aynchronous)
@@ -262,9 +262,8 @@ public class OverviewFragment extends ListFragment {
     		return false;
     	}
     	
-    	final Calendar calendar = Calendar.getInstance();
-    	final Date currentTime = calendar.getTime();
-    	if (((currentTime.getTime() - lastUpdate.getTime()) / 1000) < 30) {
+    	final Date currentTime = new Date();
+    	if (((currentTime.getTime() - lastUpdate.getTime())) < 120000L) {
     		return true;
     	}
     	
