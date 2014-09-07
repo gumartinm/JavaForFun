@@ -6,7 +6,7 @@
 
     <!-- TODO: align start/end humidity-rain wind-clouds -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	android:gravity="center"
     	android:layout_gravity="fill_vertical|center_horizontal"
@@ -26,7 +26,8 @@
 
     		<ImageView
        			android:id="@+id/weather_specific_picture"
-        		android:layout_width="wrap_content"
+        		android:layout_width="0dp"
+    			android:layout_weight="1"
         		android:layout_height="wrap_content"
         		android:contentDescription="@string/icon_weather_description"
         		android:scaleType="fitCenter"
@@ -35,7 +36,8 @@
         		android:src="@drawable/weather_showers" />
 
     		<LinearLayout
-    			android:layout_width="match_parent"
+    			android:layout_width="0dp"
+    			android:layout_weight="1"
     			android:layout_height="wrap_content"
     			android:gravity="center"
     			android:layout_gravity="center"
@@ -87,11 +89,18 @@
 		</LinearLayout>
 
         <LinearLayout
-    		android:layout_width="wrap_content"
+            android:baselineAligned="false"
+    		android:layout_width="match_parent"
    		 	android:layout_height="wrap_content"
     		android:layout_gravity="top|center"
     		android:orientation="horizontal" >
     				
+            <LinearLayout
+    			android:layout_width="0dp"
+    			android:layout_weight="1"
+   		 		android:layout_height="wrap_content"
+    			android:layout_gravity="top|start"
+    			android:orientation="horizontal" >
     			<!-- Humidity -->
         		<TextView
             		android:id="@+id/weather_specific_humidity"
@@ -126,15 +135,22 @@
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
             		android:text="%"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
+            		android:layout_gravity="start"
+            		android:gravity="start"
+            		android:textAlignment="textStart"
             		android:layout_marginTop="5dp"
             		android:layout_marginBottom="5dp"
             		android:layout_marginEnd="5dp"
             		android:textAppearance="?android:attr/textAppearanceSmall"
             		android:textStyle="bold" />
+			</LinearLayout>
 
+    	    <LinearLayout
+    	        android:layout_width="0dp"
+    	        android:layout_height="wrap_content"
+    	        android:layout_gravity="top|end"
+    	        android:layout_weight="1"
+    	        android:orientation="horizontal" >
                 <!-- Rain -->
         		<TextView
             		android:id="@+id/weather_specific_rain"
@@ -177,14 +193,23 @@
            	 		android:layout_marginEnd="5dp"
             		android:textAppearance="?android:attr/textAppearanceSmall"
             		android:textStyle="bold" />
+        	</LinearLayout>
         </LinearLayout>
     
             
         <LinearLayout
-    		android:layout_width="wrap_content"
+            android:baselineAligned="false"
+    		android:layout_width="match_parent"
    		 	android:layout_height="wrap_content"
     		android:layout_gravity="top|center"
     		android:orientation="horizontal" >
+    				
+            <LinearLayout
+    			android:layout_width="0dp"
+    			android:layout_weight="1"
+   		 		android:layout_height="wrap_content"
+    			android:layout_gravity="top|start"
+    			android:orientation="horizontal" >
         		
          		<!-- Wind -->
         		<TextView
@@ -228,7 +253,14 @@
             		android:layout_marginEnd="5dp"
             		android:textAppearance="?android:attr/textAppearanceSmall"
             		android:textStyle="bold" />
-        		
+			</LinearLayout>
+
+    	    <LinearLayout
+    	        android:layout_width="0dp"
+    	        android:layout_height="wrap_content"
+    	        android:layout_gravity="top|end"
+    	        android:layout_weight="1"
+    	        android:orientation="horizontal" >        		
                 <!-- Clouds -->
         		<TextView
             		android:id="@+id/weather_specific_clouds"
@@ -271,6 +303,7 @@
             		android:layout_marginEnd="5dp"
             		android:textAppearance="?android:attr/textAppearanceSmall"
             		android:textStyle="bold" />
+        		</LinearLayout>
 		</LinearLayout>
         <LinearLayout
    		 	android:layout_width="wrap_content"
@@ -323,15 +356,22 @@
         </LinearLayout>
         
         <HorizontalScrollView
-    		android:layout_width="match_parent"
-    		android:layout_height="wrap_content"
-    		android:layout_gravity="bottom|start"
-    		android:paddingTop="50dp" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:fadingEdge="none"
+            android:padding="25dp"
+            android:scrollbars="horizontal|none" >
         		
             	<LinearLayout
-        			android:layout_width="wrap_content"
-        			android:layout_height="wrap_content"
-        			android:orientation="horizontal" >
+            	    android:layout_width="wrap_content"
+            	    android:layout_height="wrap_content"
+            	    android:layout_gravity="center"
+            	    android:fadingEdge="none"
+            	    android:orientation="horizontal"
+            	    android:scrollbarAlwaysDrawVerticalTrack="false"
+            	    android:scrollbars="none" >
+
         			<LinearLayout
         				android:layout_width="wrap_content"
         				android:layout_height="wrap_content"
@@ -417,7 +457,7 @@
                     			android:textAppearance="?android:attr/textAppearanceMedium"
                     			android:textStyle="bold" />
         			</LinearLayout>
-        			               		<LinearLayout
+        			<LinearLayout
         				android:layout_width="wrap_content"
         				android:layout_height="wrap_content"
         				android:paddingStart="20dp"

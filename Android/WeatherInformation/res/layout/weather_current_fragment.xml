@@ -6,7 +6,7 @@
 
     <!-- TODO: align start/end feels like-snow humidity-rain wind-clouds -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	android:gravity="center"
     	android:layout_gravity="fill_vertical|center_horizontal"
@@ -26,7 +26,8 @@
 
     		<ImageView
        			android:id="@+id/weather_current_picture"
-        		android:layout_width="wrap_content"
+        		android:layout_width="0dp"
+    			android:layout_weight="1"
         		android:layout_height="wrap_content"
         		android:contentDescription="@string/icon_weather_description"
         		android:scaleType="fitCenter"
@@ -35,7 +36,8 @@
         		android:src="@drawable/weather_showers" />
 
     		<LinearLayout
-    			android:layout_width="match_parent"
+    			android:layout_width="0dp"
+    			android:layout_weight="1"
     			android:layout_height="wrap_content"
     			android:gravity="center"
     			android:layout_gravity="center"
@@ -87,283 +89,327 @@
 		</LinearLayout>
 
     	<LinearLayout
-    		android:layout_width="wrap_content"
-   		 	android:layout_height="wrap_content"
-    		android:layout_gravity="top|center"
-    		android:orientation="horizontal" >
-    				
-    			<!-- Feels like -->
-        		<TextView
-            		android:id="@+id/weather_current_feelslike"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:layout_gravity="start"
-            		android:layout_margin="5dp"
-            		android:gravity="start"
-            		android:text="FEELS LIKE"
-            		android:textAlignment="textStart"
-            		android:textAppearance="?android:attr/textAppearanceMedium"
-            		android:textColor="@color/weather_time_of_day_color_title"
-            		android:textStyle="bold" />
-        
-        		<!-- Feels like Value-->
-        		<TextView
-            		android:id="@+id/weather_current_feelslike_value"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="83"
-            		android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="normal" />
-        
-        		<!-- Feels like Units-->
-        		<TextView
-            		android:id="@+id/weather_current_feelslike_units"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="ºC"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:layout_marginEnd="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="bold" />
-
-                <!-- Snow -->
-        		<TextView
-            		android:id="@+id/weather_current_snow"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-           			android:text="SNOW"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:textColor="@color/weather_time_of_day_color_title"
-           		 	android:layout_margin="5dp"
-            		android:textAppearance="?android:attr/textAppearanceMedium"
-            		android:textStyle="bold" />
-          
-        		<!-- Snow Value-->
-        		<TextView
-            		android:id="@+id/weather_current_snow_value"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="1.22"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="normal" />
-        
-        		<!-- Snow Units -->
-        		<TextView
-            		android:id="@+id/weather_current_snow_units"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text=" mm 3h"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-           	 		android:layout_marginEnd="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="bold" />
-        </LinearLayout>
-        
-        <LinearLayout
+    	    android:baselineAligned="false"
     		android:layout_width="match_parent"
    		 	android:layout_height="wrap_content"
-    		android:layout_gravity="top|center"
+    		android:layout_gravity="top|fill_horizontal"
     		android:orientation="horizontal" >
     				
-    			<!-- Humidity -->
-        		<TextView
-            		android:id="@+id/weather_current_humidity"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:layout_gravity="start"
-            		android:layout_margin="5dp"
-            		android:gravity="start"
-            		android:text="HUMIDITY"
-            		android:textAlignment="textStart"
-            		android:textAppearance="?android:attr/textAppearanceMedium"
-            		android:textColor="@color/weather_time_of_day_color_title"
-            		android:textStyle="bold" />
+    	    <LinearLayout
+    			android:layout_width="0dp"
+    			android:layout_weight="1"
+   		 		android:layout_height="wrap_content"
+    			android:layout_gravity="top|start"
+    			android:orientation="horizontal" >
+    				<!-- Feels like -->
+        			<TextView
+            			android:id="@+id/weather_current_feelslike"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:layout_gravity="start"
+            			android:layout_margin="5dp"
+            			android:gravity="start"
+            			android:text="FEELS LIKE"
+            			android:textAlignment="textStart"
+            			android:textAppearance="?android:attr/textAppearanceMedium"
+            			android:textColor="@color/weather_time_of_day_color_title"
+            			android:textStyle="bold" />
         
-        		<!-- Humidity Value-->
-        		<TextView
-            		android:id="@+id/weather_current_humidity_value"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="83"
-            		android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="normal" />
+        			<!-- Feels like Value-->
+        			<TextView
+            			android:id="@+id/weather_current_feelslike_value"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="83"
+            			android:layout_gravity="start"
+            			android:gravity="start"
+            			android:textAlignment="textStart"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="normal" />
         
-        		<!-- Humidity Units-->
-        		<TextView
-            		android:id="@+id/weather_current_humidity_units"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="%"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:layout_marginEnd="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="bold" />
+        			<!-- Feels like Units-->
+        			<TextView
+            			android:id="@+id/weather_current_feelslike_units"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="ºC"
+            			android:layout_gravity="start"
+            			android:gravity="start"
+            			android:textAlignment="textStart"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:layout_marginEnd="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="bold" />
+        		</LinearLayout>
 
-                <!-- Rain -->
-        		<TextView
-            		android:id="@+id/weather_current_rain"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-           			android:text="RAIN"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:textColor="@color/weather_time_of_day_color_title"
-           		 	android:layout_margin="5dp"
-            		android:textAppearance="?android:attr/textAppearanceMedium"
-            		android:textStyle="bold" />
+    	    	<LinearLayout
+    	        	android:layout_width="0dp"
+    	        	android:layout_height="wrap_content"
+    	        	android:layout_gravity="top|end"
+    	        	android:layout_weight="1"
+    	        	android:orientation="horizontal" >
+                	<!-- Snow -->
+        			<TextView
+            			android:id="@+id/weather_current_snow"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+           				android:text="SNOW"
+           				android:gravity="end"
+            			android:layout_gravity="end"
+            			android:textAlignment="textEnd"
+            			android:textColor="@color/weather_time_of_day_color_title"
+           		 		android:layout_margin="5dp"
+            			android:textAppearance="?android:attr/textAppearanceMedium"
+            			android:textStyle="bold" />
           
-        		<!-- Rain Value-->
-        		<TextView
-            		android:id="@+id/weather_current_rain_value"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="1.24"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="normal" />
+        			<!-- Snow Value-->
+        			<TextView
+            			android:id="@+id/weather_current_snow_value"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="1.22"
+            			android:layout_gravity="end"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="normal" />
         
-        		<!-- Rain Units -->
-        		<TextView
-            		android:id="@+id/weather_current_rain_units"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text=" mm 3h"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-           	 		android:layout_marginEnd="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="bold" />
+        			<!-- Snow Units -->
+        			<TextView
+            			android:id="@+id/weather_current_snow_units"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text=" mm 3h"
+            			android:layout_gravity="end"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+           	 			android:layout_marginEnd="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="bold" />
+        		</LinearLayout>
         </LinearLayout>
-    
+        
+        <LinearLayout
+            android:baselineAligned="false"
+    		android:layout_width="match_parent"
+   		 	android:layout_height="wrap_content"
+    		android:layout_gravity="top|fill_horizontal"
+    		android:orientation="horizontal" >
+    	    	
+            	<LinearLayout
+    				android:layout_width="0dp"
+    				android:layout_weight="1"
+   		 			android:layout_height="wrap_content"
+    				android:layout_gravity="top|start"
+    				android:orientation="horizontal" >
+    				<!-- Humidity -->
+        			<TextView
+            			android:id="@+id/weather_current_humidity"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:layout_gravity="start"
+            			android:layout_margin="5dp"
+            			android:gravity="start"
+            			android:text="HUMIDITY"
+            			android:textAlignment="textStart"
+            			android:textAppearance="?android:attr/textAppearanceMedium"
+            			android:textColor="@color/weather_time_of_day_color_title"
+            			android:textStyle="bold" />
+        
+        			<!-- Humidity Value-->
+        			<TextView
+            			android:id="@+id/weather_current_humidity_value"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="83"
+            			android:layout_gravity="start"
+            			android:gravity="start"
+            			android:textAlignment="textStart"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="normal" />
+        
+        			<!-- Humidity Units-->
+        			<TextView
+            			android:id="@+id/weather_current_humidity_units"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="%"
+            			android:layout_gravity="start"
+            			android:gravity="start"
+            			android:textAlignment="textStart"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:layout_marginEnd="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="bold" />
+        		</LinearLayout>
+
+            	<LinearLayout
+    	        	android:layout_width="0dp"
+    	        	android:layout_height="wrap_content"
+    	        	android:layout_gravity="top|end"
+    	        	android:layout_weight="1"
+    	        	android:orientation="horizontal" >
+                	<!-- Rain -->
+        			<TextView
+            			android:id="@+id/weather_current_rain"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+           				android:text="RAIN"
+            			android:layout_gravity="end"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:textColor="@color/weather_time_of_day_color_title"
+           		 		android:layout_margin="5dp"
+            			android:textAppearance="?android:attr/textAppearanceMedium"
+            			android:textStyle="bold" />
+          
+        			<!-- Rain Value-->
+        			<TextView
+            			android:id="@+id/weather_current_rain_value"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="1.24"
+            			android:layout_gravity="end"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="normal" />
+        
+        			<!-- Rain Units -->
+        			<TextView
+            			android:id="@+id/weather_current_rain_units"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text=" mm 3h"
+            			android:layout_gravity="end"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+           	 			android:layout_marginEnd="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="bold" />
+        		</LinearLayout>
+        </LinearLayout>   
             
         <LinearLayout
-    		android:layout_width="wrap_content"
+            android:baselineAligned="false"
+    		android:layout_width="match_parent"
    		 	android:layout_height="wrap_content"
-    		android:layout_gravity="top|center"
+    		android:layout_gravity="top|fill_horizontal"
     		android:orientation="horizontal" >
         		
-         		<!-- Wind -->
-        		<TextView
-            		android:id="@+id/weather_current_wind"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="WIND"
-            		android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
-            		android:textColor="@color/weather_time_of_day_color_title"
-            		android:layout_margin="5dp"
-            		android:textAppearance="?android:attr/textAppearanceMedium"
-            		android:textStyle="bold" />
+                <LinearLayout
+    				android:layout_width="0dp"
+    				android:layout_weight="1"
+   		 			android:layout_height="wrap_content"
+    				android:layout_gravity="top|center"
+    				android:orientation="horizontal" >
+         			<!-- Wind -->
+        			<TextView
+            			android:id="@+id/weather_current_wind"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="WIND"
+            			android:layout_gravity="top|center"
+            			android:gravity="start"
+            			android:textAlignment="textStart"
+            			android:textColor="@color/weather_time_of_day_color_title"
+            			android:layout_margin="5dp"
+            			android:textAppearance="?android:attr/textAppearanceMedium"
+            			android:textStyle="bold" />
         
-        		<!-- Wind Value-->
-        		<TextView
-            		android:id="@+id/weather_current_wind_value"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-           		 	android:text="6.36"
-            		android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="normal" />
+        			<!-- Wind Value-->
+        			<TextView
+            			android:id="@+id/weather_current_wind_value"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+           		 		android:text="6.36"
+            			android:layout_gravity="top|center"
+            			android:gravity="start"
+            			android:textAlignment="textStart"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="normal" />
         
-        		<!-- Wind Units -->
-        		<TextView
-            		android:id="@+id/weather_current_wind_units"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text=" m/s"
-            		android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:layout_marginEnd="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="bold" />
+        			<!-- Wind Units -->
+        			<TextView
+            			android:id="@+id/weather_current_wind_units"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text=" m/s"
+            			android:layout_gravity="top|center"
+            			android:gravity="start"
+            			android:textAlignment="textStart"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:layout_marginEnd="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="bold" />
+        		</LinearLayout>
         		
-                <!-- Clouds -->
-        		<TextView
-            		android:id="@+id/weather_current_clouds"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="CLOUDS"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:textColor="@color/weather_time_of_day_color_title"
-            		android:layout_margin="5dp"
-            		android:textAppearance="?android:attr/textAppearanceMedium"
-            		android:textStyle="bold" />
+                <LinearLayout
+    	        	android:layout_width="0dp"
+    	        	android:layout_height="wrap_content"
+    	        	android:layout_gravity="top|center"
+    	        	android:layout_weight="1"
+    	        	android:orientation="horizontal" >
+                	<!-- Clouds -->
+        			<TextView
+            			android:id="@+id/weather_current_clouds"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="CLOUDS"
+            			android:layout_gravity="top|center"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:textColor="@color/weather_time_of_day_color_title"
+            			android:layout_margin="5dp"
+            			android:textAppearance="?android:attr/textAppearanceMedium"
+            			android:textStyle="bold" />
         
-        		<!-- Clouds Value-->
-        		<TextView
-            		android:id="@+id/weather_current_clouds_value"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="6.36"
-            		android:layout_gravity="end"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="normal" />
+        			<!-- Clouds Value-->
+        			<TextView
+            			android:id="@+id/weather_current_clouds_value"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="6.36"
+            			android:layout_gravity="top|center"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="normal" />
         
-        		<!-- Clouds Units -->
-        		<TextView
-            		android:id="@+id/weather_current_clouds_units"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:text="%"
-            		android:layout_gravity="end"
-            		android:gravity="end"
-            		android:textAlignment="textEnd"
-            		android:layout_marginTop="5dp"
-            		android:layout_marginBottom="5dp"
-            		android:layout_marginEnd="5dp"
-            		android:textAppearance="?android:attr/textAppearanceSmall"
-            		android:textStyle="bold" />
+        			<!-- Clouds Units -->
+        			<TextView
+            			android:id="@+id/weather_current_clouds_units"
+            			android:layout_width="wrap_content"
+            			android:layout_height="wrap_content"
+            			android:text="%"
+            			android:layout_gravity="top|center"
+            			android:gravity="end"
+            			android:textAlignment="textEnd"
+            			android:layout_marginTop="5dp"
+            			android:layout_marginBottom="5dp"
+            			android:layout_marginEnd="5dp"
+            			android:textAppearance="?android:attr/textAppearanceSmall"
+            			android:textStyle="bold" />
+        		</LinearLayout>
 		</LinearLayout>
         <LinearLayout
    		 	android:layout_width="wrap_content"
