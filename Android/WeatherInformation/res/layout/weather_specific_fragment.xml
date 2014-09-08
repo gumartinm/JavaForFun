@@ -99,7 +99,8 @@
     			android:layout_width="0dp"
     			android:layout_weight="1"
    		 		android:layout_height="wrap_content"
-    			android:layout_gravity="top|start"
+    			android:gravity="center"
+    			android:layout_gravity="center"
     			android:orientation="horizontal" >
     			<!-- Humidity -->
         		<TextView
@@ -148,7 +149,8 @@
     	    <LinearLayout
     	        android:layout_width="0dp"
     	        android:layout_height="wrap_content"
-    	        android:layout_gravity="top|end"
+    	        android:gravity="center"
+    			android:layout_gravity="center"
     	        android:layout_weight="1"
     	        android:orientation="horizontal" >
                 <!-- Rain -->
@@ -208,7 +210,8 @@
     			android:layout_width="0dp"
     			android:layout_weight="1"
    		 		android:layout_height="wrap_content"
-    			android:layout_gravity="top|start"
+    			android:gravity="center"
+    			android:layout_gravity="center"
     			android:orientation="horizontal" >
         		
          		<!-- Wind -->
@@ -258,7 +261,8 @@
     	    <LinearLayout
     	        android:layout_width="0dp"
     	        android:layout_height="wrap_content"
-    	        android:layout_gravity="top|end"
+    	        android:gravity="center"
+    			android:layout_gravity="center"
     	        android:layout_weight="1"
     	        android:orientation="horizontal" >        		
                 <!-- Clouds -->
@@ -317,9 +321,9 @@
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
             		android:text="PRESSURE"
-            		android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
+            		android:layout_gravity="center"
+            		android:gravity="center"
+            		android:textAlignment="center"
             		android:textColor="@color/weather_time_of_day_color_title"
             		android:layout_margin="5dp"
             		android:textAppearance="?android:attr/textAppearanceMedium"
@@ -331,9 +335,9 @@
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
             		android:text="1036.05"
-            		android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
+            		android:layout_gravity="center"
+            		android:gravity="center"
+            		android:textAlignment="center"
             		android:layout_marginTop="5dp"
             		android:layout_marginBottom="5dp"
             		android:textAppearance="?android:attr/textAppearanceSmall"
@@ -345,9 +349,9 @@
             		android:layout_width="wrap_content"
             		android:layout_height="wrap_content"
             		android:text=" hpa"
-           			android:layout_gravity="start"
-            		android:gravity="start"
-            		android:textAlignment="textStart"
+           			android:layout_gravity="center"
+            		android:gravity="center"
+            		android:textAlignment="center"
             		android:layout_marginTop="5dp"
             		android:layout_marginBottom="5dp"
             		android:layout_marginEnd="5dp"
@@ -360,7 +364,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             android:fadingEdge="none"
-            android:padding="25dp"
             android:scrollbars="horizontal|none" >
         		
             	<LinearLayout
