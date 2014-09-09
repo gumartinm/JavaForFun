@@ -23,7 +23,6 @@ import android.graphics.BitmapFactory;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
@@ -46,7 +45,6 @@ import de.example.exampletdd.service.ServiceParser;
 
 public class OverviewFragment extends ListFragment {
     private static final String TAG = "OverviewFragment";
-    private Parcelable mListState;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -71,21 +69,13 @@ public class OverviewFragment extends ListFragment {
                 		(WeatherInformationApplication) getActivity().getApplication();
                 application.setForecast(forecast);
             }
-
-            this.mListState = savedInstanceState.getParcelable("ListState");
         }
 
         this.setHasOptionsMenu(false);
 
-        final OverviewAdapter adapter = new OverviewAdapter(
-                this.getActivity(), R.layout.weather_main_entry_list);
-
         // TODO: string static resource
         this.setEmptyText("No data available");
-
-        this.setListAdapter(adapter);
-        this.setListShown(true);
-        this.setListShownNoAnimation(true);
+        this.setListShownNoAnimation(false);
     }
 
     @Override
@@ -116,12 +106,6 @@ public class OverviewFragment extends ListFragment {
             task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());
             // TODO: make sure thread UI keeps running in parallel after that. I guess.
         }
-
-        // TODO: could mListState be an old value? It is just updated in onActivityCreated method... :/
-        // What is this for? And be careful, it runs at the same time as updateUI!!! :(
-        if (this.mListState != null) {
-            this.getListView().onRestoreInstanceState(this.mListState);
-        }
     }
 
     @Override
@@ -137,9 +121,6 @@ public class OverviewFragment extends ListFragment {
         if (forecast != null) {
             savedInstanceState.putSerializable("Forecast", forecast);
         }
-
-        this.mListState = this.getListView().onSaveInstanceState();
-        savedInstanceState.putParcelable("ListState", this.mListState);
 
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -252,7 +233,6 @@ public class OverviewFragment extends ListFragment {
 
 
         // 5. Update UI.
-        this.setListAdapter(null);
         adapter.addAll(entries);
         this.setListAdapter(adapter);
     }
@@ -276,8 +256,8 @@ public class OverviewFragment extends ListFragment {
     //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
     private class OverviewTask extends AsyncTask<Object, Void, Forecast> {
     	private final Fragment localFragment;
-        final CustomHTTPClient weatherHTTPClient;
-        final ServiceParser weatherService;
+        private final CustomHTTPClient weatherHTTPClient;
+        private final ServiceParser weatherService;
 
         public OverviewTask(final Fragment fragment, final CustomHTTPClient weatherHTTPClient,
         		final ServiceParser weatherService) {
@@ -286,6 +266,15 @@ public class OverviewFragment extends ListFragment {
             this.weatherService = weatherService;
         }
 
+        @Override
+        protected void onPreExecute() {
+        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
+        	overview.setListAdapter(null);
+            // TODO: string static resource
+        	overview.setEmptyText("No data available");
+        	overview.setListShownNoAnimation(false);
+        }
+        
         @Override
         protected Forecast doInBackground(final Object... params) {
             Log.i(TAG, "OverviewFragment doInBackground");
@@ -331,6 +320,11 @@ public class OverviewFragment extends ListFragment {
         protected void onPostExecute(final Forecast forecast) {
         	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
         	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
+        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
+        	// TODO: string static resource
+        	overview.setEmptyText("Error trying to download remote data");
+        	overview.setListShownNoAnimation(true);
+        	
         	if (forecast == null) {
         		// Nothing to do
         		// TODO: Should I show some error message? I am not doing it on WP8 Should I do it on WP8?
