@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +41,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import de.example.exampletdd.fragment.ErrorDialogFragment;
-import de.example.exampletdd.fragment.ProgressDialogFragment;
 import de.example.exampletdd.gms.GPlayServicesErrorDialogFragment;
 import de.example.exampletdd.model.DatabaseQueries;
 import de.example.exampletdd.model.WeatherLocation;
@@ -58,6 +58,7 @@ public class MapActivity extends FragmentActivity implements
     private GoogleMap mMap;
     // TODO: read and store from different threads? Hopefully always from UI thread.
     private Marker mMarker;
+    private ProgressBar mActivityIndicator;
     
     // Google Play Services Location
     private GoogleApiClient mGoogleApiClient;
@@ -83,15 +84,18 @@ public class MapActivity extends FragmentActivity implements
 								.addApi(LocationServices.API)
 								.addConnectionCallbacks(this)
 								.addOnConnectionFailedListener(this)
+								.enableAutoManage(this, this)
+								.useDefaultAccount()
 								.build();  
         
         // Google Play Services Map
         final MapFragment mapFragment = (MapFragment) this.getFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.weather_map_fragment_map);
         this.mMap = mapFragment.getMap();
         this.mMap.setMyLocationEnabled(false);
         this.mMap.getUiSettings().setCompassEnabled(false);
         this.mMap.setOnMapLongClickListener(new MapActivityOnMapLongClickListener(this));
+        this.mActivityIndicator = (ProgressBar) this.findViewById(R.id.weather_map_progress);
     }
     
     @Override
@@ -234,21 +238,17 @@ public class MapActivity extends FragmentActivity implements
         private static final String TAG = "GetAddressTask";
         // Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
-        // TODO: siempre tuve problemas usando fragmentos y recreando activities (rotar, volver a activity, etc, etc)
-        private final DialogFragment newFragment;
 
         private GetAddressTask(final Context context) {
-        	this.localContext = context;
-        	this.newFragment = ProgressDialogFragment.newInstance(
-        			R.string.progress_dialog_get_remote_data,
-        			this.localContext.getString(R.string.progress_dialog_generic_message));
+        	this.localContext = context;  	
         }
         
         @Override
         protected void onPreExecute() {
         	// TODO: The same with Overview and Current? I guess so...
-        	final FragmentActivity activity = (FragmentActivity) this.localContext;
-        	this.newFragment.show(activity.getSupportFragmentManager(), "progressDialog"); 
+        	// Show the activity indicator
+        	final MapActivity activity = (MapActivity) this.localContext;
+        	activity.mActivityIndicator.setVisibility(View.VISIBLE);
         }
         
         @Override
@@ -268,19 +268,18 @@ public class MapActivity extends FragmentActivity implements
 
         @Override
         protected void onPostExecute(final WeatherLocation weatherLocation) {
-        	this.newFragment.dismiss();
+        	final MapActivity activity = (MapActivity) this.localContext;
+        	activity.mActivityIndicator.setVisibility(View.GONE);
         	
         	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
         	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(       	
             if (weatherLocation == null) {
-            	final FragmentActivity activity = (FragmentActivity) this.localContext;
             	// TODO: if user changed activity, where is this going to appear?
                 final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
                 newFragment.show(activity.getSupportFragmentManager(), "errorDialog");
                 return;
             }
 
-            final MapActivity activity = (MapActivity) this.localContext;
             activity.updateUI(weatherLocation);
         }
         
@@ -426,6 +425,8 @@ public class MapActivity extends FragmentActivity implements
 
         // Disconnecting the client invalidates it.
         // After disconnect() is called, the client is considered "dead".
+    	mGoogleApiClient.unregisterConnectionCallbacks(this);
+    	mGoogleApiClient.unregisterConnectionFailedListener(this);
         mGoogleApiClient.disconnect();
 
         super.onStop();
@@ -557,6 +558,10 @@ public class MapActivity extends FragmentActivity implements
             	Log.d(TAG, "Received an unknown activity request code onActivityResult. Request code: " + requestCode);
             	break;
         }
+        
+        // TODO: documentation says I must call its parent's onActivityResult
+        // see: https://developer.android.com/reference/com/google/android/gms/common/api/GoogleApiClient.Builder.html#enableAutoManage(android.support.v4.app.FragmentActivity, com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener)
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 	
     private void showErrorDialog(final int errorCode) {
