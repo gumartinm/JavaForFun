@@ -59,6 +59,8 @@ public class MapActivity extends FragmentActivity implements
     // TODO: read and store from different threads? Hopefully always from UI thread.
     private Marker mMarker;
     private ProgressBar mActivityIndicator;
+    // true progress bar visible/false progress bar gone
+    private boolean mIsProgressBarVisible;
     
     // Google Play Services Location
     private GoogleApiClient mGoogleApiClient;
@@ -95,7 +97,17 @@ public class MapActivity extends FragmentActivity implements
         this.mMap.setMyLocationEnabled(false);
         this.mMap.getUiSettings().setCompassEnabled(false);
         this.mMap.setOnMapLongClickListener(new MapActivityOnMapLongClickListener(this));
+        
+        // Progress bar. View and status (we keep status even after screen rotations.
         this.mActivityIndicator = (ProgressBar) this.findViewById(R.id.weather_map_progress);
+        if (savedInstanceState != null) {
+        	this.mIsProgressBarVisible = savedInstanceState.getBoolean("mIsProgressBarVisible", false);
+        }
+        if (this.mIsProgressBarVisible) {
+        	this.mActivityIndicator.setVisibility(View.VISIBLE);
+        } else {
+        	this.mActivityIndicator.setVisibility(View.GONE);
+        }
     }
     
     @Override
@@ -138,6 +150,7 @@ public class MapActivity extends FragmentActivity implements
     @Override
     public void onSaveInstanceState(final Bundle savedInstanceState) {
     	// Save UI state
+    	// Save Google Maps Marker
     	if (this.mMarker != null) {
     		final TextView city = (TextView) this.findViewById(R.id.weather_map_city);
             final TextView country = (TextView) this.findViewById(R.id.weather_map_country);
@@ -155,12 +168,15 @@ public class MapActivity extends FragmentActivity implements
             		.setLongitude(longitude);
             savedInstanceState.putSerializable("WeatherLocation", location);
         }
+    	// Save progress bar status.
+    	savedInstanceState.putBoolean("mIsProgressBarVisible", this.mIsProgressBarVisible);
     	    	
     	// Google Play Services
     	// To keep track of the boolean across activity restarts (such as when
     	// the user rotates the screen), save the boolean in the activity's saved
     	// instance data using onSaveInstanceState():
     	savedInstanceState.putBoolean("mResolvingError", this.mResolvingError);
+    	
         
     	super.onSaveInstanceState(savedInstanceState);
     }
@@ -249,6 +265,7 @@ public class MapActivity extends FragmentActivity implements
         	// Show the activity indicator
         	final MapActivity activity = (MapActivity) this.localContext;
         	activity.mActivityIndicator.setVisibility(View.VISIBLE);
+        	activity.mIsProgressBarVisible = true;
         }
         
         @Override
@@ -270,6 +287,7 @@ public class MapActivity extends FragmentActivity implements
         protected void onPostExecute(final WeatherLocation weatherLocation) {
         	final MapActivity activity = (MapActivity) this.localContext;
         	activity.mActivityIndicator.setVisibility(View.GONE);
+        	activity.mIsProgressBarVisible = false;
         	
         	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
         	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(       	
