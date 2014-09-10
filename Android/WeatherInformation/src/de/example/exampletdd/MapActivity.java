@@ -230,6 +230,8 @@ public class MapActivity extends FragmentActivity implements
         		Toast.makeText(this, "You are not yet connected to Google Play Services.", Toast.LENGTH_LONG).show();
         	}
         }
+        // Trying to use the synchronous calls. Problems: mGoogleApiClient read/store from different threads.
+        // new GetLocationTask(this).execute();
     }
     
     private void updateUI(final WeatherLocation weatherLocation) {
@@ -612,6 +614,48 @@ public class MapActivity extends FragmentActivity implements
      * 							Google Play Services LocationListener
      *
      *****************************************************************************************************/
+    private class GetLocationTask extends AsyncTask<Void, Void, Void> {
+    	// Store the context passed to the AsyncTask when the system instantiates it.
+        private final Context localContext;
+        
+        private GetLocationTask(final Context localContext) {
+			this.localContext = localContext;
+		}
+
+		@Override
+		protected Void doInBackground(final Void... params) {
+			final MapActivity activity = (MapActivity) this.localContext;
+        	
+	    	// TODO: Somehow I should show a progress dialog.
+	        // If Google Play Services is available
+	        if (activity.servicesConnected()) {
+	        	if (activity.mGoogleApiClient.isConnected()) {
+	        		// TODO: Hopefully there will be results even if location did not change...
+	        		final LocationRequest locationRequest = LocationRequest.create();
+	            	locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+	            	locationRequest.setInterval(1000);
+	        		final FusedLocationProviderApi fusedLocationApi = LocationServices.FusedLocationApi;
+	        		// TODO: What if between mGoogleApiClient.isConnected() and this point mGoogleApiClient is disconnected? Android sucks?
+	        		// esto tiene mala pinta:
+	        		// 1. mGoogleApiClient read/store desde distintos hilos
+	        		// 2. el hilo de UI podría desconectar entre este punto y isConnected y
+	        		// aquí no sé que va a pasar si está desconectado. Quizás no pase nada y simplemente status retorna error?
+	        		final com.google.android.gms.common.api.Status status =
+	        				fusedLocationApi.requestLocationUpdates(
+	        						activity.mGoogleApiClient,
+	        						locationRequest,
+	        						activity,
+	        						activity.getMainLooper()).await();
+	        	} else {
+	        		// TODO: string resource
+	        		Toast.makeText(activity, "You are not yet connected to Google Play Services.", Toast.LENGTH_LONG).show();
+	        	}
+	        }
+			return null;
+		}
+    	
+    }
+    
 	@Override
 	public void onLocationChanged(final Location location) {
 		// It was called from onClickGetLocation (UI thread) This method will run in the same thread (the UI thread)
