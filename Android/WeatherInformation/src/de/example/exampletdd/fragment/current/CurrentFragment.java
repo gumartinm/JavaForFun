@@ -378,8 +378,8 @@ public class CurrentFragment extends Fragment {
                 final CustomHTTPClient HTTPClient, final ServiceParser serviceParser)
                         throws URISyntaxException, ClientProtocolException, JsonParseException, IOException {
 
-        	final String APIVersion = getResources().getString(R.string.api_version);
-            final String urlAPI = getResources().getString(R.string.uri_api_weather_today);
+        	final String APIVersion = localContext.getResources().getString(R.string.api_version);
+            final String urlAPI = localContext.getResources().getString(R.string.uri_api_weather_today);
             final String url = weatherService.createURIAPICurrent(urlAPI, APIVersion, latitude, longitude);
             final String jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
             final Current current = weatherService

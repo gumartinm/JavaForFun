@@ -355,8 +355,8 @@ public class OverviewFragment extends ListFragment {
                 final CustomHTTPClient HTTPClient, final ServiceParser serviceParser)
                         throws URISyntaxException, ClientProtocolException, JsonParseException, IOException {
 
-            final String APIVersion = getResources().getString(R.string.api_version);
-            final String urlAPI = getResources().getString(R.string.uri_api_weather_forecast);
+            final String APIVersion = localContext.getResources().getString(R.string.api_version);
+            final String urlAPI = localContext.getResources().getString(R.string.uri_api_weather_forecast);
             // TODO: number as resource
             final String url = serviceParser.createURIAPIForecast(urlAPI, APIVersion, latitude, longitude, "14");
             final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
