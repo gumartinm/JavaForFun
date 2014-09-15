@@ -13,6 +13,10 @@ import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +47,7 @@ import de.example.exampletdd.service.ServiceParser;
 
 public class CurrentFragment extends Fragment {
     private static final String TAG = "CurrentFragment";
+    private BroadcastReceiver mReceiver;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -75,10 +81,45 @@ public class CurrentFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+    	super.onStart();
+
+        this.mReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(final Context context, final Intent intent) {
+				final String action = intent.getAction();
+				if (action.equals("de.example.exampletdd.UPDATECURRENT")) {
+					final Current current = (Current) intent.getSerializableExtra("current");
+
+					if (current != null) {
+						CurrentFragment.this.updateUI(current);
+
+			            final WeatherInformationApplication application =
+			            		(WeatherInformationApplication) getActivity().getApplication();
+			            application.setCurrent(current);
+
+			            final DatabaseQueries query = new DatabaseQueries(CurrentFragment.this.getActivity().getApplicationContext());
+			            final WeatherLocation weatherLocation = query.queryDataBase();
+			            weatherLocation.setLastCurrentUIUpdate(new Date());
+			            query.updateDataBase(weatherLocation);
+					}
+				}
+			}
+        };
+
+        // Register receiver
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction("de.example.exampletdd.UPDATECURRENT");
+        LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext())
+        						.registerReceiver(this.mReceiver, filter);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
-        final DatabaseQueries query = new DatabaseQueries(this.getActivity());
+        final DatabaseQueries query = new DatabaseQueries(this.getActivity().getApplicationContext());
         final WeatherLocation weatherLocation = query.queryDataBase();
         if (weatherLocation == null) {
             // Nothing to do.
@@ -95,7 +136,7 @@ public class CurrentFragment extends Fragment {
             // Load remote data (aynchronous)
             // Gets the data from the web.
             final CurrentTask task = new CurrentTask(
-            		this,
+            		this.getActivity().getApplicationContext(),
                     new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
                     new ServiceParser(new JPOSWeatherParser()));
 
@@ -119,6 +160,13 @@ public class CurrentFragment extends Fragment {
         }
 
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext()).unregisterReceiver(this.mReceiver);
+
+        super.onStop();
     }
 
     private void updateUI(final Current current) {
@@ -287,13 +335,14 @@ public class CurrentFragment extends Fragment {
     //       I mean, if OverviewTask shows one progress dialog and CurrentTask does the same I will have
     //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
     private class CurrentTask extends AsyncTask<Object, Void, Current> {
-        private final Fragment localFragment;
+    	// Store the context passed to the AsyncTask when the system instantiates it.
+        private final Context localContext;
         final CustomHTTPClient weatherHTTPClient;
         final ServiceParser weatherService;
 
-        public CurrentTask(final Fragment fragment, final CustomHTTPClient weatherHTTPClient,
+        public CurrentTask(final Context context, final CustomHTTPClient weatherHTTPClient,
         		final ServiceParser weatherService) {
-        	this.localFragment = fragment;
+        	this.localContext = context;
             this.weatherHTTPClient = weatherHTTPClient;
             this.weatherService = weatherService;
         }
@@ -353,16 +402,9 @@ public class CurrentFragment extends Fragment {
         	}
 
             // Call updateUI on the UI thread.
-        	updateUI(current);
-
-            final WeatherInformationApplication application =
-            		(WeatherInformationApplication) getActivity().getApplication();
-            application.setCurrent(current);
-
-            final DatabaseQueries query = new DatabaseQueries(this.localFragment.getActivity());
-            final WeatherLocation weatherLocation = query.queryDataBase();
-            weatherLocation.setLastCurrentUIUpdate(new Date());
-            query.updateDataBase(weatherLocation);
+            final Intent currentData = new Intent("de.example.exampletdd.UPDATECURRENT");
+            currentData.putExtra("current", current);
+            LocalBroadcastManager.getInstance(this.localContext).sendBroadcastSync(currentData);
         }
     }
 }

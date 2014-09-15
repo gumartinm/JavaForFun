@@ -7,8 +7,10 @@ import java.util.Locale;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender.SendIntentException;
 import android.location.Address;
 import android.location.Geocoder;
@@ -18,10 +20,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,14 +55,16 @@ public class MapActivity extends FragmentActivity implements
 	// Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private WeatherLocation mRestoreUI;
+    private BroadcastReceiver mReceiver;
        
     // Google Play Services Map
     private GoogleMap mMap;
     // TODO: read and store from different threads? Hopefully always from UI thread.
     private Marker mMarker;
-    private ProgressBar mActivityIndicator;
-    // true progress bar visible/false progress bar gone
-    private boolean mIsProgressBarVisible;
+    // IT IS IMPOSSIBLE IF SCREEN MAY ROTATE!!!! ANDROID SUCKS!!!!
+//    private ProgressBar mActivityIndicator;
+//    // true progress bar visible/false progress bar gone
+//    private boolean mIsProgressBarVisible;
     
     // Google Play Services Location
     private GoogleApiClient mGoogleApiClient;
@@ -99,15 +103,15 @@ public class MapActivity extends FragmentActivity implements
         this.mMap.setOnMapLongClickListener(new MapActivityOnMapLongClickListener(this));
         
         // Progress bar. View and status (we keep status even after screen rotations.
-        this.mActivityIndicator = (ProgressBar) this.findViewById(R.id.weather_map_progress);
-        if (savedInstanceState != null) {
-        	this.mIsProgressBarVisible = savedInstanceState.getBoolean("mIsProgressBarVisible", false);
-        }
-        if (this.mIsProgressBarVisible) {
-        	this.mActivityIndicator.setVisibility(View.VISIBLE);
-        } else {
-        	this.mActivityIndicator.setVisibility(View.GONE);
-        }
+//        this.mActivityIndicator = (ProgressBar) this.findViewById(R.id.weather_map_progress);
+//        if (savedInstanceState != null) {
+//        	this.mIsProgressBarVisible = savedInstanceState.getBoolean("mIsProgressBarVisible", false);
+//        }
+//        if (this.mIsProgressBarVisible) {
+//        	this.mActivityIndicator.setVisibility(View.VISIBLE);
+//        } else {
+//        	this.mActivityIndicator.setVisibility(View.GONE);
+//        }
     }
     
     @Override
@@ -138,7 +142,7 @@ public class MapActivity extends FragmentActivity implements
         	// just once
         	this.mRestoreUI = null;
         } else {
-        	final DatabaseQueries query = new DatabaseQueries(this);
+        	final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
         	weatherLocation = query.queryDataBase();
         }
         
@@ -169,7 +173,7 @@ public class MapActivity extends FragmentActivity implements
             savedInstanceState.putSerializable("WeatherLocation", location);
         }
     	// Save progress bar status.
-    	savedInstanceState.putBoolean("mIsProgressBarVisible", this.mIsProgressBarVisible);
+//    	savedInstanceState.putBoolean("mIsProgressBarVisible", this.mIsProgressBarVisible);
     	    	
     	// Google Play Services
     	// To keep track of the boolean across activity restarts (such as when
@@ -190,7 +194,7 @@ public class MapActivity extends FragmentActivity implements
             final String cityString = city.getText().toString();
             final String countryString = country.getText().toString();
             
-    		final DatabaseQueries query = new DatabaseQueries(this);
+    		final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
     		final WeatherLocation weatherLocation = query.queryDataBase();
             if (weatherLocation != null) {
             	weatherLocation
@@ -265,9 +269,9 @@ public class MapActivity extends FragmentActivity implements
         protected void onPreExecute() {
         	// TODO: The same with Overview and Current? I guess so...
         	// Show the activity indicator
-        	final MapActivity activity = (MapActivity) this.localContext;
-        	activity.mActivityIndicator.setVisibility(View.VISIBLE);
-        	activity.mIsProgressBarVisible = true;
+//        	final MapActivity activity = (MapActivity) this.localContext;
+//        	activity.mActivityIndicator.setVisibility(View.VISIBLE);
+//        	activity.mIsProgressBarVisible = true;
         }
         
         @Override
@@ -287,20 +291,18 @@ public class MapActivity extends FragmentActivity implements
 
         @Override
         protected void onPostExecute(final WeatherLocation weatherLocation) {
-        	final MapActivity activity = (MapActivity) this.localContext;
-        	activity.mActivityIndicator.setVisibility(View.GONE);
-        	activity.mIsProgressBarVisible = false;
-        	
         	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
-        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(       	
-            if (weatherLocation == null) {
-            	// TODO: if user changed activity, where is this going to appear?
-                final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
-                newFragment.show(activity.getSupportFragmentManager(), "errorDialog");
-                return;
-            }
+        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
+        	if (weatherLocation == null) {
+        		// Nothing to do
+        		// TODO: Should I show some error message? I am not doing it on WP8 Should I do it on WP8?
+        		return;
+        	}
 
-            activity.updateUI(weatherLocation);
+            // Call updateUI on the UI thread.
+            final Intent weatherLocationData = new Intent("de.example.exampletdd.UPDATEWEATHERLOCATION");
+            weatherLocationData.putExtra("weatherLocation", weatherLocation);
+            LocalBroadcastManager.getInstance(this.localContext).sendBroadcastSync(weatherLocationData);
         }
         
         private WeatherLocation getLocation(final double latitude, final double longitude) throws IOException {
@@ -434,6 +436,36 @@ public class MapActivity extends FragmentActivity implements
         if (!mResolvingError) {
             mGoogleApiClient.connect();
         }
+
+        this.mReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(final Context context, final Intent intent) {
+				final String action = intent.getAction();
+				if (action.equals("de.example.exampletdd.UPDATEWEATHERLOCATION")) {
+					final WeatherLocation weatherLocation = (WeatherLocation) intent.getSerializableExtra("weatherLocation");
+
+//		        	MapActivity.this.mActivityIndicator.setVisibility(View.GONE);
+//		        	MapActivity.this.mIsProgressBarVisible = false;
+
+		        	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
+		        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
+		            if (weatherLocation == null) {
+		                final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
+		                newFragment.setRetainInstance(true);
+		                newFragment.show(MapActivity.this.getSupportFragmentManager(), "errorDialog");
+		                return;
+		            }
+
+		            MapActivity.this.updateUI(weatherLocation);
+				}
+			}
+        };
+
+        // Register receiver
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction("de.example.exampletdd.UPDATEWEATHERLOCATION");
+        LocalBroadcastManager.getInstance(this.getApplicationContext()).registerReceiver(this.mReceiver, filter);
     }
     
     /**
@@ -448,6 +480,8 @@ public class MapActivity extends FragmentActivity implements
     	mGoogleApiClient.unregisterConnectionCallbacks(this);
     	mGoogleApiClient.unregisterConnectionFailedListener(this);
         mGoogleApiClient.disconnect();
+
+        LocalBroadcastManager.getInstance(this.getApplicationContext()).unregisterReceiver(this.mReceiver);
 
         super.onStop();
     }
@@ -492,6 +526,8 @@ public class MapActivity extends FragmentActivity implements
     /**
      * Called by Location Services if the attempt to
      * Location Services fails.
+     *
+     * IT NEVER DOES ANYTHING. ANDROID SUCKS!!!
      */
 	@Override
 	public void onConnectionFailed(final ConnectionResult result) {
@@ -535,6 +571,8 @@ public class MapActivity extends FragmentActivity implements
      * LocationUpdateRemover and LocationUpdateRequester may call startResolutionForResult() to
      * start an Activity that handles Google Play services problems. The result of this
      * call returns here, to onActivityResult.
+     *
+     * IT NEVER DOES ANYTHING. ANDROID SUCKS!!!
      */
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {

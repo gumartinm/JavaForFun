@@ -15,8 +15,11 @@ import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,8 +27,8 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -45,6 +48,7 @@ import de.example.exampletdd.service.ServiceParser;
 
 public class OverviewFragment extends ListFragment {
     private static final String TAG = "OverviewFragment";
+    private BroadcastReceiver mReceiver;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -79,10 +83,45 @@ public class OverviewFragment extends ListFragment {
     }
 
     @Override
+    public void onStart() {
+    	super.onStart();
+
+        this.mReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(final Context context, final Intent intent) {
+				final String action = intent.getAction();
+				if (action.equals("de.example.exampletdd.UPDATEFORECAST")) {
+					final Forecast forecast = (Forecast) intent.getSerializableExtra("forecast");
+
+					if (forecast != null) {
+						OverviewFragment.this.updateUI(forecast);
+
+			            final WeatherInformationApplication application =
+			            		(WeatherInformationApplication) getActivity().getApplication();
+			            application.setForecast(forecast);
+
+			            final DatabaseQueries query = new DatabaseQueries(OverviewFragment.this.getActivity().getApplicationContext());
+			            final WeatherLocation weatherLocation = query.queryDataBase();
+			            weatherLocation.setLastForecastUIUpdate(new Date());
+			            query.updateDataBase(weatherLocation);
+					}
+				}
+			}
+        };
+
+        // Register receiver
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction("de.example.exampletdd.UPDATEFORECAST");
+        LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext())
+        						.registerReceiver(this.mReceiver, filter);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
-        final DatabaseQueries query = new DatabaseQueries(this.getActivity());
+        final DatabaseQueries query = new DatabaseQueries(this.getActivity().getApplicationContext());
         final WeatherLocation weatherLocation = query.queryDataBase();
         if (weatherLocation == null) {
             // Nothing to do.
@@ -99,7 +138,7 @@ public class OverviewFragment extends ListFragment {
             // Load remote data (aynchronous)
             // Gets the data from the web.
             final OverviewTask task = new OverviewTask(
-            		this,
+            		this.getActivity().getApplicationContext(),
                     new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
                     new ServiceParser(new JPOSWeatherParser()));
 
@@ -123,6 +162,13 @@ public class OverviewFragment extends ListFragment {
         }
 
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext()).unregisterReceiver(this.mReceiver);
+
+        super.onStop();
     }
 
     @Override
@@ -255,24 +301,26 @@ public class OverviewFragment extends ListFragment {
     //       I mean, if OverviewTask shows one progress dialog and CurrentTask does the same I will have
     //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
     private class OverviewTask extends AsyncTask<Object, Void, Forecast> {
-    	private final Fragment localFragment;
+    	// Store the context passed to the AsyncTask when the system instantiates it.
+        private final Context localContext;
         private final CustomHTTPClient weatherHTTPClient;
         private final ServiceParser weatherService;
 
-        public OverviewTask(final Fragment fragment, final CustomHTTPClient weatherHTTPClient,
+        public OverviewTask(final Context context, final CustomHTTPClient weatherHTTPClient,
         		final ServiceParser weatherService) {
-        	this.localFragment = fragment;
+        	this.localContext = context;
             this.weatherHTTPClient = weatherHTTPClient;
             this.weatherService = weatherService;
         }
 
         @Override
         protected void onPreExecute() {
-        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
-        	overview.setListAdapter(null);
-            // TODO: string static resource
-        	overview.setEmptyText("No data available");
-        	overview.setListShownNoAnimation(false);
+        	// IMPOSSIBLE IF I USE JUST Context (I like Context because it doesn't die like Activity does when screen rotates)
+//        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
+//        	overview.setListAdapter(null);
+//            // TODO: string static resource
+//        	overview.setEmptyText("No data available");
+//        	overview.setListShownNoAnimation(false);
         }
         
         @Override
@@ -320,10 +368,11 @@ public class OverviewFragment extends ListFragment {
         protected void onPostExecute(final Forecast forecast) {
         	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
         	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
-        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
-        	// TODO: string static resource
-        	overview.setEmptyText("Error trying to download remote data");
-        	overview.setListShownNoAnimation(true);
+        	// IMPOSSIBLE IF I USE JUST Context (I like Context because it doesn't die like Activity does when screen rotates)
+//        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
+//        	// TODO: string static resource
+//        	overview.setEmptyText("Error trying to download remote data");
+//        	overview.setListShownNoAnimation(true);
         	
         	if (forecast == null) {
         		// Nothing to do
@@ -332,16 +381,9 @@ public class OverviewFragment extends ListFragment {
         	}
 
             // Call updateUI on the UI thread.
-            updateUI(forecast);
-
-            final WeatherInformationApplication application =
-            		(WeatherInformationApplication) getActivity().getApplication();
-            application.setForecast(forecast);
-
-            final DatabaseQueries query = new DatabaseQueries(this.localFragment.getActivity());
-            final WeatherLocation weatherLocation = query.queryDataBase();
-            weatherLocation.setLastForecastUIUpdate(new Date());
-            query.updateDataBase(weatherLocation);
+        	final Intent forecastData = new Intent("de.example.exampletdd.UPDATEFORECAST");
+        	forecastData.putExtra("forecast", forecast);
+            LocalBroadcastManager.getInstance(this.localContext).sendBroadcastSync(forecastData);
         }
     }
 }
