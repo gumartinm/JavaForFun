@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:baselineAligned="false" >
+    
+	<LinearLayout
+        	android:id="@+id/weather_map_button_savelocation_container"
+        	android:layout_width="0dp"
+    		android:layout_weight="1"
+    		android:layout_gravity="center"
+    		android:gravity="center"
+        	android:layout_height="wrap_content">     
+        	<Button
+        		android:id="@+id/weather_map_button_savelocation"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:layout_gravity="center"
+        		android:onClick="onClickSaveLocation"
+        		android:textAlignment="center"
+        		android:text="@string/weather_map_button_savelocation" />
+    	</LinearLayout>
+    	
+    	<LinearLayout
+        	android:id="@+id/weather_map_button_getlocation_container"
+        	android:layout_width="0dp"
+    		android:layout_weight="1"
+    		android:layout_gravity="center"
+    		android:gravity="center"
+        	android:layout_height="wrap_content" >
+    		<Button
+        		android:id="@+id/weather_map_button_getlocation"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:layout_gravity="center"
+        		android:onClick="onClickGetLocation"
+        		android:textAlignment="center"
+        		android:enabled="false"
+        		android:text="@string/weather_map_button_getlocation" />
+		</LinearLayout> 
+</LinearLayout>

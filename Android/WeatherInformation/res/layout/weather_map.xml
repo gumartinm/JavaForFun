@@ -69,34 +69,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/weather_map_citycountry_container"
-        android:layout_above="@+id/weather_map_button_savelocation" />
+        android:layout_above="@+id/weather_map_buttons_container" />
 
-
-    <Button
-        android:id="@+id/weather_map_button_savelocation"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/weather_map_buttons_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/weather_map_aux"
-        android:onClick="onClickSaveLocation"
-        android:textAlignment="center"
-        android:text="@string/weather_map_button_savelocation" />
-    <View
-        android:id="@+id/weather_map_aux"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_centerHorizontal="true" />
-    <Button
-        android:id="@+id/weather_map_button_getlocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/weather_map_aux"
-        android:onClick="onClickGetLocation"
-        android:textAlignment="center"
-        android:enabled="false"
-        android:text="@string/weather_map_button_getlocation" />
+        android:orientation="horizontal"
+        android:baselineAligned="false" >
+    </LinearLayout>
 
 </RelativeLayout>

@@ -1,26 +1,21 @@
 package de.example.exampletdd;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.IntentSender.SendIntentException;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +38,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import de.example.exampletdd.fragment.ErrorDialogFragment;
+import de.example.exampletdd.fragment.map.MapButtonsFragment;
+import de.example.exampletdd.fragment.map.MapProgressFragment;
 import de.example.exampletdd.gms.GPlayServicesErrorDialogFragment;
 import de.example.exampletdd.model.DatabaseQueries;
 import de.example.exampletdd.model.WeatherLocation;
@@ -50,21 +47,19 @@ import de.example.exampletdd.model.WeatherLocation;
 public class MapActivity extends FragmentActivity implements
 									GoogleApiClient.ConnectionCallbacks,
 									GoogleApiClient.OnConnectionFailedListener,
-									LocationListener {
+									LocationListener,
+									MapProgressFragment.TaskCallbacks {
 	private static final String TAG = "MapActivity";
 	// Request code to use when launching the resolution activity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
+    private static final String PROGRESS_FRAGMENT_TAG = "PROGRESS_FRAGMENT";
+    private static final String BUTTONS_FRAGMENT_TAG = "BUTTONS_FRAGMENT";
     private WeatherLocation mRestoreUI;
-    private BroadcastReceiver mReceiver;
        
     // Google Play Services Map
     private GoogleMap mMap;
     // TODO: read and store from different threads? Hopefully always from UI thread.
     private Marker mMarker;
-    // IT IS IMPOSSIBLE IF SCREEN MAY ROTATE!!!! ANDROID SUCKS!!!!
-//    private ProgressBar mActivityIndicator;
-//    // true progress bar visible/false progress bar gone
-//    private boolean mIsProgressBarVisible;
     
     // Google Play Services Location
     private GoogleApiClient mGoogleApiClient;
@@ -101,17 +96,6 @@ public class MapActivity extends FragmentActivity implements
         this.mMap.setMyLocationEnabled(false);
         this.mMap.getUiSettings().setCompassEnabled(false);
         this.mMap.setOnMapLongClickListener(new MapActivityOnMapLongClickListener(this));
-        
-        // Progress bar. View and status (we keep status even after screen rotations.
-//        this.mActivityIndicator = (ProgressBar) this.findViewById(R.id.weather_map_progress);
-//        if (savedInstanceState != null) {
-//        	this.mIsProgressBarVisible = savedInstanceState.getBoolean("mIsProgressBarVisible", false);
-//        }
-//        if (this.mIsProgressBarVisible) {
-//        	this.mActivityIndicator.setVisibility(View.VISIBLE);
-//        } else {
-//        	this.mActivityIndicator.setVisibility(View.GONE);
-//        }
     }
     
     @Override
@@ -130,7 +114,7 @@ public class MapActivity extends FragmentActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        
+
         final ActionBar actionBar = this.getActionBar();
         // TODO: string resource
         actionBar.setTitle("Mark your location");
@@ -141,7 +125,22 @@ public class MapActivity extends FragmentActivity implements
         	weatherLocation = this.mRestoreUI;
         	// just once
         	this.mRestoreUI = null;
-        } else {
+        } else if (this.mMarker != null ) {
+        	final TextView city = (TextView) this.findViewById(R.id.weather_map_city);
+            final TextView country = (TextView) this.findViewById(R.id.weather_map_country);
+            final String cityString = city.getText().toString();
+            final String countryString = country.getText().toString();
+            
+            final LatLng point = this.mMarker.getPosition();
+            double latitude = point.latitude;
+            double longitude = point.longitude;
+
+            weatherLocation = new WeatherLocation()
+            		.setCity(cityString)
+            		.setCountry(countryString)
+            		.setLatitude(latitude)
+            		.setLongitude(longitude);
+    	} else {
         	final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
         	weatherLocation = query.queryDataBase();
         }
@@ -149,6 +148,28 @@ public class MapActivity extends FragmentActivity implements
         if (weatherLocation != null) {
         	this.updateUI(weatherLocation);
         }
+    }
+    
+    /**
+     * I am not using fragment transactions in the right way. But I do not know other way for doing what I am doing.
+     * 
+     * {@link http://stackoverflow.com/questions/16265733/failure-delivering-result-onactivityforresult}
+     */
+    @Override
+    public void onPostResume() {
+    	super.onPostResume();
+    	
+    	final FragmentManager fm = getSupportFragmentManager();
+    	final Fragment progressFragment = fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
+    	if (progressFragment == null) {
+    		 this.addButtonsFragment();
+     	} else {
+     		this.removeProgressFragment();
+     		final Bundle bundle = progressFragment.getArguments();
+         	double latitude = bundle.getDouble("latitude");
+         	double longitude = bundle.getDouble("longitude");
+     		this.addProgressFragment(latitude, longitude);
+     	}
     }
     
     @Override
@@ -172,15 +193,8 @@ public class MapActivity extends FragmentActivity implements
             		.setLongitude(longitude);
             savedInstanceState.putSerializable("WeatherLocation", location);
         }
-    	// Save progress bar status.
-//    	savedInstanceState.putBoolean("mIsProgressBarVisible", this.mIsProgressBarVisible);
-    	    	
-    	// Google Play Services
-    	// To keep track of the boolean across activity restarts (such as when
-    	// the user rotates the screen), save the boolean in the activity's saved
-    	// instance data using onSaveInstanceState():
-    	savedInstanceState.putBoolean("mResolvingError", this.mResolvingError);
     	
+    	savedInstanceState.putBoolean("mResolvingError", this.mResolvingError);
         
     	super.onSaveInstanceState(savedInstanceState);
     }
@@ -256,81 +270,6 @@ public class MapActivity extends FragmentActivity implements
         this.mMap.animateCamera(CameraUpdateFactory.zoomTo(8), 2000, null);
     }
     
-    private class GetAddressTask extends AsyncTask<Object, Void, WeatherLocation> {
-        private static final String TAG = "GetAddressTask";
-        // Store the context passed to the AsyncTask when the system instantiates it.
-        private final Context localContext;
-
-        private GetAddressTask(final Context context) {
-        	this.localContext = context;  	
-        }
-        
-        @Override
-        protected void onPreExecute() {
-        	// TODO: The same with Overview and Current? I guess so...
-        	// Show the activity indicator
-//        	final MapActivity activity = (MapActivity) this.localContext;
-//        	activity.mActivityIndicator.setVisibility(View.VISIBLE);
-//        	activity.mIsProgressBarVisible = true;
-        }
-        
-        @Override
-        protected WeatherLocation doInBackground(final Object... params) {
-            final double latitude = (Double) params[0];
-            final double longitude = (Double) params[1];
-
-            WeatherLocation weatherLocation = null;
-            try {
-            	weatherLocation = this.getLocation(latitude, longitude);
-            } catch (final IOException e) {
-                Log.e(TAG, "GetAddressTask doInBackground exception: ", e);
-            }
-
-            return weatherLocation;
-        }
-
-        @Override
-        protected void onPostExecute(final WeatherLocation weatherLocation) {
-        	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
-        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
-        	if (weatherLocation == null) {
-        		// Nothing to do
-        		// TODO: Should I show some error message? I am not doing it on WP8 Should I do it on WP8?
-        		return;
-        	}
-
-            // Call updateUI on the UI thread.
-            final Intent weatherLocationData = new Intent("de.example.exampletdd.UPDATEWEATHERLOCATION");
-            weatherLocationData.putExtra("weatherLocation", weatherLocation);
-            LocalBroadcastManager.getInstance(this.localContext).sendBroadcastSync(weatherLocationData);
-        }
-        
-        private WeatherLocation getLocation(final double latitude, final double longitude) throws IOException {
-        	// TODO: i18n Locale.getDefault()
-            final Geocoder geocoder = new Geocoder(this.localContext, Locale.US);
-            final List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-
-            // Default values
-            String city = this.localContext.getString(R.string.city_not_found);
-            String country = this.localContext.getString(R.string.country_not_found); 
-            if (addresses != null && addresses.size() > 0) {
-            	if (addresses.get(0).getLocality() != null) {
-            		city = addresses.get(0).getLocality();
-            	}
-            	if(addresses.get(0).getCountryName() != null) {
-            		country = addresses.get(0).getCountryName();
-            	}	
-            }
-
-            return new WeatherLocation()
-            		.setLatitude(latitude)
-            		.setLongitude(longitude)
-            		.setCity(city)
-            		.setCountry(country);
-        }
-
-    }
-    
     private class MapActivityOnMapLongClickListener implements OnMapLongClickListener {
     	// Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
@@ -359,13 +298,14 @@ public class MapActivity extends FragmentActivity implements
      *
      */
     private void getAddressAndUpdateUI(final double latitude, final double longitude) {
-
         // In Gingerbread and later, use Geocoder.isPresent() to see if a geocoder is available.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && Geocoder.isPresent()) {
-        	// Start the background task
-        	final GetAddressTask geocoderAsyncTask = new GetAddressTask(this);
-        	geocoderAsyncTask.execute(latitude, longitude);
+        	this.removeButtonsFragment();
+        	this.removeProgressFragment();
+        	this.addProgressFragment(latitude, longitude);
         } else {
+        	this.removeProgressFragment();
+        	this.addButtonsFragment();
         	// No geocoder is present. Issue an error message.
         	// TODO: string resource
             Toast.makeText(this, "Cannot get address. No geocoder available.", Toast.LENGTH_LONG).show();
@@ -436,36 +376,6 @@ public class MapActivity extends FragmentActivity implements
         if (!mResolvingError) {
             mGoogleApiClient.connect();
         }
-
-        this.mReceiver = new BroadcastReceiver() {
-
-			@Override
-			public void onReceive(final Context context, final Intent intent) {
-				final String action = intent.getAction();
-				if (action.equals("de.example.exampletdd.UPDATEWEATHERLOCATION")) {
-					final WeatherLocation weatherLocation = (WeatherLocation) intent.getSerializableExtra("weatherLocation");
-
-//		        	MapActivity.this.mActivityIndicator.setVisibility(View.GONE);
-//		        	MapActivity.this.mIsProgressBarVisible = false;
-
-		        	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
-		        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
-		            if (weatherLocation == null) {
-		                final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
-		                newFragment.setRetainInstance(true);
-		                newFragment.show(MapActivity.this.getSupportFragmentManager(), "errorDialog");
-		                return;
-		            }
-
-		            MapActivity.this.updateUI(weatherLocation);
-				}
-			}
-        };
-
-        // Register receiver
-        final IntentFilter filter = new IntentFilter();
-        filter.addAction("de.example.exampletdd.UPDATEWEATHERLOCATION");
-        LocalBroadcastManager.getInstance(this.getApplicationContext()).registerReceiver(this.mReceiver, filter);
     }
     
     /**
@@ -480,8 +390,6 @@ public class MapActivity extends FragmentActivity implements
     	mGoogleApiClient.unregisterConnectionCallbacks(this);
     	mGoogleApiClient.unregisterConnectionFailedListener(this);
         mGoogleApiClient.disconnect();
-
-        LocalBroadcastManager.getInstance(this.getApplicationContext()).unregisterReceiver(this.mReceiver);
 
         super.onStop();
     }
@@ -517,8 +425,13 @@ public class MapActivity extends FragmentActivity implements
     
 	@Override
 	public void onConnected(final Bundle bundle) {
-		final Button getLocationButton = (Button) this.findViewById(R.id.weather_map_button_getlocation);
-    	getLocationButton.setEnabled(true);
+		final FragmentManager fm = getSupportFragmentManager();
+    	Fragment buttonsFragment = fm.findFragmentByTag(BUTTONS_FRAGMENT_TAG);
+    	if (buttonsFragment != null) {
+    		final Button getLocationButton = (Button) this.findViewById(R.id.weather_map_button_getlocation);
+    		getLocationButton.setEnabled(true);
+    	}
+
 		// TODO: string resource
 		Toast.makeText(this, "Connected to Google Play Services.", Toast.LENGTH_SHORT).show();
 	}
@@ -644,6 +557,7 @@ public class MapActivity extends FragmentActivity implements
     
     /* Called from GPlayServicesErrorDialogFragment when the dialog is dismissed. */
     public void onDialogDismissed() {
+    	// IT DOES NOT WORK WHEN SCREEN ROTATES. ANDROID EXAMPLES SUCK!!!
         mResolvingError = false;
     }
     
@@ -710,5 +624,89 @@ public class MapActivity extends FragmentActivity implements
 		// Display the current location in the UI
 		// TODO: May location not be null?
 		this.getAddressAndUpdateUI(location.getLatitude(), location.getLongitude());
+	}
+
+	/*****************************************************************************************************
+	 *
+	 * 							MapProgressFragment.TaskCallbacks
+	 *
+	 *****************************************************************************************************/
+	@Override
+	public void onPostExecute(WeatherLocation weatherLocation) {
+
+        if (weatherLocation == null) {
+        	this.removeProgressFragment();
+            final DialogFragment newFragment = ErrorDialogFragment.newInstance(R.string.error_dialog_location_error);
+            newFragment.setRetainInstance(true);
+            newFragment.show(this.getSupportFragmentManager(), "errorDialog");
+        } else {
+        	this.updateUI(weatherLocation);
+        	this.removeProgressFragment();
+        }
+        this.addButtonsFragment();
+	}
+
+	/*****************************************************************************************************
+	 *
+	 * 							MapProgressFragment
+	 * I am not using fragment transactions in the right way. But I do not know other way for doing what I am doing.
+     * Android sucks.
+     *
+     * "Avoid performing transactions inside asynchronous callback methods." :(
+     * see: http://stackoverflow.com/questions/16265733/failure-delivering-result-onactivityforresult
+     * see: http://www.androiddesignpatterns.com/2013/08/fragment-transaction-commit-state-loss.html
+     * How do you do what I am doing in a different way without using fragments?
+	 *****************************************************************************************************/
+	
+	private void addProgressFragment(final double latitude, final double longitude) {
+    	final Fragment progressFragment = new MapProgressFragment();
+    	progressFragment.setRetainInstance(true);
+    	final Bundle args = new Bundle();
+    	args.putDouble("latitude", latitude);
+    	args.putDouble("longitude", longitude);
+    	progressFragment.setArguments(args);
+    	
+    	final FragmentManager fm = this.getSupportFragmentManager();
+    	final FragmentTransaction fragmentTransaction = fm.beginTransaction();
+    	fragmentTransaction.setCustomAnimations(R.anim.weather_map_enter_progress, R.anim.weather_map_exit_progress);
+    	fragmentTransaction.add(R.id.weather_map_buttons_container, progressFragment, PROGRESS_FRAGMENT_TAG).commit();
+    	fm.executePendingTransactions();
+	}
+	
+	private void removeProgressFragment() {
+    	final FragmentManager fm = this.getSupportFragmentManager();
+    	final Fragment progressFragment = fm.findFragmentByTag(PROGRESS_FRAGMENT_TAG);
+    	if (progressFragment != null) {
+    		final FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        	fragmentTransaction.remove(progressFragment).commit();
+        	fm.executePendingTransactions();
+    	}
+	}
+	
+	private void addButtonsFragment() {
+		final FragmentManager fm = this.getSupportFragmentManager();
+    	Fragment buttonsFragment = fm.findFragmentByTag(BUTTONS_FRAGMENT_TAG);
+    	if (buttonsFragment == null) {
+    		buttonsFragment = new MapButtonsFragment();
+    		buttonsFragment.setRetainInstance(true);
+    		final FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        	fragmentTransaction.setCustomAnimations(R.anim.weather_map_enter_progress, R.anim.weather_map_exit_progress);
+        	fragmentTransaction.add(R.id.weather_map_buttons_container, buttonsFragment, BUTTONS_FRAGMENT_TAG).commit();
+        	fm.executePendingTransactions();
+    	}
+    	if (mGoogleApiClient.isConnected()) {
+    		final Button getLocationButton = (Button) this.findViewById(R.id.weather_map_button_getlocation);
+    		getLocationButton.setEnabled(true);
+    	}
+	}
+	
+	private void removeButtonsFragment() {
+    	final FragmentManager fm = this.getSupportFragmentManager();
+    	final Fragment buttonsFragment = fm.findFragmentByTag(BUTTONS_FRAGMENT_TAG);
+    	if (buttonsFragment != null) {
+    		final FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        	fragmentTransaction.remove(buttonsFragment).commit();
+        	fm.executePendingTransactions();
+    	}
 	}
 }
