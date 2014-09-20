@@ -109,7 +109,7 @@ public class MapProgressFragment extends Fragment {
             final double latitude = (Double) params[0];
             final double longitude = (Double) params[1];
 
-            WeatherLocation weatherLocation = null;
+            WeatherLocation weatherLocation = this.doDefaultLocation(latitude, longitude);
             try {
             	weatherLocation = this.getLocation(latitude, longitude);
             } catch (final IOException e) {
@@ -136,16 +136,24 @@ public class MapProgressFragment extends Fragment {
             final List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
             // Default values
-            String city = this.localContext.getString(R.string.city_not_found);
-            String country = this.localContext.getString(R.string.country_not_found); 
+            WeatherLocation weatherLocation = this.doDefaultLocation(latitude, longitude);
+            
             if (addresses != null && addresses.size() > 0) {
             	if (addresses.get(0).getLocality() != null) {
-            		city = addresses.get(0).getLocality();
+            		weatherLocation.setCity(addresses.get(0).getLocality());
             	}
             	if(addresses.get(0).getCountryName() != null) {
-            		country = addresses.get(0).getCountryName();
+            		weatherLocation.setCountry(addresses.get(0).getCountryName());
             	}	
             }
+
+            return weatherLocation;
+        }
+
+        private WeatherLocation doDefaultLocation(final double latitude, final double longitude) {
+        	// Default values
+            String city = this.localContext.getString(R.string.city_not_found);
+            String country = this.localContext.getString(R.string.country_not_found);
 
             return new WeatherLocation()
             		.setLatitude(latitude)
@@ -153,6 +161,5 @@ public class MapProgressFragment extends Fragment {
             		.setCity(city)
             		.setCountry(country);
         }
-
     }
 }
