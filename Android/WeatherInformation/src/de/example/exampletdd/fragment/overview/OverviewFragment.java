@@ -105,6 +105,8 @@ public class OverviewFragment extends ListFragment {
 			            final WeatherLocation weatherLocation = query.queryDataBase();
 			            weatherLocation.setLastForecastUIUpdate(new Date());
 			            query.updateDataBase(weatherLocation);
+					} else {
+						OverviewFragment.this.setListShownNoAnimation(true);
 					}
 				}
 			}
@@ -137,6 +139,7 @@ public class OverviewFragment extends ListFragment {
         } else {
             // Load remote data (aynchronous)
             // Gets the data from the web.
+            this.setListShownNoAnimation(false);
             final OverviewTask task = new OverviewTask(
             		this.getActivity().getApplicationContext(),
                     new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
@@ -312,16 +315,6 @@ public class OverviewFragment extends ListFragment {
             this.weatherHTTPClient = weatherHTTPClient;
             this.weatherService = weatherService;
         }
-
-        @Override
-        protected void onPreExecute() {
-        	// IMPOSSIBLE IF I USE JUST Context (I like Context because it doesn't die like Activity does when screen rotates)
-//        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
-//        	overview.setListAdapter(null);
-//            // TODO: string static resource
-//        	overview.setEmptyText("No data available");
-//        	overview.setListShownNoAnimation(false);
-        }
         
         @Override
         protected Forecast doInBackground(final Object... params) {
@@ -368,18 +361,7 @@ public class OverviewFragment extends ListFragment {
         protected void onPostExecute(final Forecast forecast) {
         	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
         	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
-        	// IMPOSSIBLE IF I USE JUST Context (I like Context because it doesn't die like Activity does when screen rotates)
-//        	final OverviewFragment overview = (OverviewFragment) this.localFragment;
-//        	// TODO: string static resource
-//        	overview.setEmptyText("Error trying to download remote data");
-//        	overview.setListShownNoAnimation(true);
         	
-        	if (forecast == null) {
-        		// Nothing to do
-        		// TODO: Should I show some error message? I am not doing it on WP8 Should I do it on WP8?
-        		return;
-        	}
-
             // Call updateUI on the UI thread.
         	final Intent forecastData = new Intent("de.example.exampletdd.UPDATEFORECAST");
         	forecastData.putExtra("forecast", forecast);
