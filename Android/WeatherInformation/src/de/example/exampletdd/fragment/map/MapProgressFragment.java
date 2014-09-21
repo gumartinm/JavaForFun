@@ -112,7 +112,7 @@ public class MapProgressFragment extends Fragment {
             WeatherLocation weatherLocation = this.doDefaultLocation(latitude, longitude);
             try {
             	weatherLocation = this.getLocation(latitude, longitude);
-            } catch (final IOException e) {
+            } catch (final Throwable e) { // Hopefully nothing goes wrong because of catching Throwable.
                 Log.e(TAG, "GetAddressTask doInBackground exception: ", e);
             }
 
