@@ -22,7 +22,6 @@ import de.example.exampletdd.model.WeatherLocation;
 
 public class WeatherTabsActivity extends FragmentActivity {
     private static final int NUM_ITEMS = 2;
-    private TabsAdapter mAdapter;
     private ViewPager mPager;
     
     @Override
@@ -30,10 +29,8 @@ public class WeatherTabsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.fragment_pager);
 
-        this.mAdapter = new TabsAdapter(this.getSupportFragmentManager());
-
         this.mPager = (ViewPager)this.findViewById(R.id.pager);
-        this.mPager.setAdapter(this.mAdapter);
+        this.mPager.setAdapter(new TabsAdapter(this.getSupportFragmentManager()));
 
 
         this.mPager.setOnPageChangeListener(
@@ -128,11 +125,14 @@ public class WeatherTabsActivity extends FragmentActivity {
         final ActionBar actionBar = this.getActionBar();
         
         // 1. Update title.
-        final DatabaseQueries query = new DatabaseQueries(this);
+        final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
         final WeatherLocation weatherLocation = query.queryDataBase();
         if (weatherLocation != null) {
             // TODO: I18N and comma :/
             actionBar.setTitle(weatherLocation.getCity() + "," + weatherLocation.getCountry());	
+        } else {
+        	// TODO: static resource
+        	actionBar.setTitle("no chosen location");
         }
 
         // 2. Update forecast tab text.
