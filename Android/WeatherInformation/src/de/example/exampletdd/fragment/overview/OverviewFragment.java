@@ -127,6 +127,9 @@ public class OverviewFragment extends ListFragment {
         final WeatherLocation weatherLocation = query.queryDataBase();
         if (weatherLocation == null) {
             // Nothing to do.
+        	// Empty list and show error message (see setEmptyText in onCreate)
+			this.setListAdapter(null);
+			this.setListShownNoAnimation(true);
             return;
         }
 
@@ -194,7 +197,7 @@ public class OverviewFragment extends ListFragment {
     private void updateUI(final Forecast forecastWeatherData) {
 
         final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(this.getActivity());
+                .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
 
         // TODO: repeating the same code in Overview, Specific and Current!!!
         // 1. Update units of measurement.
@@ -306,13 +309,13 @@ public class OverviewFragment extends ListFragment {
     private class OverviewTask extends AsyncTask<Object, Void, Forecast> {
     	// Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
-        private final CustomHTTPClient weatherHTTPClient;
+        private final CustomHTTPClient HTTPClient;
         private final ServiceParser weatherService;
 
-        public OverviewTask(final Context context, final CustomHTTPClient weatherHTTPClient,
+        public OverviewTask(final Context context, final CustomHTTPClient HTTPClient,
         		final ServiceParser weatherService) {
         	this.localContext = context;
-            this.weatherHTTPClient = weatherHTTPClient;
+            this.HTTPClient = HTTPClient;
             this.weatherService = weatherService;
         }
         
@@ -325,7 +328,7 @@ public class OverviewFragment extends ListFragment {
             Forecast forecast = null;
 
             try {
-                forecast = this.doInBackgroundThrowable(latitude, longitude, weatherHTTPClient, weatherService);
+                forecast = this.doInBackgroundThrowable(latitude, longitude);
             } catch (final JsonParseException e) {
                 Log.e(TAG, "OverviewTask doInBackground exception: ", e);
             } catch (final ClientProtocolException e) {
@@ -338,23 +341,22 @@ public class OverviewFragment extends ListFragment {
                 // logger infrastructure swallows UnknownHostException :/
                 Log.e(TAG, "OverviewTask doInBackground exception: " + e.getMessage(), e);
             } finally {
-                weatherHTTPClient.close();
+            	HTTPClient.close();
             }
 
             return forecast;
         }
 
-        private Forecast doInBackgroundThrowable(final double latitude, final double longitude,
-                final CustomHTTPClient HTTPClient, final ServiceParser serviceParser)
+        private Forecast doInBackgroundThrowable(final double latitude, final double longitude)
                         throws URISyntaxException, ClientProtocolException, JsonParseException, IOException {
 
             final String APIVersion = localContext.getResources().getString(R.string.api_version);
             final String urlAPI = localContext.getResources().getString(R.string.uri_api_weather_forecast);
             // TODO: number as resource
-            final String url = serviceParser.createURIAPIForecast(urlAPI, APIVersion, latitude, longitude, "14");
+            final String url = weatherService.createURIAPIForecast(urlAPI, APIVersion, latitude, longitude, "14");
             final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
 
-            return serviceParser.retrieveForecastFromJPOS(jsonData);
+            return weatherService.retrieveForecastFromJPOS(jsonData);
         }
 
         @Override

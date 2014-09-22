@@ -167,7 +167,7 @@ public class CurrentFragment extends Fragment {
     private void updateUI(final Current current) {
     	
         final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(this.getActivity());
+                .getDefaultSharedPreferences(this.getActivity().getApplicationContext());
 
         // TODO: repeating the same code in Overview, Specific and Current!!!
         // 1. Update units of measurement.
@@ -332,13 +332,13 @@ public class CurrentFragment extends Fragment {
     private class CurrentTask extends AsyncTask<Object, Void, Current> {
     	// Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
-        final CustomHTTPClient weatherHTTPClient;
+        final CustomHTTPClient HTTPClient;
         final ServiceParser weatherService;
 
-        public CurrentTask(final Context context, final CustomHTTPClient weatherHTTPClient,
+        public CurrentTask(final Context context, final CustomHTTPClient HTTPClient,
         		final ServiceParser weatherService) {
         	this.localContext = context;
-            this.weatherHTTPClient = weatherHTTPClient;
+            this.HTTPClient = HTTPClient;
             this.weatherService = weatherService;
         }
 
@@ -350,7 +350,7 @@ public class CurrentFragment extends Fragment {
   
             Current current = null;
             try {
-            	current = this.doInBackgroundThrowable(latitude, longitude, weatherHTTPClient, weatherService);
+            	current = this.doInBackgroundThrowable(latitude, longitude);
             } catch (final JsonParseException e) {
                 Log.e(TAG, "CurrentTask doInBackground exception: ", e);
             } catch (final ClientProtocolException e) {
@@ -363,22 +363,20 @@ public class CurrentFragment extends Fragment {
                 // logger infrastructure swallows UnknownHostException :/
                 Log.e(TAG, "CurrentTask doInBackground exception: " + e.getMessage(), e);
             } finally {
-                weatherHTTPClient.close();
+            	HTTPClient.close();
             }
 
             return current;
         }
 
-        private Current doInBackgroundThrowable(final double latitude, final double longitude,
-                final CustomHTTPClient HTTPClient, final ServiceParser serviceParser)
+        private Current doInBackgroundThrowable(final double latitude, final double longitude)
                         throws URISyntaxException, ClientProtocolException, JsonParseException, IOException {
 
         	final String APIVersion = localContext.getResources().getString(R.string.api_version);
             final String urlAPI = localContext.getResources().getString(R.string.uri_api_weather_today);
             final String url = weatherService.createURIAPICurrent(urlAPI, APIVersion, latitude, longitude);
-            final String jsonData = weatherHTTPClient.retrieveDataAsString(new URL(url));
-            final Current current = weatherService
-                    .retrieveCurrentFromJPOS(jsonData);
+            final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
+            final Current current = weatherService.retrieveCurrentFromJPOS(jsonData);
             // TODO: what is this for? I guess I could skip it :/
             final Calendar now = Calendar.getInstance();
             current.setDate(now.getTime());

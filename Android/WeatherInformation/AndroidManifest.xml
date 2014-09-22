@@ -84,7 +84,7 @@
         </activity>
         
         <receiver android:name=".WeatherInformationBootReceiver"
-            android:enabled="false">
+            android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>

@@ -69,17 +69,19 @@
         <item>14-Day Forecast</item>
     </string-array>
     <string-array name="weather_preferences_update_time_rate">
-        <item>60</item>
-        <item>120</item>
-        <item>300</item>
-        <item>600</item>
+        <item>0</item>
         <item>900</item>
+        <item>1800</item>
+        <item>3600</item>       
+        <item>43200</item>
+        <item>86400</item>    
     </string-array>
     <string-array name="weather_preferences_update_time_rate_human_value">
-        <item>1 minute</item>
-        <item>2 minutes</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>15 minutes</item>
+        <item>no updates</item>
+        <item>fifteen minutes</item>
+        <item>half hour</item>
+        <item>one hour</item>   
+        <item>half day</item>
+        <item>one day</item>     
     </string-array>
 </resources>

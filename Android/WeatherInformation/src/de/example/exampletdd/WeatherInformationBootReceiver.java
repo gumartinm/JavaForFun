@@ -13,26 +13,38 @@ public class WeatherInformationBootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        // TODO: there should be some option in the application if user does not want to set
-        // alarm in boot time.
-        
+
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+        	
+        	// Update Time Rate
             final SharedPreferences sharedPreferences = PreferenceManager
                     .getDefaultSharedPreferences(context);
             final String keyPreference = context
                     .getString(R.string.weather_preferences_update_time_rate_key);
-            final String updateTimeRate = sharedPreferences.getString(keyPreference, "");
-            final int timeRate = Integer.valueOf(updateTimeRate);
+            final String updateTimeRate = sharedPreferences.getString(keyPreference, "");            
+            long chosenInterval = 0;
+            if (updateTimeRate.equals("900")) {
+            	chosenInterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+            } else if (updateTimeRate.equals("1800")) {
+            	chosenInterval = AlarmManager.INTERVAL_HALF_HOUR;
+            } else if (updateTimeRate.equals("3600")) {
+            	chosenInterval = AlarmManager.INTERVAL_HOUR;
+            } else if (updateTimeRate.equals("43200")) {
+            	chosenInterval = AlarmManager.INTERVAL_HALF_DAY;
+            } else if (updateTimeRate.equals("86400")) {
+            	chosenInterval = AlarmManager.INTERVAL_DAY;
+            }
 
-            final AlarmManager alarmMgr = (AlarmManager) context
-                    .getSystemService(Context.ALARM_SERVICE);
-            // TODO: better use some string instead of .class? In case I change the service class
-            // this could be a problem (I guess)
-            final Intent serviceIntent = new Intent(context, WeatherInformationBatch.class);
-            final PendingIntent alarmIntent = PendingIntent.getService(context, 0, serviceIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()
-                    + (timeRate * 1000), (timeRate * 1000), alarmIntent);
+            if (chosenInterval != 0) {
+                final AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                // TODO: better use some string instead of .class? In case I change the service class
+                // this could be a problem (I guess)
+                final Intent serviceIntent = new Intent(context, WeatherInformationBatch.class);
+                final PendingIntent alarmIntent = PendingIntent.getService(context, 0, serviceIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
+                        + chosenInterval, chosenInterval, alarmIntent);
+            }
         }
     }
 

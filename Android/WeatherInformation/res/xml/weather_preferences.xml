@@ -14,10 +14,10 @@
         android:entryValues="@array/weather_preferences_update_time_rate"
         android:key="@string/weather_preferences_update_time_rate_key"
         android:title="@string/weather_preferences_update_time_rate"
-        android:defaultValue="60"
+        android:defaultValue="0"
         android:persistent="true"
         android:selectable="true"
-        android:summary="1 minute"/>
+        android:summary="no updates"/>
     <ListPreference
         android:key="@string/weather_preferences_day_forecast_key"
         android:title="@string/weather_preferences_day_forecast"
