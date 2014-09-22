@@ -105,7 +105,12 @@ public class OverviewFragment extends ListFragment {
 			            final WeatherLocation weatherLocation = query.queryDataBase();
 			            weatherLocation.setLastForecastUIUpdate(new Date());
 			            query.updateDataBase(weatherLocation);
+
+			            // Show list.
+			            OverviewFragment.this.setListShownNoAnimation(true);
 					} else {
+						// Empty list and show error message (see setEmptyText in onCreate)
+						OverviewFragment.this.setListAdapter(null);
 						OverviewFragment.this.setListShownNoAnimation(true);
 					}
 				}
