@@ -83,8 +83,8 @@ public class OverviewFragment extends ListFragment {
     }
 
     @Override
-    public void onStart() {
-    	super.onStart();
+    public void onResume() {
+        super.onResume();
 
         this.mReceiver = new BroadcastReceiver() {
 
@@ -117,11 +117,6 @@ public class OverviewFragment extends ListFragment {
         filter.addAction("de.example.exampletdd.UPDATEFORECAST");
         LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext())
         						.registerReceiver(this.mReceiver, filter);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
 
         final DatabaseQueries query = new DatabaseQueries(this.getActivity().getApplicationContext());
         final WeatherLocation weatherLocation = query.queryDataBase();
@@ -168,10 +163,10 @@ public class OverviewFragment extends ListFragment {
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
         LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext()).unregisterReceiver(this.mReceiver);
 
-        super.onStop();
+        super.onPause();
     }
 
     @Override
