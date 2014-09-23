@@ -295,7 +295,7 @@ public class OverviewFragment extends ListFragment {
     	}
     	
     	final Date currentTime = new Date();
-    	// TODO: static resource instead of 120000L
+    	// TODO: user settings instead of 120000L
     	if (((currentTime.getTime() - lastUpdate.getTime())) < 120000L) {
     		return true;
     	}
@@ -322,7 +322,6 @@ public class OverviewFragment extends ListFragment {
         
         @Override
         protected Forecast doInBackground(final Object... params) {
-            Log.i(TAG, "OverviewFragment doInBackground");
             final double latitude = (Double) params[0];
             final double longitude = (Double) params[1];
 

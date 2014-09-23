@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -77,13 +78,19 @@ public class CurrentFragment extends Fragment {
             			(WeatherInformationApplication) getActivity().getApplication();
                 application.setCurrent(current);
             }
-        }
+        }     
+        
+        final ProgressBar progress = (ProgressBar) getActivity().findViewById(R.id.weather_current_progressbar);
+        progress.setVisibility(View.VISIBLE);
+        final TextView errorMessage = (TextView) getActivity().findViewById(R.id.weather_current_error_message);
+        errorMessage.setVisibility(View.GONE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        
         this.mReceiver = new BroadcastReceiver() {
 
 			@Override
@@ -103,6 +110,13 @@ public class CurrentFragment extends Fragment {
 			            final WeatherLocation weatherLocation = query.queryDataBase();
 			            weatherLocation.setLastCurrentUIUpdate(new Date());
 			            query.updateDataBase(weatherLocation);
+					} else {
+						// Empty UI and show error message
+						CurrentFragment.this.clearUI();
+						final ProgressBar progress = (ProgressBar) getActivity().findViewById(R.id.weather_current_progressbar);
+				        progress.setVisibility(View.GONE);
+						final TextView errorMessage = (TextView) getActivity().findViewById(R.id.weather_current_error_message);
+				        errorMessage.setVisibility(View.VISIBLE);
 					}
 				}
 			}
@@ -114,10 +128,18 @@ public class CurrentFragment extends Fragment {
         LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext())
         						.registerReceiver(this.mReceiver, filter);
 
+        // Empty UI
+        this.clearUI();
+        
         final DatabaseQueries query = new DatabaseQueries(this.getActivity().getApplicationContext());
         final WeatherLocation weatherLocation = query.queryDataBase();
         if (weatherLocation == null) {
             // Nothing to do.
+        	// Show error message
+        	final ProgressBar progress = (ProgressBar) getActivity().findViewById(R.id.weather_current_progressbar);
+	        progress.setVisibility(View.GONE);
+			final TextView errorMessage = (TextView) getActivity().findViewById(R.id.weather_current_error_message);
+	        errorMessage.setVisibility(View.VISIBLE);
             return;
         }
         
@@ -130,6 +152,10 @@ public class CurrentFragment extends Fragment {
         } else {
             // Load remote data (aynchronous)
             // Gets the data from the web.
+        	final ProgressBar progress = (ProgressBar) getActivity().findViewById(R.id.weather_current_progressbar);
+            progress.setVisibility(View.VISIBLE);
+            final TextView errorMessage = (TextView) getActivity().findViewById(R.id.weather_current_error_message);
+            errorMessage.setVisibility(View.GONE);
             final CurrentTask task = new CurrentTask(
             		this.getActivity().getApplicationContext(),
                     new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
@@ -281,6 +307,11 @@ public class CurrentFragment extends Fragment {
 
 
         // 4. Update UI.
+        ProgressBar progress = (ProgressBar) getActivity().findViewById(R.id.weather_current_progressbar);
+        progress.setVisibility(View.GONE);
+        TextView errorMessage = (TextView) getActivity().findViewById(R.id.weather_current_error_message);
+        errorMessage.setVisibility(View.GONE);
+        
         final TextView tempMaxView = (TextView) getActivity().findViewById(R.id.weather_current_temp_max);
         tempMaxView.setText(tempMax);
         final TextView tempMinView = (TextView) getActivity().findViewById(R.id.weather_current_temp_min);
@@ -291,25 +322,55 @@ public class CurrentFragment extends Fragment {
         final TextView descriptionView = (TextView) getActivity().findViewById(R.id.weather_current_description);
         descriptionView.setText(description);
         
-        final TextView humidityValueView = (TextView) getActivity().findViewById(R.id.weather_current_humidity_value);
-        humidityValueView.setText(humidityValue);
-        final TextView pressureValueView = (TextView) getActivity().findViewById(R.id.weather_current_pressure_value);
-        pressureValueView.setText(pressureValue);
-        final TextView windValueView = (TextView) getActivity().findViewById(R.id.weather_current_wind_value);
-        windValueView.setText(windValue);
-        final TextView rainValueView = (TextView) getActivity().findViewById(R.id.weather_current_rain_value);
-        rainValueView.setText(rainValue);
-        final TextView cloudsValueView = (TextView) getActivity().findViewById(R.id.weather_current_clouds_value);
-        cloudsValueView.setText(cloudsValue);
-        final TextView snowValueView = (TextView) getActivity().findViewById(R.id.weather_current_snow_value);
-        snowValueView.setText(snowValue);
-        final TextView feelsLikeView = (TextView) getActivity().findViewById(R.id.weather_current_feelslike_value);
-        feelsLikeView.setText(feelsLike);
+        ((TextView) getActivity().findViewById(R.id.weather_current_humidity)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_humidity));
+        ((TextView) getActivity().findViewById(R.id.weather_current_humidity_value)).setText(humidityValue);
+        ((TextView) getActivity().findViewById(R.id.weather_current_humidity_units)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_units_percent));
         
-        final TextView sunRiseTimeView = (TextView) getActivity().findViewById(R.id.weather_current_sunrise_value);
-        sunRiseTimeView.setText(sunRiseTime);
-        final TextView sunSetTimeView = (TextView) getActivity().findViewById(R.id.weather_current_sunset_value);
-        sunSetTimeView.setText(sunSetTime);
+        ((TextView) getActivity().findViewById(R.id.weather_current_pressure)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_pressure));
+        ((TextView) getActivity().findViewById(R.id.weather_current_pressure_value)).setText(pressureValue);
+        ((TextView) getActivity().findViewById(R.id.weather_current_pressure_units)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_units_hpa));
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_wind)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_wind));
+        ((TextView) getActivity().findViewById(R.id.weather_current_wind_value)).setText(windValue);
+        ((TextView) getActivity().findViewById(R.id.weather_current_wind_units)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_units_ms));
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_rain)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_rain));
+        ((TextView) getActivity().findViewById(R.id.weather_current_rain_value)).setText(rainValue);
+        ((TextView) getActivity().findViewById(R.id.weather_current_rain_units)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_units_mm3h));
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_clouds)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_clouds));
+        ((TextView) getActivity().findViewById(R.id.weather_current_clouds_value)).setText(cloudsValue);
+        ((TextView) getActivity().findViewById(R.id.weather_current_clouds_units)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_units_percent));
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_snow)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_snow));
+        ((TextView) getActivity().findViewById(R.id.weather_current_snow_value)).setText(snowValue);
+        ((TextView) getActivity().findViewById(R.id.weather_current_snow_units)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_units_mm3h));
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_feels_like));
+        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike_value)).setText(feelsLike);
+        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike_units)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_units_centigrade));
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunrise)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_sun_rise));
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunrise_value)).setText(sunRiseTime);
+
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunset)).setText(
+        		this.getActivity().getApplicationContext().getString(R.string.text_field_sun_set));
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunset_value)).setText(sunSetTime);
     }
     
     private boolean isDataFresh(final Date lastUpdate) {
@@ -318,12 +379,59 @@ public class CurrentFragment extends Fragment {
     	}
     	
     	final Date currentTime = new Date();
-    	// TODO: static resource instead of 120000L
+    	// TODO: user settings instead of 120000L
     	if (((currentTime.getTime() - lastUpdate.getTime())) < 120000L) {
     		return true;
     	}
     	
     	return false;
+    }
+    
+    private void clearUI() {
+
+        ((TextView) getActivity().findViewById(R.id.weather_current_temp_max)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_temp_min)).setText("");
+        
+        ((ImageView) getActivity().findViewById(R.id.weather_current_picture)).setImageBitmap(null);
+        
+
+        ((TextView) getActivity().findViewById(R.id.weather_current_description)).setText("");
+        
+
+        ((TextView) getActivity().findViewById(R.id.weather_current_humidity)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_humidity_value)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_humidity_units)).setText("");
+       
+        ((TextView) getActivity().findViewById(R.id.weather_current_pressure)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_pressure_value)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_pressure_units)).setText("");
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_wind)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_wind_value)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_wind_units)).setText("");
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_rain)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_rain_value)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_rain_units)).setText("");
+
+        ((TextView) getActivity().findViewById(R.id.weather_current_clouds)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_clouds_value)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_clouds_units)).setText("");
+
+        ((TextView) getActivity().findViewById(R.id.weather_current_snow)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_snow_value)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_snow_units)).setText("");    
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike_value)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike_units)).setText("");
+        
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunrise)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunrise_value)).setText("");
+        
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunset)).setText("");
+        ((TextView) getActivity().findViewById(R.id.weather_current_sunset_value)).setText("");
     }
     
     // TODO: How could I show just one progress dialog when I have two fragments in tabs
@@ -345,7 +453,6 @@ public class CurrentFragment extends Fragment {
 
         @Override
         protected Current doInBackground(final Object... params) {
-        	Log.i(TAG, "CurrentTask doInBackground");
         	final double latitude = (Double) params[0];
             final double longitude = (Double) params[1];
   
@@ -389,11 +496,6 @@ public class CurrentFragment extends Fragment {
         protected void onPostExecute(final Current current) {
         	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
         	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
-        	if (current == null) {
-        		// Nothing to do
-        		// TODO: Should I show some error message? I am not doing it on WP8 Should I do it on WP8?
-        		return;
-        	}
 
             // Call updateUI on the UI thread.
             final Intent currentData = new Intent("de.example.exampletdd.UPDATECURRENT");

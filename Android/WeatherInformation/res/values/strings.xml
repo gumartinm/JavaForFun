@@ -13,21 +13,15 @@
     <string name="uri_api_weather_forecast">http://api.openweathermap.org/data/{0}/forecast/daily?lat={1}&amp;lon={2}&amp;cnt={3}&amp;mode=json</string>
     <string name="uri_api_geocoding">https://maps.googleapis.com/maps/api/geocode/json?latlng={0},{1}&amp;sensor=true</string>
     <string name="api_version">2.5</string>
-    <string name="text_default_city">London,uk</string>
-    <string name="text_field_city">City name</string>
-    <string name="text_field_latitude">Latitude</string>
-    <string name="text_field_longitude">Longitude</string>
-    <string name="text_field_sun_rise">Sun rise time:</string>
-    <string name="text_field_sun_set">Sun set time:</string>
-    <string name="text_field_description">Weather description:</string>
-    <string name="text_field_tem">Temperature:</string>
-    <string name="text_field_tem_min">Min temperature:</string>
-    <string name="text_field_tem_max">Max temperature:</string>
-    <string name="text_field_cloudiness">Cloudiness in %:</string>
-    <string name="text_field_rain_time">Rain time:</string>
-    <string name="text_field_rain_amount">Rain amount:</string>
-    <string name="text_field_wind_speed">Wind speed:</string>
-    <string name="text_field_humidity">Humidity in %:</string>
+    <string name="text_field_sun_rise">SUN RISE</string>
+    <string name="text_field_sun_set">SUN SET</string>
+    <string name="text_field_feels_like">FEELS LIKE</string>
+    <string name="text_field_clouds">CLOUDS</string>
+    <string name="text_field_rain">RAIN</string>
+    <string name="text_field_wind">WIND</string>
+    <string name="text_field_snow">SNOW</string>
+    <string name="text_field_pressure">PRESSURE</string>
+    <string name="text_field_humidity">HUMIDITY</string>
     <string name="button_ok">OK</string>
     <string name="error_dialog_connection_tiemout">Connection error timeout</string>
     <string name="error_dialog_generic_error">Impossible to receive weather data.</string>
@@ -52,4 +46,9 @@
     <string name="title_section3">Section 3</string>
     <string name="weather_map_button_savelocation">Save Location</string>
 	<string name="weather_map_button_getlocation">Get Location</string>
+	<string name="text_units_mm3h">mm 3h</string>
+	<string name="text_units_percent">%</string>
+	<string name="text_units_centigrade">ºC</string>
+	<string name="text_units_ms">m/s</string>
+	<string name="text_units_hpa">hpa</string>
 </resources>
