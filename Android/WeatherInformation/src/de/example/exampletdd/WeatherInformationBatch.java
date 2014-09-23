@@ -45,25 +45,14 @@ public class WeatherInformationBatch extends IntentService {
     }
 
     @Override
-    public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        Log.i(TAG, "onStartCommand");
-
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
     protected void onHandleIntent(final Intent intent) {
-
-        Log.i(TAG, "onHandleIntent");
-
         final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
         final WeatherLocation weatherLocation = query.queryDataBase();
         
         if (weatherLocation != null) {
-            Log.i(TAG, "onHandleIntent, weatherLocation not null");
             final ServiceParser weatherService = new ServiceParser(new JPOSWeatherParser());
             final CustomHTTPClient HTTPClient = new CustomHTTPClient(
-                    AndroidHttpClient.newInstance("Android Weather Information Agent"));
+                    AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent"));
 
             Current current = null;
             try {
@@ -84,7 +73,9 @@ public class WeatherInformationBatch extends IntentService {
                 HTTPClient.close();
             }
             
-            this.showNotification(current);
+            if (current != null) {
+            	this.showNotification(current, weatherLocation);
+            }
         }
     }
 
@@ -107,7 +98,7 @@ public class WeatherInformationBatch extends IntentService {
         return current;
     }
     
-    private void showNotification(final Current current) {
+    private void showNotification(final Current current, final WeatherLocation weatherLocation) {
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
 
@@ -133,7 +124,7 @@ public class WeatherInformationBatch extends IntentService {
         tempFormatter.applyPattern("#####.#####");
 
 
-        // 3. Prepare data for UI.
+        // 3. Prepare data for RemoteViews.
         String tempMax = "";
         if (current.getMain().getTemp_max() != null) {
             double conversion = (Double) current.getMain().getTemp_max();
@@ -146,11 +137,6 @@ public class WeatherInformationBatch extends IntentService {
             conversion = conversion - tempUnits;
             tempMin = tempFormatter.format(conversion) + symbol;
         }
-        // TODO: static resource
-        String description = "no description available";
-        if (current.getWeather().size() > 0) {
-            description = current.getWeather().get(0).getDescription();
-        }
         Bitmap picture;
         if ((current.getWeather().size() > 0)
                 && (current.getWeather().get(0).getIcon() != null)
@@ -162,12 +148,18 @@ public class WeatherInformationBatch extends IntentService {
             picture = BitmapFactory.decodeResource(this.getResources(),
                     R.drawable.weather_severe_alert);
         }
+        final String city = weatherLocation.getCity();
+        final String country = weatherLocation.getCountry();
         
+        // 4. Insert data in RemoteViews.
         final RemoteViews remoteView = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.notification);
         remoteView.setImageViewBitmap(R.id.weather_notification_image, picture);
         remoteView.setTextViewText(R.id.weather_notification_temperature_max, tempMax);
         remoteView.setTextViewText(R.id.weather_notification_temperature_min, tempMin);
+        remoteView.setTextViewText(R.id.weather_notification_city, city);
+        remoteView.setTextViewText(R.id.weather_notification_country, country);
 
+        // 5. Activity launcher.
         final Intent resultIntent =  new Intent(this.getApplicationContext(), WeatherTabsActivity.class);
         // The PendingIntent to launch our activity if the user selects this notification
 //        final PendingIntent contentIntent = PendingIntent.getActivity(
@@ -190,6 +182,7 @@ public class WeatherInformationBatch extends IntentService {
     			NotificationManagerCompat.from(this.getApplicationContext());
     	
 
+    	// 6. Create notification.
         final NotificationCompat.Builder notificationBuilder =
         		new NotificationCompat.Builder(this.getApplicationContext())
         		.setContent(remoteView)
