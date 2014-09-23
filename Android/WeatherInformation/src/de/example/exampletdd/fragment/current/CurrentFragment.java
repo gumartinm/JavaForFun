@@ -318,6 +318,7 @@ public class CurrentFragment extends Fragment {
     	}
     	
     	final Date currentTime = new Date();
+    	// TODO: static resource instead of 120000L
     	if (((currentTime.getTime() - lastUpdate.getTime())) < 120000L) {
     		return true;
     	}
