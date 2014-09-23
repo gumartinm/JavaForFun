@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -17,12 +16,15 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.http.AndroidHttpClient;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
@@ -31,11 +33,11 @@ import de.example.exampletdd.model.DatabaseQueries;
 import de.example.exampletdd.model.WeatherLocation;
 import de.example.exampletdd.model.currentweather.Current;
 import de.example.exampletdd.parser.JPOSWeatherParser;
+import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.ServiceParser;
 
 public class WeatherInformationBatch extends IntentService {
     private static final String TAG = "WeatherInformationBatch";
-    private static final String resultsNumber = "14";
 
 
     public WeatherInformationBatch() {
@@ -129,24 +131,42 @@ public class WeatherInformationBatch extends IntentService {
         // 2. Formatters
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.#####");
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.US);
-        
-        
-        String feelsLike = "";
-        if (current.getMain().getTemp() != null) {
-            double conversion = (Double) current.getMain().getTemp();
+
+
+        // 3. Prepare data for UI.
+        String tempMax = "";
+        if (current.getMain().getTemp_max() != null) {
+            double conversion = (Double) current.getMain().getTemp_max();
             conversion = conversion - tempUnits;
-            feelsLike = tempFormatter.format(conversion);
+            tempMax = tempFormatter.format(conversion) + symbol;
         }
-        
+        String tempMin = "";
+        if (current.getMain().getTemp_min() != null) {
+            double conversion = (Double) current.getMain().getTemp_min();
+            conversion = conversion - tempUnits;
+            tempMin = tempFormatter.format(conversion) + symbol;
+        }
         // TODO: static resource
         String description = "no description available";
         if (current.getWeather().size() > 0) {
             description = current.getWeather().get(0).getDescription();
         }
-    	
+        Bitmap picture;
+        if ((current.getWeather().size() > 0)
+                && (current.getWeather().get(0).getIcon() != null)
+                && (IconsList.getIcon(current.getWeather().get(0).getIcon()) != null)) {
+            final String icon = current.getWeather().get(0).getIcon();
+            picture = BitmapFactory.decodeResource(this.getResources(), IconsList.getIcon(icon)
+                    .getResourceDrawable());
+        } else {
+            picture = BitmapFactory.decodeResource(this.getResources(),
+                    R.drawable.weather_severe_alert);
+        }
         
-
+        final RemoteViews remoteView = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.notification);
+        remoteView.setImageViewBitmap(R.id.weather_notification_image, picture);
+        remoteView.setTextViewText(R.id.weather_notification_temperature_max, tempMax);
+        remoteView.setTextViewText(R.id.weather_notification_temperature_min, tempMin);
 
         final Intent resultIntent =  new Intent(this.getApplicationContext(), WeatherTabsActivity.class);
         // The PendingIntent to launch our activity if the user selects this notification
@@ -172,14 +192,14 @@ public class WeatherInformationBatch extends IntentService {
 
         final NotificationCompat.Builder notificationBuilder =
         		new NotificationCompat.Builder(this.getApplicationContext())
+        		.setContent(remoteView)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentText(description)
-                .setContentTitle(this.getText(R.string.app_name))
                 .setAutoCancel(true)
                 .setLocalOnly(true)
+                .setWhen(System.currentTimeMillis())
                 .setContentIntent(resultPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setNumber(666);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        
         final Notification notification = notificationBuilder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
