@@ -92,26 +92,34 @@ public class CurrentFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        
+
         this.mReceiver = new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(final Context context, final Intent intent) {
 				final String action = intent.getAction();
 				if (action.equals("de.example.exampletdd.UPDATECURRENT")) {
-					final Current current = (Current) intent.getSerializableExtra("current");
+					final Current currentRemote = (Current) intent.getSerializableExtra("current");
 
-					if (current != null) {
-						CurrentFragment.this.updateUI(current);
+					if (currentRemote != null) {
 
-			            final WeatherInformationApplication application =
-			            		(WeatherInformationApplication) getActivity().getApplication();
-			            application.setCurrent(current);
-
-			            final DatabaseQueries query = new DatabaseQueries(CurrentFragment.this.getActivity().getApplicationContext());
+						// 1. Check conditions. They must be the same as the ones that triggered the AsyncTask.
+						final DatabaseQueries query = new DatabaseQueries(CurrentFragment.this.getActivity().getApplicationContext());
 			            final WeatherLocation weatherLocation = query.queryDataBase();
-			            weatherLocation.setLastCurrentUIUpdate(new Date());
-			            query.updateDataBase(weatherLocation);
+			            final WeatherInformationApplication application =
+			            		(WeatherInformationApplication) CurrentFragment.this.getActivity().getApplication();
+			            final Current current = application.getCurrent();
+
+			            if (current == null || !CurrentFragment.this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
+			            	// 2. Update UI.
+			            	CurrentFragment.this.updateUI(currentRemote);
+
+			            	// 3. Update Data.
+				            application.setCurrent(currentRemote);
+				            weatherLocation.setLastCurrentUIUpdate(new Date());
+				            query.updateDataBase(weatherLocation);
+			            }
+
 					} else {
 						// Empty UI and show error message
 						CurrentFragment.this.clearUI();

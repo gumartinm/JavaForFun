@@ -92,22 +92,30 @@ public class OverviewFragment extends ListFragment {
 			public void onReceive(final Context context, final Intent intent) {
 				final String action = intent.getAction();
 				if (action.equals("de.example.exampletdd.UPDATEFORECAST")) {
-					final Forecast forecast = (Forecast) intent.getSerializableExtra("forecast");
+					final Forecast forecastRemote = (Forecast) intent.getSerializableExtra("forecast");
 
-					if (forecast != null) {
-						OverviewFragment.this.updateUI(forecast);
+					if (forecastRemote != null) {
 
-			            final WeatherInformationApplication application =
-			            		(WeatherInformationApplication) getActivity().getApplication();
-			            application.setForecast(forecast);
-
-			            final DatabaseQueries query = new DatabaseQueries(OverviewFragment.this.getActivity().getApplicationContext());
+						// 1. Check conditions. They must be the same as the ones that triggered the AsyncTask.
+						final DatabaseQueries query = new DatabaseQueries(OverviewFragment.this.getActivity().getApplicationContext());
 			            final WeatherLocation weatherLocation = query.queryDataBase();
-			            weatherLocation.setLastForecastUIUpdate(new Date());
-			            query.updateDataBase(weatherLocation);
+						final WeatherInformationApplication application =
+			            		(WeatherInformationApplication) OverviewFragment.this.getActivity().getApplication();
+						final Forecast forecast = application.getForecast();
 
-			            // Show list.
-			            OverviewFragment.this.setListShownNoAnimation(true);
+				        if (forecast == null || !OverviewFragment.this.isDataFresh(weatherLocation.getLastForecastUIUpdate())) {
+				        	// 2. Update UI.
+				        	OverviewFragment.this.updateUI(forecastRemote);
+
+				        	// 3. Update Data.
+							application.setForecast(forecastRemote);
+				            weatherLocation.setLastForecastUIUpdate(new Date());
+				            query.updateDataBase(weatherLocation);
+
+				            // 4. Show list.
+				            OverviewFragment.this.setListShownNoAnimation(true);
+				        }
+
 					} else {
 						// Empty list and show error message (see setEmptyText in onCreate)
 						OverviewFragment.this.setListAdapter(null);
