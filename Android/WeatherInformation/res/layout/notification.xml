@@ -39,7 +39,6 @@
             android:text="Morata de Tajuña"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/weather_time_of_day_color_title"
             android:textStyle="bold" />
     
         <TextView
@@ -50,7 +49,6 @@
             android:text="Spain"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/weather_time_of_day_color_title"
             android:textStyle="normal" />
     </LinearLayout>
             
@@ -71,7 +69,6 @@
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/weather_time_of_day_color_title"
             android:textStyle="bold" />
     
     	<TextView
@@ -83,7 +80,6 @@
         	android:textAlignment="center"
         	android:textAllCaps="true"
         	android:textAppearance="?android:attr/textAppearanceMedium"
-        	android:textColor="@color/weather_time_of_day_color_title"
         	android:textStyle="normal" />
     </LinearLayout>
     
