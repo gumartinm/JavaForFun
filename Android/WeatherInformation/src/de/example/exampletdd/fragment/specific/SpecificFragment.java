@@ -68,6 +68,8 @@ public class SpecificFragment extends Fragment {
 
             this.mChosenDay = savedInstanceState.getInt("mChosenDay");
         }
+
+        this.setHasOptionsMenu(false);
     }
 
     @Override

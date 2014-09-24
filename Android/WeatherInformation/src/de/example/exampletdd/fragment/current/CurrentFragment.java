@@ -80,6 +80,8 @@ public class CurrentFragment extends Fragment {
             }
         }     
         
+        this.setHasOptionsMenu(false);
+
         final ProgressBar progress = (ProgressBar) getActivity().findViewById(R.id.weather_current_progressbar);
         progress.setVisibility(View.VISIBLE);
         final TextView errorMessage = (TextView) getActivity().findViewById(R.id.weather_current_error_message);
