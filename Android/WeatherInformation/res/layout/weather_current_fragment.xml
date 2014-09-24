@@ -545,27 +545,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateBehavior="repeat"
-        android:indeterminateDuration="3500"
-        android:indeterminateOnly="true"
-        android:visibility="gone" />
-    
-    <LinearLayout
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleLarge" />
+
+    <TextView
+        android:id="@+id/weather_current_error_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="25dp"
         android:layout_gravity="center"
-        android:orientation="horizontal" >
+        android:text="No data available"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/weather_current_error_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="No data available"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone" />    
-    </LinearLayout>
 	</FrameLayout>
 </ScrollView>
