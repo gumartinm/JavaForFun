@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="fill"
+    android:orientation="horizontal"
     android:baselineAligned="false"
-    android:orientation="horizontal" >
+    android:padding="@dimen/widget_margin" >
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -33,7 +34,7 @@
         android:orientation="vertical" >
         
         <TextView
-            android:id="@+id/weather_notification_city"
+            android:id="@+id/weather_appwidget_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,7 +44,7 @@
             android:textStyle="bold" />
     
         <TextView
-            android:id="@+id/weather_notification_country"
+            android:id="@+id/weather_appwidget_country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -62,7 +63,7 @@
         android:orientation="vertical" >
         
         <TextView
-            android:id="@+id/weather_notification_temperature_max"
+            android:id="@+id/weather_appwidget_temperature_max"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -73,7 +74,7 @@
             android:textStyle="bold" />
     
     	<TextView
-        	android:id="@+id/weather_notification_temperature_min"
+        	android:id="@+id/weather_appwidget_temperature_min"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:layout_gravity="center"
@@ -92,7 +93,7 @@
         android:orientation="vertical" >
     
     	<ImageView
-        	android:id="@+id/weather_notification_image"
+        	android:id="@+id/weather_appwidget_image"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:layout_gravity="end"
