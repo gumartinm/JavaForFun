@@ -34,17 +34,15 @@
     
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> 
     
-    <application
+    <application android:name="de.example.exampletdd.WeatherInformationApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:logo="@drawable/ic_launcher"
         android:theme="@style/AppTheme"
-        android:name="de.example.exampletdd.WeatherInformationApplication"
         android:supportsRtl="false">
 
-        <activity
-            android:name="de.example.exampletdd.WeatherTabsActivity"
+        <activity android:name="de.example.exampletdd.WeatherTabsActivity"
             android:hardwareAccelerated="false"
             android:uiOptions="splitActionBarWhenNarrow"
             android:launchMode="singleTop" >
@@ -54,8 +52,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="de.example.exampletdd.WeatherInformationPreferencesActivity"
+        <activity android:name="de.example.exampletdd.WeatherInformationPreferencesActivity"
             android:parentActivityName="de.example.exampletdd.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONSETTINGS" />
@@ -63,8 +60,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="de.example.exampletdd.MapActivity"
+        <activity android:name="de.example.exampletdd.MapActivity"
             android:parentActivityName="de.example.exampletdd.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONMAP" />
@@ -72,8 +68,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="de.example.exampletdd.SpecificActivity"
+        <activity android:name="de.example.exampletdd.SpecificActivity"
             android:parentActivityName="de.example.exampletdd.WeatherTabsActivity"
             android:exported="false" >
             <intent-filter>
@@ -102,9 +97,14 @@
                        android:resource="@xml/appwidget_provider" />
         </receiver>
 
-        <service
-            android:name=".WeatherInformationBatch"
+        <!-- Service to update Notification -->
+        <service android:name=".WeatherInformationBatch"
             android:exported="false"
+            android:enabled="true" />
+        
+        <!-- Service to update Widget -->
+		<service android:name=".WeatherInformationWidgetProvider$UpdateService"
+		    android:exported="false"
             android:enabled="true" />
         
 
