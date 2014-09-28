@@ -21,7 +21,7 @@ public class WeatherInformationWidgetProvider extends AppWidgetProvider {
         for (int i=0; i<N; i++) {
             int appWidgetId = appWidgetIds[i];
             // To prevent any ANR timeouts, we perform the update in a service
-        	final Intent intent = new Intent(context, WidgetIntentService.class);
+        	final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
         	intent.putExtra("appWidgetId", appWidgetId);
         	intent.putExtra("updateByApp", false);
             context.startService(intent);
@@ -57,7 +57,7 @@ public class WeatherInformationWidgetProvider extends AppWidgetProvider {
         // the layout from our package).
         //final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget);
         
-        final Intent intent = new Intent(context, WidgetIntentService.class);
+        final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
     	intent.putExtra("appWidgetId", appWidgetId);
         context.startService(intent);
     }

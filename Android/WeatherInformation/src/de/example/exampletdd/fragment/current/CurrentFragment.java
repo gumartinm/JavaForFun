@@ -104,9 +104,9 @@ public class CurrentFragment extends Fragment {
 					if (currentRemote != null) {
 
 						// 1. Check conditions. They must be the same as the ones that triggered the AsyncTask.
-						final DatabaseQueries query = new DatabaseQueries(CurrentFragment.this.getActivity().getApplicationContext());
+						final DatabaseQueries query = new DatabaseQueries(context.getApplicationContext());
 			            final WeatherLocation weatherLocation = query.queryDataBase();
-			            final PermanentStorage store = new PermanentStorage(CurrentFragment.this.getActivity().getApplicationContext());
+			            final PermanentStorage store = new PermanentStorage(context.getApplicationContext());
 			            final Current current = store.getCurrent();
 
 			            if (current == null || !CurrentFragment.this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
@@ -119,12 +119,9 @@ public class CurrentFragment extends Fragment {
 				            query.updateDataBase(weatherLocation);
 
 				            // 4. Update Widget's UI.
-				            // TODO: Unable to start service intent not found U=0  WHYYYYYYYY? ANDROID SUCKSSSSSSS
-				            final Intent intentWidget = new Intent();
-				            intentWidget.setClassName("de.example.exampletdd", WidgetIntentService.class.getCanonicalName());
-				            intent.putExtra("appWidgetId", 0);
+				            final Intent intentWidget = new Intent(context.getApplicationContext(), WidgetIntentService.class);
 				            intentWidget.putExtra("updateByApp", true);
-				            CurrentFragment.this.getActivity().getApplicationContext().startService(intent);
+				            context.getApplicationContext().startService(intentWidget);
 			            }
 
 					} else {

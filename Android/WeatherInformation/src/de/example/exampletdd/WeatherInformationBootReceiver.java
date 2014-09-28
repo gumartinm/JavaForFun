@@ -40,10 +40,16 @@ public class WeatherInformationBootReceiver extends BroadcastReceiver {
                 // TODO: better use some string instead of .class? In case I change the service class
                 // this could be a problem (I guess)
                 final Intent serviceIntent = new Intent(context, NotificationIntentService.class);
-                final PendingIntent alarmIntent = PendingIntent.getService(context, 0, serviceIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime()
-                        + chosenInterval, chosenInterval, alarmIntent);
+                final PendingIntent alarmIntent = PendingIntent.getService(
+                		context,
+                		0,
+                		serviceIntent,
+                		PendingIntent.FLAG_UPDATE_CURRENT);
+                alarmMgr.setInexactRepeating(
+                		AlarmManager.ELAPSED_REALTIME,
+                		SystemClock.elapsedRealtime() + chosenInterval,
+                		chosenInterval,
+                		alarmIntent);
             }
         }
     }

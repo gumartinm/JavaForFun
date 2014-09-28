@@ -14,7 +14,6 @@ import org.apache.http.client.ClientProtocolException;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,6 +35,7 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.PermanentStorage;
 import de.example.exampletdd.service.ServiceParser;
+import de.example.exampletdd.widget.WeatherInformationWidgetProvider;
 
 public class WidgetIntentService extends IntentService {
 	private static final String TAG = "WidgetIntentService";
@@ -127,7 +127,8 @@ public class WidgetIntentService extends IntentService {
 		final String urlAPI = this.getResources().getString(R.string.uri_api_weather_today);
 		final String url = weatherService.createURIAPICurrent(urlAPI, APIVersion,
 				weatherLocation.getLatitude(), weatherLocation.getLongitude());
-		final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
+		final String urlWithoutCache = url.concat("&time=" + System.currentTimeMillis());
+		final String jsonData = HTTPClient.retrieveDataAsString(new URL(urlWithoutCache));
 		final Current current = weatherService.retrieveCurrentFromJPOS(jsonData);
 		// TODO: what is this for? I guess I could skip it :/
 		final Calendar now = Calendar.getInstance();
@@ -222,18 +223,14 @@ public class WidgetIntentService extends IntentService {
 	
 	private void updateWidget(final RemoteViews remoteView, final int appWidgetId) {
 		
-		final AppWidgetManager manager = AppWidgetManager.getInstance(this);
+		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
 		manager.updateAppWidget(appWidgetId, remoteView);
-
-		Log.i(TAG, "updateWidget updated");
 	}
 	
 	private void updateWidgets(final RemoteViews remoteView) {
 		
-		final ComponentName widgets = new ComponentName("de.example.exampletdd.widget", AppWidgetProvider.class.getCanonicalName());
-		final AppWidgetManager manager = AppWidgetManager.getInstance(this);
+		final ComponentName widgets = new ComponentName(this.getApplicationContext(), WeatherInformationWidgetProvider.class);
+		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
 		manager.updateAppWidget(widgets, remoteView);
-
-		Log.i(TAG, "updateWidgets updated");
 	}
 }

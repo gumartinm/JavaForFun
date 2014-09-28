@@ -96,9 +96,9 @@ public class OverviewFragment extends ListFragment {
 					if (forecastRemote != null) {
 
 						// 1. Check conditions. They must be the same as the ones that triggered the AsyncTask.
-						final DatabaseQueries query = new DatabaseQueries(OverviewFragment.this.getActivity().getApplicationContext());
+						final DatabaseQueries query = new DatabaseQueries(context.getApplicationContext());
 			            final WeatherLocation weatherLocation = query.queryDataBase();
-			            final PermanentStorage store = new PermanentStorage(OverviewFragment.this.getActivity().getApplicationContext());
+			            final PermanentStorage store = new PermanentStorage(context.getApplicationContext());
 			            final Forecast forecast = store.getForecast();
 
 				        if (forecast == null || !OverviewFragment.this.isDataFresh(weatherLocation.getLastForecastUIUpdate())) {
