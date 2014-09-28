@@ -11,7 +11,7 @@ import android.os.SystemClock;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import de.example.exampletdd.R;
-import de.example.exampletdd.WeatherInformationBatch;
+import de.example.exampletdd.NotificationIntentService;
 
 public class WeatherInformationPreferencesFragment extends PreferenceFragment 
 													implements OnSharedPreferenceChangeListener {
@@ -163,7 +163,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         // TODO: better use some string instead of .class? In case I change the service class
         // this could be a problem (I guess)
         final Intent serviceIntent =
-        		new Intent(this.getActivity().getApplicationContext(), WeatherInformationBatch.class);
+        		new Intent(this.getActivity().getApplicationContext(), NotificationIntentService.class);
         final PendingIntent alarmIntent =
         		PendingIntent.getService(
         				this.getActivity().getApplicationContext(),

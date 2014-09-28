@@ -19,9 +19,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import de.example.exampletdd.R;
-import de.example.exampletdd.WeatherInformationApplication;
 import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.service.IconsList;
+import de.example.exampletdd.service.PermanentStorage;
 
 public class SpecificFragment extends Fragment {
     private int mChosenDay;
@@ -61,9 +61,8 @@ public class SpecificFragment extends Fragment {
             // TODO: Could it be better to store in global data forecast even if it is null value?
             //       So, perhaps do not check for null value and always store in global variable.
             if (forecast != null) {
-                final WeatherInformationApplication application =
-                		(WeatherInformationApplication) getActivity().getApplication();
-                application.setForecast(forecast);
+            	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+            	store.saveForecast(forecast);
             }
 
             this.mChosenDay = savedInstanceState.getInt("mChosenDay");
@@ -76,9 +75,8 @@ public class SpecificFragment extends Fragment {
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save UI state
-    	final WeatherInformationApplication application =
-        		(WeatherInformationApplication) getActivity().getApplication();
-        final Forecast forecast = application.getForecast();
+    	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+        final Forecast forecast = store.getForecast();
 
         // TODO: Could it be better to save forecast data even if it is null value?
         //       So, perhaps do not check for null value.
@@ -97,9 +95,8 @@ public class SpecificFragment extends Fragment {
      * @param chosenDay
      */
     public void updateUIByChosenDay(final int chosenDay) {
-        final WeatherInformationApplication application =
-        		(WeatherInformationApplication) getActivity().getApplication();
-        final Forecast forecast = application.getForecast();
+    	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+        final Forecast forecast = store.getForecast();
 
         if (forecast != null) {
             this.updateUI(forecast, chosenDay);
@@ -264,9 +261,8 @@ public class SpecificFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        final WeatherInformationApplication application =
-        		(WeatherInformationApplication) getActivity().getApplication();
-        final Forecast forecast = application.getForecast();
+        final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+        final Forecast forecast = store.getForecast();
 
         if (forecast != null) {
             this.updateUI(forecast, this.mChosenDay);

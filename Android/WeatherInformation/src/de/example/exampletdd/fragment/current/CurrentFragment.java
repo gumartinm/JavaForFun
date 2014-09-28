@@ -37,13 +37,14 @@ import android.widget.TextView;
 import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.R;
-import de.example.exampletdd.WeatherInformationApplication;
+import de.example.exampletdd.WidgetIntentService;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.DatabaseQueries;
 import de.example.exampletdd.model.WeatherLocation;
 import de.example.exampletdd.model.currentweather.Current;
 import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
+import de.example.exampletdd.service.PermanentStorage;
 import de.example.exampletdd.service.ServiceParser;
 
 public class CurrentFragment extends Fragment {
@@ -74,9 +75,8 @@ public class CurrentFragment extends Fragment {
             // TODO: Could it be better to store in global forecast data even if it is null value?
             //       So, perhaps do not check for null value and always store in global variable.
             if (current != null) {
-            	final WeatherInformationApplication application =
-            			(WeatherInformationApplication) getActivity().getApplication();
-                application.setCurrent(current);
+            	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+            	store.saveCurrent(current);
             }
         }     
         
@@ -106,18 +106,25 @@ public class CurrentFragment extends Fragment {
 						// 1. Check conditions. They must be the same as the ones that triggered the AsyncTask.
 						final DatabaseQueries query = new DatabaseQueries(CurrentFragment.this.getActivity().getApplicationContext());
 			            final WeatherLocation weatherLocation = query.queryDataBase();
-			            final WeatherInformationApplication application =
-			            		(WeatherInformationApplication) CurrentFragment.this.getActivity().getApplication();
-			            final Current current = application.getCurrent();
+			            final PermanentStorage store = new PermanentStorage(CurrentFragment.this.getActivity().getApplicationContext());
+			            final Current current = store.getCurrent();
 
 			            if (current == null || !CurrentFragment.this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
 			            	// 2. Update UI.
 			            	CurrentFragment.this.updateUI(currentRemote);
 
 			            	// 3. Update Data.
-				            application.setCurrent(currentRemote);
+							store.saveCurrent(currentRemote);
 				            weatherLocation.setLastCurrentUIUpdate(new Date());
 				            query.updateDataBase(weatherLocation);
+
+				            // 4. Update Widget's UI.
+				            // TODO: Unable to start service intent not found U=0  WHYYYYYYYY? ANDROID SUCKSSSSSSS
+				            final Intent intentWidget = new Intent();
+				            intentWidget.setClassName("de.example.exampletdd", WidgetIntentService.class.getCanonicalName());
+				            intent.putExtra("appWidgetId", 0);
+				            intentWidget.putExtra("updateByApp", true);
+				            CurrentFragment.this.getActivity().getApplicationContext().startService(intent);
 			            }
 
 					} else {
@@ -152,10 +159,9 @@ public class CurrentFragment extends Fragment {
 	        errorMessage.setVisibility(View.VISIBLE);
             return;
         }
-        
-        final WeatherInformationApplication application =
-        		(WeatherInformationApplication) getActivity().getApplication();
-        final Current current = application.getCurrent();
+
+        final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+        final Current current = store.getCurrent();
 
         if (current != null && this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
             this.updateUI(current);
@@ -180,9 +186,8 @@ public class CurrentFragment extends Fragment {
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save UI state
-    	final WeatherInformationApplication application =
-        		(WeatherInformationApplication) getActivity().getApplication();
-        final Current current = application.getCurrent();
+    	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+        final Current current = store.getCurrent();
 
         // TODO: Could it be better to save current data even if it is null value?
         //       So, perhaps do not check for null value.

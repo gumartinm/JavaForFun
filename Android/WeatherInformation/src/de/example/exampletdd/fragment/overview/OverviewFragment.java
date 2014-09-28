@@ -36,7 +36,6 @@ import android.widget.ListView;
 import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.R;
-import de.example.exampletdd.WeatherInformationApplication;
 import de.example.exampletdd.fragment.specific.SpecificFragment;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.DatabaseQueries;
@@ -44,6 +43,7 @@ import de.example.exampletdd.model.WeatherLocation;
 import de.example.exampletdd.model.forecastweather.Forecast;
 import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
+import de.example.exampletdd.service.PermanentStorage;
 import de.example.exampletdd.service.ServiceParser;
 
 public class OverviewFragment extends ListFragment {
@@ -69,9 +69,8 @@ public class OverviewFragment extends ListFragment {
             // TODO: Could it be better to store in global forecast data even if it is null value?
             //       So, perhaps do not check for null value and always store in global variable.
             if (forecast != null) {
-                final WeatherInformationApplication application =
-                		(WeatherInformationApplication) getActivity().getApplication();
-                application.setForecast(forecast);
+            	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+            	store.saveForecast(forecast);
             }
         }
 
@@ -99,16 +98,15 @@ public class OverviewFragment extends ListFragment {
 						// 1. Check conditions. They must be the same as the ones that triggered the AsyncTask.
 						final DatabaseQueries query = new DatabaseQueries(OverviewFragment.this.getActivity().getApplicationContext());
 			            final WeatherLocation weatherLocation = query.queryDataBase();
-						final WeatherInformationApplication application =
-			            		(WeatherInformationApplication) OverviewFragment.this.getActivity().getApplication();
-						final Forecast forecast = application.getForecast();
+			            final PermanentStorage store = new PermanentStorage(OverviewFragment.this.getActivity().getApplicationContext());
+			            final Forecast forecast = store.getForecast();
 
 				        if (forecast == null || !OverviewFragment.this.isDataFresh(weatherLocation.getLastForecastUIUpdate())) {
 				        	// 2. Update UI.
 				        	OverviewFragment.this.updateUI(forecastRemote);
 
 				        	// 3. Update Data.
-							application.setForecast(forecastRemote);
+				        	store.saveForecast(forecastRemote);
 				            weatherLocation.setLastForecastUIUpdate(new Date());
 				            query.updateDataBase(weatherLocation);
 
@@ -141,10 +139,10 @@ public class OverviewFragment extends ListFragment {
             return;
         }
 
-        final WeatherInformationApplication application =
-        		(WeatherInformationApplication) getActivity().getApplication();
-        final Forecast forecast = application.getForecast();
+        final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+        final Forecast forecast = store.getForecast();
 
+        // TODO: store forecast data in permanent storage and check here if there is data in permanent storage
         if (forecast != null && this.isDataFresh(weatherLocation.getLastForecastUIUpdate())) {
             this.updateUI(forecast);
         } else {
@@ -165,9 +163,8 @@ public class OverviewFragment extends ListFragment {
     public void onSaveInstanceState(final Bundle savedInstanceState) {
 
         // Save UI state
-        final WeatherInformationApplication application =
-        		(WeatherInformationApplication) getActivity().getApplication();
-        final Forecast forecast = application.getForecast();
+    	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
+        final Forecast forecast = store.getForecast();
 
         // TODO: Could it be better to save forecast data even if it is null value?
         //       So, perhaps do not check for null value.

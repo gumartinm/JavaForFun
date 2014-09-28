@@ -36,12 +36,12 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.ServiceParser;
 
-public class WeatherInformationBatch extends IntentService {
-    private static final String TAG = "WeatherInformationBatch";
+public class NotificationIntentService extends IntentService {
+    private static final String TAG = "NotificationIntentService";
 
 
-    public WeatherInformationBatch() {
-        super("WIB-Thread");
+    public NotificationIntentService() {
+        super("NIS-Thread");
     }
 
     @Override

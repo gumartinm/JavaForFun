@@ -34,7 +34,7 @@
     
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> 
     
-    <application android:name="de.example.exampletdd.WeatherInformationApplication"
+    <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -77,13 +77,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".widget.WeatherInformationWidgetConfigure">
+        <activity android:name="de.example.exampletdd.widget.WeatherInformationWidgetConfigure">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
         
-        <receiver android:name=".WeatherInformationBootReceiver"
+        <receiver android:name="de.example.exampletdd.WeatherInformationBootReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
@@ -98,12 +98,12 @@
         </receiver>
 
         <!-- Service to update Notification -->
-        <service android:name=".WeatherInformationBatch"
+        <service android:name="de.example.exampletdd.NotificationIntentService"
             android:exported="false"
             android:enabled="true" />
         
         <!-- Service to update Widget -->
-		<service android:name=".WeatherInformationWidgetProvider$UpdateService"
+		<service android:name="de.example.exampletdd.WidgetIntentService"
 		    android:exported="false"
             android:enabled="true" />
         
