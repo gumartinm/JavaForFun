@@ -60,12 +60,12 @@
     </LinearLayout>
     
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
-        android:padding="4dp"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:padding="4dp" >
         
         <TextView
             android:id="@+id/weather_appwidget_city"
