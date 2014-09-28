@@ -498,7 +498,8 @@ public class CurrentFragment extends Fragment {
         	final String APIVersion = localContext.getResources().getString(R.string.api_version);
             final String urlAPI = localContext.getResources().getString(R.string.uri_api_weather_today);
             final String url = weatherService.createURIAPICurrent(urlAPI, APIVersion, latitude, longitude);
-            final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
+            final String urlWithoutCache = url.concat("&time=" + System.currentTimeMillis());
+            final String jsonData = HTTPClient.retrieveDataAsString(new URL(urlWithoutCache));
             final Current current = weatherService.retrieveCurrentFromJPOS(jsonData);
             // TODO: what is this for? I guess I could skip it :/
             final Calendar now = Calendar.getInstance();

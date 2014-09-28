@@ -89,7 +89,8 @@ public class NotificationIntentService extends IntentService {
         final String urlAPI = this.getResources().getString(R.string.uri_api_weather_today);
         final String url = weatherService.createURIAPICurrent(urlAPI, APIVersion,
                 weatherLocation.getLatitude(), weatherLocation.getLongitude());
-        final String jsonData = HTTPClient.retrieveDataAsString(new URL(url));
+        final String urlWithoutCache = url.concat("&time=" + System.currentTimeMillis());
+        final String jsonData = HTTPClient.retrieveDataAsString(new URL(urlWithoutCache));
         final Current current = weatherService.retrieveCurrentFromJPOS(jsonData);
         // TODO: what is this for? I guess I could skip it :/
         final Calendar now = Calendar.getInstance();
