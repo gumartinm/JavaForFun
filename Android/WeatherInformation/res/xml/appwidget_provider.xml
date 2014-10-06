@@ -6,7 +6,7 @@
     android:minResizeHeight="40dp"
     android:resizeMode="none"
     android:previewImage="@drawable/ic_launcher"
-    android:initialLayout="@layout/appwidget"
+    android:initialLayout="@layout/appwidget_error"
     android:configure="de.example.exampletdd.widget.WeatherInformationWidgetConfigure" 
     android:widgetCategory="home_screen|keyguard"
     android:updatePeriodMillis="3600000">

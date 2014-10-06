@@ -76,8 +76,7 @@ public class OverviewFragment extends ListFragment {
 
         this.setHasOptionsMenu(false);
 
-        // TODO: string static resource
-        this.setEmptyText("No data available");
+        this.setEmptyText(this.getString(R.string.text_field_remote_error));
         this.setListShownNoAnimation(false);
     }
 

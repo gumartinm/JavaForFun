@@ -39,4 +39,5 @@
 	<string name="text_units_centigrade">ºC</string>
 	<string name="text_units_ms">m/s</string>
 	<string name="text_units_hpa">hpa</string>
+	<string name="text_field_remote_error">No data available</string>
 </resources>

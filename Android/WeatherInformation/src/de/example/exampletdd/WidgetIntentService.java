@@ -48,14 +48,16 @@ public class WidgetIntentService extends IntentService {
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		Log.i(TAG, "onHandleIntent");
-		final int appWidgetId = intent.getIntExtra("appWidgetId", -666);
+		final int appWidgetId = intent.getIntExtra("appWidgetId", AppWidgetManager.INVALID_APPWIDGET_ID);
 		final boolean isUpdateByApp = intent.getBooleanExtra("updateByApp", false);
 
 		final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
 		final WeatherLocation weatherLocation = query.queryDataBase();
 		
 		if (weatherLocation == null) {
-			// Nothing to do.		
+			// Nothing to do. Show error.
+			final RemoteViews view = this.makeErrorView();
+			this.updateWidgets(view);
 			return;
 		}
 		
@@ -76,8 +78,10 @@ public class WidgetIntentService extends IntentService {
 	}
 	
 	private void updateByTimeout(final WeatherLocation weatherLocation, final int appWidgetId) {
-		if (appWidgetId == -666) {
-			// Nothing to do. Something went wrong.
+		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+			// Nothing to do. Something went wrong. Show error.
+			final RemoteViews view = this.makeErrorView();
+			this.updateWidgets(view);
 			return;
 		}
 		
@@ -86,7 +90,9 @@ public class WidgetIntentService extends IntentService {
 			final RemoteViews view = this.makeView(current, weatherLocation);
 			this.updateWidget(view, appWidgetId);
 		} else {
-			// TODO: show layout error in Widget
+			// Show error.
+			final RemoteViews view = this.makeErrorView();
+			this.updateWidgets(view);
 		}
 	}
 	
@@ -221,6 +227,32 @@ public class WidgetIntentService extends IntentService {
 		return remoteView;
 	}
 	
+	private RemoteViews makeErrorView() {
+		final RemoteViews remoteView = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.appwidget_error);
+
+		// 5. Activity launcher.
+		final Intent resultIntent =  new Intent(this.getApplicationContext(), WeatherTabsActivity.class);
+		// The PendingIntent to launch our activity if the user selects this notification
+		//            final PendingIntent contentIntent = PendingIntent.getActivity(
+		//            		this.getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		// The stack builder object will contain an artificial back stack for the started Activity.
+		// This ensures that navigating backward from the Activity leads out of
+		// your application to the Home screen.
+		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
+		// Adds the back stack for the Intent (but not the Intent itself)
+		stackBuilder.addParentStack(WeatherTabsActivity.class);
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		final PendingIntent resultPendingIntent =
+				stackBuilder.getPendingIntent(
+						0,
+						PendingIntent.FLAG_UPDATE_CURRENT
+						);
+		remoteView.setOnClickPendingIntent(R.id.weather_appwidget_error, resultPendingIntent);
+
+		return remoteView;
+	}
+
 	private void updateWidget(final RemoteViews remoteView, final int appWidgetId) {
 		
 		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
