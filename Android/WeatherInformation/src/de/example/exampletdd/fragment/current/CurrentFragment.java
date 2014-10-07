@@ -202,6 +202,11 @@ public class CurrentFragment extends Fragment {
         super.onPause();
     }
 
+    private interface UnitsConversor {
+    	
+    	public double doConversion(final double value);
+    }
+    
     private void updateUI(final Current current) {
     	
         final SharedPreferences sharedPreferences = PreferenceManager
@@ -209,19 +214,49 @@ public class CurrentFragment extends Fragment {
 
         // TODO: repeating the same code in Overview, Specific and Current!!!
         // 1. Update units of measurement.
-        boolean mIsFahrenheit = false;
-        final String keyPreference = this.getResources().getString(
-                R.string.weather_preferences_units_key);
-        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        final String celsius = this.getResources().getString(
-                R.string.weather_preferences_units_celsius);
-        if (unitsPreferenceValue.equals(celsius)) {
-            mIsFahrenheit = false;
+        // 1.1 Temperature
+        String tempSymbol;
+        UnitsConversor tempUnitsConversor;
+        String keyPreference = this.getResources().getString(R.string.weather_preferences_units_key);
+        String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
+        if (unitsPreferenceValue.equals(values[0])) {
+        	tempSymbol = values[0];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value - 273.15;
+				}
+        		
+        	};
+        } else if (unitsPreferenceValue.equals(values[1])) {
+        	tempSymbol = values[1];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return (value * 1.8) - 459.67;
+				}
+        		
+        	};
         } else {
-            mIsFahrenheit = true;
+        	tempSymbol = values[2];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value;
+				}
+        		
+        	};
         }
-        final double tempUnits = mIsFahrenheit ? 0 : 273.15;
-        final String symbol = mIsFahrenheit ? "ºF" : "ºC";
+
+        // 1.2 Wind
+        keyPreference = this.getResources().getString(R.string.weather_preferences_wind_key);
+        final String windSymbol = sharedPreferences.getString(
+        		keyPreference,
+        		this.getResources().getStringArray(R.array.weather_preferences_wind)[0]);
 
 
         // 2. Formatters
@@ -234,14 +269,14 @@ public class CurrentFragment extends Fragment {
         String tempMax = "";
         if (current.getMain().getTemp_max() != null) {
             double conversion = (Double) current.getMain().getTemp_max();
-            conversion = conversion - tempUnits;
-            tempMax = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempMax = tempFormatter.format(conversion) + tempSymbol;
         }
         String tempMin = "";
         if (current.getMain().getTemp_min() != null) {
             double conversion = (Double) current.getMain().getTemp_min();
-            conversion = conversion - tempUnits;
-            tempMin = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempMin = tempFormatter.format(conversion) + tempSymbol;
         }
         Bitmap picture;
         if ((current.getWeather().size() > 0)
@@ -301,7 +336,7 @@ public class CurrentFragment extends Fragment {
         String feelsLike = "";
         if (current.getMain().getTemp() != null) {
             double conversion = (Double) current.getMain().getTemp();
-            conversion = conversion - tempUnits;
+            conversion = tempUnitsConversor.doConversion(conversion);
             feelsLike = tempFormatter.format(conversion);
         }
         String sunRiseTime = "";
@@ -349,8 +384,7 @@ public class CurrentFragment extends Fragment {
         ((TextView) getActivity().findViewById(R.id.weather_current_wind)).setText(
         		this.getActivity().getApplicationContext().getString(R.string.text_field_wind));
         ((TextView) getActivity().findViewById(R.id.weather_current_wind_value)).setText(windValue);
-        ((TextView) getActivity().findViewById(R.id.weather_current_wind_units)).setText(
-        		this.getActivity().getApplicationContext().getString(R.string.text_units_ms));
+        ((TextView) getActivity().findViewById(R.id.weather_current_wind_units)).setText(windSymbol);
         
         ((TextView) getActivity().findViewById(R.id.weather_current_rain)).setText(
         		this.getActivity().getApplicationContext().getString(R.string.text_field_rain));
@@ -373,8 +407,7 @@ public class CurrentFragment extends Fragment {
         ((TextView) getActivity().findViewById(R.id.weather_current_feelslike)).setText(
         		this.getActivity().getApplicationContext().getString(R.string.text_field_feels_like));
         ((TextView) getActivity().findViewById(R.id.weather_current_feelslike_value)).setText(feelsLike);
-        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike_units)).setText(
-        		this.getActivity().getApplicationContext().getString(R.string.text_units_centigrade));
+        ((TextView) getActivity().findViewById(R.id.weather_current_feelslike_units)).setText(tempSymbol);
         
         ((TextView) getActivity().findViewById(R.id.weather_current_sunrise)).setText(
         		this.getActivity().getApplicationContext().getString(R.string.text_field_sun_rise));
@@ -406,6 +439,7 @@ public class CurrentFragment extends Fragment {
     
     private void clearUI() {
 
+    	// TODO: something better than this for clearing view?
         ((TextView) getActivity().findViewById(R.id.weather_current_temp_max)).setText("");
         ((TextView) getActivity().findViewById(R.id.weather_current_temp_min)).setText("");
         

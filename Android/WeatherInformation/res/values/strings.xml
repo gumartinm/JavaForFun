@@ -21,7 +21,6 @@
     <string name="weather_preferences_actionbar_title">Settings</string>
     <string name="weather_preferences_units">Units</string>
     <string name="weather_preferences_units_key">weather_preferences_units</string>
-    <string name="weather_preferences_units_fahrenheit">Fahrenheit</string>
     <string name="weather_preferences_units_celsius">Celsius</string>
     <string name="weather_preferences_temperature_units">Temperature</string>
     <string name="weather_preferences_notifications">Notifications</string>
@@ -36,6 +35,9 @@
     <string name="weather_preferences_day_forecast">Forecast days number</string>
     <string name="weather_preferences_refresh_interval_key">weather_preferences_refresh_interval</string>
     <string name="weather_preferences_refresh_interval">Refresh interval</string>
+    <string name="weather_preferences_wind_key">weather_preferences_wind</string>
+    <string name="weather_preferences_wind">Wind</string>
+    <string name="weather_preferences_wind_summary">Wind</string>
     <string name="city_not_found">city not found</string>
     <string name="country_not_found">country not found</string>
     <string name="progress_dialog_generic_message">Please wait&#8230;</string>
@@ -46,8 +48,6 @@
 	<string name="weather_map_button_getlocation">Get Location</string>
 	<string name="text_units_mm3h">mm 3h</string>
 	<string name="text_units_percent">%</string>
-	<string name="text_units_centigrade">ºC</string>
-	<string name="text_units_ms">m/s</string>
 	<string name="text_units_hpa">hpa</string>
 	<string name="text_field_remote_error">No data available</string>
 </resources>

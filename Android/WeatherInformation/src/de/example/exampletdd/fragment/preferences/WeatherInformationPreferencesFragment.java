@@ -24,22 +24,33 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         this.addPreferencesFromResource(R.xml.weather_preferences);
         
         
-        // Units of Measurement
+        // Temperature units
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
+        String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_units_human_value);
         String keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.weather_preferences_units_key);
         Preference connectionPref = this.findPreference(keyPreference);
-        connectionPref.setSummary(this.getPreferenceManager()
-                .getSharedPreferences().getString(keyPreference, ""));
-        
-        // Update Time Rate
-        String[] values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
-        String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate_human_value);
-        keyPreference = this.getActivity().getApplicationContext().getString(
-                R.string.weather_preferences_update_time_rate_key);
-        connectionPref = this.findPreference(keyPreference);
         String value = this.getPreferenceManager().getSharedPreferences()
                 .getString(keyPreference, "");
         String humanValue = "";
+        if (value.equals(values[0])) {
+            humanValue = humanValues[0];
+        } else if (value.equals(values[1])) {
+            humanValue = humanValues[1];
+        } else if (value.equals(values[2])) {
+            humanValue = humanValues[2];
+        }
+        connectionPref.setSummary(humanValue);
+        
+        // Update Time Rate
+        values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate_human_value);
+        keyPreference = this.getActivity().getApplicationContext().getString(
+                R.string.weather_preferences_update_time_rate_key);
+        connectionPref = this.findPreference(keyPreference);
+        value = this.getPreferenceManager().getSharedPreferences()
+                .getString(keyPreference, "");
+        humanValue = "";
         if (value.equals(values[0])) {
             humanValue = humanValues[0];
         } else if (value.equals(values[1])) {

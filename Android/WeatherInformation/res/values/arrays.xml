@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="weather_preferences_units_value">
-        <item>Celsius</item>
-        <item>Fahrenheit</item>
+        <item>ºC</item>
+        <item>ºF</item>
+        <item>K</item>
     </string-array>
     <string-array name="weather_preferences_units_human_value">
         <item>Celsius</item>
         <item>Fahrenheit</item>
+        <item>Kelvin</item>
     </string-array>
     <string-array name="weather_preferences_language_value">
         <item>ar</item>
@@ -82,7 +84,7 @@
         <item>half day</item>
         <item>one day</item>     
     </string-array>
-        <string-array name="weather_preferences_refresh_interval">
+    <string-array name="weather_preferences_refresh_interval">
         <item>300000</item>
         <item>900000</item>
         <item>1800000</item>
@@ -99,5 +101,13 @@
         <item>two hours</item>
         <item>half day</item>
         <item>one day</item>
+    </string-array>
+    <string-array name="weather_preferences_wind">
+        <item>m/s</item>
+        <item>mph</item>
+    </string-array>
+    <string-array name="weather_preferences_wind_human_value">
+        <item>meter per second</item>
+        <item>miles per hour</item>
     </string-array>
 </resources>

@@ -103,7 +103,11 @@ public class SpecificFragment extends Fragment {
         }
     }
 
-
+    private interface UnitsConversor {
+    	
+    	public double doConversion(final double value);
+    }
+    
     private void updateUI(final Forecast forecastWeatherData, final int chosenDay) {
 
         final SharedPreferences sharedPreferences = PreferenceManager
@@ -111,21 +115,52 @@ public class SpecificFragment extends Fragment {
 
         // TODO: repeating the same code in Overview, Specific and Current!!!
         // 1. Update units of measurement.
-        boolean isFahrenheit = false;
-        final String keyPreference = this.getResources().getString(
+        // 1.1 Temperature
+        String tempSymbol;
+        UnitsConversor tempUnitsConversor;
+        String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_units_key);
         final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        final String celsius = this.getResources().getString(
-                R.string.weather_preferences_units_celsius);
-        if (unitsPreferenceValue.equals(celsius)) {
-            isFahrenheit = false;
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
+        if (unitsPreferenceValue.equals(values[0])) {
+        	tempSymbol = values[0];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value - 273.15;
+				}
+        		
+        	};
+        } else if (unitsPreferenceValue.equals(values[1])) {
+        	tempSymbol = values[1];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return (value * 1.8) - 459.67;
+				}
+        		
+        	};
         } else {
-            isFahrenheit = true;
+        	tempSymbol = values[2];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value;
+				}
+        		
+        	};
         }
-        final double tempUnits = isFahrenheit ? 0 : 273.15;
-        final String symbol = isFahrenheit ? "ºF" : "ºC";
-    	
-        
+
+        // 1.2 Wind
+        keyPreference = this.getResources().getString(R.string.weather_preferences_wind_key);
+        final String windSymbol = sharedPreferences.getString(
+        		keyPreference,
+        		this.getResources().getStringArray(R.array.weather_preferences_wind)[0]);
+
+
         // 2. Formatters
         final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         tempFormatter.applyPattern("#####.#####");
@@ -144,14 +179,14 @@ public class SpecificFragment extends Fragment {
         String tempMax = "";
         if (forecast.getTemp().getMax() != null) {
             double conversion = (Double) forecast.getTemp().getMax();
-            conversion = conversion - tempUnits;
-            tempMax = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempMax = tempFormatter.format(conversion) + tempSymbol;
         }        
         String tempMin = "";
         if (forecast.getTemp().getMin() != null) {
             double conversion = (Double) forecast.getTemp().getMin();
-            conversion = conversion - tempUnits;
-            tempMin = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempMin = tempFormatter.format(conversion) + tempSymbol;
         }
         Bitmap picture;
         if ((forecast.getWeather().size() > 0) && (forecast.getWeather().get(0).getIcon() != null)
@@ -200,26 +235,26 @@ public class SpecificFragment extends Fragment {
         String tempDay = "";
         if (forecast.getTemp().getDay() != null) {
             double conversion = (Double) forecast.getTemp().getDay();
-            conversion = conversion - tempUnits;
-            tempDay = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempDay = tempFormatter.format(conversion) + tempSymbol;
         }
         String tempMorn = "";
         if (forecast.getTemp().getMorn() != null) {
             double conversion = (Double) forecast.getTemp().getMorn();
-            conversion = conversion - tempUnits;
-            tempMorn = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempMorn = tempFormatter.format(conversion) + tempSymbol;
         }
         String tempEve = "";
         if (forecast.getTemp().getEve() != null) {
             double conversion = (Double) forecast.getTemp().getEve();
-            conversion = conversion - tempUnits;
-            tempEve = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempEve = tempFormatter.format(conversion) + tempSymbol;
         }   
         String tempNight = "";
         if (forecast.getTemp().getNight() != null) {
             double conversion = (Double) forecast.getTemp().getNight();
-            conversion = conversion - tempUnits;
-            tempNight = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempNight = tempFormatter.format(conversion) + tempSymbol;
         }   
 
 
@@ -240,8 +275,8 @@ public class SpecificFragment extends Fragment {
         humidityValueView.setText(humidityValue);
         final TextView pressureValueView = (TextView) getActivity().findViewById(R.id.weather_specific_pressure_value);
         pressureValueView.setText(pressureValue);
-        final TextView windValueView = (TextView) getActivity().findViewById(R.id.weather_specific_wind_value);
-        windValueView.setText(windValue);
+        ((TextView) getActivity().findViewById(R.id.weather_specific_wind_value)).setText(windValue);;
+        ((TextView) getActivity().findViewById(R.id.weather_specific_wind_units)).setText(windSymbol);
         final TextView rainValueView = (TextView) getActivity().findViewById(R.id.weather_specific_rain_value);
         rainValueView.setText(rainValue);
         final TextView cloudsValueView = (TextView) getActivity().findViewById(R.id.weather_specific_clouds_value);

@@ -24,7 +24,11 @@
             android:entryValues="@array/weather_preferences_units_value"
             android:selectable="true"
             android:persistent="true"
-            android:defaultValue="Celsius" />
+            android:defaultValue="@string/weather_preferences_units_celsius" />
+        <ListPreference android:key="@string/weather_preferences_wind_key"
+            android:entryValues="@array/weather_preferences_wind_human_value"
+            android:entries="@array/weather_preferences_wind"
+            android:title="@string/weather_preferences_wind"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/weather_preferences_notifications">
         <SwitchPreference android:key="@string/weather_preferences_notifications_switch_key"

@@ -198,6 +198,11 @@ public class OverviewFragment extends ListFragment {
         }
     }
 
+    private interface UnitsConversor {
+    	
+    	public double doConversion(final double value);
+    }
+    
     private void updateUI(final Forecast forecastWeatherData) {
 
         final SharedPreferences sharedPreferences = PreferenceManager
@@ -205,27 +210,49 @@ public class OverviewFragment extends ListFragment {
 
         // TODO: repeating the same code in Overview, Specific and Current!!!
         // 1. Update units of measurement.
-        boolean isFahrenheit = false;
-        String keyPreference = this.getResources()
-                .getString(R.string.weather_preferences_units_key);
-        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "Celsius");
-        final String celsius = this.getResources().getString(
-                R.string.weather_preferences_units_celsius);
-        if (unitsPreferenceValue.equals(celsius)) {
-            isFahrenheit = false;
+        String symbol;
+        UnitsConversor unitsConversor;
+        String keyPreference = this.getResources().getString(
+                R.string.weather_preferences_units_key);
+        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
+        if (unitsPreferenceValue.equals(values[0])) {
+        	symbol = values[0];
+        	unitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value - 273.15;
+				}
+        		
+        	};
+        } else if (unitsPreferenceValue.equals(values[1])) {
+        	symbol = values[1];
+        	unitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return (value * 1.8) - 459.67;
+				}
+        		
+        	};
         } else {
-            isFahrenheit = true;
+        	symbol = values[2];
+        	unitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value;
+				}
+        		
+        	};
         }
-        final double tempUnits = isFahrenheit ? 0 : 273.15;
-        final String symbol = isFahrenheit ? "ºF" : "ºC";
 
 
         // 2. Update number day forecast.
-        int mDayForecast;
-        keyPreference = this.getResources()
-                .getString(R.string.weather_preferences_day_forecast_key);
+        keyPreference = this.getResources().getString(R.string.weather_preferences_day_forecast_key);
         final String dayForecast = sharedPreferences.getString(keyPreference, "5");
-        mDayForecast = Integer.valueOf(dayForecast);
+        final int mDayForecast = Integer.valueOf(dayForecast);
 
 
         // 3. Formatters
@@ -266,13 +293,13 @@ public class OverviewFragment extends ListFragment {
             Double maxTemp = null;
             if (forecast.getTemp().getMax() != null) {
                 maxTemp = (Double) forecast.getTemp().getMax();
-                maxTemp = maxTemp - tempUnits;
+                maxTemp = unitsConversor.doConversion(maxTemp);
             }
 
             Double minTemp = null;
             if (forecast.getTemp().getMin() != null) {
                 minTemp = (Double) forecast.getTemp().getMin();
-                minTemp = minTemp - tempUnits;
+                minTemp = unitsConversor.doConversion(minTemp);
             }
 
             if ((maxTemp != null) && (minTemp != null)) {
