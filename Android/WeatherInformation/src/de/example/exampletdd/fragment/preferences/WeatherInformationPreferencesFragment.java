@@ -32,39 +32,66 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
                 .getSharedPreferences().getString(keyPreference, ""));
         
         // Update Time Rate
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
+        String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate_human_value);
         keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.weather_preferences_update_time_rate_key);
         connectionPref = this.findPreference(keyPreference);
         String value = this.getPreferenceManager().getSharedPreferences()
                 .getString(keyPreference, "");
         String humanValue = "";
-        if (value.equals("0")) {
-            humanValue = "no updates";
-        } else if (value.equals("900")) {
-            humanValue = "fifteen minutes";
-        } else if (value.equals("1800")) {
-            humanValue = "half hour";
-        } else if (value.equals("3600")) {
-            humanValue = "one hour";
-        } else if (value.equals("43200")) {
-            humanValue = "half day";
-        } else if (value.equals("86400")) {
-            humanValue = "one day";
+        if (value.equals(values[0])) {
+            humanValue = humanValues[0];
+        } else if (value.equals(values[1])) {
+            humanValue = humanValues[1];
+        } else if (value.equals(values[2])) {
+            humanValue = humanValues[2];
+        } else if (value.equals(values[3])) {
+            humanValue = humanValues[3];
+        } else if (value.equals(values[4])) {
+            humanValue = humanValues[4];
         }
         connectionPref.setSummary(humanValue);
         
         // Forecast days number
+        values = this.getResources().getStringArray(R.array.weather_preferences_day_forecast);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_day_forecast_human_value);
         keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.weather_preferences_day_forecast_key);
         connectionPref = this.findPreference(keyPreference);
         value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
         humanValue = "";
-        if (value.equals("5")) {
-            humanValue = "5-Day Forecast";
-        } else if (value.equals("10")) {
-            humanValue = "10-Day Forecast";
-        } else if (value.equals("14")) {
-            humanValue = "14-Day Forecast";
+        if (value.equals(values[0])) {
+            humanValue = humanValues[0];
+        } else if (value.equals(values[1])) {
+            humanValue = humanValues[1];
+        } else if (value.equals(values[2])) {
+            humanValue = humanValues[2];
+        }
+        connectionPref.setSummary(humanValue);
+
+        // Refresh interval
+        values = this.getResources().getStringArray(R.array.weather_preferences_refresh_interval);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_refresh_interval_human_value);
+        keyPreference = this.getActivity().getApplicationContext().getString(
+                R.string.weather_preferences_refresh_interval_key);
+        connectionPref = this.findPreference(keyPreference);
+        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        humanValue = "";
+        if (value.equals(values[0])) {
+            humanValue = humanValues[0];
+        } else if (value.equals(values[1])) {
+            humanValue = humanValues[1];
+        } else if (value.equals(values[2])) {
+            humanValue = humanValues[2];
+        } else if (value.equals(values[3])) {
+            humanValue = humanValues[3];
+        } else if (value.equals(values[4])) {
+            humanValue = humanValues[4];
+        } else if (value.equals(values[5])) {
+            humanValue = humanValues[5];
+        } else if (value.equals(values[6])) {
+            humanValue = humanValues[6];
         }
         connectionPref.setSummary(humanValue);
     }
@@ -99,24 +126,24 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         }
 
         // Update Time Rate
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
+        String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate_human_value);
         keyValue = this.getActivity().getApplicationContext().getString(
         		R.string.weather_preferences_update_time_rate_key);
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
             final String value = sharedPreferences.getString(key, "");
             String humanValue = "";
-            if (value.equals("0")) {
-                humanValue = "no updates";
-            } else if (value.equals("900")) {
-                humanValue = "fifteen minutes";
-            } else if (value.equals("1800")) {
-                humanValue = "half hour";
-            } else if (value.equals("3600")) {
-                humanValue = "one hour";
-            } else if (value.equals("43200")) {
-                humanValue = "half day";
-            } else if (value.equals("86400")) {
-                humanValue = "one day";
+            if (value.equals(values[0])) {
+                humanValue = humanValues[0];
+            } else if (value.equals(values[1])) {
+                humanValue = humanValues[1];
+            } else if (value.equals(values[2])) {
+                humanValue = humanValues[2];
+            } else if (value.equals(values[3])) {
+                humanValue = humanValues[3];
+            } else if (value.equals(values[4])) {
+                humanValue = humanValues[4];
             }
             
             this.updateAlarm(value);
@@ -125,36 +152,66 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         }
 
         // Forecast days number
+        values = this.getResources().getStringArray(R.array.weather_preferences_day_forecast);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_day_forecast_human_value);
         keyValue = this.getActivity().getString(
                 R.string.weather_preferences_day_forecast_key);
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
             final String value = sharedPreferences.getString(key, "");
             String humanValue = "";
-            if (value.equals("5")) {
-                humanValue = "5-Day Forecast";
-            } else if (value.equals("10")) {
-                humanValue = "10-Day Forecast";
-            } else if (value.equals("14")) {
-                humanValue = "14-Day Forecast";
+            if (value.equals(values[0])) {
+                humanValue = humanValues[0];
+            } else if (value.equals(values[1])) {
+                humanValue = humanValues[1];
+            } else if (value.equals(values[2])) {
+                humanValue = humanValues[2];
             }
             connectionPref.setSummary(humanValue);
             return;
         }
 
+        // Refresh interval
+        values = this.getResources().getStringArray(R.array.weather_preferences_refresh_interval);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_refresh_interval_human_value);
+        keyValue = this.getActivity().getApplicationContext().getString(
+                R.string.weather_preferences_refresh_interval_key);
+        if (key.equals(keyValue)) {
+        	final Preference connectionPref = this.findPreference(key);
+            final String value = sharedPreferences.getString(key, "");
+            String humanValue = "";
+            if (value.equals(values[0])) {
+                humanValue = humanValues[0];
+            } else if (value.equals(values[1])) {
+                humanValue = humanValues[1];
+            } else if (value.equals(values[2])) {
+                humanValue = humanValues[2];
+            } else if (value.equals(values[3])) {
+                humanValue = humanValues[3];
+            } else if (value.equals(values[4])) {
+                humanValue = humanValues[4];
+            } else if (value.equals(values[5])) {
+                humanValue = humanValues[5];
+            } else if (value.equals(values[6])) {
+                humanValue = humanValues[6];
+            }
+            connectionPref.setSummary(humanValue);
+            return;
+        }
     }
 
     private void updateAlarm(final String updateTimeRate) {
+    	final String[] values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
         long chosenInterval = 0;
-        if (updateTimeRate.equals("900")) {
+        if (updateTimeRate.equals(values[0])) {
         	chosenInterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-        } else if (updateTimeRate.equals("1800")) {
+        } else if (updateTimeRate.equals(values[1])) {
         	chosenInterval = AlarmManager.INTERVAL_HALF_HOUR;
-        } else if (updateTimeRate.equals("3600")) {
+        } else if (updateTimeRate.equals(values[2])) {
         	chosenInterval = AlarmManager.INTERVAL_HOUR;
-        } else if (updateTimeRate.equals("43200")) {
+        } else if (updateTimeRate.equals(values[3])) {
         	chosenInterval = AlarmManager.INTERVAL_HALF_DAY;
-        } else if (updateTimeRate.equals("86400")) {
+        } else if (updateTimeRate.equals(values[4])) {
         	chosenInterval = AlarmManager.INTERVAL_DAY;
         }
 

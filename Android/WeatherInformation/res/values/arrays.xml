@@ -64,12 +64,11 @@
         <item>14</item>
     </string-array>
     <string-array name="weather_preferences_day_forecast_human_value">
-        <item>5-Day Forecast</item>
-        <item>10-Day Forecast</item>
-        <item>14-Day Forecast</item>
+        <item>5 day forecast</item>
+        <item>10 day forecast</item>
+        <item>14 day forecast</item>
     </string-array>
     <string-array name="weather_preferences_update_time_rate">
-        <item>0</item>
         <item>900</item>
         <item>1800</item>
         <item>3600</item>       
@@ -77,11 +76,28 @@
         <item>86400</item>    
     </string-array>
     <string-array name="weather_preferences_update_time_rate_human_value">
-        <item>no updates</item>
         <item>fifteen minutes</item>
         <item>half hour</item>
         <item>one hour</item>   
         <item>half day</item>
         <item>one day</item>     
+    </string-array>
+        <string-array name="weather_preferences_refresh_interval">
+        <item>300000</item>
+        <item>900000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>7200000</item>
+        <item>43200000</item>
+        <item>86400000</item>
+    </string-array>
+    <string-array name="weather_preferences_refresh_interval_human_value">
+        <item>five minutes</item>
+        <item>fifteen minutes</item>
+        <item>half hour</item>
+        <item>one hour</item>
+        <item>two hours</item>
+        <item>half day</item>
+        <item>one day</item>
     </string-array>
 </resources>

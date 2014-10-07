@@ -390,9 +390,14 @@ public class CurrentFragment extends Fragment {
     		return false;
     	}
     	
-    	final Date currentTime = new Date();
-    	// TODO: user settings instead of 120000L
-    	if (((currentTime.getTime() - lastUpdate.getTime())) < 120000L) {
+    	final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+    			this.getActivity().getApplicationContext());
+        final String keyPreference = this.getString(R.string.weather_preferences_refresh_interval_key);
+        final String refresh = sharedPreferences.getString(
+        		keyPreference,
+        		this.getResources().getStringArray(R.array.weather_preferences_refresh_interval)[0]);
+        final Date currentTime = new Date();
+    	if (((currentTime.getTime() - lastUpdate.getTime())) < Long.valueOf(refresh)) {
     		return true;
     	}
     	
