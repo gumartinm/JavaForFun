@@ -4,12 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <FrameLayout 
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
         
     <!-- TODO: align start/end feels like-snow humidity-rain wind-clouds -->
-    <LinearLayout
+    <LinearLayout android:id="@+id/weather_current_data_container"
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"
     	android:gravity="center"
