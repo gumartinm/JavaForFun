@@ -1,0 +1,187 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>de.example.sql.deadlocks</groupId>
+  <artifactId>sql-deadlocks-retry</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>sql-deadlocks-retry</name>
+  <url>http://gumartinm.name</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <spring.version>3.1.1.RELEASE</spring.version>
+    <spring.batch.version>2.0.4.RELEASE</spring.batch.version>
+  </properties>
+  <dependencies>
+    <!--
+    **************************************************************************************************************************
+        1. LOGBACK: SLF4J NATIVE IMPLEMENTATION. See: http://logback.qos.ch/
+    **************************************************************************************************************************
+    -->
+    <!--
+        1/1 Required dependency for native implementation (nothing else is required)
+
+        Native implementation. There are also SLF4J bindings external to the SLF4J project, e.g. logback which implements
+        SLF4Jnatively. Logback's ch.qos.logback.classic.Logger class is a direct implementation of SLF4J's org.slf4j.Logger
+        interface. Thus, using SLF4J in conjunction with logback involves strictly zero memory and computational overhead.
+        see: http://www.slf4j.org/manual.html
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.2</version>
+    </dependency>
+    -->
+    <!--
+    **************************************************************************************************************************
+        2. SLF4J AND LOG4J 2. See: http://logging.apache.org/log4j/2.x/
+    **************************************************************************************************************************
+    -->
+    <!--
+        1/2 Required dependency for log4j 2 with slf4j: binding
+    -->
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>2.0-rc1</version>
+    </dependency>
+    <!--
+        2/2 Required dependency for log4j 2 with slf4j: log4j 2 maven plugin
+    -->
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.0-rc1</version>
+    </dependency>
+    <!--
+        LMAX Disruptor technology for LOG4J 2. I am not using it, but it is declared in my log4j2.xml file (just for fun)
+    -->
+    <dependency>
+      <groupId>com.lmax</groupId>
+      <artifactId>disruptor</artifactId>
+      <version>3.2.1</version>
+    </dependency>
+
+	
+    <!--
+        Spring dependencies
+    -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.batch</groupId>
+        <artifactId>spring-batch-core</artifactId>
+        <version>${spring.batch.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.batch</groupId>
+        <artifactId>spring-batch-infrastructure</artifactId>
+        <version>${spring.batch.version}</version>
+    </dependency>
+
+
+    <!--
+        AOP AspectJ
+    -->
+    <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>1.6.5</version>
+    </dependency>
+    <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.6.5</version>
+    </dependency>
+
+
+    <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.2.1</version>
+    </dependency>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.6</version>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>2.0.2</version>
+            <configuration>
+                <source>1.6</source>
+                <target>1.6</target>
+                <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.6</version>
+            <configuration>
+                <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.3.1</version>
+            <configuration>
+                <archive>
+                    <manifestEntries>
+                        <Specification-Title>${project.description}</Specification-Title>
+                        <Specification-Version>${project.version}</Specification-Version>
+                        <Specification-Vendor>${project.organization.name}</Specification-Vendor>
+                        <Implementation-Title>${project.description}</Implementation-Title>
+                        <Implementation-Version>${project.version}</Implementation-Version>
+                        <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+                        <Implementation-Build>${BUILD_TAG}</Implementation-Build>
+                        <Implementation-Build-id>${BUILD_ID}</Implementation-Build-id>
+                        <Implementation-Build-number>${BUILD_NUMBER}</Implementation-Build-number>
+                        <scm-committed-revision>${prefix.committedRevision}</scm-committed-revision>
+                        <scm-repository>${prefix.repository}</scm-repository>
+                        <scm-path>${prefix.path}</scm-path>
+                    </manifestEntries>
+                </archive>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+</project>

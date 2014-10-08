@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  						   http://www.springframework.org/schema/beans/spring-beans.xsd
+  						   http://www.springframework.org/schema/context 
+  						   http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd">
+          
+    <!-- 
+        ************* WE HAVE TO ENABLE THE ASPECTJ SUPPORT!!!!!! ************* 
+        Otherwise the @Aspect annotation (defines @AspectJ aspects) will not work
+        It relies on the Java 5 specific AspectJ reflection APIs. You can not use it
+        on JDK 1.4 and below.
+            
+            
+        We could force here the use of CGLIB.
+        See: http://static.springsource.org/spring/docs/3.1.0.RC1/spring-framework-reference/html/aop.html#aop-proxying
+        Spring detects if the bean has an interface implementation. If it has one,
+        Spring will use J2SE (J2SE needs classes with interfaces) in other case it
+        will use CGLIB. We could force the CGLIB use in classes with interfaces.
+    -->
+    <aop:aspectj-autoproxy/>
+
+
+    <!--
+        Spring makes the nasty work for us (it searches the annotations) 
+        See: http://static.springsource.org/spring/docs/3.1.0.RC1/spring-framework-reference/html/beans.html#beans-annotation-config
+
+        With filters we can narrow down the targets and hopefully improve the 
+        performance while searching annotations in the Spring context. 
+        Besides we disable automatic detection of classes annotated with 
+        @Component, @Repository, @Service, or @Controller because we do not
+        need here that feature.
+
+        NOTA: VER SI ASPECTJ REALMENTE NECESITA ESTO. YO CREO, QUE NO!!!! PROBAR A BORRAR ESTO Y VER QUE PASA.
+    -->
+    <context:component-scan base-package="de.example.sql.deadlocks" use-default-filters="false">
+        <context:include-filter 
+        type="annotation" 
+        expression="de.example.sql.deadlocks.annotation.DeadlockRetry" />
+    </context:component-scan>
+
+    <bean id="deadlockRetryAspect" class="de.example.sql.deadlocks.aspect.DeadlockRetryAspect">
+    </bean>
+
+
+
+
+
+    <!-- enables configuration of transactional behavior based on annotations -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+ 
+    <!--
+        Not required, just for fun.
+    -->
+ 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+                <property name="user" value="root"/>
+                <property name="password" value=""/>
+                <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+                <property name="jdbcUrl" value="jdbc:mysql://127.0.0.1:3306/example?autoReconnect=true"/>
+                <property name="initialPoolSize" value="5"/>
+                <property name="maxPoolSize" value="20"/>
+                <property name="minPoolSize" value="10"/>
+                <property name="acquireIncrement" value="1"/>
+                <property name="acquireRetryAttempts" value="5"/>
+                <property name="acquireRetryDelay" value="1000"/>
+                <property name="automaticTestTable" value="con_test"/>
+                <property name="checkoutTimeout" value="5000"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+
+
+    <bean id="customAnnotation" class="de.example.sql.deadlocks.example.CustomAnnotationExample" >
+    </bean>
+ 
+</beans>
