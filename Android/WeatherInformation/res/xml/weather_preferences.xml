@@ -40,9 +40,9 @@
             android:summaryOff="@string/weather_preferences_notifications_switch_off_summary"
             android:switchTextOff="@string/weather_preferences_notifications_switch_off"
             android:switchTextOn="@string/weather_preferences_notifications_switch_on"
-            android:selectable="false"
+            android:selectable="true"
             android:enabled="true"
-            android:defaultValue="On"
+            android:defaultValue="@string/weather_preferences_notifications_switch_off"
             android:disableDependentsState="false"
             android:persistent="true"/>
         <ListPreference android:key="@string/weather_preferences_update_time_rate_key"
