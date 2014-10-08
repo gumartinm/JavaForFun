@@ -21,7 +21,6 @@
     <string name="weather_preferences_actionbar_title">Settings</string>
     <string name="weather_preferences_units">Units</string>
     <string name="weather_preferences_units_key">weather_preferences_units</string>
-    <string name="weather_preferences_units_celsius">Celsius</string>
     <string name="weather_preferences_temperature_units">Temperature</string>
     <string name="weather_preferences_notifications">Notifications</string>
     <string name="weather_preferences_notifications_switch_off_summary">Disabled</string>
@@ -37,7 +36,7 @@
     <string name="weather_preferences_refresh_interval">Refresh interval</string>
     <string name="weather_preferences_wind_key">weather_preferences_wind</string>
     <string name="weather_preferences_wind">Wind</string>
-    <string name="weather_preferences_wind_summary">Wind</string>
+    <string name="weather_preferences_wind_summary">meter per second</string>
     <string name="city_not_found">city not found</string>
     <string name="country_not_found">country not found</string>
     <string name="progress_dialog_generic_message">Please wait&#8230;</string>

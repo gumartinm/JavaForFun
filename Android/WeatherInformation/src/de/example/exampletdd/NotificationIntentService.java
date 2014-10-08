@@ -99,25 +99,54 @@ public class NotificationIntentService extends IntentService {
         return current;
     }
     
+    private interface UnitsConversor {
+    	
+    	public double doConversion(final double value);
+    }
+    
     private void showNotification(final Current current, final WeatherLocation weatherLocation) {
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
 
-        // TODO: repeating the same code in Overview, Specific and Current!!!
-        // 1. Update units of measurement.
-        boolean mIsFahrenheit = false;
-        final String keyPreference = this.getResources().getString(
-                R.string.weather_preferences_units_key);
-        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        final String celsius = this.getResources().getString(
-                R.string.weather_preferences_units_celsius);
-        if (unitsPreferenceValue.equals(celsius)) {
-            mIsFahrenheit = false;
+		// TODO: repeating the same code in Overview, Specific and Current!!!
+		// 1. Update units of measurement.
+        // 1.1 Temperature
+        String tempSymbol;
+        UnitsConversor tempUnitsConversor;
+        String keyPreference = this.getResources().getString(R.string.weather_preferences_units_key);
+        String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
+        if (unitsPreferenceValue.equals(values[0])) {
+        	tempSymbol = values[0];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value - 273.15;
+				}
+        		
+        	};
+        } else if (unitsPreferenceValue.equals(values[1])) {
+        	tempSymbol = values[1];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return (value * 1.8) - 459.67;
+				}
+        		
+        	};
         } else {
-            mIsFahrenheit = true;
+        	tempSymbol = values[2];
+        	tempUnitsConversor = new UnitsConversor(){
+
+				@Override
+				public double doConversion(final double value) {
+					return value;
+				}
+        		
+        	};
         }
-        final double tempUnits = mIsFahrenheit ? 0 : 273.15;
-        final String symbol = mIsFahrenheit ? "ºF" : "ºC";
 
 
         // 2. Formatters
@@ -129,14 +158,14 @@ public class NotificationIntentService extends IntentService {
         String tempMax = "";
         if (current.getMain().getTemp_max() != null) {
             double conversion = (Double) current.getMain().getTemp_max();
-            conversion = conversion - tempUnits;
-            tempMax = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempMax = tempFormatter.format(conversion) + tempSymbol;
         }
         String tempMin = "";
         if (current.getMain().getTemp_min() != null) {
             double conversion = (Double) current.getMain().getTemp_min();
-            conversion = conversion - tempUnits;
-            tempMin = tempFormatter.format(conversion) + symbol;
+            conversion = tempUnitsConversor.doConversion(conversion);
+            tempMin = tempFormatter.format(conversion) + tempSymbol;
         }
         Bitmap picture;
         if ((current.getWeather().size() > 0)

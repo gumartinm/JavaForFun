@@ -64,6 +64,20 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         }
         connectionPref.setSummary(humanValue);
         
+        // Wind
+        values = this.getResources().getStringArray(R.array.weather_preferences_wind);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_wind_human_value);
+        keyPreference = this.getString(R.string.weather_preferences_wind_key);
+        connectionPref = this.findPreference(keyPreference);
+        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        humanValue = "";
+        if (value.equals(values[0])) {
+            humanValue = humanValues[0];
+        } else if (value.equals(values[1])) {
+            humanValue = humanValues[1];
+        }
+        connectionPref.setSummary(humanValue);
+        
         // Forecast days number
         values = this.getResources().getStringArray(R.array.weather_preferences_day_forecast);
         humanValues = this.getResources().getStringArray(R.array.weather_preferences_day_forecast_human_value);
@@ -126,19 +140,30 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
     public void onSharedPreferenceChanged(
             final SharedPreferences sharedPreferences, final String key) {
     	
-    	// Units of Measurement
+    	// Temperature units
+    	String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
+    	String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_units_human_value);
         String keyValue = this.getActivity().getApplicationContext().getString(
                 R.string.weather_preferences_units_key);
-
         if (key.equals(keyValue)) {
-            final Preference connectionPref = this.findPreference(key);
-            connectionPref.setSummary(sharedPreferences.getString(key, ""));
-            return;
+        	final Preference connectionPref = this.findPreference(key);
+            final String value = sharedPreferences.getString(key, "");
+        	String humanValue = "";
+        	if (value.equals(values[0])) {
+        		humanValue = humanValues[0];
+        	} else if (value.equals(values[1])) {
+        		humanValue = humanValues[1];
+        	} else if (value.equals(values[2])) {
+        		humanValue = humanValues[2];
+        	}
+
+        	connectionPref.setSummary(humanValue);
+        	return;
         }
 
         // Update Time Rate
-        String[] values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
-        String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate_human_value);
+        values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate_human_value);
         keyValue = this.getActivity().getApplicationContext().getString(
         		R.string.weather_preferences_update_time_rate_key);
         if (key.equals(keyValue)) {
@@ -162,6 +187,24 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
             return;
         }
 
+        // Wind
+        values = this.getResources().getStringArray(R.array.weather_preferences_wind);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_wind_human_value);
+        keyValue = this.getString(R.string.weather_preferences_wind_key);
+        if (key.equals(keyValue)) {
+            final Preference connectionPref = this.findPreference(key);
+            final String value = sharedPreferences.getString(key, "");
+            String humanValue = "";
+            if (value.equals(values[0])) {
+            	humanValue = humanValues[0];
+            } else if (value.equals(values[1])) {
+            	humanValue = humanValues[1];
+            }
+        
+        	connectionPref.setSummary(humanValue);
+        	return;
+        }
+        
         // Forecast days number
         values = this.getResources().getStringArray(R.array.weather_preferences_day_forecast);
         humanValues = this.getResources().getStringArray(R.array.weather_preferences_day_forecast_human_value);

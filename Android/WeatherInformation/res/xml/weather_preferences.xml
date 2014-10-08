@@ -19,15 +19,19 @@
     <PreferenceCategory android:title="@string/weather_preferences_units">
         <ListPreference android:key="@string/weather_preferences_units_key"
             android:title="@string/weather_preferences_temperature_units"
-            android:summary="@string/weather_preferences_units_celsius"
+            android:summary="celsius"
             android:entries="@array/weather_preferences_units_human_value"
             android:entryValues="@array/weather_preferences_units_value"
             android:selectable="true"
             android:persistent="true"
-            android:defaultValue="@string/weather_preferences_units_celsius" />
+            android:defaultValue="ºC" />
         <ListPreference android:key="@string/weather_preferences_wind_key"
-            android:entryValues="@array/weather_preferences_wind_human_value"
-            android:entries="@array/weather_preferences_wind"
+            android:entryValues="@array/weather_preferences_wind"
+            android:entries="@array/weather_preferences_wind_human_value"
+            android:summary="@string/weather_preferences_wind_summary"
+            android:selectable="true"
+            android:persistent="true"
+            android:defaultValue="m/s"
             android:title="@string/weather_preferences_wind"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/weather_preferences_notifications">

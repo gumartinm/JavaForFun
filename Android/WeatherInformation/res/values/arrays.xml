@@ -6,9 +6,9 @@
         <item>K</item>
     </string-array>
     <string-array name="weather_preferences_units_human_value">
-        <item>Celsius</item>
-        <item>Fahrenheit</item>
-        <item>Kelvin</item>
+        <item>celsius</item>
+        <item>fahrenheit</item>
+        <item>kelvin</item>
     </string-array>
     <string-array name="weather_preferences_language_value">
         <item>ar</item>
