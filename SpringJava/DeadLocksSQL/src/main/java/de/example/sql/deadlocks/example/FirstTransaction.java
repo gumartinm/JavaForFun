@@ -30,7 +30,7 @@ public class FirstTransaction {
 		}
     }
 
-    public void doFirstStepWithGate() {
+    private void doFirstStepWithGate() {
 		logger.info("Start doFirstStepWithGate");
 
 		logger.info("doFirstStepWithGate UPDATING");
@@ -56,7 +56,7 @@ public class FirstTransaction {
         logger.info("End doFirstStepWithGate");
     }
 
-    public void doFirstStepWithoutGate() {
+    private void doFirstStepWithoutGate() {
 		logger.info("Start doFirstStepWithoutGate");
 
 		logger.info("doFirstStepWithoutGate UPDATING");
@@ -76,8 +76,6 @@ public class FirstTransaction {
 		logger.info("doThirdStep UPDATING");
 		final JdbcOperations jdbcTemplate = new JdbcTemplate(dataSource);
 		jdbcTemplate.execute("UPDATE children SET name='Bob', parent_id='1' WHERE id='2'");
-
-		// trx2 continues  (fourth step)
 
         logger.info("End doThirdStep");
     }

@@ -17,10 +17,11 @@ public class Main {
 	public static void main(String[] args) {
 		final ThreadGate trx1Gate = new ThreadGate();
 		final ThreadGate trx2Gate = new ThreadGate();
+		final FutureTask<Void>[] tasks = new FutureTask[2];
 
 		logger.info("Starting application");
 
-		final FutureTask<Void> taskFirst = new FutureTask<Void>
+		tasks[0] = new FutureTask<Void>
 		(
 			new Runnable(){
 
@@ -34,7 +35,7 @@ public class Main {
 			},
 			null
 		);
-		final FutureTask<Void> taskSecond = new FutureTask<Void>
+		tasks[1] = new FutureTask<Void>
 		(
 			new Runnable(){
 
@@ -49,20 +50,24 @@ public class Main {
 			null
 		);
 
-		new Thread(taskFirst).start();
-		new Thread(taskSecond).start();
-
-		// Wait for end.
-		try {
-			taskFirst.get();
-			taskSecond.get();
-		} catch (final InterruptedException e) {
-			logger.error("Error", e);
-		} catch (final ExecutionException e) {
-			logger.error("Error", e);
+		for (final FutureTask<Void> task : tasks) {
+			new Thread(task).start();
 		}
 
+		// Wait for end.
+		for (final FutureTask<Void> task : tasks) {
+			try {
+				task.get();
+			} catch (final InterruptedException e) {
+				logger.error("Error", e);
+			} catch (final ExecutionException e) {
+				logger.error("Error", e);
+			} finally {
+				task.cancel(true);
+			}
+		}
 
+		SpringContextLocator.getInstance().close();
 		logger.info("End application");
 	}
 }

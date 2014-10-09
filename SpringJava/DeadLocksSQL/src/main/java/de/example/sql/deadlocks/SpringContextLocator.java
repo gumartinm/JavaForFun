@@ -2,7 +2,6 @@ package de.example.sql.deadlocks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
@@ -11,7 +10,7 @@ public final class SpringContextLocator {
 	// Spring Context
 	private static final String SPRING_CONFIG_CONTEXT="/spring-config.xml";
 	// Spring ApplicationContext
-	private final ApplicationContext context;
+	private final ClassPathXmlApplicationContext context;
 	
 	
 	private SpringContextLocator() {
@@ -33,5 +32,9 @@ public final class SpringContextLocator {
 	
 	public Object getBean(final String name) {
 		return context.getBean(name);
+	}
+
+	public void close() {
+		context.close();
 	}
 }
