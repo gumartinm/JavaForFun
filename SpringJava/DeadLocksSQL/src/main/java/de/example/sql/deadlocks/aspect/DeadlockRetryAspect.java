@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLTransactionRollbackException;
 
@@ -18,13 +19,14 @@ import de.example.sql.deadlocks.annotation.DeadlockRetry;
  *
  */
 @Aspect
-public class DeadlockRetryAspect {
+public class DeadlockRetryAspect implements Ordered {
 	private static final Logger logger = LoggerFactory.getLogger(DeadlockRetryAspect.class);
+	private static final int ORDER = 99;
 
-	@Around(value = "@annotation(de.example.sql.deadlocks.annotation.DeadlockRetry)", argNames = "deadlockRetry")
+	@Around(value = "@annotation(deadlockRetry)", argNames = "deadlockRetry")
 	public Object doAround(final ProceedingJoinPoint pjp, final DeadlockRetry deadlockRetry) throws Throwable {
-		logger.info("GUSUSUSUUS");
-		final Integer maxTries = deadlockRetry.maxTries();
+
+		final int maxTries = deadlockRetry.maxTries();
         final long interval = deadlockRetry.interval();
 
         final Object target = pjp.getTarget();
@@ -61,11 +63,15 @@ public class DeadlockRetryAspect {
     				}
     			}
     		}
-    	} while (count <= maxTries);
+    	} while (count < maxTries);
 
     	throw new RuntimeException("DeadlockRetry failed, deadlock in all retry attempts.", deadLockException);
     }
 
+	@Override
+	public int getOrder() {
+		return ORDER;
+	}
 
 	private boolean isDeadLock(Throwable ex) {
 		do {

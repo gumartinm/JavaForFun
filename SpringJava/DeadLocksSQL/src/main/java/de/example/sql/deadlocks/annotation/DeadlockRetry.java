@@ -22,5 +22,5 @@ public @interface DeadlockRetry {
 	 * 
 	 * @return interval in milliseconds
 	 */
-	int interval() default 1000;
+	long interval() default 1000;
 }
