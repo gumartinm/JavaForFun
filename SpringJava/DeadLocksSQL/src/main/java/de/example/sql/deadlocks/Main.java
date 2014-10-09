@@ -8,13 +8,16 @@ import org.slf4j.LoggerFactory;
 
 import de.example.sql.deadlocks.example.FirstTransaction;
 import de.example.sql.deadlocks.example.SecondTransaction;
+import de.example.sql.deadlocks.gate.ThreadGate;
 
 
 public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
-	
 
 	public static void main(String[] args) {
+		final ThreadGate trx1Gate = new ThreadGate();
+		final ThreadGate trx2Gate = new ThreadGate();
+
 		logger.info("Starting application");
 
 		final FutureTask<Void> taskFirst = new FutureTask<Void>
@@ -24,13 +27,13 @@ public class Main {
 				@Override
 				public void run() {
 					final FirstTransaction first = (FirstTransaction) SpringContextLocator.getInstance().getBean("firstTransaction");
-					first.doTransaction();
+					first.setThreadGateTrx1(trx1Gate);
+					first.setThreadGateTrx2(trx2Gate);
+					first.doFirstStep();
 				}
 			},
 			null
 		);
-		new Thread(taskFirst).start();
-
 		final FutureTask<Void> taskSecond = new FutureTask<Void>
 		(
 			new Runnable(){
@@ -38,11 +41,15 @@ public class Main {
 				@Override
 				public void run() {
 					final SecondTransaction second = (SecondTransaction) SpringContextLocator.getInstance().getBean("secondTransaction");
-					second.doTransaction();
+					second.setThreadGateTrx1(trx1Gate);
+					second.setThreadGateTrx2(trx2Gate);
+					second.doSecondStep();
 				}
 			},
 			null
 		);
+
+		new Thread(taskFirst).start();
 		new Thread(taskSecond).start();
 
 		// Wait for end.
