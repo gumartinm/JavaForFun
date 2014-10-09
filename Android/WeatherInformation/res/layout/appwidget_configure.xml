@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    android:layout_gravity="fill_vertical|fill_horizontal" >
 
-    <TextView
+    <LinearLayout android:id="@+id/weather_appwidget_configure_preferences"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Acitivity configure, WIP."/>
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:orientation="horizontal" >
 
-    <Button
-        android:id="@+id/weather_appwidget_configure_save_button"
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@android:string/ok"/>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
+        
+        <Button
+            android:id="@+id/weather_appwidget_configure_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:text="@android:string/ok" />
+    </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
 

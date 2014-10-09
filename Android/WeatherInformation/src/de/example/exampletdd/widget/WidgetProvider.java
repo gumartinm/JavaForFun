@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import de.example.exampletdd.WidgetIntentService;
 
-public class WeatherInformationWidgetProvider extends AppWidgetProvider {
+public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {

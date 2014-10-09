@@ -35,7 +35,7 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.PermanentStorage;
 import de.example.exampletdd.service.ServiceParser;
-import de.example.exampletdd.widget.WeatherInformationWidgetProvider;
+import de.example.exampletdd.widget.WidgetProvider;
 
 public class WidgetIntentService extends IntentService {
 	private static final String TAG = "WidgetIntentService";
@@ -290,7 +290,7 @@ public class WidgetIntentService extends IntentService {
 	
 	private void updateWidgets(final RemoteViews remoteView) {
 		
-		final ComponentName widgets = new ComponentName(this.getApplicationContext(), WeatherInformationWidgetProvider.class);
+		final ComponentName widgets = new ComponentName(this.getApplicationContext(), WidgetProvider.class);
 		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
 		manager.updateAppWidget(widgets, remoteView);
 	}
