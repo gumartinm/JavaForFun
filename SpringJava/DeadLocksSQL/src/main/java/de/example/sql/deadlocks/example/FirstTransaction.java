@@ -49,8 +49,6 @@ public class FirstTransaction {
         }
 		this.trx1Gate.close();
 
-		trx2Gate.open();
-
         this.doThirdStep();
 
         logger.info("End doFirstStepWithGate");

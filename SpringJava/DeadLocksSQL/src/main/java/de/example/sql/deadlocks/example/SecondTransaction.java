@@ -50,15 +50,6 @@ public class SecondTransaction {
 	    // trx1 continue
 	    trx1Gate.open();
 
-	    try {
-	    	this.trx2Gate.await();
-	    } catch (InterruptedException e) {
-	        logger.warn("interrupt error", e);
-
-	        Thread.currentThread().interrupt();
-	    }
-	    this.trx2Gate.close();
-
 	    this.doFourthStep();
 
         logger.info("End doSecondStepWithGate");
