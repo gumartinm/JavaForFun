@@ -213,7 +213,7 @@ public class OverviewFragment extends ListFragment {
         String symbol;
         UnitsConversor unitsConversor;
         String keyPreference = this.getResources().getString(
-                R.string.weather_preferences_units_key);
+                R.string.weather_preferences_temperature_key);
         final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
         if (unitsPreferenceValue.equals(values[0])) {

@@ -157,7 +157,7 @@ public class WidgetIntentService extends IntentService {
         // 1.1 Temperature
         String tempSymbol;
         UnitsConversor tempUnitsConversor;
-        String keyPreference = this.getResources().getString(R.string.weather_preferences_units_key);
+        String keyPreference = this.getResources().getString(R.string.weather_preferences_temperature_key);
         String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
         if (unitsPreferenceValue.equals(values[0])) {

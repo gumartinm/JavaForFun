@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import de.example.exampletdd.R;
-import de.example.exampletdd.fragment.map.MapProgressFragment;
 
 public class WidgetConfigure extends Activity {
 	private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
