@@ -20,8 +20,14 @@
     <string name="icon_weather_description">Icon weather</string>
     <string name="weather_preferences_actionbar_title">Settings</string>
     <string name="weather_preferences_units">Units</string>
-    <string name="weather_preferences_units_key">weather_preferences_units</string>
-    <string name="weather_preferences_temperature_units">Temperature</string>
+    <string name="weather_preferences_temperature_key">weather_preferences_temperature</string>
+    <string name="weather_preferences_temperature">Temperature</string>
+    <string name="weather_preferences_temperature_celsius">ºC</string>
+    <string name="weather_preferences_temperature_fahrenheit">ºF</string>
+    <string name="weather_preferences_temperature_kelvin">K</string>
+    <string name="weather_preferences_temperature_celsius_human_value">celsius</string>
+    <string name="weather_preferences_temperature_fahrenheit_human_value">fahrenheit</string>
+    <string name="weather_preferences_temperature_kelvin_human_value">kelvin</string>
     <string name="weather_preferences_notifications">Notifications</string>
     <string name="weather_preferences_notifications_switch_off_summary">Disabled</string>
     <string name="weather_preferences_notifications_switch_on_summary">Enabled</string>
@@ -36,7 +42,16 @@
     <string name="weather_preferences_refresh_interval">Refresh interval</string>
     <string name="weather_preferences_wind_key">weather_preferences_wind</string>
     <string name="weather_preferences_wind">Wind</string>
-    <string name="weather_preferences_wind_summary">meter per second</string>
+    <string name="weather_preferences_wind_meters">m/s</string>
+    <string name="weather_preferences_wind_miles">mph</string>
+    <string name="weather_preferences_wind_human_value_meters">meter per second</string>
+    <string name="weather_preferences_wind_human_value_miles">miles per hour</string>
+    <string name="weather_preferences_pressure_key">weather_preferences_pressure</string>
+    <string name="weather_preferences_pressure">Pressure</string>
+    <string name="weather_preferences_pressure_pascal">hpa</string>
+    <string name="weather_preferences_pressure_standard_atm">atm</string>
+    <string name="weather_preferences_pressure_human_value_pascal">pascal</string>
+    <string name="weather_preferences_pressure_human_value_standard_atm">standard atmosphere</string>
     <string name="widget_preferences_units">Units</string>
     <string name="widget_preferences_units_key">widget_preferences_units</string>
     <string name="widget_preferences_refresh_interval_key">widget_preferences_refresh_interval</string>
@@ -51,6 +66,5 @@
 	<string name="weather_map_button_getlocation">Get Location</string>
 	<string name="text_units_mm3h">mm 3h</string>
 	<string name="text_units_percent">%</string>
-	<string name="text_units_hpa">hpa</string>
 	<string name="text_field_remote_error">No data available</string>
 </resources>

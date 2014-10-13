@@ -10,7 +10,7 @@
         android:summary="five minutes" />
     <PreferenceCategory android:title="@string/widget_preferences_units">
         <ListPreference android:key="@string/widget_preferences_units_key"
-            android:title="@string/weather_preferences_temperature_units"
+            android:title="@string/weather_preferences_temperature"
             android:summary="celsius"
             android:entries="@array/weather_preferences_units_human_value"
             android:entryValues="@array/weather_preferences_units_value"

@@ -197,12 +197,7 @@ public class CurrentFragment extends Fragment {
         super.onPause();
     }
 
-    private interface TempUnitsConversor {
-    	
-    	public double doConversion(final double value);
-    }
-
-    private interface WindUnitsConversor {
+    private interface UnitsConversor {
     	
     	public double doConversion(final double value);
     }
@@ -216,13 +211,13 @@ public class CurrentFragment extends Fragment {
         // 1. Update units of measurement.
         // 1.1 Temperature
         String tempSymbol;
-        TempUnitsConversor tempUnitsConversor;
-        String keyPreference = this.getResources().getString(R.string.weather_preferences_units_key);
+        UnitsConversor tempUnitsConversor;
+        String keyPreference = this.getResources().getString(R.string.weather_preferences_temperature_key);
         String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
         if (unitsPreferenceValue.equals(values[0])) {
         	tempSymbol = values[0];
-        	tempUnitsConversor = new TempUnitsConversor(){
+        	tempUnitsConversor = new UnitsConversor(){
 
 				@Override
 				public double doConversion(final double value) {
@@ -232,7 +227,7 @@ public class CurrentFragment extends Fragment {
         	};
         } else if (unitsPreferenceValue.equals(values[1])) {
         	tempSymbol = values[1];
-        	tempUnitsConversor = new TempUnitsConversor(){
+        	tempUnitsConversor = new UnitsConversor(){
 
 				@Override
 				public double doConversion(final double value) {
@@ -242,7 +237,7 @@ public class CurrentFragment extends Fragment {
         	};
         } else {
         	tempSymbol = values[2];
-        	tempUnitsConversor = new TempUnitsConversor(){
+        	tempUnitsConversor = new UnitsConversor(){
 
 				@Override
 				public double doConversion(final double value) {
@@ -254,13 +249,13 @@ public class CurrentFragment extends Fragment {
 
         // 1.2 Wind
         String windSymbol;
-        WindUnitsConversor windUnitsConversor;
+        UnitsConversor windUnitsConversor;
         keyPreference = this.getResources().getString(R.string.weather_preferences_wind_key);
         unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         values = this.getResources().getStringArray(R.array.weather_preferences_wind);
         if (unitsPreferenceValue.equals(values[0])) {
         	windSymbol = values[0];
-        	windUnitsConversor = new WindUnitsConversor(){
+        	windUnitsConversor = new UnitsConversor(){
 
     			@Override
     			public double doConversion(double value) {
@@ -269,11 +264,37 @@ public class CurrentFragment extends Fragment {
         	};
         } else {
         	windSymbol = values[1];
-        	windUnitsConversor = new WindUnitsConversor(){
+        	windUnitsConversor = new UnitsConversor(){
 
     			@Override
     			public double doConversion(double value) {
     				return value * 2.237;
+    			}	
+        	};
+        }
+
+        // 1.3 Pressure
+        String pressureSymbol;
+        UnitsConversor pressureUnitsConversor;
+        keyPreference = this.getResources().getString(R.string.weather_preferences_pressure_key);
+        unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
+        values = this.getResources().getStringArray(R.array.weather_preferences_pressure);
+        if (unitsPreferenceValue.equals(values[0])) {
+        	pressureSymbol = values[0];
+        	pressureUnitsConversor = new UnitsConversor(){
+
+    			@Override
+    			public double doConversion(double value) {
+    				return value;
+    			}	
+        	};
+        } else {
+        	pressureSymbol = values[1];
+        	pressureUnitsConversor = new UnitsConversor(){
+
+    			@Override
+    			public double doConversion(double value) {
+    				return value / 113.25d;
     			}	
         	};
         }
@@ -326,7 +347,8 @@ public class CurrentFragment extends Fragment {
         String pressureValue = "";
         if ((current.getMain() != null)
                 && (current.getMain().getPressure() != null)) {
-            final double conversion = (Double) current.getMain().getPressure();
+            double conversion = (Double) current.getMain().getPressure();
+            conversion = pressureUnitsConversor.doConversion(conversion);
             pressureValue = tempFormatter.format(conversion);
         }
         String windValue = "";
@@ -390,8 +412,7 @@ public class CurrentFragment extends Fragment {
         		this.getActivity().getApplicationContext().getString(R.string.text_units_percent));
         
         ((TextView) getActivity().findViewById(R.id.weather_current_pressure_value)).setText(pressureValue);
-        ((TextView) getActivity().findViewById(R.id.weather_current_pressure_units)).setText(
-        		this.getActivity().getApplicationContext().getString(R.string.text_units_hpa));
+        ((TextView) getActivity().findViewById(R.id.weather_current_pressure_units)).setText(pressureSymbol);
         
         ((TextView) getActivity().findViewById(R.id.weather_current_wind_value)).setText(windValue);
         ((TextView) getActivity().findViewById(R.id.weather_current_wind_units)).setText(windSymbol);

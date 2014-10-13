@@ -56,8 +56,11 @@
             android:parentActivityName="de.example.exampletdd.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONSETTINGS" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+				<category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name="de.example.exampletdd.MapActivity"

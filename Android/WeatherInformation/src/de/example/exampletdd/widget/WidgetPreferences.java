@@ -26,7 +26,7 @@ public class WidgetPreferences extends PreferenceFragment {
         String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
         String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_units_human_value);
         String keyPreference = this.getActivity().getApplicationContext().getString(
-                R.string.weather_preferences_units_key);
+                R.string.weather_preferences_temperature_key);
         Preference connectionPref = this.findPreference(keyPreference);
         String value = this.getPreferenceManager().getSharedPreferences()
                 .getString(keyPreference, "");
@@ -73,7 +73,7 @@ public class WidgetPreferences extends PreferenceFragment {
     	String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
     	String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_units_human_value);
         String keyValue = this.getActivity().getApplicationContext().getString(
-                R.string.weather_preferences_units_key);
+                R.string.weather_preferences_temperature_key);
         if (key.equals(keyValue)) {
         	final Preference connectionPref = this.findPreference(key);
             final String value = sharedPreferences.getString(key, "");

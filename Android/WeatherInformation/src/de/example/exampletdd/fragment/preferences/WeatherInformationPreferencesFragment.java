@@ -29,7 +29,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
         String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_units_human_value);
         String keyPreference = this.getActivity().getApplicationContext().getString(
-                R.string.weather_preferences_units_key);
+                R.string.weather_preferences_temperature_key);
         Preference connectionPref = this.findPreference(keyPreference);
         String value = this.getPreferenceManager().getSharedPreferences()
                 .getString(keyPreference, "");
@@ -56,7 +56,21 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
             humanValue = humanValues[1];
         }
         connectionPref.setSummary(humanValue);
-        
+
+        // Pressure
+        values = this.getResources().getStringArray(R.array.weather_preferences_pressure);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_pressure_human_value);
+        keyPreference = this.getString(R.string.weather_preferences_pressure_key);
+        connectionPref = this.findPreference(keyPreference);
+        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        humanValue = "";
+        if (value.equals(values[0])) {
+            humanValue = humanValues[0];
+        } else if (value.equals(values[1])) {
+            humanValue = humanValues[1];
+        }
+        connectionPref.setSummary(humanValue);
+
         // Forecast days number
         values = this.getResources().getStringArray(R.array.weather_preferences_day_forecast);
         humanValues = this.getResources().getStringArray(R.array.weather_preferences_day_forecast_human_value);
@@ -145,7 +159,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
     	String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
     	String[] humanValues = this.getResources().getStringArray(R.array.weather_preferences_units_human_value);
         String keyValue = this.getActivity().getApplicationContext().getString(
-                R.string.weather_preferences_units_key);
+                R.string.weather_preferences_temperature_key);
         if (key.equals(keyValue)) {
         	final Preference connectionPref = this.findPreference(key);
             final String value = sharedPreferences.getString(key, "");
@@ -179,7 +193,25 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         	connectionPref.setSummary(humanValue);
         	return;
         }
+
+        // Pressure
+        values = this.getResources().getStringArray(R.array.weather_preferences_pressure);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_pressure_human_value);
+        keyValue = this.getString(R.string.weather_preferences_pressure_key);
+        if (key.equals(keyValue)) {
+            final Preference connectionPref = this.findPreference(key);
+            final String value = sharedPreferences.getString(key, "");
+            String humanValue = "";
+            if (value.equals(values[0])) {
+            	humanValue = humanValues[0];
+            } else if (value.equals(values[1])) {
+            	humanValue = humanValues[1];
+            }
         
+        	connectionPref.setSummary(humanValue);
+        	return;
+        }
+
         // Forecast days number
         values = this.getResources().getStringArray(R.array.weather_preferences_day_forecast);
         humanValues = this.getResources().getStringArray(R.array.weather_preferences_day_forecast_human_value);

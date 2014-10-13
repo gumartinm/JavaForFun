@@ -1,65 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="weather_preferences_units_value">
-        <item>ºC</item>
-        <item>ºF</item>
-        <item>K</item>
-    </string-array>
-    <string-array name="weather_preferences_units_human_value">
-        <item>celsius</item>
-        <item>fahrenheit</item>
-        <item>kelvin</item>
-    </string-array>
-    <string-array name="weather_preferences_language_value">
-        <item>ar</item>
-        <item>bg</item>
-        <item>zh_cn</item>
-        <item>zh_tw</item>
-        <item>cz</item>
-        <item>nl</item>
-        <item>en</item>
-        <item>fi</item>
-        <item>fr</item>
-        <item>gl</item>
-        <item>de</item>
-        <item>it</item>
-        <item>mk</item>
-        <item>pl</item>
-        <item>pt</item>
-        <item>ro</item>
-        <item>ru</item>
-        <item>sk</item>
-        <item>sp</item>
-        <item>se</item>
-        <item>tr</item>
-        <item>ua</item>
-        <item>vi</item>
-    </string-array>
-    <string-array name="weather_preferences_language_human_value">
-        <item>Arabic</item>
-        <item>Bulgarian</item>
-        <item>Chinese Simplified</item>
-        <item>Chinese Traditional</item>
-        <item>Czech</item>
-        <item>Dutch</item>
-        <item>English</item>
-        <item>Finnish</item>
-        <item>French</item>
-        <item>Galician</item>
-        <item>German</item>
-        <item>Italian</item>
-        <item>Macedonian</item>
-        <item>Polish</item>
-        <item>Portuguese</item>
-        <item>Romanian</item>
-        <item>Russian</item>
-        <item>Slovak</item>
-        <item>Spanish</item>
-        <item>Swedish</item>
-        <item>Turkish</item>
-        <item>Ukrainian</item>
-        <item>Vietnamese</item>
-    </string-array>
     <string-array name="weather_preferences_day_forecast">
         <item>5</item>
         <item>10</item>
@@ -102,12 +42,30 @@
         <item>half day</item>
         <item>one day</item>
     </string-array>
+    <string-array name="weather_preferences_units_value">
+        <item>@string/weather_preferences_temperature_celsius</item>
+        <item>@string/weather_preferences_temperature_fahrenheit</item>
+        <item>@string/weather_preferences_temperature_kelvin</item>
+    </string-array>
+    <string-array name="weather_preferences_units_human_value">
+        <item>@string/weather_preferences_temperature_celsius_human_value</item>
+        <item>@string/weather_preferences_temperature_fahrenheit_human_value</item>
+        <item>@string/weather_preferences_temperature_kelvin_human_value</item>
+    </string-array>
     <string-array name="weather_preferences_wind">
-        <item>m/s</item>
-        <item>mph</item>
+        <item>@string/weather_preferences_wind_meters</item>
+        <item>@string/weather_preferences_wind_miles</item>
     </string-array>
     <string-array name="weather_preferences_wind_human_value">
-        <item>meter per second</item>
-        <item>miles per hour</item>
+        <item>@string/weather_preferences_wind_human_value_meters</item>
+        <item>@string/weather_preferences_wind_human_value_miles</item>
+    </string-array>
+    <string-array name="weather_preferences_pressure">
+        <item>@string/weather_preferences_pressure_pascal</item>
+        <item>@string/weather_preferences_pressure_standard_atm</item>
+    </string-array>
+    <string-array name="weather_preferences_pressure_human_value">
+        <item>@string/weather_preferences_pressure_human_value_pascal</item>
+        <item>@string/weather_preferences_pressure_human_value_standard_atm</item>
     </string-array>
 </resources>
