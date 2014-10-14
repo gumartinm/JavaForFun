@@ -10,6 +10,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 import de.example.sql.deadlocks.annotation.DeadlockRetry;
 
@@ -18,8 +19,13 @@ import de.example.sql.deadlocks.annotation.DeadlockRetry;
  *
  */
 @Aspect
+@Order(99)
 public class DeadlockRetryAspect implements Ordered {
 	private static final Logger logger = LoggerFactory.getLogger(DeadlockRetryAspect.class);
+	/**
+	 * Whatever you want as long as it has a higher value than the one used by
+	 * annotation-driven transaction-manager (it uses by default Ordered.LOWEST_PRECEDENCE)
+	 */
 	private static final int ORDER = 99;
 
 	private Collection<Class<? extends Throwable>> retryableExceptionClasses;

@@ -79,8 +79,16 @@
 
 
 
-    <!-- enables configuration of transactional behavior based on annotations -->
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+    <!--
+        It enables transactional behavior based on annotations.
+        My Aspect will always be processed before the @Transactional annotation because
+        by default the @Transactional annotation has the lowest order: Ordered.LOWEST_PRECEDENCE
+        See: http://docs.spring.io/spring/docs/3.1.0.M2/spring-framework-reference/html/transaction.html#transaction-declarative-annotations
+
+        Be careful with this order because we want our aspect to have a higher precedence order than @Transactional
+        (our aspect must be called before the transactional one)
+    -->
+    <tx:annotation-driven transaction-manager="transactionManager" mode="proxy" proxy-target-class="true" />
  
     <!--
         Not required, just for fun.
