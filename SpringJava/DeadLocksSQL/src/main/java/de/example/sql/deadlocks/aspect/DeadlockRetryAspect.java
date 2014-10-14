@@ -1,16 +1,15 @@
 package de.example.sql.deadlocks.aspect;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
-
-import com.mysql.jdbc.exceptions.jdbc4.MySQLTransactionRollbackException;
 
 import de.example.sql.deadlocks.annotation.DeadlockRetry;
 
@@ -23,6 +22,8 @@ public class DeadlockRetryAspect implements Ordered {
 	private static final Logger logger = LoggerFactory.getLogger(DeadlockRetryAspect.class);
 	private static final int ORDER = 99;
 
+	private Collection<Class<? extends Throwable>> retryableExceptionClasses;
+
 	@Around(value = "@annotation(deadlockRetry)", argNames = "deadlockRetry")
 	public Object doAround(final ProceedingJoinPoint pjp, final DeadlockRetry deadlockRetry) throws Throwable {
 
@@ -34,29 +35,29 @@ public class DeadlockRetryAspect implements Ordered {
         final Method method = signature.getMethod();
         
         int count = 0;
-        Throwable deadLockException = null;
+        Throwable lastException = null;
     	do {
     		try {
     			count++;
 
     			logger.info("Attempting to invoke method " + method.getName() + " on " + target.getClass() + " count " + count);
     			//Calling real method
-    			Object result = pjp.proceed();
+    			final Object result = pjp.proceed();
     			logger.info("Completed invocation of method " + method.getName() + " on " + target.getClass());
 
     			return result;
-    		} catch (final Throwable e1) {
+    		} catch (final Throwable ex) {
 
-    			if (!isDeadLock(e1)) {
-    				throw e1;
+    			if (!isDeadLock(ex)) {
+    				throw ex;
     			}
 
-    			deadLockException = e1;
+    			lastException = ex;
     			if (interval > 0) {
     				try {
     					Thread.sleep(interval);
-    				} catch (final InterruptedException e2) {
-    					logger.warn("Deadlock retry thread interrupt", e2);
+    				} catch (final InterruptedException exi) {
+    					logger.warn("Deadlock retry thread interrupt", exi);
                 	
     					// Restore interrupt status.
     					Thread.currentThread().interrupt();
@@ -65,7 +66,7 @@ public class DeadlockRetryAspect implements Ordered {
     		}
     	} while (count < maxTries);
 
-    	throw new RuntimeException("DeadlockRetry failed, deadlock in all retry attempts.", deadLockException);
+    	throw new RuntimeException("DeadlockRetry failed, deadlock in all retry attempts.", lastException);
     }
 
 	@Override
@@ -73,9 +74,13 @@ public class DeadlockRetryAspect implements Ordered {
 		return ORDER;
 	}
 
+	public final void setRetryableExceptionClasses(final Collection<Class<? extends Throwable>> retryableExceptionClasses) {
+		this.retryableExceptionClasses = retryableExceptionClasses;
+	}
+
 	private boolean isDeadLock(Throwable ex) {
 		do {
-			if (ex instanceof MySQLTransactionRollbackException) {
+			if (this.retryableExceptionClasses.contains(ex.getClass())) {
 				return true;
 			}
 		} while ((ex = ex.getCause()) != null);

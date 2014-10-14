@@ -4,6 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans 
   						   http://www.springframework.org/schema/beans/spring-beans.xsd
   						   http://www.springframework.org/schema/context 
@@ -11,7 +12,9 @@
                            http://www.springframework.org/schema/aop 
                            http://www.springframework.org/schema/aop/spring-aop.xsd
                            http://www.springframework.org/schema/tx
-                           http://www.springframework.org/schema/tx/spring-tx.xsd">
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util.xsd">
           
     <!-- 
         ************* WE HAVE TO ENABLE THE ASPECTJ SUPPORT!!!!!! ************* 
@@ -25,8 +28,22 @@
         Spring detects if the bean has an interface implementation. If it has one,
         Spring will use J2SE (J2SE needs classes with interfaces) in other case it
         will use CGLIB. We could force the CGLIB use in classes with interfaces.
+
+        I AM GOING TO FORCE THE USE OF CGLIB BECAUSE OF THIS:
+        See: http://docs.spring.io/spring/docs/3.1.0.M2/spring-framework-reference/html/aop.html#aop-proxying
+        "If you want to force the use of CGLIB proxying (for example, to proxy every method defined
+        for the target object, not just those implemented by its interfaces)"
+
+        ATTENTION!!!! :O
+        See: http://docs.spring.io/spring/docs/3.1.0.M2/spring-framework-reference/html/aop.html#aop-proxying
+        Multiple <aop:config/> sections are collapsed into a single unified auto-proxy creator at runtime, which
+        applies the strongest proxy settings that any of the <aop:config/> sections (typically from different XML
+        bean definition files) specified. This also applies to the <tx:annotation-driven/> and <aop:aspectj-autoproxy/> elements.
+
+		To be clear: using 'proxy-target-class="true"' on <tx:annotation-driven/>, <aop:aspectj-autoproxy/> or <aop:config/>
+		elements will force the use of CGLIB proxies for all three of them.
     -->
-    <aop:aspectj-autoproxy/>
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
 
 
 
@@ -41,14 +58,21 @@
         need here that feature.
 
         I do not really need the component-scan thing but I hope, it will improve performance (not sure)
-    -->
+
+        I DO NOT THINK component-scan IS INTENDED TO BE USED IN THIS WAY!!!!!
     <context:component-scan base-package="de.example.sql.deadlocks" use-default-filters="false">
         <context:include-filter 
         type="annotation" 
         expression="de.example.sql.deadlocks.annotation.DeadlockRetry" />
     </context:component-scan>
+    -->
 
     <bean id="deadlockRetryAspect" class="de.example.sql.deadlocks.aspect.DeadlockRetryAspect">
+		<property name="retryableExceptionClasses">
+			<list value-type="java.lang.String">
+				<value>com.mysql.jdbc.exceptions.jdbc4.MySQLTransactionRollbackException</value>
+			</list>
+		</property>
     </bean>
 
 
