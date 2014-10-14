@@ -72,7 +72,10 @@ public class DeadlockRetryAspect implements Ordered {
     		}
     	} while (count < maxTries);
 
-    	throw new RuntimeException("DeadlockRetry failed, deadlock in all retry attempts.", lastException);
+    	// Throwing exception because it matched or it contains (exception chaining)
+    	// some of the exceptions from the list in the spring-config.xml file.
+    	// The exception being thrown will depend on the API that you are using.
+    	throw lastException;
     }
 
 	@Override

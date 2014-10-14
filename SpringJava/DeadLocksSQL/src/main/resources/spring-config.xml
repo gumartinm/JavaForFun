@@ -69,8 +69,13 @@
 
     <bean id="deadlockRetryAspect" class="de.example.sql.deadlocks.aspect.DeadlockRetryAspect">
 		<property name="retryableExceptionClasses">
+		    <!--
+		      You have to add here the exceptions for your API. In this case it is
+		      spring-tx and JDBC.
+		     -->
 			<list value-type="java.lang.String">
 				<value>com.mysql.jdbc.exceptions.jdbc4.MySQLTransactionRollbackException</value>
+				<value>org.springframework.dao.DeadlockLoserDataAccessException</value>
 			</list>
 		</property>
     </bean>
