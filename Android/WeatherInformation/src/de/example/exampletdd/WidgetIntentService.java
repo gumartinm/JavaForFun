@@ -20,6 +20,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.http.AndroidHttpClient;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -35,6 +36,7 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.PermanentStorage;
 import de.example.exampletdd.service.ServiceParser;
+import de.example.exampletdd.widget.WidgetConfigure;
 import de.example.exampletdd.widget.WidgetProvider;
 
 public class WidgetIntentService extends IntentService {
@@ -56,23 +58,23 @@ public class WidgetIntentService extends IntentService {
 		
 		if (weatherLocation == null) {
 			// Nothing to do. Show error.
-			final RemoteViews view = this.makeErrorView();
+			final RemoteViews view = this.makeErrorView(appWidgetId);
 			this.updateWidgets(view);
 			return;
 		}
 		
 		if (isUpdateByApp) {		
-			this.updateByApp(weatherLocation);
+			this.updateByApp(weatherLocation, appWidgetId);
 		} else {
 			this.updateByTimeout(weatherLocation, appWidgetId);
 		}
 
 	}
 
-	private void updateByApp(final WeatherLocation weatherLocation) {
+	private void updateByApp(final WeatherLocation weatherLocation, final int appWidgetId) {
 		final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
         final Current current = store.getCurrent();
-		final RemoteViews view = this.makeView(current, weatherLocation);
+		final RemoteViews view = this.makeView(current, weatherLocation, appWidgetId);
 		
 		this.updateWidgets(view);
 	}
@@ -80,18 +82,18 @@ public class WidgetIntentService extends IntentService {
 	private void updateByTimeout(final WeatherLocation weatherLocation, final int appWidgetId) {
 		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			// Nothing to do. Something went wrong. Show error.
-			final RemoteViews view = this.makeErrorView();
+			final RemoteViews view = this.makeErrorView(appWidgetId);
 			this.updateWidgets(view);
 			return;
 		}
 		
 		final Current current = this.getRemoteCurrent(weatherLocation);
 		if (current != null) {
-			final RemoteViews view = this.makeView(current, weatherLocation);
+			final RemoteViews view = this.makeView(current, weatherLocation, appWidgetId);
 			this.updateWidget(view, appWidgetId);
 		} else {
 			// Show error.
-			final RemoteViews view = this.makeErrorView();
+			final RemoteViews view = this.makeErrorView(appWidgetId);
 			this.updateWidgets(view);
 		}
 	}
@@ -148,7 +150,7 @@ public class WidgetIntentService extends IntentService {
     	public double doConversion(final double value);
     }
     
-	private RemoteViews makeView(final Current current, final WeatherLocation weatherLocation) {
+	private RemoteViews makeView(final Current current, final WeatherLocation weatherLocation, final int appWidgetId) {
 		final SharedPreferences sharedPreferences = PreferenceManager
 				.getDefaultSharedPreferences(this.getApplicationContext());
 
@@ -234,16 +236,13 @@ public class WidgetIntentService extends IntentService {
 		remoteView.setTextViewText(R.id.weather_appwidget_country, country);
 
 		// 5. Activity launcher.
-		final Intent resultIntent =  new Intent(this.getApplicationContext(), WeatherTabsActivity.class);
-		// The PendingIntent to launch our activity if the user selects this notification
-		//            final PendingIntent contentIntent = PendingIntent.getActivity(
-		//            		this.getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		// The stack builder object will contain an artificial back stack for the started Activity.
-		// This ensures that navigating backward from the Activity leads out of
-		// your application to the Home screen.
+		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
+		resultIntent.putExtra("actionFromUser", true);
+		resultIntent.putExtra("appWidgetId", appWidgetId);
+
 		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
 		// Adds the back stack for the Intent (but not the Intent itself)
-		stackBuilder.addParentStack(WeatherTabsActivity.class);
+		stackBuilder.addParentStack(WidgetConfigure.class);
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
 		final PendingIntent resultPendingIntent =
@@ -256,20 +255,17 @@ public class WidgetIntentService extends IntentService {
 		return remoteView;
 	}
 	
-	private RemoteViews makeErrorView() {
+	private RemoteViews makeErrorView(final int appWidgetId) {
 		final RemoteViews remoteView = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.appwidget_error);
 
 		// 5. Activity launcher.
-		final Intent resultIntent =  new Intent(this.getApplicationContext(), WeatherTabsActivity.class);
-		// The PendingIntent to launch our activity if the user selects this notification
-		//            final PendingIntent contentIntent = PendingIntent.getActivity(
-		//            		this.getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		// The stack builder object will contain an artificial back stack for the started Activity.
-		// This ensures that navigating backward from the Activity leads out of
-		// your application to the Home screen.
+		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
+		resultIntent.putExtra("actionFromUser", true);
+		resultIntent.putExtra("appWidgetId", appWidgetId);
+
 		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
 		// Adds the back stack for the Intent (but not the Intent itself)
-		stackBuilder.addParentStack(WeatherTabsActivity.class);
+		stackBuilder.addParentStack(WidgetConfigure.class);
 		// Adds the Intent that starts the Activity to the top of the stack
 		stackBuilder.addNextIntent(resultIntent);
 		final PendingIntent resultPendingIntent =

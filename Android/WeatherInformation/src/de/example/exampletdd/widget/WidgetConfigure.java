@@ -37,17 +37,27 @@ public class WidgetConfigure extends Activity {
     @Override
     public void onCreate(final Bundle icicle) {
         super.onCreate(icicle);
-     
-        // Set the result to CANCELED.  This will cause the widget host to cancel
-        // out of the widget placement if they press the back button.
-        this.setResult(RESULT_CANCELED);
 
         // Find the widget id from the intent. 
         final Intent intent = getIntent();
         final Bundle extras = intent.getExtras();
+        boolean isActionFromUser = false;
         if (extras != null) {
             mAppWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+            
+            isActionFromUser = extras.getBoolean("actionFromUser", false);
+        }
+        
+        if (!isActionFromUser) {
+        	// If they gave us an intent without the widget id, just bail.
+        	if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+        		this.finish();
+        	}
+
+            // Set the result to CANCELED.  This will cause the widget host to cancel
+            // out of the widget placement if they press the back button.
+            this.setResult(RESULT_CANCELED);
         }
         
         // Set the view layout resource to use.
@@ -65,12 +75,6 @@ public class WidgetConfigure extends Activity {
         
         // Bind the action for the save button.
         this.findViewById(R.id.weather_appwidget_configure_save_button).setOnClickListener(mOnClickListener);
-
-   
-        // If they gave us an intent without the widget id, just bail.
-        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-        	this.finish();
-        }
     }
     
     @Override

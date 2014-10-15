@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-        <ListPreference android:key="@string/widget_preferences_refresh_interval_key"
-        android:title="@string/widget_preferences_refresh_interval"
-        android:entries="@array/weather_preferences_refresh_interval_human_value"
-        android:entryValues="@array/weather_preferences_refresh_interval"
-        android:selectable="true"
-        android:persistent="true"
-        android:defaultValue="300000"
-        android:summary="five minutes" />
+    <PreferenceCategory android:title="@string/widget_preferences_country">
+        <SwitchPreference android:key="@string/widget_preferences_country_switch_key"
+            android:summaryOn="@string/widget_preferences_country_switch_on_summary"
+            android:summaryOff="@string/widget_preferences_country_switch_off_summary"
+            android:switchTextOff="@string/widget_preferences_country_switch_off"
+            android:switchTextOn="@string/widget_preferences_country_switch_on"
+            android:selectable="true"
+            android:enabled="true"
+            android:defaultValue="@string/widget_preferences_country_switch_off"
+            android:disableDependentsState="false"
+            android:persistent="true"/>
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/widget_preferences_units">
         <ListPreference android:key="@string/widget_preferences_temperature_key"
             android:title="@string/weather_preferences_temperature"
-            android:summary="celsius"
+            android:summary="@string/weather_preferences_temperature_celsius_human_value"
             android:entries="@array/weather_preferences_temperature_human_value"
             android:entryValues="@array/weather_preferences_temperature"
             android:selectable="true"
             android:persistent="true"
-            android:defaultValue="ºC" />
+            android:defaultValue="@string/weather_preferences_temperature_celsius" />
     </PreferenceCategory>
 
 </PreferenceScreen>

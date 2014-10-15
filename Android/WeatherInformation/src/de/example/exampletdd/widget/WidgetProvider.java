@@ -29,11 +29,11 @@ public class WidgetProvider extends AppWidgetProvider {
     }
     
     @Override
-    public void onDeleted(Context context, int[] appWidgetIds) {
+    public void onDeleted(final Context context, final int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
         final int N = appWidgetIds.length;
         for (int i=0; i<N; i++) {
-            //ExampleAppWidgetConfigure.deleteTitlePref(context, appWidgetIds[i]);
+        	WidgetPreferences.deletePreference(context, appWidgetIds[i]);
         }
     }
     
