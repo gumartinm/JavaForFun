@@ -214,7 +214,7 @@ public class CurrentFragment extends Fragment {
         UnitsConversor tempUnitsConversor;
         String keyPreference = this.getResources().getString(R.string.weather_preferences_temperature_key);
         String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        String[] values = this.getResources().getStringArray(R.array.weather_preferences_units_value);
+        String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
         if (unitsPreferenceValue.equals(values[0])) {
         	tempSymbol = values[0];
         	tempUnitsConversor = new UnitsConversor(){

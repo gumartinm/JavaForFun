@@ -42,12 +42,12 @@
         <item>half day</item>
         <item>one day</item>
     </string-array>
-    <string-array name="weather_preferences_units_value">
+    <string-array name="weather_preferences_temperature">
         <item>@string/weather_preferences_temperature_celsius</item>
         <item>@string/weather_preferences_temperature_fahrenheit</item>
         <item>@string/weather_preferences_temperature_kelvin</item>
     </string-array>
-    <string-array name="weather_preferences_units_human_value">
+    <string-array name="weather_preferences_temperature_human_value">
         <item>@string/weather_preferences_temperature_celsius_human_value</item>
         <item>@string/weather_preferences_temperature_fahrenheit_human_value</item>
         <item>@string/weather_preferences_temperature_kelvin_human_value</item>

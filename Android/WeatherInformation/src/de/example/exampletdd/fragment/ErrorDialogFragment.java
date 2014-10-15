@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import de.example.exampletdd.R;
 
 public class ErrorDialogFragment extends DialogFragment {
 
@@ -26,7 +25,7 @@ public class ErrorDialogFragment extends DialogFragment {
         return new AlertDialog.Builder(this.getActivity())
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setTitle(title)
-        .setPositiveButton(R.string.button_ok,
+        .setPositiveButton(android.R.string.ok,
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog,

@@ -5,8 +5,8 @@
     <item
         android:id="@+id/weather_menu_settings"
         android:menuCategory="system"
-        android:title="@string/action_settings"
-        android:titleCondensed="@string/action_settings"
+        android:title="@string/weather_preferences_action_settings"
+        android:titleCondensed="@string/weather_preferences_action_settings"
         android:checked="false"
         android:visible="true"
         android:checkable="false"
@@ -22,8 +22,8 @@
         android:checkable="false"
         android:enabled="true"
         android:checked="false"
-        android:title="@string/action_map"
-        android:titleCondensed="@string/action_map">
+        android:title="@string/weather_map_action_map"
+        android:titleCondensed="@string/weather_map_action_map">
     </item>
     
 

@@ -78,6 +78,6 @@ public class WidgetConfigure extends Activity {
         super.onResume();
 
         final ActionBar actionBar = this.getActionBar();
-        actionBar.setTitle(this.getString(R.string.weather_preferences_actionbar_title));
+        actionBar.setTitle(this.getString(R.string.widget_preferences_action_settings));
     }
 }
