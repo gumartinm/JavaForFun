@@ -116,13 +116,6 @@ public class CurrentFragment extends Fragment {
 							store.saveCurrent(currentRemote);
 				            weatherLocation.setLastCurrentUIUpdate(new Date());
 				            query.updateDataBase(weatherLocation);
-
-				            // 4. Update Widget's UI.
-				            // TODO: MEJOR PONER UN REFRESH EN LA ACTIVITY DE CONFIGURACION DEL WIDGET!!!!
-				            // PARA DE ESA FORMA NO PERDER EL WIDGETID
-				            final Intent intentWidget = new Intent(context.getApplicationContext(), WidgetIntentService.class);
-				            intentWidget.putExtra("updateByApp", true);
-				            context.getApplicationContext().startService(intentWidget);
 			            }
 
 					} else {

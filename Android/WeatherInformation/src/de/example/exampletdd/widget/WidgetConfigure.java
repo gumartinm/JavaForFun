@@ -42,6 +42,7 @@ public class WidgetConfigure extends Activity {
         final Intent intent = getIntent();
         final Bundle extras = intent.getExtras();
         boolean isActionFromUser = false;
+
         if (extras != null) {
             mAppWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -49,12 +50,12 @@ public class WidgetConfigure extends Activity {
             isActionFromUser = extras.getBoolean("actionFromUser", false);
         }
         
+        // If they gave us an intent without the widget id, just bail.
+    	if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+    		this.finish();
+    	}
+    	
         if (!isActionFromUser) {
-        	// If they gave us an intent without the widget id, just bail.
-        	if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-        		this.finish();
-        	}
-
             // Set the result to CANCELED.  This will cause the widget host to cancel
             // out of the widget placement if they press the back button.
             this.setResult(RESULT_CANCELED);
@@ -64,7 +65,7 @@ public class WidgetConfigure extends Activity {
         this.setContentView(R.layout.appwidget_configure);
         
     	final Bundle args = new Bundle();
-    	args.putInt("appWidgetId", mAppWidgetId);
+    	args.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
     	final Fragment preferences = new WidgetPreferences();
         preferences.setRetainInstance(true);
     	preferences.setArguments(args);

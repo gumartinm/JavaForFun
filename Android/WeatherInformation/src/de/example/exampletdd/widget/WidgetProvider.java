@@ -22,7 +22,7 @@ public class WidgetProvider extends AppWidgetProvider {
             int appWidgetId = appWidgetIds[i];
             // To prevent any ANR timeouts, we perform the update in a service
         	final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
-        	intent.putExtra("appWidgetId", appWidgetId);
+        	intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         	intent.putExtra("updateByApp", false);
             context.startService(intent);
         }
@@ -58,7 +58,7 @@ public class WidgetProvider extends AppWidgetProvider {
         //final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget);
         
         final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
-    	intent.putExtra("appWidgetId", appWidgetId);
+    	intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         context.startService(intent);
     }
 }

@@ -14,13 +14,12 @@ import org.apache.http.client.ClientProtocolException;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.net.http.AndroidHttpClient;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -37,7 +36,6 @@ import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.PermanentStorage;
 import de.example.exampletdd.service.ServiceParser;
 import de.example.exampletdd.widget.WidgetConfigure;
-import de.example.exampletdd.widget.WidgetProvider;
 
 public class WidgetIntentService extends IntentService {
 	private static final String TAG = "WidgetIntentService";
@@ -50,8 +48,14 @@ public class WidgetIntentService extends IntentService {
 	@Override
 	protected void onHandleIntent(final Intent intent) {
 		Log.i(TAG, "onHandleIntent");
-		final int appWidgetId = intent.getIntExtra("appWidgetId", AppWidgetManager.INVALID_APPWIDGET_ID);
+		final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		final boolean isUpdateByApp = intent.getBooleanExtra("updateByApp", false);
+
+		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+			// Nothing to do. Something went wrong. Show error.
+			return;
+		}
+
 
 		final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
 		final WeatherLocation weatherLocation = query.queryDataBase();
@@ -59,7 +63,7 @@ public class WidgetIntentService extends IntentService {
 		if (weatherLocation == null) {
 			// Nothing to do. Show error.
 			final RemoteViews view = this.makeErrorView(appWidgetId);
-			this.updateWidgets(view);
+			this.updateWidget(view, appWidgetId);
 			return;
 		}
 		
@@ -74,29 +78,30 @@ public class WidgetIntentService extends IntentService {
 	private void updateByApp(final WeatherLocation weatherLocation, final int appWidgetId) {
 		final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
         final Current current = store.getCurrent();
-		final RemoteViews view = this.makeView(current, weatherLocation, appWidgetId);
 		
-		this.updateWidgets(view);
+		this.updateWidget(current, weatherLocation, appWidgetId);
 	}
 	
 	private void updateByTimeout(final WeatherLocation weatherLocation, final int appWidgetId) {
-		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-			// Nothing to do. Something went wrong. Show error.
-			final RemoteViews view = this.makeErrorView(appWidgetId);
-			this.updateWidgets(view);
-			return;
-		}
-		
+
 		final Current current = this.getRemoteCurrent(weatherLocation);
+
+		this.updateWidget(current, weatherLocation, appWidgetId);
+	}
+	
+	private void updateWidget(final Current current, final WeatherLocation weatherLocation, final int appWidgetId) {
+
 		if (current != null) {
 			final RemoteViews view = this.makeView(current, weatherLocation, appWidgetId);
 			this.updateWidget(view, appWidgetId);
 		} else {
 			// Show error.
 			final RemoteViews view = this.makeErrorView(appWidgetId);
-			this.updateWidgets(view);
+			this.updateWidget(view, appWidgetId);
 		}
 	}
+
+
 	
 	private Current getRemoteCurrent(final WeatherLocation weatherLocation) {
 
@@ -238,7 +243,10 @@ public class WidgetIntentService extends IntentService {
 		// 5. Activity launcher.
 		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
 		resultIntent.putExtra("actionFromUser", true);
-		resultIntent.putExtra("appWidgetId", appWidgetId);
+		resultIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		// From: http://stackoverflow.com/questions/4011178/multiple-instances-of-widget-only-updating-last-widget
+		final Uri data = Uri.withAppendedPath(Uri.parse("PAIN" + "://widget/id/") ,String.valueOf(appWidgetId));
+		resultIntent.setData(data);
 
 		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
 		// Adds the back stack for the Intent (but not the Intent itself)
@@ -261,7 +269,10 @@ public class WidgetIntentService extends IntentService {
 		// 5. Activity launcher.
 		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
 		resultIntent.putExtra("actionFromUser", true);
-		resultIntent.putExtra("appWidgetId", appWidgetId);
+		resultIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+		// From: http://stackoverflow.com/questions/4011178/multiple-instances-of-widget-only-updating-last-widget
+		final Uri data = Uri.withAppendedPath(Uri.parse("PAIN" + "://widget/id/") ,String.valueOf(appWidgetId));
+		resultIntent.setData(data);
 
 		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
 		// Adds the back stack for the Intent (but not the Intent itself)
@@ -284,10 +295,10 @@ public class WidgetIntentService extends IntentService {
 		manager.updateAppWidget(appWidgetId, remoteView);
 	}
 	
-	private void updateWidgets(final RemoteViews remoteView) {
-		
-		final ComponentName widgets = new ComponentName(this.getApplicationContext(), WidgetProvider.class);
-		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
-		manager.updateAppWidget(widgets, remoteView);
-	}
+//	private void updateWidgets(final RemoteViews remoteView) {
+//		
+//		final ComponentName widgets = new ComponentName(this.getApplicationContext(), WidgetProvider.class);
+//		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
+//		manager.updateAppWidget(widgets, remoteView);
+//	}
 }
