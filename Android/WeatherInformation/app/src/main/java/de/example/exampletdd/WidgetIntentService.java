@@ -265,7 +265,7 @@ public class WidgetIntentService extends IntentService {
                 0,
                 resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteView.setOnClickPendingIntent(R.id.weather_appwidget_error, resultPendingIntent);
+        remoteView.setOnClickPendingIntent(R.id.weather_appwidget, resultPendingIntent);
 		
 		return remoteView;
 	}
