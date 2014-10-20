@@ -244,28 +244,28 @@ public class WidgetIntentService extends IntentService {
 		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
 		resultIntent.putExtra("actionFromUser", true);
 		resultIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK );
+    //    resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK );
 		// From: http://stackoverflow.com/questions/4011178/multiple-instances-of-widget-only-updating-last-widget
 		final Uri data = Uri.withAppendedPath(Uri.parse("PAIN" + "://widget/id/") ,String.valueOf(appWidgetId));
 		resultIntent.setData(data);
 
-//		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
-//		// Adds the back stack for the Intent (but not the Intent itself)
-//		stackBuilder.addParentStack(WidgetConfigure.class);
-//		// Adds the Intent that starts the Activity to the top of the stack
-//		stackBuilder.addNextIntent(resultIntent);
-//		final PendingIntent resultPendingIntent =
-//				stackBuilder.getPendingIntent(
-//						0,
-//						PendingIntent.FLAG_UPDATE_CURRENT
-//						);
-//		remoteView.setOnClickPendingIntent(R.id.weather_appwidget, resultPendingIntent);
-        final PendingIntent resultPendingIntent = PendingIntent.getActivity(
-                this.getApplicationContext(),
-                0,
-                resultIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteView.setOnClickPendingIntent(R.id.weather_appwidget, resultPendingIntent);
+		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
+		// Adds the back stack for the Intent (but not the Intent itself)
+		stackBuilder.addParentStack(WidgetConfigure.class);
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		final PendingIntent resultPendingIntent =
+				stackBuilder.getPendingIntent(
+						0,
+						PendingIntent.FLAG_UPDATE_CURRENT
+						);
+		remoteView.setOnClickPendingIntent(R.id.weather_appwidget, resultPendingIntent);
+//        final PendingIntent resultPendingIntent = PendingIntent.getActivity(
+//                this.getApplicationContext(),
+//                0,
+//                resultIntent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+//        remoteView.setOnClickPendingIntent(R.id.weather_appwidget, resultPendingIntent);
 		
 		return remoteView;
 	}
@@ -277,27 +277,27 @@ public class WidgetIntentService extends IntentService {
 		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
 		resultIntent.putExtra("actionFromUser", true);
 		resultIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK );
+//        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK );
 		// From: http://stackoverflow.com/questions/4011178/multiple-instances-of-widget-only-updating-last-widget
 		final Uri data = Uri.withAppendedPath(Uri.parse("PAIN" + "://widget/id/") ,String.valueOf(appWidgetId));
 		resultIntent.setData(data);
 
-//		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
-//		// Adds the back stack for the Intent (but not the Intent itself)
-//		stackBuilder.addParentStack(WidgetConfigure.class);
-//		// Adds the Intent that starts the Activity to the top of the stack
-//		stackBuilder.addNextIntent(resultIntent);
-//		final PendingIntent resultPendingIntent =
-//				stackBuilder.getPendingIntent(
-//						0,
-//						PendingIntent.FLAG_UPDATE_CURRENT
-//						);
-        final PendingIntent resultPendingIntent = PendingIntent.getActivity(
-                this.getApplicationContext(),
-                0,
-                resultIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-		remoteView.setOnClickPendingIntent(R.id.weather_appwidget_error, resultPendingIntent);
+		final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
+		// Adds the back stack for the Intent (but not the Intent itself)
+		stackBuilder.addParentStack(WidgetConfigure.class);
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		final PendingIntent resultPendingIntent =
+				stackBuilder.getPendingIntent(
+						0,
+						PendingIntent.FLAG_UPDATE_CURRENT
+						);
+//        final PendingIntent resultPendingIntent = PendingIntent.getActivity(
+//                this.getApplicationContext(),
+//                0,
+//                resultIntent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+//		remoteView.setOnClickPendingIntent(R.id.weather_appwidget_error, resultPendingIntent);
 
 		return remoteView;
 	}
