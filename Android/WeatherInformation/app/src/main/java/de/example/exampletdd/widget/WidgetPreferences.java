@@ -18,17 +18,20 @@ import de.example.exampletdd.R;
  * without pain?
  */
 public class WidgetPreferences extends PreferenceFragment implements OnSharedPreferenceChangeListener {
-	private int appWidgetId;
+    private int mAppWidgetId;
+    private boolean mIsCountry;
+    private String mTempUnits;
 	
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Retain this fragment across configuration changes.
-    	this.setRetainInstance(true);
+        // Do not retain this fragment across configuration changes because I am tired for following
+        // the fragment lifecycle (I am going to loose the instance field values but I DON'T CARE!!!)
+        this.setRetainInstance(false);
     	
     	final Bundle bundle = this.getArguments();
-    	appWidgetId = bundle.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+    	mAppWidgetId = bundle.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     	
         // Load the preferences from an XML resource
         this.addPreferencesFromResource(R.xml.appwidget_preferences);
@@ -37,7 +40,7 @@ public class WidgetPreferences extends PreferenceFragment implements OnSharedPre
         /******************* Show/hide country field *******************/
         String keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.widget_preferences_country_switch_key);
-        String realKeyPreference = keyPreference + "_" + appWidgetId;
+        String realKeyPreference = keyPreference + "_" + mAppWidgetId;
         
         // What was saved to permanent storage (or default values if it is the first time)
         boolean countryValue = this.getActivity().getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE)
@@ -53,7 +56,7 @@ public class WidgetPreferences extends PreferenceFragment implements OnSharedPre
 
         keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.widget_preferences_temperature_key);
-        realKeyPreference = keyPreference + "_" + appWidgetId;
+        realKeyPreference = keyPreference + "_" + mAppWidgetId;
 
 
         // What was saved to permanent storage (or default values if it is the first time)
@@ -81,70 +84,49 @@ public class WidgetPreferences extends PreferenceFragment implements OnSharedPre
     }
 
     @Override
-	public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
+    public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
 
-    	/******************* Show/hide country field *******************/
+        /******************* Show/hide country field *******************/
         String keyPreference = this.getActivity().getApplicationContext().getString(
-        		R.string.widget_preferences_country_switch_key);
+                R.string.widget_preferences_country_switch_key);
         if (key.equals(keyPreference)) {
-        	final String realKeyPreference = keyPreference + "_" + appWidgetId;
-        	// Saving to permanent storage.
-    		final SharedPreferences.Editor prefs =
-        			this.getActivity().getSharedPreferences(
-        					"WIDGET_PREFERENCES", 
-        					Context.MODE_PRIVATE).edit();
-    		// What is shown on the screen
-        	final SwitchPreference preference = (SwitchPreference) this.findPreference(key);
-        	if (preference.isChecked())
-        	{
-        		// Saving to permanent storage.
-        		prefs.putBoolean(realKeyPreference, true); 
-        	} else {
-        		// Saving to permanent storage.
-        		prefs.putBoolean(realKeyPreference, false); 
-        	}
-        	prefs.commit();
+            // What is shown on the screen
+            final SwitchPreference preference = (SwitchPreference) this.findPreference(key);
+            // Update temporal value
+            mIsCountry = preference.isChecked();
+
+            return;
         }
 
-    	/********************* Temperature units  **********************/
+        /********************* Temperature units  **********************/
         keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.widget_preferences_temperature_key);
         if (key.equals(keyPreference)) {
-        	final String[] values = this.getResources().getStringArray(
-        			R.array.weather_preferences_temperature);
-        	final String[] humanValues = this.getResources().getStringArray(
-        			R.array.weather_preferences_temperature_human_value);
-        	
-        	// What is shown on the screen
-        	final ListPreference listPref = (ListPreference) this.findPreference(key);
-        	final String value = listPref.getValue();
-        	String humanValue = "";
-        	if (value.equals(values[0])) {
-        		humanValue = humanValues[0];
-        	} else if (value.equals(values[1])) {
-        		humanValue = humanValues[1];
-        	} else if (value.equals(values[2])) {
-        		humanValue = humanValues[2];
-        	}
-        	// Update data on screen
-        	listPref.setSummary(humanValue);
-        	
-        	
-        	// Saving to permanent storage.
-            final String realKeyPreference = keyPreference + "_" + appWidgetId;
-            
-        	final SharedPreferences.Editor prefs =
-        			this.getActivity().getSharedPreferences(
-        					"WIDGET_PREFERENCES", 
-        					Context.MODE_PRIVATE).edit();
-            prefs.putString(realKeyPreference, value);
-            prefs.commit();
-        	return;
-        }
-        
-        
+            final String[] values = this.getResources().getStringArray(
+                    R.array.weather_preferences_temperature);
+            final String[] humanValues = this.getResources().getStringArray(
+                    R.array.weather_preferences_temperature_human_value);
 
-	}
+            // What is shown on the screen
+            final ListPreference listPref = (ListPreference) this.findPreference(key);
+            final String value = listPref.getValue();
+            String humanValue = "";
+            if (value.equals(values[0])) {
+                humanValue = humanValues[0];
+            } else if (value.equals(values[1])) {
+                humanValue = humanValues[1];
+            } else if (value.equals(values[2])) {
+                humanValue = humanValues[2];
+            }
+            // Update data on screen
+            listPref.setSummary(humanValue);
+
+            // Update temporal value
+            mTempUnits = value;
+
+            return;
+        }
+    }
 
     @Override
     public void onResume() {
@@ -159,7 +141,30 @@ public class WidgetPreferences extends PreferenceFragment implements OnSharedPre
         this.getPreferenceManager().getSharedPreferences()
         .unregisterOnSharedPreferenceChangeListener(this);
     }
-    
+
+    public void onSavePreferences() {
+        final SharedPreferences.Editor prefs =
+                this.getActivity().getSharedPreferences(
+                        "WIDGET_PREFERENCES",
+                        Context.MODE_PRIVATE).edit();
+
+        /******************* Show/hide country field *******************/
+        String keyPreference = this.getActivity().getApplicationContext().getString(
+                R.string.widget_preferences_country_switch_key);
+        String realKeyPreference = keyPreference + "_" + mAppWidgetId;
+        prefs.putBoolean(realKeyPreference, mIsCountry);
+
+
+        /********************* Temperature units  **********************/
+        keyPreference = this.getActivity().getApplicationContext().getString(
+                R.string.widget_preferences_temperature_key);
+        realKeyPreference = keyPreference + "_" + mAppWidgetId;
+        prefs.putString(realKeyPreference, mTempUnits);
+
+        // Saving to permanent storage.
+        prefs.commit();
+    }
+
     public static void deletePreference(final Context context, final int appWidgetId) {
     	final String keyPreference = context.getApplicationContext().getString(
                 R.string.widget_preferences_temperature_key);

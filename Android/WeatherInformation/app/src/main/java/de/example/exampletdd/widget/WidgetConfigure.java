@@ -11,28 +11,8 @@ import de.example.exampletdd.R;
 
 public class WidgetConfigure extends Activity {
 	private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-	
-    final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-
-        	
-            // When the button is clicked, save the string in our prefs and return that they
-            // clicked OK.
-            // Push widget update to surface with newly set prefix
-            final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(
-            		WidgetConfigure.this.getApplicationContext());
-            WidgetProvider.updateAppWidget(
-            		WidgetConfigure.this.getApplicationContext(),
-            		appWidgetManager,
-                    mAppWidgetId);
-
-            // Make sure we pass back the original appWidgetId
-            final Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            WidgetConfigure.this.setResult(RESULT_OK, resultValue);
-            finish();
-        }
-    };
+    private WidgetPreferences mPreferences;
+    private View.OnClickListener mOnClickListener;
 
     @Override
     public void onCreate(final Bundle icicle) {
@@ -46,7 +26,7 @@ public class WidgetConfigure extends Activity {
         if (extras != null) {
             mAppWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-            
+
             isActionFromUser = extras.getBoolean("actionFromUser", false);
         }
         
@@ -54,7 +34,7 @@ public class WidgetConfigure extends Activity {
     	if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
     		this.finish();
     	}
-    	
+
         if (!isActionFromUser) {
             // Set the result to CANCELED.  This will cause the widget host to cancel
             // out of the widget placement if they press the back button.
@@ -66,14 +46,37 @@ public class WidgetConfigure extends Activity {
         
     	final Bundle args = new Bundle();
     	args.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-    	final Fragment preferences = new WidgetPreferences();
-        preferences.setRetainInstance(true);
-    	preferences.setArguments(args);
+        mPreferences = new WidgetPreferences();
+        // Do not retain this fragment across configuration changes because I am tired for following
+        // the fragment lifecycle (I am going to loose the instance field values but I DON'T CARE!!!)
+        mPreferences.setRetainInstance(false);
+        mPreferences.setArguments(args);
         this.getFragmentManager()
         .beginTransaction()
-        .replace(R.id.weather_appwidget_configure_preferences, preferences)
+        .replace(R.id.weather_appwidget_configure_preferences, mPreferences)
         .commit();
-        
+
+        mOnClickListener = new View.OnClickListener() {
+            public void onClick(View v) {
+
+                // Save to permanent storage
+                mPreferences.onSavePreferences();
+
+                // Push widget update to surface with newly set prefix
+                final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(
+                        WidgetConfigure.this.getApplicationContext());
+                WidgetProvider.updateAppWidget(
+                        WidgetConfigure.this.getApplicationContext(),
+                        appWidgetManager,
+                        mAppWidgetId);
+
+                // Make sure we pass back the original appWidgetId
+                final Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                WidgetConfigure.this.setResult(RESULT_OK, resultValue);
+                finish();
+            }
+        };
         // Bind the action for the save button.
         this.findViewById(R.id.weather_appwidget_configure_save_button).setOnClickListener(mOnClickListener);
     }

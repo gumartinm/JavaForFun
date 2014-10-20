@@ -80,7 +80,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="de.example.exampletdd.widget.WidgetConfigure">
+        <activity android:name="de.example.exampletdd.widget.WidgetConfigure"
+            android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
