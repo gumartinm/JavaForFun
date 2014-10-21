@@ -39,6 +39,8 @@
     <string name="weather_preferences_notifications_switch_key">weather_preferences_notifications_switch</string>
     <string name="weather_preferences_update_time_rate_key">weather_preferences_update_time_rate</string>
     <string name="weather_preferences_update_time_rate">Update time rate</string>
+    <string name="weather_preferences_notifications_temperature_key">weather_preferences_notifications_temperature</string>
+    <string name="weather_preferences_notifications_temperature">Temperature</string>
     <string name="weather_preferences_day_forecast_key">weather_preferences_day_forecast</string>
     <string name="weather_preferences_day_forecast">Forecast days number</string>
     <string name="weather_preferences_refresh_interval_key">weather_preferences_refresh_interval</string>
@@ -55,6 +57,7 @@
     <string name="weather_preferences_pressure_standard_atm">atm</string>
     <string name="weather_preferences_pressure_human_value_pascal">pascal</string>
     <string name="weather_preferences_pressure_human_value_standard_atm">standard atmosphere</string>
+
 
 
     <!-- Widget Preferences Activity -->

@@ -214,8 +214,9 @@ public class OverviewFragment extends ListFragment {
         UnitsConversor unitsConversor;
         String keyPreference = this.getResources().getString(
                 R.string.weather_preferences_temperature_key);
-        final String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        final String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        final String unitsPreferenceValue = sharedPreferences.getString(
+                keyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
         if (unitsPreferenceValue.equals(values[0])) {
         	symbol = values[0];
         	unitsConversor = new UnitsConversor(){

@@ -113,9 +113,10 @@ public class NotificationIntentService extends IntentService {
         // 1.1 Temperature
         String tempSymbol;
         UnitsConversor tempUnitsConversor;
-        String keyPreference = this.getResources().getString(R.string.weather_preferences_temperature_key);
-        String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        final String keyPreference = this.getApplicationContext().getString(R.string.weather_preferences_notifications_temperature_key);
+        final String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        final String unitsPreferenceValue = sharedPreferences.getString(
+                keyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
         if (unitsPreferenceValue.equals(values[0])) {
         	tempSymbol = values[0];
         	tempUnitsConversor = new UnitsConversor(){
@@ -124,7 +125,7 @@ public class NotificationIntentService extends IntentService {
 				public double doConversion(final double value) {
 					return value - 273.15;
 				}
-        		
+
         	};
         } else if (unitsPreferenceValue.equals(values[1])) {
         	tempSymbol = values[1];

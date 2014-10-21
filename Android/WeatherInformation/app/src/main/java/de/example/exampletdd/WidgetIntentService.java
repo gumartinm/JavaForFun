@@ -166,7 +166,7 @@ public class WidgetIntentService extends IntentService {
         // What was saved to permanent storage (or default values if it is the first time)
         final String tempValue = this.getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE)
                 .getString(realKeyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
-                String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        final String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
         if (tempValue.equals(values[0])) {
         	tempSymbol = values[0];
         	tempUnitsConversor = new UnitsConversor(){
@@ -249,6 +249,9 @@ public class WidgetIntentService extends IntentService {
         if (!isCountry) {
             remoteView.setViewVisibility(R.id.weather_appwidget_country, View.GONE);
         } else {
+            // TODO: It is as if Android has a view cache. If I did not set VISIBLE value,
+            // the country field would be gone forever... :/
+            remoteView.setViewVisibility(R.id.weather_appwidget_country, View.VISIBLE);
             remoteView.setTextViewText(R.id.weather_appwidget_country, country);
         }
 

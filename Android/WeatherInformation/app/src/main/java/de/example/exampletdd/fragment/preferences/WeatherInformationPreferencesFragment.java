@@ -32,7 +32,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
                 R.string.weather_preferences_temperature_key);
         Preference connectionPref = this.findPreference(keyPreference);
         String value = this.getPreferenceManager().getSharedPreferences()
-                .getString(keyPreference, "");
+                .getString(keyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
         String humanValue = "";
         if (value.equals(values[0])) {
             humanValue = humanValues[0];
@@ -48,7 +48,8 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         humanValues = this.getResources().getStringArray(R.array.weather_preferences_wind_human_value);
         keyPreference = this.getString(R.string.weather_preferences_wind_key);
         connectionPref = this.findPreference(keyPreference);
-        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        value = this.getPreferenceManager().getSharedPreferences()
+                .getString(keyPreference, this.getString(R.string.weather_preferences_wind_meters));
         humanValue = "";
         if (value.equals(values[0])) {
             humanValue = humanValues[0];
@@ -62,7 +63,8 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         humanValues = this.getResources().getStringArray(R.array.weather_preferences_pressure_human_value);
         keyPreference = this.getString(R.string.weather_preferences_pressure_key);
         connectionPref = this.findPreference(keyPreference);
-        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        value = this.getPreferenceManager().getSharedPreferences()
+                .getString(keyPreference, this.getString(R.string.weather_preferences_pressure_pascal));
         humanValue = "";
         if (value.equals(values[0])) {
             humanValue = humanValues[0];
@@ -77,7 +79,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.weather_preferences_day_forecast_key);
         connectionPref = this.findPreference(keyPreference);
-        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, values[0]);
         humanValue = "";
         if (value.equals(values[0])) {
             humanValue = humanValues[0];
@@ -94,7 +96,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         keyPreference = this.getActivity().getApplicationContext().getString(
                 R.string.weather_preferences_refresh_interval_key);
         connectionPref = this.findPreference(keyPreference);
-        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, "");
+        value = this.getPreferenceManager().getSharedPreferences().getString(keyPreference, values[0]);
         humanValue = "";
         if (value.equals(values[0])) {
             humanValue = humanValues[0];
@@ -120,7 +122,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
                 R.string.weather_preferences_update_time_rate_key);
         connectionPref = this.findPreference(keyPreference);
         value = this.getPreferenceManager().getSharedPreferences()
-                .getString(keyPreference, "");
+                .getString(keyPreference, values[0]);
         humanValue = "";
         if (value.equals(values[0])) {
             humanValue = humanValues[0];
@@ -132,6 +134,24 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
             humanValue = humanValues[3];
         } else if (value.equals(values[4])) {
             humanValue = humanValues[4];
+        }
+        connectionPref.setSummary(humanValue);
+
+        // Notifications temperature units
+        values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_temperature_human_value);
+        keyPreference = this.getActivity().getApplicationContext().getString(
+                R.string.weather_preferences_notifications_temperature_key);
+        connectionPref = this.findPreference(keyPreference);
+        value = this.getPreferenceManager().getSharedPreferences()
+                .getString(keyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
+        humanValue = "";
+        if (value.equals(values[0])) {
+            humanValue = humanValues[0];
+        } else if (value.equals(values[1])) {
+            humanValue = humanValues[1];
+        } else if (value.equals(values[2])) {
+            humanValue = humanValues[2];
         }
         connectionPref.setSummary(humanValue);
     }
@@ -162,7 +182,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
                 R.string.weather_preferences_temperature_key);
         if (key.equals(keyValue)) {
         	final Preference connectionPref = this.findPreference(key);
-            final String value = sharedPreferences.getString(key, "");
+            final String value = sharedPreferences.getString(key, values[0]);
         	String humanValue = "";
         	if (value.equals(values[0])) {
         		humanValue = humanValues[0];
@@ -182,7 +202,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         keyValue = this.getString(R.string.weather_preferences_wind_key);
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
-            final String value = sharedPreferences.getString(key, "");
+            final String value = sharedPreferences.getString(key, values[0]);
             String humanValue = "";
             if (value.equals(values[0])) {
             	humanValue = humanValues[0];
@@ -200,7 +220,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         keyValue = this.getString(R.string.weather_preferences_pressure_key);
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
-            final String value = sharedPreferences.getString(key, "");
+            final String value = sharedPreferences.getString(key, values[0]);
             String humanValue = "";
             if (value.equals(values[0])) {
             	humanValue = humanValues[0];
@@ -219,7 +239,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
                 R.string.weather_preferences_day_forecast_key);
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
-            final String value = sharedPreferences.getString(key, "");
+            final String value = sharedPreferences.getString(key, values[0]);
             String humanValue = "";
             if (value.equals(values[0])) {
                 humanValue = humanValues[0];
@@ -239,7 +259,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
                 R.string.weather_preferences_refresh_interval_key);
         if (key.equals(keyValue)) {
         	final Preference connectionPref = this.findPreference(key);
-            final String value = sharedPreferences.getString(key, "");
+            final String value = sharedPreferences.getString(key, values[0]);
             String humanValue = "";
             if (value.equals(values[0])) {
                 humanValue = humanValues[0];
@@ -261,6 +281,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         }
 
         // Notification switch
+        values = this.getResources().getStringArray(R.array.weather_preferences_update_time_rate);
         keyValue = this.getActivity().getApplicationContext().getString(
         		R.string.weather_preferences_notifications_switch_key);
         if (key.equals(keyValue)) {
@@ -269,7 +290,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         	{
         		keyValue = this.getActivity().getApplicationContext().getString(
                 		R.string.weather_preferences_update_time_rate_key);
-        		final String value = sharedPreferences.getString(keyValue, "");
+        		final String value = sharedPreferences.getString(keyValue, values[0]);
         		this.updateNotification(value);
         	} else {
         		this.cancelNotification();
@@ -282,7 +303,7 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
         		R.string.weather_preferences_update_time_rate_key);
         if (key.equals(keyValue)) {
             final Preference connectionPref = this.findPreference(key);
-            final String value = sharedPreferences.getString(key, "");
+            final String value = sharedPreferences.getString(key, values[0]);
             String humanValue = "";
             if (value.equals(values[0])) {
                 humanValue = humanValues[0];
@@ -297,6 +318,27 @@ public class WeatherInformationPreferencesFragment extends PreferenceFragment
             }
 
             this.updateNotification(value);
+            connectionPref.setSummary(humanValue);
+            return;
+        }
+
+        // Temperature units
+        values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        humanValues = this.getResources().getStringArray(R.array.weather_preferences_temperature_human_value);
+        keyValue = this.getActivity().getApplicationContext().getString(
+                R.string.weather_preferences_notifications_temperature_key);
+        if (key.equals(keyValue)) {
+            final Preference connectionPref = this.findPreference(key);
+            final String value = sharedPreferences.getString(key, values[0]);
+            String humanValue = "";
+            if (value.equals(values[0])) {
+                humanValue = humanValues[0];
+            } else if (value.equals(values[1])) {
+                humanValue = humanValues[1];
+            } else if (value.equals(values[2])) {
+                humanValue = humanValues[2];
+            }
+
             connectionPref.setSummary(humanValue);
             return;
         }

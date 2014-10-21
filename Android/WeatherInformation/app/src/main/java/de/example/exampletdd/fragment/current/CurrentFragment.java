@@ -208,8 +208,9 @@ public class CurrentFragment extends Fragment {
         String tempSymbol;
         UnitsConversor tempUnitsConversor;
         String keyPreference = this.getResources().getString(R.string.weather_preferences_temperature_key);
-        String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        String unitsPreferenceValue = sharedPreferences.getString(
+                keyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
         if (unitsPreferenceValue.equals(values[0])) {
         	tempSymbol = values[0];
         	tempUnitsConversor = new UnitsConversor(){
@@ -246,8 +247,9 @@ public class CurrentFragment extends Fragment {
         String windSymbol;
         UnitsConversor windUnitsConversor;
         keyPreference = this.getResources().getString(R.string.weather_preferences_wind_key);
-        unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         values = this.getResources().getStringArray(R.array.weather_preferences_wind);
+        unitsPreferenceValue = sharedPreferences.getString(
+                keyPreference, this.getString(R.string.weather_preferences_wind_meters));
         if (unitsPreferenceValue.equals(values[0])) {
         	windSymbol = values[0];
         	windUnitsConversor = new UnitsConversor(){
@@ -272,8 +274,9 @@ public class CurrentFragment extends Fragment {
         String pressureSymbol;
         UnitsConversor pressureUnitsConversor;
         keyPreference = this.getResources().getString(R.string.weather_preferences_pressure_key);
-        unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
         values = this.getResources().getStringArray(R.array.weather_preferences_pressure);
+        unitsPreferenceValue = sharedPreferences.getString(
+                keyPreference, this.getString(R.string.weather_preferences_pressure_pascal));
         if (unitsPreferenceValue.equals(values[0])) {
         	pressureSymbol = values[0];
         	pressureUnitsConversor = new UnitsConversor(){
