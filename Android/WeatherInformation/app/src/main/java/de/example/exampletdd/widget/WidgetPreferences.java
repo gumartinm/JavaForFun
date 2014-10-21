@@ -43,9 +43,12 @@ public class WidgetPreferences extends PreferenceFragment implements OnSharedPre
         String realKeyPreference = keyPreference + "_" + mAppWidgetId;
         
         // What was saved to permanent storage (or default values if it is the first time)
-        boolean countryValue = this.getActivity().getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE)
+        final boolean countryValue = this.getActivity().getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE)
         		.getBoolean(realKeyPreference, false);
-        
+
+        // Update temporal value
+        mIsCountry = countryValue;
+
         // What is shown on the screen
         final SwitchPreference countryPref = (SwitchPreference) this.findPreference(keyPreference);
         countryPref.setChecked(countryValue);
@@ -75,6 +78,8 @@ public class WidgetPreferences extends PreferenceFragment implements OnSharedPre
             humanValue = humanValues[2];
         }
 
+        // Update temporal value
+        mTempUnits = tempValue;
 
         // What is shown on the screen
         final ListPreference listPref = (ListPreference) this.findPreference(keyPreference);

@@ -1,5 +1,23 @@
 package de.example.exampletdd;
 
+import android.app.IntentService;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.net.http.AndroidHttpClient;
+import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
+import android.view.View;
+import android.widget.RemoteViews;
+
+import com.fasterxml.jackson.core.JsonParseException;
+
+import org.apache.http.client.ClientProtocolException;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -8,24 +26,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Locale;
-
-import org.apache.http.client.ClientProtocolException;
-
-import android.app.IntentService;
-import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.net.http.AndroidHttpClient;
-import android.preference.PreferenceManager;
-import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
-import android.widget.RemoteViews;
-
-import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.DatabaseQueries;
@@ -156,18 +156,18 @@ public class WidgetIntentService extends IntentService {
     }
     
 	private RemoteViews makeView(final Current current, final WeatherLocation weatherLocation, final int appWidgetId) {
-		final SharedPreferences sharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(this.getApplicationContext());
 
 		// TODO: repeating the same code in Overview, Specific and Current!!!
 		// 1. Update units of measurement.
-        // 1.1 Temperature
         String tempSymbol;
         UnitsConversor tempUnitsConversor;
-        String keyPreference = this.getResources().getString(R.string.weather_preferences_temperature_key);
-        String unitsPreferenceValue = sharedPreferences.getString(keyPreference, "");
-        String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
-        if (unitsPreferenceValue.equals(values[0])) {
+        String keyPreference = this.getApplicationContext().getString(R.string.widget_preferences_temperature_key);
+        String realKeyPreference = keyPreference + "_" + appWidgetId;
+        // What was saved to permanent storage (or default values if it is the first time)
+        final String tempValue = this.getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE)
+                .getString(realKeyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
+                String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
+        if (tempValue.equals(values[0])) {
         	tempSymbol = values[0];
         	tempUnitsConversor = new UnitsConversor(){
 
@@ -175,9 +175,9 @@ public class WidgetIntentService extends IntentService {
 				public double doConversion(final double value) {
 					return value - 273.15;
 				}
-        		
+
         	};
-        } else if (unitsPreferenceValue.equals(values[1])) {
+        } else if (tempValue.equals(values[1])) {
         	tempSymbol = values[1];
         	tempUnitsConversor = new UnitsConversor(){
 
@@ -185,7 +185,7 @@ public class WidgetIntentService extends IntentService {
 				public double doConversion(final double value) {
 					return (value * 1.8) - 459.67;
 				}
-        		
+
         	};
         } else {
         	tempSymbol = values[2];
@@ -195,17 +195,25 @@ public class WidgetIntentService extends IntentService {
 				public double doConversion(final double value) {
 					return value;
 				}
-        		
+
         	};
         }
 
 
-		// 2. Formatters
+        // 2. Update country.
+        keyPreference = this.getApplicationContext().getString(R.string.widget_preferences_country_switch_key);
+        realKeyPreference = keyPreference + "_" + appWidgetId;
+        // What was saved to permanent storage (or default values if it is the first time)
+        final boolean isCountry = this.getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE)
+                .getBoolean(realKeyPreference, false);
+
+
+		// 3. Formatters
 		final DecimalFormat tempFormatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
 		tempFormatter.applyPattern("#####.#####");
 
 
-		// 3. Prepare data for RemoteViews.
+		// 4. Prepare data for RemoteViews.
 		String tempMax = "";
 		if (current.getMain().getTemp_max() != null) {
 			double conversion = (Double) current.getMain().getTemp_max();
@@ -232,15 +240,20 @@ public class WidgetIntentService extends IntentService {
 		final String city = weatherLocation.getCity();
 		final String country = weatherLocation.getCountry();
 
-		// 4. Insert data in RemoteViews.
+		// 5. Insert data in RemoteViews.
 		final RemoteViews remoteView = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.appwidget);
 		remoteView.setImageViewBitmap(R.id.weather_appwidget_image, picture);
 		remoteView.setTextViewText(R.id.weather_appwidget_temperature_max, tempMax);
 		remoteView.setTextViewText(R.id.weather_appwidget_temperature_min, tempMin);
 		remoteView.setTextViewText(R.id.weather_appwidget_city, city);
-		remoteView.setTextViewText(R.id.weather_appwidget_country, country);
+        if (!isCountry) {
+            remoteView.setViewVisibility(R.id.weather_appwidget_country, View.GONE);
+        } else {
+            remoteView.setTextViewText(R.id.weather_appwidget_country, country);
+        }
 
-		// 5. Activity launcher.
+
+		// 6. Activity launcher.
 		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
 		resultIntent.putExtra("actionFromUser", true);
 		resultIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -273,7 +286,7 @@ public class WidgetIntentService extends IntentService {
 	private RemoteViews makeErrorView(final int appWidgetId) {
 		final RemoteViews remoteView = new RemoteViews(this.getApplicationContext().getPackageName(), R.layout.appwidget_error);
 
-		// 5. Activity launcher.
+		// 6. Activity launcher.
 		final Intent resultIntent =  new Intent(this.getApplicationContext(), WidgetConfigure.class);
 		resultIntent.putExtra("actionFromUser", true);
 		resultIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
