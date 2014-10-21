@@ -14,6 +14,7 @@ public class WeatherLocation implements Serializable {
     private double longitude;
     private Date lastCurrentUIUpdate;
     private Date lastForecastUIUpdate;
+    private boolean isNew;
 
     public WeatherLocation setId(int id) {
 		this.id = id;
@@ -55,6 +56,11 @@ public class WeatherLocation implements Serializable {
 		return this;
 	}
 
+    public WeatherLocation setIsNew(final boolean isNew) {
+        this.isNew = isNew;
+        return this;
+    }
+
 	public int getId() {
     	return this.id;
     }
@@ -85,5 +91,9 @@ public class WeatherLocation implements Serializable {
     
     public Date getLastForecastUIUpdate() {
     	return this.lastForecastUIUpdate;
+    }
+
+    public boolean getIsNew() {
+        return this.isNew;
     }
 }

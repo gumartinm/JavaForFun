@@ -23,7 +23,7 @@ public class WidgetProvider extends AppWidgetProvider {
             // To prevent any ANR timeouts, we perform the update in a service
         	final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
         	intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        	intent.putExtra("updateByApp", false);
+            intent.putExtra("updateByApp", false);
             context.startService(intent);
         }
     }
@@ -59,6 +59,7 @@ public class WidgetProvider extends AppWidgetProvider {
         
         final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
     	intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        intent.putExtra("updateByApp", true);
         context.startService(intent);
     }
 }

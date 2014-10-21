@@ -24,7 +24,8 @@ public class WeatherLocationDbHelper extends SQLiteOpenHelper {
 				+ WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_CURRENT_UI_UPDATE + " INTEGER, "
 				+ WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_FORECAST_UI_UPDATE + " INTEGER, "
 				+ WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE + " REAL" + " NOT NULL, "
-				+ WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE + " REAL" + " NOT NULL "
+				+ WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE + " REAL" + " NOT NULL, "
+                + WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_NEW + " INTEGER" + " NOT NULL "
 				+ ");");
 	}
 

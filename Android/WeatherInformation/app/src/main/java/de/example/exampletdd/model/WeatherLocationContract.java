@@ -27,6 +27,8 @@ public class WeatherLocationContract {
 		public static final String COLUMN_NAME_LAST_FORECAST_UI_UPDATE = "lastForecastUpdate";
 		
 		public static final String COLUMN_NAME_LAST_CURRENT_UI_UPDATE = "lastCurrentUpdate";
+
+        public static final String COLUMN_NAME_IS_NEW = "isNew";
 	}
 
 }

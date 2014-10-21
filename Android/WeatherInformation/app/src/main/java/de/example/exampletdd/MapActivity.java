@@ -188,7 +188,8 @@ public class MapActivity extends FragmentActivity implements
             	.setLatitude(position.latitude)
             	.setLongitude(position.longitude)
             	.setLastCurrentUIUpdate(null)
-            	.setLastForecastUIUpdate(null);
+            	.setLastForecastUIUpdate(null)
+                .setIsNew(true);
             	query.updateDataBase(weatherLocation);
             } else {
             	final WeatherLocation location = new WeatherLocation()
@@ -196,7 +197,8 @@ public class MapActivity extends FragmentActivity implements
             		.setCountry(countryString)
             		.setIsSelected(true)
             		.setLatitude(position.latitude)
-            		.setLongitude(position.longitude);
+            		.setLongitude(position.longitude)
+                    .setIsNew(true);
             	query.insertIntoDataBase(location);
             }
     	}

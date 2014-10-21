@@ -31,7 +31,8 @@ public class WeatherLocationDbQueries {
         		WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_CURRENT_UI_UPDATE,
         		WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_FORECAST_UI_UPDATE,
         		WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE,
-        		WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE
+        		WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE,
+                WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_NEW
         	    };
         
 
@@ -45,7 +46,7 @@ public class WeatherLocationDbQueries {
         		final String country = cursor.getString(cursor.
         				getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_COUNTRY));
         		final boolean isSelected = (cursor.getInt(cursor
-        				.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_SELECTED)) == 0) ? false : true;	
+                        .getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_SELECTED)) != 0);
         		Date lastCurrentUIUpdate = null;
         		if (!cursor.isNull(cursor
         				.getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LAST_CURRENT_UI_UPDATE))) {
@@ -64,6 +65,8 @@ public class WeatherLocationDbQueries {
         				getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE));
         		final double longitude = cursor.getDouble(cursor.
         				getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE));
+                final boolean isNew = (cursor.getInt(cursor
+                        .getColumnIndexOrThrow(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_NEW)) != 0);
         		
 	        	
         		return new WeatherLocation()
@@ -74,7 +77,8 @@ public class WeatherLocationDbQueries {
         				.setLastCurrentUIUpdate(lastCurrentUIUpdate)
         				.setLastForecastUIUpdate(lasForecastUIUpdate)
         				.setLatitude(latitude)
-        				.setLongitude(longitude);
+        				.setLongitude(longitude)
+                        .setIsNew(isNew);
         	}
         };
 
@@ -99,6 +103,7 @@ public class WeatherLocationDbQueries {
 		}
 		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE, weatherLocation.getLatitude());
 		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE, weatherLocation.getLongitude());
+        values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_NEW, weatherLocation.getIsNew());
 		
 		return this.insertIntoDataBase(WeatherLocationContract.WeatherLocation.TABLE_NAME, values);
 	}
@@ -125,6 +130,7 @@ public class WeatherLocationDbQueries {
 		}
 		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LATITUDE, weatherLocation.getLatitude());
 		values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_LONGITUDE, weatherLocation.getLongitude());
+        values.put(WeatherLocationContract.WeatherLocation.COLUMN_NAME_IS_NEW, weatherLocation.getIsNew());
 		
 		this.updateDataBase(WeatherLocationContract.WeatherLocation.TABLE_NAME, selectionArgs, selection, values);
 	}

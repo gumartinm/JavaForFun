@@ -13,7 +13,9 @@ import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -46,6 +48,7 @@ import de.example.exampletdd.parser.JPOSWeatherParser;
 import de.example.exampletdd.service.IconsList;
 import de.example.exampletdd.service.PermanentStorage;
 import de.example.exampletdd.service.ServiceParser;
+import de.example.exampletdd.widget.WidgetProvider;
 
 public class CurrentFragment extends Fragment {
     private static final String TAG = "CurrentFragment";
@@ -112,10 +115,26 @@ public class CurrentFragment extends Fragment {
 			            	// 2. Update UI.
 			            	CurrentFragment.this.updateUI(currentRemote);
 
-			            	// 3. Update Data.
+			            	// 3. Update current data.
 							store.saveCurrent(currentRemote);
-				            weatherLocation.setLastCurrentUIUpdate(new Date());
-				            query.updateDataBase(weatherLocation);
+
+                            // 4. If is new data (new location) update widgets.
+                            if (weatherLocation.getIsNew()) {
+                                final ComponentName widgets = new ComponentName(context.getApplicationContext(), WidgetProvider.class);
+                                final AppWidgetManager manager = AppWidgetManager.getInstance(context.getApplicationContext());
+                                final int[] appWidgetIds = manager.getAppWidgetIds(widgets);
+                                for (final int appWidgetId : appWidgetIds) {
+                                    final Intent intentWidget = new Intent(context.getApplicationContext(), WidgetIntentService.class);
+                                    intentWidget.putExtra("updateByApp", true);
+                                    intentWidget.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                                    context.getApplicationContext().startService(intentWidget);
+                                }
+                            }
+
+                            // 5. Update location data.
+                            weatherLocation.setIsNew(false);
+                            weatherLocation.setLastCurrentUIUpdate(new Date());
+                            query.updateDataBase(weatherLocation);
 			            }
 
 					} else {
