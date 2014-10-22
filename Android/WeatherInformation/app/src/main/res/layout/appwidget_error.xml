@@ -12,7 +12,7 @@
         android:layout_gravity="fill"
         android:orientation="horizontal"
         android:baselineAligned="false"
-        android:background="@drawable/appwidget_dark_bg_9">
+        android:background="@drawable/appwidget_dark_bg">
 
         <LinearLayout
             android:layout_width="wrap_content"
