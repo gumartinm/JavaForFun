@@ -1,52 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/weather_appwidget_error"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="fill"
-    android:orientation="horizontal"
-    android:baselineAligned="false"
-    android:background="@color/widget_background_holo_dark"
-    android:padding="@dimen/widget_margin" >
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="@dimen/widget_margin">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/weather_appwidget_error"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:padding="4dp"
-        android:orientation="vertical" >
-    
-    	<ImageView
-        	android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:layout_gravity="start"
-        	android:contentDescription="@string/icon_weather_description"
-        	android:orientation="vertical"
-        	android:src="@drawable/ic_launcher" />
-    
-    </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="4dp" >
-        
-        <TextView
+        android:layout_gravity="fill"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:background="@drawable/appwidget_dark_bg_9">
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:text="@string/text_field_remote_error"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
+            android:gravity="center"
+            android:padding="4dp"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:contentDescription="@string/icon_weather_description"
+                android:orientation="vertical"
+                android:src="@drawable/ic_launcher" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="4dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/text_field_remote_error"
+                android:textAlignment="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+
+
+
     </LinearLayout>
-            
-
-    
-
-
-</LinearLayout>
+</FrameLayout>
