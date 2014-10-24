@@ -1,47 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="fill_vertical|fill_horizontal" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-    <LinearLayout android:id="@+id/weather_appwidget_configure_preferences"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        android:orientation="horizontal" >
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/weather_appwidget_configure_preferences"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:baselineAligned="false"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/weather_appwidget_configure_refresh_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:text="@string/widget_preferences_button_refresh" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <LinearLayout android:id="@+id/weather_appwidget_configure_button_layout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:baselineAligned="false"
-        android:orientation="horizontal" >
-        
+        android:orientation="horizontal"
+        android:gravity="center">
         <Button
             android:id="@+id/weather_appwidget_configure_save_button"
             android:layout_width="wrap_content"
@@ -51,5 +18,104 @@
             android:text="@android:string/ok" />
     </LinearLayout>
 
-</RelativeLayout>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/weather_appwidget_configure_button_layout">
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Country"
+                android:padding="5dp"
+                android:layout_gravity="start" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#ffffffff" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="30dp">
+
+                <Switch android:id="@+id/weather_appwidget_configure_country"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Country field"
+                    android:textOff="HIDE"
+                    android:textOn="SHOW" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Temperature units"
+                android:padding="5dp"
+                android:layout_gravity="start" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#ffffffff" />
+
+            <Spinner android:id="@+id/weather_appwidget_configure_temperature_units"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="30dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:entries="@array/weather_preferences_temperature_human_value"
+                android:spinnerMode="dialog" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Refresh"
+                android:padding="5dp"
+                android:layout_gravity="start" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#ffffffff" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="30dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Refresh data"
+                    android:padding="5dp"
+                    android:layout_gravity="start" />
+
+                <Button android:id="@+id/weather_appwidget_configure_refresh_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:textAlignment="center"
+                    android:text="Refresh"/>
+
+            </GridLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>

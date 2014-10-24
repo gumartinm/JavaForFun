@@ -2,7 +2,6 @@ package de.example.exampletdd.widget;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import de.example.exampletdd.R;
 
 public class WidgetConfigure extends Activity {
 	private int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    private WidgetPreferences mPreferences;
     private View.OnClickListener mOnClickListener;
 
     @Override
@@ -43,24 +41,12 @@ public class WidgetConfigure extends Activity {
         
         // Set the view layout resource to use.
         this.setContentView(R.layout.appwidget_configure);
-        
-    	final Bundle args = new Bundle();
-    	args.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-        mPreferences = new WidgetPreferences();
-        // Do not retain this fragment across configuration changes because I am tired for following
-        // the fragment lifecycle (I am going to loose the instance field values but I DON'T CARE!!!)
-        mPreferences.setRetainInstance(false);
-        mPreferences.setArguments(args);
-        this.getFragmentManager()
-        .beginTransaction()
-        .replace(R.id.weather_appwidget_configure_preferences, mPreferences)
-        .commit();
+
 
         mOnClickListener = new View.OnClickListener() {
             public void onClick(View v) {
 
                 // Save to permanent storage
-                mPreferences.onSavePreferences();
 
                 // Push widget update to surface with newly set prefix
                 final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(
