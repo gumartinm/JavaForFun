@@ -120,15 +120,7 @@ public class CurrentFragment extends Fragment {
 
                             // 4. If is new data (new location) update widgets.
                             if (weatherLocation.getIsNew()) {
-                                final ComponentName widgets = new ComponentName(context.getApplicationContext(), WidgetProvider.class);
-                                final AppWidgetManager manager = AppWidgetManager.getInstance(context.getApplicationContext());
-                                final int[] appWidgetIds = manager.getAppWidgetIds(widgets);
-                                for (final int appWidgetId : appWidgetIds) {
-                                    final Intent intentWidget = new Intent(context.getApplicationContext(), WidgetIntentService.class);
-                                    intentWidget.putExtra("updateByApp", true);
-                                    intentWidget.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-                                    context.getApplicationContext().startService(intentWidget);
-                                }
+                                WidgetProvider.updateAllAppWidgets(context);
                             }
 
                             // 5. Update location data.

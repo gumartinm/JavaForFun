@@ -25,6 +25,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import de.example.exampletdd.httpclient.CustomHTTPClient;
@@ -39,7 +40,7 @@ import de.example.exampletdd.widget.WidgetConfigure;
 
 public class WidgetIntentService extends IntentService {
 	private static final String TAG = "WidgetIntentService";
-
+    private static final long UPDATE_TIME_RATE = 86400000L;
 
 	public WidgetIntentService() {
 		super("WIS-Thread");
@@ -49,7 +50,7 @@ public class WidgetIntentService extends IntentService {
 	protected void onHandleIntent(final Intent intent) {
 		Log.i(TAG, "onHandleIntent");
 		final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-		final boolean isUpdateByApp = intent.getBooleanExtra("updateByApp", false);
+		final boolean isForceRefreshAppWidget = intent.getBooleanExtra("forceRefreshAppWidget", false);
 
 		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			// Nothing to do. Something went wrong. Show error.
@@ -66,42 +67,35 @@ public class WidgetIntentService extends IntentService {
 			this.updateWidget(view, appWidgetId);
 			return;
 		}
-		
-		if (isUpdateByApp) {		
-			this.updateByApp(weatherLocation, appWidgetId);
+
+        // TODO: improve this code. Too tired right now...
+		if (!isForceRefreshAppWidget && this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
+            RemoteViews view;
+
+            final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
+            final Current current = store.getCurrent();
+            if (current != null) {
+                // Update UI.
+                view = this.makeView(current, weatherLocation, appWidgetId);
+            } else {
+                // Show error.
+                view = this.makeErrorView(appWidgetId);
+            }
+            this.updateWidget(view, appWidgetId);
 		} else {
-			this.updateByTimeout(weatherLocation, appWidgetId);
-		}
+            RemoteViews view;
 
-	}
-
-	private void updateByApp(final WeatherLocation weatherLocation, final int appWidgetId) {
-		final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
-        final Current current = store.getCurrent();
-		
-		this.updateWidget(current, weatherLocation, appWidgetId);
-	}
-	
-	private void updateByTimeout(final WeatherLocation weatherLocation, final int appWidgetId) {
-
-		final Current current = this.getRemoteCurrent(weatherLocation);
-
-		this.updateWidget(current, weatherLocation, appWidgetId);
-	}
-	
-	private void updateWidget(final Current current, final WeatherLocation weatherLocation, final int appWidgetId) {
-
-		if (current != null) {
-			final RemoteViews view = this.makeView(current, weatherLocation, appWidgetId);
-			this.updateWidget(view, appWidgetId);
-		} else {
-			// Show error.
-			final RemoteViews view = this.makeErrorView(appWidgetId);
-			this.updateWidget(view, appWidgetId);
+            final Current current = this.getRemoteCurrent(weatherLocation);
+            if (current != null) {
+                // Update UI.
+                view = this.makeView(current, weatherLocation, appWidgetId);
+            } else {
+                // Show error.
+                view = this.makeErrorView(appWidgetId);
+            }
+            this.updateWidget(view, appWidgetId);
 		}
 	}
-
-
 	
 	private Current getRemoteCurrent(final WeatherLocation weatherLocation) {
 
@@ -159,16 +153,14 @@ public class WidgetIntentService extends IntentService {
 
 		// TODO: repeating the same code in Overview, Specific and Current!!!
 		// 1. Update units of measurement.
-        String tempSymbol;
+
         UnitsConversor tempUnitsConversor;
-        String keyPreference = this.getApplicationContext().getString(R.string.widget_preferences_temperature_key);
+        String keyPreference = this.getApplicationContext().getString(R.string.widget_preferences_temperature_units_key);
         String realKeyPreference = keyPreference + "_" + appWidgetId;
         // What was saved to permanent storage (or default values if it is the first time)
-        final String tempValue = this.getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE)
-                .getString(realKeyPreference, this.getString(R.string.weather_preferences_temperature_celsius));
-        final String[] values = this.getResources().getStringArray(R.array.weather_preferences_temperature);
-        if (tempValue.equals(values[0])) {
-        	tempSymbol = values[0];
+        final int tempValue = this.getSharedPreferences("WIDGET_PREFERENCES", Context.MODE_PRIVATE).getInt(realKeyPreference, 0);
+        final String tempSymbol = this.getResources().getStringArray(R.array.weather_preferences_temperature)[tempValue];
+        if (tempValue == 0) {
         	tempUnitsConversor = new UnitsConversor(){
 
 				@Override
@@ -177,8 +169,7 @@ public class WidgetIntentService extends IntentService {
 				}
 
         	};
-        } else if (tempValue.equals(values[1])) {
-        	tempSymbol = values[1];
+        } else if (tempValue == 1) {
         	tempUnitsConversor = new UnitsConversor(){
 
 				@Override
@@ -188,7 +179,6 @@ public class WidgetIntentService extends IntentService {
 
         	};
         } else {
-        	tempSymbol = values[2];
         	tempUnitsConversor = new UnitsConversor(){
 
 				@Override
@@ -324,6 +314,19 @@ public class WidgetIntentService extends IntentService {
 		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
 		manager.updateAppWidget(appWidgetId, remoteView);
 	}
+
+    private boolean isDataFresh(final Date lastUpdate) {
+        if (lastUpdate == null) {
+            return false;
+        }
+
+        final Date currentTime = new Date();
+        if (((currentTime.getTime() - lastUpdate.getTime())) < UPDATE_TIME_RATE) {
+            return true;
+        }
+
+        return false;
+    }
 	
 //	private void updateWidgets(final RemoteViews remoteView) {
 //		

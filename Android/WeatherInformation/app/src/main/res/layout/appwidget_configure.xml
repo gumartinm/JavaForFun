@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textAlignment="center"
+            android:onClick="onClickOk"
             android:text="@android:string/ok" />
     </LinearLayout>
 
@@ -32,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Country"
+                android:text="@string/widget_preferences_country"
                 android:padding="5dp"
                 android:layout_gravity="start" />
 
@@ -49,16 +50,17 @@
                 <Switch android:id="@+id/weather_appwidget_configure_country"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Country field"
-                    android:textOff="HIDE"
-                    android:textOn="SHOW" />
+                    android:checked="false"
+                    android:text="@string/widget_preferences_country_switch_off_summary"
+                    android:textOff="@string/widget_preferences_country_switch_off"
+                    android:textOn="@string/widget_preferences_country_switch_on" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Temperature units"
+                android:text="@string/widget_preferences_temperature_units"
                 android:padding="5dp"
                 android:layout_gravity="start" />
 
@@ -81,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Refresh"
+                android:text="@string/widget_preferences_button_refresh"
                 android:padding="5dp"
                 android:layout_gravity="start" />
 
@@ -100,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Refresh data"
+                    android:text="@string/widget_configure_button_refresh_summary"
                     android:padding="5dp"
                     android:layout_gravity="start" />
 
@@ -109,7 +111,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:textAlignment="center"
-                    android:text="Refresh"/>
+                    android:onClick="onClickRefresh"
+                    android:text="@string/widget_preferences_button_refresh"/>
 
             </GridLayout>
 

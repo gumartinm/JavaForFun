@@ -12,8 +12,8 @@
             android:disableDependentsState="false"
             android:persistent="true"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/widget_preferences_units">
-        <ListPreference android:key="@string/widget_preferences_temperature_key"
+    <PreferenceCategory android:title="@string/widget_preferences_temperature_units">
+        <ListPreference android:key="@string/widget_preferences_temperature_units_key"
             android:title="@string/weather_preferences_temperature"
             android:summary="@string/weather_preferences_temperature_celsius_human_value"
             android:entries="@array/weather_preferences_temperature_human_value"
