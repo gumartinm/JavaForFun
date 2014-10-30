@@ -112,7 +112,7 @@ public class WidgetConfigure extends Activity {
 
     public void onClickRefresh(final View view) {
         // Push widget update to surface
-        WidgetProvider.forceRefreshAppWidget(this.getApplicationContext(), mAppWidgetId);
+        WidgetProvider.refreshAppWidget(this.getApplicationContext(), mAppWidgetId);
     }
 
     public void onClickOk(final View view) {

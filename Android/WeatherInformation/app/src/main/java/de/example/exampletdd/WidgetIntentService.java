@@ -50,7 +50,7 @@ public class WidgetIntentService extends IntentService {
 	protected void onHandleIntent(final Intent intent) {
 		Log.i(TAG, "onHandleIntent");
 		final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-		final boolean isForceRefreshAppWidget = intent.getBooleanExtra("forceRefreshAppWidget", false);
+		final boolean isRefreshAppWidget = intent.getBooleanExtra("refreshAppWidget", false);
 
 		if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
 			// Nothing to do. Something went wrong. Show error.
@@ -69,7 +69,7 @@ public class WidgetIntentService extends IntentService {
 		}
 
         // TODO: improve this code. Too tired right now...
-		if (!isForceRefreshAppWidget && this.isDataFresh(weatherLocation.getLastCurrentUIUpdate())) {
+		if (!isRefreshAppWidget) {
             RemoteViews view;
 
             final PermanentStorage store = new PermanentStorage(this.getApplicationContext());

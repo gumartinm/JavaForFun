@@ -13,9 +13,7 @@ import java.util.Locale;
 
 import org.apache.http.client.ClientProtocolException;
 
-import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -39,7 +37,6 @@ import android.widget.TextView;
 import com.fasterxml.jackson.core.JsonParseException;
 
 import de.example.exampletdd.R;
-import de.example.exampletdd.WidgetIntentService;
 import de.example.exampletdd.httpclient.CustomHTTPClient;
 import de.example.exampletdd.model.DatabaseQueries;
 import de.example.exampletdd.model.WeatherLocation;
@@ -118,13 +115,7 @@ public class CurrentFragment extends Fragment {
 			            	// 3. Update current data.
 							store.saveCurrent(currentRemote);
 
-                            // 4. If is new data (new location) update widgets.
-                            if (weatherLocation.getIsNew()) {
-                                WidgetProvider.updateAllAppWidgets(context);
-                            }
-
-                            // 5. Update location data.
-                            weatherLocation.setIsNew(false);
+                            // 4. Update location data.
                             weatherLocation.setLastCurrentUIUpdate(new Date());
                             query.updateDataBase(weatherLocation);
 			            }
@@ -159,6 +150,15 @@ public class CurrentFragment extends Fragment {
 	        errorMessage.setVisibility(View.VISIBLE);
             return;
         }
+
+        // If is new location update widgets.
+        if (weatherLocation.getIsNew()) {
+            WidgetProvider.refreshAllAppWidgets(this.getActivity().getApplicationContext());
+            // Update location data.
+            weatherLocation.setIsNew(false);
+            query.updateDataBase(weatherLocation);
+        }
+
 
         final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
         final Current current = store.getCurrent();

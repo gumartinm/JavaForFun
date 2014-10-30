@@ -24,7 +24,7 @@ public class WidgetProvider extends AppWidgetProvider {
             // To prevent any ANR timeouts, we perform the update in a service
         	final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
         	intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            intent.putExtra("forceRefreshAppWidget", true);
+            intent.putExtra("refreshAppWidget", true);
             context.startService(intent);
         }
     }
@@ -38,14 +38,29 @@ public class WidgetProvider extends AppWidgetProvider {
         }
     }
 
-    static void updateAppWidget(final Context context, final int appWidgetId) {
+    public static void updateAppWidget(final Context context, final int appWidgetId) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
 
         updateAppWidget(context, appWidgetManager, appWidgetId);
     }
 
-    static void forceRefreshAppWidget(final Context context, final int appWidgetId) {
+    public static void refreshAppWidget(final Context context, final int appWidgetId) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
+
+        refreshAppWidget(context.getApplicationContext(), appWidgetManager, appWidgetId);
+    }
+
+    public static void refreshAllAppWidgets(final Context context) {
+        final ComponentName widgets = new ComponentName(context.getApplicationContext(), WidgetProvider.class);
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
+
+        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgets);
+        for (final int appWidgetId : appWidgetIds) {
+            refreshAppWidget(context.getApplicationContext(), appWidgetManager, appWidgetId);
+        }
+    }
+
+    private static void refreshAppWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
 
         int widgetId;
         Bundle myOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
@@ -67,18 +82,8 @@ public class WidgetProvider extends AppWidgetProvider {
 
         final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        intent.putExtra("forceRefreshAppWidget", true);
+        intent.putExtra("refreshAppWidget", true);
         context.startService(intent);
-    }
-
-    public static void updateAllAppWidgets(final Context context) {
-        final ComponentName widgets = new ComponentName(context.getApplicationContext(), WidgetProvider.class);
-        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context.getApplicationContext());
-
-        final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgets);
-        for (final int appWidgetId : appWidgetIds) {
-            updateAppWidget(context.getApplicationContext(), appWidgetManager, appWidgetId);
-        }
     }
 
     private static void updateAppWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId) {
@@ -103,7 +108,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
         final Intent intent = new Intent(context.getApplicationContext(), WidgetIntentService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-        intent.putExtra("forceRefreshAppWidget", false);
+        intent.putExtra("refreshAppWidget", false);
         context.startService(intent);
     }
 }
