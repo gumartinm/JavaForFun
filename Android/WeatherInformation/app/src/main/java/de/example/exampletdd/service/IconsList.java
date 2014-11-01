@@ -12,6 +12,15 @@ public enum IconsList {
             return R.drawable.weather_clear;
         }
     },
+    // TODO: I am sometimes receiving this code, there is no documentation about it on the
+    // openweathermap site.... But it exists!!! Some day, try to find out more information about it.
+    // see: http://openweathermap.org/img/w/01dd.png
+    ICON_01dd("01dd") {
+        @Override
+        public int getResourceDrawable() {
+            return R.drawable.weather_clear;
+        }
+    },
     ICON_01n("01n") {
         @Override
         public int getResourceDrawable() {
