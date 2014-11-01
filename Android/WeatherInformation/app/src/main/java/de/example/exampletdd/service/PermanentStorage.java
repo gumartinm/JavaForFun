@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
+import java.text.MessageFormat;
 
 import android.content.Context;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class PermanentStorage {
 	private static final String TAG = "PermanentStorage";
     private static final String CURRENT_DATA_FILE = "current.file";
     private static final String FORECAST_DATA_FILE = "forecast.file";
+    private static final String WIDGET_CURRENT_DATA_FILE = "current.{0}.file";
     private final Context context;
 
     public PermanentStorage(final Context context) {
@@ -55,6 +57,36 @@ public class PermanentStorage {
 		}
     	
     	return null;
+    }
+
+    public void saveCurrentWidget(final Current current, final int appWidgetId) {
+
+        final String file = MessageFormat.format(WIDGET_CURRENT_DATA_FILE, appWidgetId);
+        try {
+            this.saveObject(file, current);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "saveCurrent exception: ", e);
+        } catch (IOException e) {
+            Log.e(TAG, "saveCurrent exception: ", e);
+        }
+    }
+
+    public Current getCurrentWidget(final int appWidgetId) {
+
+        final String file = MessageFormat.format(WIDGET_CURRENT_DATA_FILE, appWidgetId);
+        try {
+            return (Current) this.getObject(file);
+        } catch (final StreamCorruptedException e) {
+            Log.e(TAG, "getCurrent exception: ", e);
+        } catch (final FileNotFoundException e) {
+            Log.e(TAG, "getCurrent exception: ", e);
+        } catch (final IOException e) {
+            Log.e(TAG, "getCurrent exception: ", e);
+        } catch (final ClassNotFoundException e) {
+            Log.e(TAG, "getCurrent exception: ", e);
+        }
+
+        return null;
     }
 
     public void saveForecast(final Forecast forecast) {

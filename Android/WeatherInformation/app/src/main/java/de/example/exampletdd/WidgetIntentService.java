@@ -73,7 +73,7 @@ public class WidgetIntentService extends IntentService {
             RemoteViews view;
 
             final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
-            final Current current = store.getCurrent();
+            final Current current = store.getCurrentWidget(appWidgetId);
             if (current != null) {
                 // Update UI.
                 view = this.makeView(current, weatherLocation, appWidgetId);
@@ -89,6 +89,9 @@ public class WidgetIntentService extends IntentService {
             if (current != null) {
                 // Update UI.
                 view = this.makeView(current, weatherLocation, appWidgetId);
+
+                final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
+                store.saveCurrentWidget(current, appWidgetId);
             } else {
                 // Show error.
                 view = this.makeErrorView(appWidgetId);
