@@ -59,34 +59,45 @@ public class PermanentStorage {
     	return null;
     }
 
-    public void saveCurrentWidget(final Current current, final int appWidgetId) {
+    public void saveWidgetCurrentData(final Current current, final int appWidgetId) {
 
-        final String file = MessageFormat.format(WIDGET_CURRENT_DATA_FILE, appWidgetId);
+        final String fileName = MessageFormat.format(WIDGET_CURRENT_DATA_FILE, appWidgetId);
         try {
-            this.saveObject(file, current);
+            this.saveObject(fileName, current);
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "saveCurrent exception: ", e);
+            Log.e(TAG, "saveWidgetCurrentData exception: ", e);
         } catch (IOException e) {
-            Log.e(TAG, "saveCurrent exception: ", e);
+            Log.e(TAG, "saveWidgetCurrentData exception: ", e);
         }
     }
 
-    public Current getCurrentWidget(final int appWidgetId) {
+    public Current getWidgetCurrentData(final int appWidgetId) {
 
-        final String file = MessageFormat.format(WIDGET_CURRENT_DATA_FILE, appWidgetId);
+        final String fileName = MessageFormat.format(WIDGET_CURRENT_DATA_FILE, appWidgetId);
         try {
-            return (Current) this.getObject(file);
+            return (Current) this.getObject(fileName);
         } catch (final StreamCorruptedException e) {
-            Log.e(TAG, "getCurrent exception: ", e);
+            Log.e(TAG, "getWidgetCurrentData exception: ", e);
         } catch (final FileNotFoundException e) {
-            Log.e(TAG, "getCurrent exception: ", e);
+            Log.e(TAG, "getWidgetCurrentData exception: ", e);
         } catch (final IOException e) {
-            Log.e(TAG, "getCurrent exception: ", e);
+            Log.e(TAG, "getWidgetCurrentData exception: ", e);
         } catch (final ClassNotFoundException e) {
-            Log.e(TAG, "getCurrent exception: ", e);
+            Log.e(TAG, "getWidgetCurrentData exception: ", e);
         }
 
         return null;
+    }
+
+    public void removeWidgetCurrentData(final int appWidgetId) {
+
+        final String fileName = MessageFormat.format(WIDGET_CURRENT_DATA_FILE, appWidgetId);
+
+        try {
+            this.removeFile(fileName);
+        } catch (final IOException e) {
+            Log.e(TAG, "removeWidgetCurrentData exception: ", e);
+        }
     }
 
     public void saveForecast(final Forecast forecast) {
@@ -166,6 +177,15 @@ public class PermanentStorage {
         		throw new IOException("PermanentStorage, delete file error");
         	}	
         	throw new IOException("PermanentStorage, rename file error");
+        }
+    }
+
+    private void removeFile(final String fileName) throws IOException {
+        final File filesDir = this.context.getFilesDir();
+        final File file = new File(filesDir, fileName);
+
+        if (!file.delete()) {
+            throw new IOException("PermanentStorage, remove file error");
         }
     }
 }

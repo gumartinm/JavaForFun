@@ -35,6 +35,7 @@ public class WidgetProvider extends AppWidgetProvider {
         final int N = appWidgetIds.length;
         for (int i=0; i<N; i++) {
         	WidgetConfigure.deletePreference(context, appWidgetIds[i]);
+            WidgetIntentService.deleteWidgetCurrentData(context, appWidgetIds[i]);
         }
     }
 

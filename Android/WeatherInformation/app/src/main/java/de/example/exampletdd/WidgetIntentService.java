@@ -73,7 +73,7 @@ public class WidgetIntentService extends IntentService {
             RemoteViews view;
 
             final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
-            final Current current = store.getCurrentWidget(appWidgetId);
+            final Current current = store.getWidgetCurrentData(appWidgetId);
             if (current != null) {
                 // Update UI.
                 view = this.makeView(current, weatherLocation, appWidgetId);
@@ -91,7 +91,7 @@ public class WidgetIntentService extends IntentService {
                 view = this.makeView(current, weatherLocation, appWidgetId);
 
                 final PermanentStorage store = new PermanentStorage(this.getApplicationContext());
-                store.saveCurrentWidget(current, appWidgetId);
+                store.saveWidgetCurrentData(current, appWidgetId);
             } else {
                 // Show error.
                 view = this.makeErrorView(appWidgetId);
@@ -99,7 +99,13 @@ public class WidgetIntentService extends IntentService {
             this.updateWidget(view, appWidgetId);
 		}
 	}
-	
+
+    public static void deleteWidgetCurrentData(final Context context, final int appWidgetId) {
+        final PermanentStorage store = new PermanentStorage(context.getApplicationContext());
+
+        store.removeWidgetCurrentData(appWidgetId);
+    }
+
 	private Current getRemoteCurrent(final WeatherLocation weatherLocation) {
 
 		final ServiceParser weatherService = new ServiceParser(new JPOSWeatherParser());
