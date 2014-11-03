@@ -26,6 +26,5 @@
     </style>
 
     <color name="weather_time_of_day_color_title">#48aed4</color>
-    <color name="widget_background_holo_dark">#ff000000</color>
 
 </resources>

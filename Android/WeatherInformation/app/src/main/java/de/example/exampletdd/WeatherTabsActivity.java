@@ -105,6 +105,12 @@ public class WeatherTabsActivity extends FragmentActivity {
             				"de.example.exampletdd.MapActivity"));
             this.startActivity(intent);
             return true;
+        } else if (itemId == R.id.weather_menu_about) {
+            intent = new Intent("de.example.exampletdd.WEATHERINFO").
+                    setComponent(new ComponentName("de.example.exampletdd",
+                            "de.example.exampletdd.AboutActivity"));
+            this.startActivity(intent);
+            return true;
         } else {
         }
 

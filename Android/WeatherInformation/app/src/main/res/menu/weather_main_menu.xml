@@ -2,8 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     
     
-    <item
-        android:id="@+id/weather_menu_settings"
+    <item android:id="@+id/weather_menu_settings"
         android:menuCategory="system"
         android:title="@string/weather_preferences_action_settings"
         android:titleCondensed="@string/weather_preferences_action_settings"
@@ -14,8 +13,7 @@
         android:icon="@drawable/ic_action_settings"
         android:showAsAction="ifRoom">
     </item>
-    <item
-        android:id="@+id/weather_menu_map"
+    <item android:id="@+id/weather_menu_map"
         android:icon="@drawable/ic_action_map"
         android:showAsAction="ifRoom"
         android:visible="true"
@@ -25,6 +23,15 @@
         android:title="@string/weather_map_action_map"
         android:titleCondensed="@string/weather_map_action_map">
     </item>
-    
+    <item android:id="@+id/weather_menu_about"
+        android:showAsAction="never"
+        android:visible="true"
+        android:checkable="false"
+        android:enabled="true"
+        android:checked="false"
+        android:orderInCategory="100"
+        android:title="@string/weather_about_action"
+        android:titleCondensed="@string/weather_about_action">
+    </item>
 
 </menu>
