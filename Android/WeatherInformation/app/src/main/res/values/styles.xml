@@ -16,7 +16,14 @@
     <style name="AppTheme" parent="android:Theme.Holo">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
 
     <color name="weather_time_of_day_color_title">#48aed4</color>
     <color name="widget_background_holo_dark">#ff000000</color>

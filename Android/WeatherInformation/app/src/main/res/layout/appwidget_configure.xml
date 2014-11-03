@@ -37,10 +37,7 @@
                 android:padding="5dp"
                 android:layout_gravity="start" />
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="#ffffffff" />
+            <View style="@style/Divider"/>
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -64,15 +61,12 @@
                 android:padding="5dp"
                 android:layout_gravity="start" />
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="#ffffffff" />
+            <View style="@style/Divider"/>
 
             <Spinner android:id="@+id/weather_appwidget_configure_temperature_units"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="30dp"
+                android:layout_margin="20dp"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textAlignment="center"
@@ -87,10 +81,7 @@
                 android:padding="5dp"
                 android:layout_gravity="start" />
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="#ffffffff" />
+            <View style="@style/Divider"/>
 
             <GridLayout
                 android:layout_width="match_parent"
