@@ -83,7 +83,7 @@
     <string name="weather_about_application_version">Version 1.0</string>
     <string name="weather_about_application_legal">Legal information</string>
     <string name="weather_about_application_source_code">Source code</string>
-    <string name="weather_about_application_remote_data">REMOTE DATA</string>
+    <string name="weather_about_application_remote_data">WEATHER DATA</string>
     <string name="weather_about_application_remote_data_openweathermap">OpenWeatherMap</string>
     <string name="weather_about_application_developer">DEVELOPER</string>
     <string name="weather_about_application_developer_name">Gustavo Martin Morcuende</string>
