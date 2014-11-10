@@ -89,6 +89,9 @@
     <string name="weather_about_application_developer_name">Gustavo Martin Morcuende</string>
     <string name="weather_about_application_developer_web">Web</string>
 
+    <!-- Licenses Activity -->
+    <string name="weather_licenses_title">Licenses</string>
+
     <!-- DO NOT TRANSLATE -->
     <string name="uri_api_weather_today">http://api.openweathermap.org/data/{0}/weather?lat={1}&amp;lon={2}&amp;cnt=1</string>
     <string name="uri_api_weather_forecast">http://api.openweathermap.org/data/{0}/forecast/daily?lat={1}&amp;lon={2}&amp;cnt={3}&amp;mode=json</string>

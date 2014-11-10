@@ -2,6 +2,7 @@ package de.example.exampletdd;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,7 +26,10 @@ public class AboutActivity extends Activity {
     }
 
     public void onClickLegalInformation(final View view) {
-
+        final Intent intent = new Intent("de.example.exampletdd.WEATHERINFO")
+                .setComponent(new ComponentName("de.example.exampletdd",
+                        "de.example.exampletdd.LicensesActivity"));
+        this.startActivity(intent);
     }
 
     public void onClickSourceCode(final View view) {
