@@ -154,7 +154,6 @@ public class OverviewFragment extends ListFragment {
                     new ServiceParser(new JPOSWeatherParser()));
 
             task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());
-            // TODO: make sure thread UI keeps running in parallel after that. I guess.
         }
     }
 
@@ -340,10 +339,6 @@ public class OverviewFragment extends ListFragment {
     	return false;
     }
 
-    // TODO: How could I show just one progress dialog when I have two fragments in tabs
-    //       activity doing the same in background?
-    //       I mean, if OverviewTask shows one progress dialog and CurrentTask does the same I will have
-    //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
     private class OverviewTask extends AsyncTask<Object, Void, Forecast> {
     	// Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
@@ -399,8 +394,6 @@ public class OverviewFragment extends ListFragment {
 
         @Override
         protected void onPostExecute(final Forecast forecast) {
-        	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
-        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
         	
             // Call updateUI on the UI thread.
         	final Intent forecastData = new Intent("de.example.exampletdd.UPDATEFORECAST");

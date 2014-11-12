@@ -139,7 +139,6 @@ public class WeatherLocationDbQueries {
 	private WeatherLocation queryDataBase(final String table,
 			final String[] projection, final String[] selectionArgs,
 			final String selection, final DoQuery doQuery) {
-        // TODO: execute around idiom? I miss try/finally with resources
         final SQLiteDatabase db = this.mDbHelper.getReadableDatabase();
         try {
         	final Cursor cursor = db.query(table, projection, selection, selectionArgs, null, null, null);

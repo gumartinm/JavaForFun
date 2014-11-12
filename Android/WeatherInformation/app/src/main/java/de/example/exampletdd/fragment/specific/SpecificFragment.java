@@ -247,15 +247,13 @@ public class SpecificFragment extends Fragment {
         } else {
             picture = BitmapFactory.decodeResource(this.getResources(),
                     R.drawable.weather_severe_alert);
-        }       
+        }
 
-        // TODO: string resource
-        String description = "no description available";
+        String description = this.getString(R.string.test_field_description_when_error);
         if (forecast.getWeather().size() > 0) {
             description = forecast.getWeather().get(0).getDescription();
         }
 
-        // TODO: units!!!!
         String humidityValue = "";
         if (forecast.getHumidity() != null) {
             final double conversion = (Double) forecast.getHumidity();
@@ -354,7 +352,5 @@ public class SpecificFragment extends Fragment {
         if (forecast != null) {
             this.updateUI(forecast, this.mChosenDay);
         }
-        
-        // TODO: Overview is doing things with mListState... Why not here?
     }
 }

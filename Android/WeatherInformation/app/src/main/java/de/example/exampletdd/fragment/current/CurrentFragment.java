@@ -176,7 +176,6 @@ public class CurrentFragment extends Fragment {
                     new ServiceParser(new JPOSWeatherParser()));
 
             task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());
-            // TODO: make sure UI thread keeps running in parallel after that. I guess.
         }
     }
 
@@ -340,13 +339,11 @@ public class CurrentFragment extends Fragment {
                     R.drawable.weather_severe_alert);
         }
 
-        // TODO: static resource
-        String description = "no description available";
+        String description = this.getString(R.string.test_field_description_when_error);
         if (current.getWeather().size() > 0) {
             description = current.getWeather().get(0).getDescription();
         }
 
-        // TODO: units!!!!
         String humidityValue = "";
         if ((current.getMain() != null)
                 && (current.getMain().getHumidity() != null)) {
@@ -468,11 +465,7 @@ public class CurrentFragment extends Fragment {
     	
     	return false;
     }
-    
-    // TODO: How could I show just one progress dialog when I have two fragments in tabs
-    //       activity doing the same in background?
-    //       I mean, if OverviewTask shows one progress dialog and CurrentTask does the same I will have
-    //       have two progress dialogs... How may I solve this problem? I HATE ANDROID.
+
     private class CurrentTask extends AsyncTask<Object, Void, Current> {
     	// Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
@@ -520,18 +513,12 @@ public class CurrentFragment extends Fragment {
             final String url = weatherService.createURIAPICurrent(urlAPI, APIVersion, latitude, longitude);
             final String urlWithoutCache = url.concat("&time=" + System.currentTimeMillis());
             final String jsonData = HTTPClient.retrieveDataAsString(new URL(urlWithoutCache));
-            final Current current = weatherService.retrieveCurrentFromJPOS(jsonData);
-            // TODO: what is this for? I guess I could skip it :/
-            final Calendar now = Calendar.getInstance();
-            current.setDate(now.getTime());
 
-            return current;
+            return weatherService.retrieveCurrentFromJPOS(jsonData);
         }
 
         @Override
         protected void onPostExecute(final Current current) {
-        	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
-        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
 
             // Call updateUI on the UI thread.
             final Intent currentData = new Intent("de.example.exampletdd.UPDATECURRENT");

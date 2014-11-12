@@ -224,7 +224,7 @@ public class MapActivity extends FragmentActivity implements
             this.mLocationManager.requestSingleUpdate(criteria, this, null);
         } else {
         	// TODO: string resource
-        	Toast.makeText(this, "You do not have enabled location.", Toast.LENGTH_LONG).show();
+        	Toast.makeText(this, this.getString(R.string.weather_map_not_enabled_location), Toast.LENGTH_LONG).show();
         }
         // Trying to use the synchronous calls. Problems: mGoogleApiClient read/store from different threads.
         // new GetLocationTask(this).execute();
@@ -391,20 +391,11 @@ public class MapActivity extends FragmentActivity implements
 	}
 	
 	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onProviderEnabled(String provider) {}
 
 	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onProviderDisabled(String provider) {}
 }
