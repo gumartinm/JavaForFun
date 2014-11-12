@@ -6,8 +6,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_height="wrap_content">
         
     <!-- TODO: align start/end feels like-snow humidity-rain wind-clouds -->
     <LinearLayout android:id="@+id/weather_current_data_container"
@@ -23,7 +22,7 @@
         	 With long texts, many times, text will not fit... The same for WP8 :/ -->
     	<LinearLayout
     		android:layout_width="match_parent"
-    		android:layout_height="match_parent"
+    		android:layout_height="wrap_content"
     		android:gravity="center"
     		android:layout_gravity="top|center"
     		android:padding="50dp"
