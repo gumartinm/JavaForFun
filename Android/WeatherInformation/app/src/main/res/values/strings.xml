@@ -5,8 +5,8 @@
     <string name="icon_weather_description">Icon weather</string>
 
     <!-- Activities Current, Overview and Specific -->
-    <string name="text_field_sun_rise">SUN RISE</string>
-    <string name="text_field_sun_set">SUN SET</string>
+    <string name="text_field_sun_rise">SUN RISE (UTC)</string>
+    <string name="text_field_sun_set">SUN SET (UTC)</string>
     <string name="text_field_feels_like">FEELS LIKE</string>
     <string name="text_field_clouds">CLOUDS</string>
     <string name="text_field_rain">RAIN</string>
