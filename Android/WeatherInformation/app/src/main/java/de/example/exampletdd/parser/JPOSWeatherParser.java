@@ -13,6 +13,7 @@ import de.example.exampletdd.model.currentweather.Coord;
 import de.example.exampletdd.model.currentweather.Current;
 import de.example.exampletdd.model.currentweather.Main;
 import de.example.exampletdd.model.currentweather.Rain;
+import de.example.exampletdd.model.currentweather.Snow;
 import de.example.exampletdd.model.currentweather.Sys;
 import de.example.exampletdd.model.currentweather.Wind;
 import de.example.exampletdd.model.forecastweather.City;
@@ -32,6 +33,7 @@ public class JPOSWeatherParser implements IJPOSParser {
         currentWeatherData.setMain(new Main());
         currentWeatherData.setRain(new Rain());
         currentWeatherData.setSys(new Sys());
+        currentWeatherData.setSnow(new Snow());
         currentWeatherData
         .setWeather(new ArrayList<de.example.exampletdd.model.currentweather.Weather>());
         currentWeatherData.setWind(new Wind());
@@ -90,7 +92,7 @@ public class JPOSWeatherParser implements IJPOSParser {
     private void getCurrentWeatherDataObjects(final Current currentWeatherData,
             final JsonParser jParser, final String fieldname) throws JsonParseException,
             IOException {
-        if (fieldname == "coord") {
+        if ("coord".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -102,7 +104,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "sys") {
+        if ("sys".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -120,7 +122,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "weather") {
+        if ("weather".equals(fieldname)) {
             final de.example.exampletdd.model.currentweather.Weather weather = new de.example.exampletdd.model.currentweather.Weather();
             currentWeatherData.getWeather().add(weather);
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
@@ -141,10 +143,10 @@ public class JPOSWeatherParser implements IJPOSParser {
 
             }
         }
-        if (fieldname == "base") {
+        if ("base".equals(fieldname)) {
             currentWeatherData.setBase(jParser.getText());
         }
-        if (fieldname == "main") {
+        if ("main".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -171,7 +173,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "wind") {
+        if ("wind".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -183,7 +185,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "clouds") {
+        if ("clouds".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -192,10 +194,10 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "dt") {
+        if ("dt".equals(fieldname)) {
             currentWeatherData.setDt(jParser.getLongValue());
         }
-        if (fieldname == "rain") {
+        if ("rain".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -204,7 +206,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "snow") {
+        if ("snow".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -213,13 +215,13 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "id") {
+        if ("id".equals(fieldname)) {
             currentWeatherData.setId(jParser.getLongValue());
         }
-        if (fieldname == "name") {
+        if ("name".equals(fieldname)) {
             currentWeatherData.setName(jParser.getText());
         }
-        if (fieldname == "cod") {
+        if ("cod".equals(fieldname)) {
             currentWeatherData.setCod(jParser.getIntValue());
         }
     }
@@ -255,14 +257,14 @@ public class JPOSWeatherParser implements IJPOSParser {
             final JsonParser jParser, final String fieldname) throws JsonParseException,
             IOException {
 
-        if (fieldname == "cod") {
+        if ("cod".equals(fieldname)) {
             final String stringCod = jParser.getText();
             forecastWeatherData.setCod(Long.valueOf(stringCod));
         }
-        if (fieldname == "message") {
+        if ("message".equals(fieldname)) {
             forecastWeatherData.setMessage(jParser.getDoubleValue());
         }
-        if (fieldname == "city") {
+        if ("city".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 final JsonToken nextToken = jParser.nextToken(); // move to
@@ -286,10 +288,10 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "cnt") {
+        if ("cnt".equals(fieldname)) {
             forecastWeatherData.setCnt(jParser.getIntValue());
         }
-        if (fieldname == "coord") {
+        if ("coord".equals(fieldname)) {
             while (jParser.nextToken() != JsonToken.END_OBJECT) {
                 final String namefield = jParser.getCurrentName();
                 jParser.nextToken(); // move to value
@@ -301,7 +303,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "list") {
+        if ("list".equals(fieldname)) {
             final de.example.exampletdd.model.forecastweather.List list = new de.example.exampletdd.model.forecastweather.List();
             list.setTemp(new Temp());
             list.setWeather(new ArrayList<de.example.exampletdd.model.forecastweather.Weather>());
@@ -350,7 +352,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "temp") {
+        if ("temp".equals(fieldname)) {
             final de.example.exampletdd.model.forecastweather.List list = forecastWeatherData
                     .getList().get(
                             (forecastWeatherData.getList().size() - 1));
@@ -377,7 +379,7 @@ public class JPOSWeatherParser implements IJPOSParser {
                 }
             }
         }
-        if (fieldname == "weather") {
+        if ("weather".equals(fieldname)) {
             final de.example.exampletdd.model.forecastweather.List list = forecastWeatherData
                     .getList().get(
                             (forecastWeatherData.getList().size() - 1));
