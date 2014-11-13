@@ -82,8 +82,7 @@ public class MapActivity extends FragmentActivity implements
         super.onResume();
 
         final ActionBar actionBar = this.getActionBar();
-        // TODO: string resource
-        actionBar.setTitle("Mark your location");
+        actionBar.setTitle(this.getString(R.string.weather_map_mark_location));
         
         WeatherLocation weatherLocation;
         if (this.mRestoreUI != null) {
@@ -223,7 +222,6 @@ public class MapActivity extends FragmentActivity implements
             
             this.mLocationManager.requestSingleUpdate(criteria, this, null);
         } else {
-        	// TODO: string resource
         	Toast.makeText(this, this.getString(R.string.weather_map_not_enabled_location), Toast.LENGTH_LONG).show();
         }
         // Trying to use the synchronous calls. Problems: mGoogleApiClient read/store from different threads.
@@ -279,8 +277,7 @@ public class MapActivity extends FragmentActivity implements
         	this.removeProgressFragment();
         	this.addButtonsFragment();
         	// No geocoder is present. Issue an error message.
-        	// TODO: string resource
-            Toast.makeText(this, "Cannot get address. No geocoder available.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, this.getString(R.string.weather_map_no_geocoder_available), Toast.LENGTH_LONG).show();
             
             // Default values
             final String city = this.getString(R.string.city_not_found);

@@ -15,6 +15,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.text.MessageFormat;
+import java.util.Locale;
+
 import de.example.exampletdd.fragment.current.CurrentFragment;
 import de.example.exampletdd.fragment.overview.OverviewFragment;
 import de.example.exampletdd.model.DatabaseQueries;
@@ -134,11 +138,14 @@ public class WeatherTabsActivity extends FragmentActivity {
         final DatabaseQueries query = new DatabaseQueries(this.getApplicationContext());
         final WeatherLocation weatherLocation = query.queryDataBase();
         if (weatherLocation != null) {
-            // TODO: I18N and comma :/
-            actionBar.setTitle(weatherLocation.getCity() + "," + weatherLocation.getCountry());	
+            final String[] array = new String[2];
+            array[0] = weatherLocation.getCity();
+            array[1] = weatherLocation.getCountry();
+            final MessageFormat message = new MessageFormat("{0},{1}", Locale.US);
+            final String cityCountry = message.format(array);
+            actionBar.setTitle(cityCountry);
         } else {
-        	// TODO: static resource
-        	actionBar.setTitle("no chosen location");
+        	actionBar.setTitle(this.getString(R.string.text_field_no_chosen_location));
         }
 
         // 2. Update forecast tab text.
@@ -175,12 +182,9 @@ public class WeatherTabsActivity extends FragmentActivity {
         @Override
         public Fragment getItem(final int position) {
             if (position == 0) {
-            	// TODO: new instance every time I click on tab?
                 return new CurrentFragment();
             } else {
-            	// TODO: new instance every time I click on tab?
-                final Fragment fragment = new OverviewFragment();
-                return fragment;
+                return new OverviewFragment();
             }
 
         }

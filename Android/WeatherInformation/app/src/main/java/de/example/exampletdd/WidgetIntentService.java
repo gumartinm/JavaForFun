@@ -145,12 +145,8 @@ public class WidgetIntentService extends IntentService {
 				weatherLocation.getLatitude(), weatherLocation.getLongitude());
 		final String urlWithoutCache = url.concat("&time=" + System.currentTimeMillis());
 		final String jsonData = HTTPClient.retrieveDataAsString(new URL(urlWithoutCache));
-		final Current current = weatherService.retrieveCurrentFromJPOS(jsonData);
-		// TODO: what is this for? I guess I could skip it :/
-		final Calendar now = Calendar.getInstance();
-		current.setDate(now.getTime());
 
-		return current;
+		return weatherService.retrieveCurrentFromJPOS(jsonData);
 	}
 
     private interface UnitsConversor {
@@ -248,7 +244,7 @@ public class WidgetIntentService extends IntentService {
         if (!isCountry) {
             remoteView.setViewVisibility(R.id.weather_appwidget_country, View.GONE);
         } else {
-            // TODO: It is as if Android has a view cache. If I did not set VISIBLE value,
+            // TODO: It is as if Android had a view cache. If I did not set VISIBLE value,
             // the country field would be gone forever... :/
             remoteView.setViewVisibility(R.id.weather_appwidget_country, View.VISIBLE);
             remoteView.setTextViewText(R.id.weather_appwidget_country, country);

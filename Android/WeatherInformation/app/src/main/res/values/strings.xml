@@ -17,7 +17,8 @@
     <string name="text_units_mm3h">mm 3h</string>
     <string name="text_units_percent">%</string>
     <string name="text_field_remote_error">No data available</string>
-    <string name="test_field_description_when_error">no description available</string>
+    <string name="text_field_description_when_error">no description available</string>
+    <string name="text_field_no_chosen_location">no chosen location</string>
 
     <!-- Preferences Acitivity -->
     <string name="weather_preferences_action_settings">Settings</string>
@@ -78,6 +79,8 @@
     <string name="weather_map_button_savelocation">Save Location</string>
     <string name="weather_map_button_getlocation">Get Location</string>
     <string name="weather_map_not_enabled_location">You do not have enabled location.</string>
+    <string name="weather_map_no_geocoder_available">Cannot get address. No geocoder available.</string>
+    <string name="weather_map_mark_location">Mark your location</string>
 
     <!-- About Activity -->
     <string name="weather_about_action">About</string>

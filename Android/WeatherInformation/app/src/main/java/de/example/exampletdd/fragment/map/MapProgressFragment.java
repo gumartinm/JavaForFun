@@ -121,8 +121,6 @@ public class MapProgressFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final WeatherLocation weatherLocation) {
-        	// TODO: Is AsyncTask calling this method even when RunTimeException in doInBackground method?
-        	// I hope so, otherwise I must catch(Throwable) in doInBackground method :(
  
             // Call updateUI on the UI thread.
         	if (mCallbacks != null) {

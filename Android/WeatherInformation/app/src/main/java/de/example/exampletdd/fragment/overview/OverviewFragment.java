@@ -66,8 +66,6 @@ public class OverviewFragment extends ListFragment {
             // Restore UI state
             final Forecast forecast = (Forecast) savedInstanceState.getSerializable("Forecast");
 
-            // TODO: Could it be better to store in global forecast data even if it is null value?
-            //       So, perhaps do not check for null value and always store in global variable.
             if (forecast != null) {
             	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
             	store.saveForecast(forecast);
@@ -141,7 +139,6 @@ public class OverviewFragment extends ListFragment {
         final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
         final Forecast forecast = store.getForecast();
 
-        // TODO: store forecast data in permanent storage and check here if there is data in permanent storage
         if (forecast != null && this.isDataFresh(weatherLocation.getLastForecastUIUpdate())) {
             this.updateUI(forecast);
         } else {
@@ -164,8 +161,6 @@ public class OverviewFragment extends ListFragment {
     	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
         final Forecast forecast = store.getForecast();
 
-        // TODO: Could it be better to save forecast data even if it is null value?
-        //       So, perhaps do not check for null value.
         if (forecast != null) {
             savedInstanceState.putSerializable("Forecast", forecast);
         }

@@ -91,12 +91,8 @@ public class NotificationIntentService extends IntentService {
                 weatherLocation.getLatitude(), weatherLocation.getLongitude());
         final String urlWithoutCache = url.concat("&time=" + System.currentTimeMillis());
         final String jsonData = HTTPClient.retrieveDataAsString(new URL(urlWithoutCache));
-        final Current current = weatherService.retrieveCurrentFromJPOS(jsonData);
-        // TODO: what is this for? I guess I could skip it :/
-        final Calendar now = Calendar.getInstance();
-        current.setDate(now.getTime());
-        
-        return current;
+
+        return weatherService.retrieveCurrentFromJPOS(jsonData);
     }
     
     private interface UnitsConversor {

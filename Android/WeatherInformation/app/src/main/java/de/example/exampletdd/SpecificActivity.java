@@ -3,6 +3,10 @@ package de.example.exampletdd;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import java.text.MessageFormat;
+import java.util.Locale;
+
 import de.example.exampletdd.model.DatabaseQueries;
 import de.example.exampletdd.model.WeatherLocation;
 
@@ -30,8 +34,12 @@ public class SpecificActivity extends FragmentActivity {
         final WeatherLocation weatherLocation = query.queryDataBase();
         if (weatherLocation != null) {
         	final ActionBar actionBar = this.getActionBar();
-            // TODO: I18N and comma :/
-            actionBar.setTitle(weatherLocation.getCity() + "," + weatherLocation.getCountry());	
+            final String[] array = new String[2];
+            array[0] = weatherLocation.getCity();
+            array[1] = weatherLocation.getCountry();
+            final MessageFormat message = new MessageFormat("{0},{1}", Locale.US);
+            final String cityCountry = message.format(array);
+            actionBar.setTitle(cityCountry);
         }
     }
 }

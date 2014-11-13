@@ -16,10 +16,6 @@ import de.example.exampletdd.model.currentweather.Current;
 import de.example.exampletdd.model.forecastweather.Forecast;
 
 
-/**
- * TODO: show some error message when there is no enough space for saving files. :/
- *
- */
 public class PermanentStorage {
 	private static final String TAG = "PermanentStorage";
     private static final String CURRENT_DATA_FILE = "current.file";

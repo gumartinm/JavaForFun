@@ -59,8 +59,6 @@ public class SpecificFragment extends Fragment {
         	// Restore UI state
             final Forecast forecast = (Forecast) savedInstanceState.getSerializable("Forecast");
 
-            // TODO: Could it be better to store in global data forecast even if it is null value?
-            //       So, perhaps do not check for null value and always store in global variable.
             if (forecast != null) {
             	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
             	store.saveForecast(forecast);
@@ -79,8 +77,6 @@ public class SpecificFragment extends Fragment {
     	final PermanentStorage store = new PermanentStorage(this.getActivity().getApplicationContext());
         final Forecast forecast = store.getForecast();
 
-        // TODO: Could it be better to save forecast data even if it is null value?
-        //       So, perhaps do not check for null value.
         if (forecast != null) {
             savedInstanceState.putSerializable("Forecast", forecast);
         }
@@ -249,7 +245,7 @@ public class SpecificFragment extends Fragment {
                     R.drawable.weather_severe_alert);
         }
 
-        String description = this.getString(R.string.test_field_description_when_error);
+        String description = this.getString(R.string.text_field_description_when_error);
         if (forecast.getWeather().size() > 0) {
             description = forecast.getWeather().get(0).getDescription();
         }
