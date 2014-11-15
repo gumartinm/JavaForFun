@@ -7,7 +7,7 @@
     android:resizeMode="none"
     android:previewImage="@drawable/ic_launcher"
     android:initialLayout="@layout/appwidget_error"
-    android:configure="com.weather.information.widget.WidgetConfigure"
+    android:configure="name.gumartinm.weather.information.widget.WidgetConfigure"
     android:widgetCategory="home_screen|keyguard"
     android:updatePeriodMillis="3600000">
 </appwidget-provider>

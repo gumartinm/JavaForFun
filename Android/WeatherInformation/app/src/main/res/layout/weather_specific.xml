@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.weather.information.activity.SpecificActivity"
+    tools:context="name.gumartinm.weather.information.activity.SpecificActivity"
     tools:ignore="MergeRootFrame" >
 
 
@@ -15,6 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/weather_specific_fragment"
-        class="com.weather.information.fragment.specific.SpecificFragment" />
+        class="name.gumartinm.weather.information.fragment.specific.SpecificFragment" />
 
 </LinearLayout>

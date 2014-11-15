@@ -5,11 +5,11 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.weather.information"
+        applicationId "name.gumartinm.weather.information"
         minSdkVersion 18
         targetSdkVersion 18
 
-        testApplicationId "com.weather.information.test"
+        testApplicationId "name.gumartinm.weather.information.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 
