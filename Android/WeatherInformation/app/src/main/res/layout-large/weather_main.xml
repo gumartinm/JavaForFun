@@ -4,19 +4,19 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="de.example.exampletdd.WeatherInformationActivity"
+    tools:context="com.weather.information.activity.WeatherInformationActivity"
     tools:ignore="MergeRootFrame" >
 
     <fragment
         android:id="@+id/weather_overview_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="de.example.exampletdd.fragment.overview.OverviewFragment" />
+        class="com.weather.information.fragment.overview.OverviewFragment" />
     
     <fragment
         android:id="@+id/weather_specific_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="de.example.exampletdd.fragment.specific.SpecificFragment" />
+        class="com.weather.information.fragment.specific.SpecificFragment" />
 
 </FrameLayout>

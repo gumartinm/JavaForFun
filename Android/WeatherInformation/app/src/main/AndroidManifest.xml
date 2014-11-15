@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.example.exampletdd"
+    package="com.weather.information"
     android:installLocation="auto"
     android:versionCode="1"
     android:versionName="1.0" >
@@ -44,7 +44,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".WeatherTabsActivity"
+            android:name=".activity.WeatherTabsActivity"
             android:hardwareAccelerated="false"
             android:launchMode="singleTop"
             android:uiOptions="splitActionBarWhenNarrow" >
@@ -55,8 +55,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".WeatherInformationPreferencesActivity"
-            android:parentActivityName=".WeatherTabsActivity" >
+            android:name=".activity.WeatherInformationPreferencesActivity"
+            android:parentActivityName=".activity.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONSETTINGS" />
 
@@ -69,8 +69,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapActivity"
-            android:parentActivityName=".WeatherTabsActivity" >
+            android:name=".activity.MapActivity"
+            android:parentActivityName=".activity.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONMAP" />
 
@@ -78,9 +78,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SpecificActivity"
+            android:name=".activity.SpecificActivity"
             android:exported="false"
-            android:parentActivityName=".WeatherTabsActivity" >
+            android:parentActivityName=".activity.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONSPECIFICDATA" />
 
@@ -96,9 +96,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AboutActivity"
+            android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about"
-            android:parentActivityName=".WeatherTabsActivity" >
+            android:parentActivityName=".activity.WeatherTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONABOUT" />
 
@@ -106,8 +106,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LicensesActivity"
-            android:parentActivityName=".AboutActivity" >
+            android:name=".activity.LicensesActivity"
+            android:parentActivityName=".activity.AboutActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONLICENSES" />
 
@@ -116,7 +116,7 @@
         </activity>
 
         <receiver
-            android:name=".WeatherInformationBootReceiver"
+            android:name=".boot.WeatherInformationBootReceiver"
             android:enabled="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -134,19 +134,19 @@
 
         <!-- Service to update Notification -->
         <service
-            android:name=".NotificationIntentService"
+            android:name=".notification.NotificationIntentService"
             android:enabled="true"
             android:exported="false" />
 
         <!-- Service to update Widget -->
         <service
-            android:name=".WidgetIntentService"
+            android:name=".widget.service.WidgetIntentService"
             android:enabled="true"
             android:exported="false" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="" />
+            android:value="AIzaSyCJBJwCx3wGLqdjSHcRsTvs23cA29eiwXs" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
