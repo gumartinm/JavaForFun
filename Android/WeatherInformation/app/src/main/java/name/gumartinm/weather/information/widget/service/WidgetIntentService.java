@@ -318,19 +318,6 @@ public class WidgetIntentService extends IntentService {
 		final AppWidgetManager manager = AppWidgetManager.getInstance(this.getApplicationContext());
 		manager.updateAppWidget(appWidgetId, remoteView);
 	}
-
-    private boolean isDataFresh(final Date lastUpdate) {
-        if (lastUpdate == null) {
-            return false;
-        }
-
-        final Date currentTime = new Date();
-        if (((currentTime.getTime() - lastUpdate.getTime())) < UPDATE_TIME_RATE) {
-            return true;
-        }
-
-        return false;
-    }
 	
 //	private void updateWidgets(final RemoteViews remoteView) {
 //		
