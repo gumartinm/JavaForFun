@@ -27,7 +27,7 @@ import android.preference.PreferenceManager;
 import name.gumartinm.weather.information.R;
 import name.gumartinm.weather.information.notification.NotificationIntentService;
 
-public class WeatherInformationBootReceiver extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {

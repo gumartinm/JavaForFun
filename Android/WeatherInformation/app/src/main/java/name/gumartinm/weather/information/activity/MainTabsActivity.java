@@ -41,7 +41,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 
-public class WeatherTabsActivity extends FragmentActivity {
+public class MainTabsActivity extends FragmentActivity {
     private static final int NUM_ITEMS = 2;
     private ViewPager mPager;
     
@@ -58,7 +58,7 @@ public class WeatherTabsActivity extends FragmentActivity {
                 new ViewPager.SimpleOnPageChangeListener() {
                     @Override
                     public void onPageSelected(final int position) {
-                        WeatherTabsActivity.this.getActionBar().setSelectedNavigationItem(position);
+                        MainTabsActivity.this.getActionBar().setSelectedNavigationItem(position);
                     }
                 });
 
@@ -77,7 +77,7 @@ public class WeatherTabsActivity extends FragmentActivity {
 
             @Override
             public void onTabSelected(final Tab tab, final FragmentTransaction ft) {
-                WeatherTabsActivity.this.mPager.setCurrentItem(tab.getPosition());
+                MainTabsActivity.this.mPager.setCurrentItem(tab.getPosition());
 
             }
 

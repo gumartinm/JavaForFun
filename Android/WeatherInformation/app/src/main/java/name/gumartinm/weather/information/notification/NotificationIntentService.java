@@ -42,7 +42,7 @@ import android.widget.RemoteViews;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import name.gumartinm.weather.information.R;
-import name.gumartinm.weather.information.activity.WeatherTabsActivity;
+import name.gumartinm.weather.information.activity.MainTabsActivity;
 import name.gumartinm.weather.information.httpclient.CustomHTTPClient;
 import name.gumartinm.weather.information.model.DatabaseQueries;
 import name.gumartinm.weather.information.model.WeatherLocation;
@@ -203,7 +203,7 @@ public class NotificationIntentService extends IntentService {
         remoteView.setTextViewText(R.id.weather_notification_country, country);
 
         // 5. Activity launcher.
-        final Intent resultIntent =  new Intent(this.getApplicationContext(), WeatherTabsActivity.class);
+        final Intent resultIntent =  new Intent(this.getApplicationContext(), MainTabsActivity.class);
         // The PendingIntent to launch our activity if the user selects this notification
 //        final PendingIntent contentIntent = PendingIntent.getActivity(
 //        		this.getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -212,7 +212,7 @@ public class NotificationIntentService extends IntentService {
         // your application to the Home screen.
         final TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getApplicationContext());
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(WeatherTabsActivity.class);
+        stackBuilder.addParentStack(MainTabsActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         final PendingIntent resultPendingIntent =

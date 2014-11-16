@@ -59,7 +59,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activity.WeatherTabsActivity"
+            android:name=".activity.MainTabsActivity"
             android:hardwareAccelerated="false"
             android:launchMode="singleTop"
             android:uiOptions="splitActionBarWhenNarrow" >
@@ -70,8 +70,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.WeatherInformationPreferencesActivity"
-            android:parentActivityName=".activity.WeatherTabsActivity" >
+            android:name=".activity.PreferencesActivity"
+            android:parentActivityName=".activity.MainTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONSETTINGS" />
 
@@ -85,7 +85,7 @@
         </activity>
         <activity
             android:name=".activity.MapActivity"
-            android:parentActivityName=".activity.WeatherTabsActivity" >
+            android:parentActivityName=".activity.MainTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONMAP" />
 
@@ -95,7 +95,7 @@
         <activity
             android:name=".activity.SpecificActivity"
             android:exported="false"
-            android:parentActivityName=".activity.WeatherTabsActivity" >
+            android:parentActivityName=".activity.MainTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONSPECIFICDATA" />
 
@@ -113,7 +113,7 @@
         <activity
             android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about"
-            android:parentActivityName=".activity.WeatherTabsActivity" >
+            android:parentActivityName=".activity.MainTabsActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.WEATHERINFORMATIONABOUT" />
 
@@ -131,7 +131,7 @@
         </activity>
 
         <receiver
-            android:name=".boot.WeatherInformationBootReceiver"
+            android:name=".boot.BootReceiver"
             android:enabled="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -155,7 +155,7 @@
 
         <!-- Service to update Widget -->
         <service
-            android:name=".widget.service.WidgetIntentService"
+            android:name=".widget.WidgetIntentService"
             android:enabled="true"
             android:exported="false" />
 

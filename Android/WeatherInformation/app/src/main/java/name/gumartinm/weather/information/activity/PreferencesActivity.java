@@ -20,9 +20,9 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import name.gumartinm.weather.information.R;
-import name.gumartinm.weather.information.fragment.preferences.WeatherInformationPreferencesFragment;
+import name.gumartinm.weather.information.fragment.preferences.PreferencesFragment;
 
-public class WeatherInformationPreferencesActivity extends Activity {
+public class PreferencesActivity extends Activity {
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class WeatherInformationPreferencesActivity extends Activity {
         this.getFragmentManager()
         .beginTransaction()
         .replace(android.R.id.content,
-                new WeatherInformationPreferencesFragment()).commit();
+                new PreferencesFragment()).commit();
     }
 
     @Override

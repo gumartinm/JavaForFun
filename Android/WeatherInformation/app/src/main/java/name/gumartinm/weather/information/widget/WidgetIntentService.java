@@ -1,4 +1,4 @@
-package name.gumartinm.weather.information.widget.service;
+package name.gumartinm.weather.information.widget;
 
 import android.app.IntentService;
 import android.app.PendingIntent;

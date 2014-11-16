@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import name.gumartinm.weather.information.widget.service.WidgetIntentService;
-
 public class WidgetProvider extends AppWidgetProvider {
 
     @Override

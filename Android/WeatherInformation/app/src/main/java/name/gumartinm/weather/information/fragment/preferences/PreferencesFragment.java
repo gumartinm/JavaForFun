@@ -30,8 +30,7 @@ import android.preference.SwitchPreference;
 import name.gumartinm.weather.information.R;
 import name.gumartinm.weather.information.notification.NotificationIntentService;
 
-public class WeatherInformationPreferencesFragment extends PreferenceFragment 
-													implements OnSharedPreferenceChangeListener {
+public class PreferencesFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
