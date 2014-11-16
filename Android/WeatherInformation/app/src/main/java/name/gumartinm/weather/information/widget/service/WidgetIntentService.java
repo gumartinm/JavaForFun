@@ -20,10 +20,10 @@ import name.gumartinm.weather.information.httpclient.CustomHTTPClient;
 import name.gumartinm.weather.information.model.DatabaseQueries;
 import name.gumartinm.weather.information.model.WeatherLocation;
 import name.gumartinm.weather.information.model.currentweather.Current;
-import name.gumartinm.weather.information.parser.JPOSWeatherParser;
+import name.gumartinm.weather.information.parser.JPOSCurrentParser;
 import name.gumartinm.weather.information.service.IconsList;
 import name.gumartinm.weather.information.service.PermanentStorage;
-import name.gumartinm.weather.information.service.ServiceParser;
+import name.gumartinm.weather.information.service.ServiceCurrentParser;
 import name.gumartinm.weather.information.widget.WidgetConfigure;
 
 import org.apache.http.client.ClientProtocolException;
@@ -107,7 +107,7 @@ public class WidgetIntentService extends IntentService {
 
 	private Current getRemoteCurrent(final WeatherLocation weatherLocation) {
 
-		final ServiceParser weatherService = new ServiceParser(new JPOSWeatherParser());
+		final ServiceCurrentParser weatherService = new ServiceCurrentParser(new JPOSCurrentParser());
 		final CustomHTTPClient HTTPClient = new CustomHTTPClient(
 				AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent"));
 
@@ -133,7 +133,7 @@ public class WidgetIntentService extends IntentService {
 	}
 
 	private Current getRemoteCurrentThrowable(final WeatherLocation weatherLocation,
-			final CustomHTTPClient HTTPClient, final ServiceParser weatherService)
+			final CustomHTTPClient HTTPClient, final ServiceCurrentParser weatherService)
 					throws ClientProtocolException, MalformedURLException, URISyntaxException,
 					JsonParseException, IOException {
 

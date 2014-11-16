@@ -40,10 +40,10 @@ import name.gumartinm.weather.information.httpclient.CustomHTTPClient;
 import name.gumartinm.weather.information.model.DatabaseQueries;
 import name.gumartinm.weather.information.model.WeatherLocation;
 import name.gumartinm.weather.information.model.forecastweather.Forecast;
-import name.gumartinm.weather.information.parser.JPOSWeatherParser;
+import name.gumartinm.weather.information.parser.JPOSForecastParser;
 import name.gumartinm.weather.information.service.IconsList;
 import name.gumartinm.weather.information.service.PermanentStorage;
-import name.gumartinm.weather.information.service.ServiceParser;
+import name.gumartinm.weather.information.service.ServiceForecastParser;
 
 public class OverviewFragment extends ListFragment {
     private static final String TAG = "OverviewFragment";
@@ -147,7 +147,7 @@ public class OverviewFragment extends ListFragment {
             final OverviewTask task = new OverviewTask(
             		this.getActivity().getApplicationContext(),
                     new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
-                    new ServiceParser(new JPOSWeatherParser()));
+                    new ServiceForecastParser(new JPOSForecastParser()));
 
             task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());
         }
@@ -337,10 +337,10 @@ public class OverviewFragment extends ListFragment {
     	// Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
         private final CustomHTTPClient HTTPClient;
-        private final ServiceParser weatherService;
+        private final ServiceForecastParser weatherService;
 
         public OverviewTask(final Context context, final CustomHTTPClient HTTPClient,
-        		final ServiceParser weatherService) {
+        		final ServiceForecastParser weatherService) {
         	this.localContext = context;
             this.HTTPClient = HTTPClient;
             this.weatherService = weatherService;

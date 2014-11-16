@@ -39,10 +39,10 @@ import name.gumartinm.weather.information.httpclient.CustomHTTPClient;
 import name.gumartinm.weather.information.model.DatabaseQueries;
 import name.gumartinm.weather.information.model.WeatherLocation;
 import name.gumartinm.weather.information.model.currentweather.Current;
-import name.gumartinm.weather.information.parser.JPOSWeatherParser;
+import name.gumartinm.weather.information.parser.JPOSCurrentParser;
 import name.gumartinm.weather.information.service.IconsList;
 import name.gumartinm.weather.information.service.PermanentStorage;
-import name.gumartinm.weather.information.service.ServiceParser;
+import name.gumartinm.weather.information.service.ServiceCurrentParser;
 import name.gumartinm.weather.information.widget.WidgetProvider;
 
 public class CurrentFragment extends Fragment {
@@ -169,7 +169,7 @@ public class CurrentFragment extends Fragment {
             final CurrentTask task = new CurrentTask(
             		this.getActivity().getApplicationContext(),
                     new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
-                    new ServiceParser(new JPOSWeatherParser()));
+                    new ServiceCurrentParser(new JPOSCurrentParser()));
 
             task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());
         }
@@ -464,10 +464,10 @@ public class CurrentFragment extends Fragment {
     	// Store the context passed to the AsyncTask when the system instantiates it.
         private final Context localContext;
         final CustomHTTPClient HTTPClient;
-        final ServiceParser weatherService;
+        final ServiceCurrentParser weatherService;
 
         public CurrentTask(final Context context, final CustomHTTPClient HTTPClient,
-        		final ServiceParser weatherService) {
+        		final ServiceCurrentParser weatherService) {
         	this.localContext = context;
             this.HTTPClient = HTTPClient;
             this.weatherService = weatherService;

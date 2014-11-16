@@ -32,9 +32,9 @@ import name.gumartinm.weather.information.httpclient.CustomHTTPClient;
 import name.gumartinm.weather.information.model.DatabaseQueries;
 import name.gumartinm.weather.information.model.WeatherLocation;
 import name.gumartinm.weather.information.model.currentweather.Current;
-import name.gumartinm.weather.information.parser.JPOSWeatherParser;
+import name.gumartinm.weather.information.parser.JPOSCurrentParser;
 import name.gumartinm.weather.information.service.IconsList;
-import name.gumartinm.weather.information.service.ServiceParser;
+import name.gumartinm.weather.information.service.ServiceCurrentParser;
 
 
 public class NotificationIntentService extends IntentService {
@@ -51,7 +51,7 @@ public class NotificationIntentService extends IntentService {
         final WeatherLocation weatherLocation = query.queryDataBase();
         
         if (weatherLocation != null) {
-            final ServiceParser weatherService = new ServiceParser(new JPOSWeatherParser());
+            final ServiceCurrentParser weatherService = new ServiceCurrentParser(new JPOSCurrentParser());
             final CustomHTTPClient HTTPClient = new CustomHTTPClient(
                     AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent"));
 
@@ -81,7 +81,7 @@ public class NotificationIntentService extends IntentService {
     }
 
     private Current doInBackgroundThrowable(final WeatherLocation weatherLocation,
-            final CustomHTTPClient HTTPClient, final ServiceParser weatherService)
+            final CustomHTTPClient HTTPClient, final ServiceCurrentParser weatherService)
                     throws ClientProtocolException, MalformedURLException, URISyntaxException,
                     JsonParseException, IOException {
 
