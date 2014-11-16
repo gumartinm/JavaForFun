@@ -117,7 +117,7 @@ public class MainTabsActivity extends FragmentActivity {
         if (itemId == R.id.weather_menu_settings) {
             intent = new Intent("name.gumartinm.weather.information.WEATHERINFO")
             .setComponent(new ComponentName("name.gumartinm.weather.information",
-                    "name.gumartinm.weather.information.activity.WeatherInformationPreferencesActivity"));
+                    "name.gumartinm.weather.information.activity.PreferencesActivity"));
             this.startActivity(intent);
             return true;
         } else if (itemId == R.id.weather_menu_map) {
@@ -167,16 +167,16 @@ public class MainTabsActivity extends FragmentActivity {
 
         // 2. Update forecast tab text.
         final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(this);
+                .getDefaultSharedPreferences(this.getApplicationContext());
         final String keyPreference = this.getString(R.string.weather_preferences_day_forecast_key);
         final String value = sharedPreferences.getString(keyPreference, "");
         String humanValue = "";
         if (value.equals("5")) {
-            humanValue = "5 DAY FORECAST";
+            humanValue = this.getString(R.string.text_tab_five_days_forecast);
         } else if (value.equals("10")) {
-            humanValue = "10 DAY FORECAST";
+            humanValue = this.getString(R.string.text_tab_ten_days_forecast);
         } else if (value.equals("14")) {
-            humanValue = "14 DAY FORECAST";
+            humanValue = this.getString(R.string.text_tab_fourteen_days_forecast);
         }
         actionBar.getTabAt(1).setText(humanValue);
     }
