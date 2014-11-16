@@ -18,7 +18,7 @@ package name.gumartinm.weather.information.model.currentweather;
 import java.io.Serializable;
 
 public class Snow implements Serializable {
-    private static final long serialVersionUID = 6769716772818311879L;
+    private static final long serialVersionUID = 1504151864003412278L;
     private Number three;
 
     public Number get3h() {

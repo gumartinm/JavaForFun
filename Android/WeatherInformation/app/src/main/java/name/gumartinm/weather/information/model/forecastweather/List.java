@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 
 public class List implements Serializable {
-    private static final long serialVersionUID = 838468273188666785L;
+    private static final long serialVersionUID = -1322511710940950980L;
     private Number clouds;
     private Number deg;
     private Number dt;

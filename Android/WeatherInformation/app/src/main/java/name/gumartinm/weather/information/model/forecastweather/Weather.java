@@ -18,7 +18,7 @@ package name.gumartinm.weather.information.model.forecastweather;
 import java.io.Serializable;
 
 public class Weather implements Serializable {
-    private static final long serialVersionUID = -5066357704517363241L;
+    private static final long serialVersionUID = 4555025203754545425L;
     private String description;
     private String icon;
     private Number id;

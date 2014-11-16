@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 
 public class Sys implements Serializable {
-    private static final long serialVersionUID = 5333083785731053139L;
+    private static final long serialVersionUID = 6081540634738547852L;
     private String country;
     private Number message;
     private Number sunrise;

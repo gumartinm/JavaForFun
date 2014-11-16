@@ -20,8 +20,8 @@ import java.util.Date;
 
 
 public class WeatherLocation implements Serializable {
-	private static final long serialVersionUID = -1469725417020355109L;
-	private int id;
+    private static final long serialVersionUID = -3781096380869053212L;
+    private int id;
 	private String city;
     private String country;
     private boolean isSelected;

@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Forecast implements Serializable {
-    private static final long serialVersionUID = 5095443678019686190L;
+    private static final long serialVersionUID = -3401781053518082046L;
     private City city;
     private Number cnt;
     private Number cod;

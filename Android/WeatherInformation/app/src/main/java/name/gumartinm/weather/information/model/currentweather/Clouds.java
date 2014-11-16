@@ -18,7 +18,7 @@ package name.gumartinm.weather.information.model.currentweather;
 import java.io.Serializable;
 
 public class Clouds implements Serializable {
-    private static final long serialVersionUID = 3034435739326030899L;
+    private static final long serialVersionUID = 8069387745331450810L;
     private Number all;
 
     public Number getAll(){

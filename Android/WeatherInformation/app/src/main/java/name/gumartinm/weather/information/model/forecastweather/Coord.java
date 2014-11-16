@@ -18,7 +18,7 @@ package name.gumartinm.weather.information.model.forecastweather;
 import java.io.Serializable;
 
 public class Coord implements Serializable {
-    private static final long serialVersionUID = 8069257976701986700L;
+    private static final long serialVersionUID = -3182026816076893381L;
     private Number lat;
     private Number lon;
 

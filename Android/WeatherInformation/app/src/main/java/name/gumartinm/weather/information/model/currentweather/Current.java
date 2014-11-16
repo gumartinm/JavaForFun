@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Current implements Serializable {
-    private static final long serialVersionUID = -730690341739860818L;
+    private static final long serialVersionUID = 7641628094751383380L;
     private String base;
     private Clouds clouds;
     private Number cod;

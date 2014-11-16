@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 
 public class City implements Serializable {
-    private static final long serialVersionUID = 3079687975077030704L;
+    private static final long serialVersionUID = 3208415171959638923L;
     private Coord coord;
     private String country;
     private Number id;
