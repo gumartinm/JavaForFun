@@ -68,7 +68,7 @@ public class NotificationIntentService extends IntentService {
         if (weatherLocation != null) {
             final ServiceCurrentParser weatherService = new ServiceCurrentParser(new JPOSCurrentParser());
             final CustomHTTPClient HTTPClient = new CustomHTTPClient(
-                    AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent"));
+                    AndroidHttpClient.newInstance(this.getString(R.string.http_client_agent)));
 
             Current current = null;
             try {

@@ -183,7 +183,7 @@ public class CurrentFragment extends Fragment {
         	this.getActivity().findViewById(R.id.weather_current_error_message).setVisibility(View.GONE);
             final CurrentTask task = new CurrentTask(
             		this.getActivity().getApplicationContext(),
-                    new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
+                    new CustomHTTPClient(AndroidHttpClient.newInstance(this.getString(R.string.http_client_agent))),
                     new ServiceCurrentParser(new JPOSCurrentParser()));
 
             task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());

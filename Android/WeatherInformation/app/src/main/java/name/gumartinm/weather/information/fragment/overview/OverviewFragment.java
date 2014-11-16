@@ -161,7 +161,7 @@ public class OverviewFragment extends ListFragment {
             this.setListShownNoAnimation(false);
             final OverviewTask task = new OverviewTask(
             		this.getActivity().getApplicationContext(),
-                    new CustomHTTPClient(AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent")),
+                    new CustomHTTPClient(AndroidHttpClient.newInstance(this.getString(R.string.http_client_agent))),
                     new ServiceForecastParser(new JPOSForecastParser()));
 
             task.execute(weatherLocation.getLatitude(), weatherLocation.getLongitude());

@@ -24,7 +24,6 @@ import name.gumartinm.weather.information.parser.JPOSCurrentParser;
 import name.gumartinm.weather.information.service.IconsList;
 import name.gumartinm.weather.information.service.PermanentStorage;
 import name.gumartinm.weather.information.service.ServiceCurrentParser;
-import name.gumartinm.weather.information.widget.WidgetConfigure;
 
 import org.apache.http.client.ClientProtocolException;
 
@@ -109,7 +108,7 @@ public class WidgetIntentService extends IntentService {
 
 		final ServiceCurrentParser weatherService = new ServiceCurrentParser(new JPOSCurrentParser());
 		final CustomHTTPClient HTTPClient = new CustomHTTPClient(
-				AndroidHttpClient.newInstance("Android 4.3 WeatherInformation Agent"));
+				AndroidHttpClient.newInstance(this.getString(R.string.http_client_agent)));
 
 		try {
 			return this.getRemoteCurrentThrowable(weatherLocation, HTTPClient, weatherService);
