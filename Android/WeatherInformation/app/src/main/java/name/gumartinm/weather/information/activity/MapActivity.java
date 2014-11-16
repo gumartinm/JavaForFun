@@ -56,7 +56,6 @@ public class MapActivity extends FragmentActivity implements
        
     // Google Play Services Map
     private GoogleMap mMap;
-    // TODO: read and store from different threads? Hopefully always from UI thread.
     private Marker mMarker;
     
     private LocationManager mLocationManager;
@@ -396,7 +395,6 @@ public class MapActivity extends FragmentActivity implements
 	@Override
 	public void onLocationChanged(final Location location) {
 		// It was called from onClickGetLocation (UI thread) This method will run in the same thread (the UI thread)
-		// so, I do no think there should be any problem.
 
 		// Display the current location in the UI
 		// TODO: May location not be null?
