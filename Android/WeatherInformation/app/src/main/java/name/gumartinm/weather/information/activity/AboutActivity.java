@@ -54,7 +54,7 @@ public class AboutActivity extends Activity {
     }
 
     public void onClickRemoteData(final View view) {
-        final String url = this.getString(R.string.openweahtermap_url);
+        final String url = this.getString(R.string.openweathermap_url);
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 
