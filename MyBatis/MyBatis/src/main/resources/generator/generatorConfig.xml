@@ -59,12 +59,12 @@
         <table schema="mybatis_example" tableName="ad" domainObjectName="Ad">
             <property name="useActualColumnNames" value="false" />
             <property name="ignoreQualifiersAtRuntime" value="true" />
-            <generatedKey column="id" sqlStatement="MySql" identity="false" type="pre" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
         </table>
         <table schema="mybatis_example" tableName="ad_description" domainObjectName="AdDescription">
             <property name="useActualColumnNames" value="false" />
             <property name="ignoreQualifiersAtRuntime" value="true" />
-            <generatedKey column="id" sqlStatement="MySql" identity="false" type="pre" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
         </table>
     </context>
 </generatorConfiguration>

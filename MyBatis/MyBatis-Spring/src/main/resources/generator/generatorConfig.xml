@@ -63,7 +63,7 @@
             <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
             -->
             <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
-            <generatedKey column="id" sqlStatement="MySql" identity="false" type="pre" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
         </table>
         <table schema="mybatis_example" tableName="ad_description" domainObjectName="AdDescription">
             <property name="useActualColumnNames" value="false" />
@@ -72,7 +72,7 @@
             <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
             -->
             <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
-            <generatedKey column="id" sqlStatement="MySql" identity="false" type="pre" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
         </table>
     </context>
 </generatorConfiguration>
