@@ -110,5 +110,9 @@
     <bean id="exampleService" class="de.example.mybatis.spring.service.ExampleService">
         <property name="adMapper" ref="adMapper" />
     </bean>
+
+    <bean id="exampleCustomService" class="de.example.mybatis.spring.service.ExampleCustomService">
+        <property name="adCustomMapper" ref="adCustomMapper" />
+    </bean>
     
 </beans>
