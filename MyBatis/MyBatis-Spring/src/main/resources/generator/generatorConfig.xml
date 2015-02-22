@@ -21,6 +21,16 @@
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin">
         </plugin>
 
+        <!-- Not very useful because you can not rely on its results (equals/hashcode depend on bussines rules)
+        <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin">
+        </plugin>
+
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin">
+            <property name="suppressJavaInterface" value="true"/>
+        </plugin>
+        -->
+
+
         <commentGenerator>
             <property name="suppressAllComments" value="false" />
             <property name="suppressDate" value="false" />
@@ -37,7 +47,7 @@
         </jdbcConnection>
 
         <javaTypeResolver>
-            <property name="forceBigDecimals" value="false" />
+            <property name="forceBigDecimals" value="true" />
         </javaTypeResolver>
 
         <javaModelGenerator targetPackage="de.example.mybatis.model"  targetProject="MAVEN">
@@ -56,22 +66,38 @@
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 
+        <!--
+            There is no need of declaring every table in data base.
+
         <table schema="mybatis_example" tableName="ad" domainObjectName="Ad">
             <property name="useActualColumnNames" value="false" />
             <property name="ignoreQualifiersAtRuntime" value="true" />
-            <!--
             <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
-            -->
             <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
             <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
         </table>
         <table schema="mybatis_example" tableName="ad_description" domainObjectName="AdDescription">
             <property name="useActualColumnNames" value="false" />
             <property name="ignoreQualifiersAtRuntime" value="true" />
-            <!--
             <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
-            -->
             <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
+        </table>
+        -->
+
+        <table tableName="%"
+            enableSelectByExample="true"
+            enableDeleteByExample="true"
+            enableCountByExample="true"
+            enableUpdateByExample="true"
+            selectByExampleQueryId="true">
+           <property name="useActualColumnNames" value="false" />
+           <property name="ignoreQualifiersAtRuntime" value="true" />
+           <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
+           <!--
+            <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
+           -->
+           <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
             <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
         </table>
     </context>

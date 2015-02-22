@@ -111,9 +111,12 @@
         <property name="adMapper" ref="adMapper" />
     </bean>
 
+    <bean id="exampleCustomService" class="de.example.mybatis.spring.service.ExampleCustomService">
+        <property name="adCustomMapper" ref="adCustomMapper" />
+    </bean>
+
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
         <property name="dataSource" ref="dataSource" />
         <property name="changeLog" value="classpath:/liquibase/liquibaseChangeLogs.xml" />
     </bean>
-    
 </beans>

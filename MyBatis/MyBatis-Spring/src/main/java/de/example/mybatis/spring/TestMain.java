@@ -2,6 +2,7 @@ package de.example.mybatis.spring;
 
 import org.apache.log4j.Logger;
 
+import de.example.mybatis.spring.service.ExampleCustomService;
 import de.example.mybatis.spring.service.ExampleService;
 
 public class TestMain {
@@ -17,6 +18,12 @@ public class TestMain {
         exampleService.insertNewAd();
 
         exampleService.getAdsByCriteria();
+
+
+        final ExampleCustomService exampleCustomService = (ExampleCustomService) SpringContextLocator
+                .getInstance().getBean("exampleCustomService");
+
+        exampleCustomService.getAds();
     }
 
 }

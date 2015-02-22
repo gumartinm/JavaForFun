@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="de.example.mybatis.repository.mapper.AdCustomMapper" >
+  <select id="selectAds" resultType="de.example.mybatis.model.Ad" flushCache="false" useCache="true" timeout="10000" statementType="PREPARED">
+  		select * FROM ad
+  </select>
+</mapper>
