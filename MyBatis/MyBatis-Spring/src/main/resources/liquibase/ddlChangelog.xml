@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+    <changeSet author="gustavo (generated)" id="1424631556445-1">
+        <createTable tableName="ad">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="company_id" type="BIGINT"/>
+            <column name="company_categ_id" type="BIGINT"/>
+            <column name="ad_gps" type="BLOB"/>
+            <column name="ad_mobile_image" type="VARCHAR(255)"/>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="0000-00-00 00:00:00" name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!-- 
+        	 You do not need this if you created your schema with the right charset and collation (because
+             it is inherited from schema to tables and rows) anyhow this is just an example of what you can do.
+ 		-->
+        <modifySql dbms="mysql">
+            <append value="ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1424631556445-2">
+        <createTable tableName="ad_description">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="laguage_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ad_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ad_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ad_description" type="LONGTEXT"/>
+            <column name="ad_mobile_text" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ad_link" type="VARCHAR(3000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!-- 
+        	 You do not need this if you created your schema with the right charset and collation (because
+             it is inherited from schema to tables and rows) anyhow this is just an example of what you can do.
+ 		-->
+        <modifySql dbms="mysql">
+            <append value="ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1424631556445-3">
+        <addUniqueConstraint columnNames="id" constraintName="id" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ad"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1424631556445-4">
+        <addForeignKeyConstraint baseColumnNames="ad_id" baseTableName="ad_description" constraintName="ad_description_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ad"/>
+    </changeSet>
+</databaseChangeLog>

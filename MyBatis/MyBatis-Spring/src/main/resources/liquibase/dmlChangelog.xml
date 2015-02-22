@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet author="gustavo (generated)" id="1424628789069-1">
+        <insert tableName="ad">
+            <column name="id" valueNumeric="1"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="bild.jpg"/>
+            <column name="created_at" valueDate="2014-12-17 23:27:36.0"/>
+            <column name="updated_at" valueDate="2014-12-17 23:27:36.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="2"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="bild.jpg"/>
+            <column name="created_at" valueDate="2014-12-17 23:29:10.0"/>
+            <column name="updated_at" valueDate="2014-12-17 23:29:10.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="3"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 17:13:46.0"/>
+            <column name="updated_at" valueDate="2014-12-27 17:13:47.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="4"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 17:14:39.0"/>
+            <column name="updated_at" valueDate="2014-12-27 17:15:27.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="5"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 23:38:47.0"/>
+            <column name="updated_at" valueDate="2014-12-27 23:38:47.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="6"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 23:39:53.0"/>
+            <column name="updated_at" valueDate="2014-12-27 23:39:53.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="7"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 23:39:54.0"/>
+            <column name="updated_at" valueDate="2014-12-27 23:39:54.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="8"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 23:40:21.0"/>
+            <column name="updated_at" valueDate="2014-12-27 23:40:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="9"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 23:40:21.0"/>
+            <column name="updated_at" valueDate="2014-12-27 23:40:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="10"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 23:42:34.0"/>
+            <column name="updated_at" valueDate="2014-12-27 23:42:34.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="11"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-27 23:42:34.0"/>
+            <column name="updated_at" valueDate="2014-12-27 23:42:34.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="12"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:07:34.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:07:34.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="13"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:07:35.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:07:35.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="14"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:10:20.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:10:20.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="15"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:10:21.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:10:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="16"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:10:21.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:10:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="17"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:10:21.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:10:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="18"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:10:21.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:10:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="19"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:10:21.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:10:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="20"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:10:21.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:10:21.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="21"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:19:06.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:19:06.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="23"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:20:08.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:20:08.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="25"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:31:11.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:31:11.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="26"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:31:12.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:31:12.0"/>
+        </insert>
+        <insert tableName="ad">
+            <column name="id" valueNumeric="27"/>
+            <column name="company_id" valueNumeric="2"/>
+            <column name="company_categ_id" valueNumeric="200"/>
+            <column name="ad_gps"/>
+            <column name="ad_mobile_image" value="mobileImage.jpg"/>
+            <column name="created_at" valueDate="2014-12-28 00:31:12.0"/>
+            <column name="updated_at" valueDate="2014-12-28 00:31:12.0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

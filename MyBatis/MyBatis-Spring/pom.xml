@@ -10,6 +10,7 @@
   <properties>
     <mybatis.generator.outputdirectory>${project.build.directory}/generated-sources/mybatis-generator/</mybatis.generator.outputdirectory>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <liquibase.version>3.3.0</liquibase.version>
   </properties>
   <dependencies>
     <dependency>
@@ -56,6 +57,11 @@
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
       <version>2.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>${liquibase.version}</version>
     </dependency>
   </dependencies>
   <build>
