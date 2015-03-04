@@ -12,18 +12,20 @@ public class TestMain {
 
         logger.info("Starting application");
 
-        final ExampleService exampleService = (ExampleService) SpringContextLocator
-                .getInstance().getBean("exampleService");
-
-        exampleService.insertNewAd();
-
-        exampleService.getAdsByCriteria();
+//        final ExampleService exampleService = (ExampleService) SpringContextLocator
+//                .getInstance().getBean("exampleService");
+//
+//        exampleService.insertNewAd();
+//
+//        exampleService.getAdsByCriteria();
 
 
         final ExampleCustomService exampleCustomService = (ExampleCustomService) SpringContextLocator
                 .getInstance().getBean("exampleCustomService");
 
         exampleCustomService.getAds();
+        
+        exampleCustomService.updateAds();
     }
 
 }

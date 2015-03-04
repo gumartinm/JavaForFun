@@ -1,6 +1,8 @@
 package de.example.mybatis.spring.service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -39,5 +41,27 @@ public class ExampleCustomService {
             logger.info("Ad updatedAt: " + ad.getUpdatedAt());
             logger.info("\n");
         }
+    }
+    
+    public void updateAds() {
+    	logger.info("ExampleCustomService: updateAds");
+    	
+    	final List<Ad> ads = this.adCustomMapper.selectAdsList();
+    	final List<Ad> updateAds = new ArrayList<Ad>();
+    	
+    	long companyId = 10;
+    	long companyCategId = 20;
+    	String mobileImage = "newimage.jpg";
+        for (final Ad ad : ads) {
+        	ad.setCompanyCategId(companyCategId);
+        	ad.setCompanyId(companyId);
+        	ad.setAdMobileImage(mobileImage);
+        	
+        	updateAds.add(ad);
+        	companyId++;
+        	companyCategId++;
+        }
+        
+        this.adCustomMapper.updateAdsBatch(updateAds);
     }
 }

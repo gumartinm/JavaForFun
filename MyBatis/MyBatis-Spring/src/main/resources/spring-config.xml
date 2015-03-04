@@ -42,7 +42,7 @@
         The JVM tries to find out if IPV6 is available by means of opening a random
         AF_INET6 POSIX socket.
          -->
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis_example?autoReconnect=true&amp;characterEncoding=UTF-8"/>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis_example?allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8"/>
         <property name="initialPoolSize" value="5"/>
         <property name="maxPoolSize" value="20"/>
         <property name="minPoolSize" value="10"/>
