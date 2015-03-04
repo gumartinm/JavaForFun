@@ -20,6 +20,30 @@
   		</foreach>
   </update>
   
+    <update id="updateAdsBatchWithCase" parameterType="List">		
+    		UPDATE ad
+    			SET
+    			company_id = CASE id
+    				<foreach collection="list" item="ad">
+    				WHEN #{ad.id} THEN #{ad.companyId}    					
+    				</foreach>
+    			END,
+    			company_categ_id = CASE id
+    				<foreach collection="list" item="ad">
+    				WHEN #{ad.id} THEN #{ad.companyCategId}    					
+    				</foreach>
+    			END,
+    			ad_mobile_image = CASE id
+    				<foreach collection="list" item="ad">
+    				WHEN #{ad.id} THEN #{ad.adMobileImage}    					
+    				</foreach>
+    			END
+    		WHERE id IN (
+    		<foreach collection="list" item="ad" separator=",">
+    			#{ad.id}   					
+    		</foreach> )
+  </update>
+  
    <select id="selectAdsList" resultType="de.example.mybatis.model.Ad" flushCache="false" useCache="true" timeout="10000" statementType="PREPARED">
   		select * FROM ad
   </select>

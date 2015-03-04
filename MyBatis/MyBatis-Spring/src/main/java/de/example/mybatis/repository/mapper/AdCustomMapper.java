@@ -14,4 +14,6 @@ public interface AdCustomMapper extends MyBatisScanFilter {
 	List<Ad> selectAdsList();
 	
 	void updateAdsBatch(List<Ad> ads);
+	
+	void updateAdsBatchWithCase(List<Ad> ads);
 }

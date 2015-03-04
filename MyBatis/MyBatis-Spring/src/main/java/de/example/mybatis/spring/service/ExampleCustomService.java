@@ -49,7 +49,7 @@ public class ExampleCustomService {
     	final List<Ad> ads = this.adCustomMapper.selectAdsList();
     	final List<Ad> updateAds = new ArrayList<Ad>();
     	
-    	long companyId = 10;
+    	long companyId = 66;
     	long companyCategId = 20;
     	String mobileImage = "newimage.jpg";
         for (final Ad ad : ads) {
@@ -62,6 +62,7 @@ public class ExampleCustomService {
         	companyCategId++;
         }
         
+        this.adCustomMapper.updateAdsBatchWithCase(updateAds);
         this.adCustomMapper.updateAdsBatch(updateAds);
     }
 }
