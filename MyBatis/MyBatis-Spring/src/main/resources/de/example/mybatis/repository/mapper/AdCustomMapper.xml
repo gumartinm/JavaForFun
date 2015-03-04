@@ -20,7 +20,8 @@
   		</foreach>
   </update>
   
-    <update id="updateAdsBatchWithCase" parameterType="List">		
+    <update id="updateAdsBatchWithCase" parameterType="List">
+    	<!-- The same as updateAdsBatch but it doesn't require allowMultiQueries=true -->
     		UPDATE ad
     			SET
     			company_id = CASE id
