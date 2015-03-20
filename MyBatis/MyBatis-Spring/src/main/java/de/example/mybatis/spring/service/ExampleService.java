@@ -64,5 +64,7 @@ public class ExampleService {
         adTest.setCompanyId(2L);
         adTest.setUpdatedAt(new Date());
         this.adMapper.insert(adTest);
+        
+        this.adMapper.insert(adTest);
     }
 }

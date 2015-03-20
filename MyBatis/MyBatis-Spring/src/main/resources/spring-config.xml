@@ -25,7 +25,8 @@
     See http://mybatis.org/schema/mybatis-spring.xsd for further information.
     -->
     <mybatis:scan base-package="de.example.mybatis.repository.mapper"
-                  marker-interface="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
+                  marker-interface="de.example.mybatis.mapper.filter.MyBatisScanFilter"
+                  template-ref="sqlSimpleSession" /> <!-- Required because I am using SIMPLE and BATCH MyBatis Executors -->
 
     <!-- enable the configuration of transactional behavior based on annotations -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -57,10 +58,21 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
  
+ 	<!-- It will be shared by SIMPLE and BATCH operations. -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
         <property name="configLocation" value="classpath:config/mybatis-config.xml" />
     </bean>
+    
+    <!-- We need to declare in this way the SqlSessionTemplate bean because otherwise 
+         mybatis:scan will retrieve the first instantiated Spring bean of this type.
+         Because we want to create a BATCH SqlSessionTemplate we also have to create
+         a SIMPLE SqlSessionTemplate (it is SIMPLE because if we do not declare the Executor type
+         SqlSessionFactoryBean will retrieve its value from mybatis-config.xml and in that file
+         I am using defaultExecutorType=SIMPLE)-->
+    <bean id="sqlSimpleSession" class="org.mybatis.spring.SqlSessionTemplate">
+    	<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
     
     <!-- 
     The <mybatis:scan/> XML element will search for mappers in a very similar way than the
@@ -72,7 +84,10 @@
 
     Notice that there is no need to specify a SqlSessionFactory or SqlSessionTemplate as an
     attribute in the <mybatis:scan/> element because it will create MapperFactoryBeans that can
-    be autowired. But if you are using more than one DataSource autowire may not work for you.
+    be autowired. But if you are using more than one DataSource autowire may not work for you
+    (in my case I am using SIMPLE and BATCH operations, and autowire did not work for me because
+    once you declare SqlSessionTemplate bean for BATCH operations you have also to declare
+    the SqlSessionTemplate for SIMPLE operations)
     In this case you can use the factory-ref or template-ref attributes to set the right bean
     name to use.
 
@@ -119,4 +134,35 @@
         <property name="dataSource" ref="dataSource" />
         <property name="changeLog" value="classpath:/liquibase/liquibaseChangeLogs.xml" />
     </bean>
+    
+    
+    <!-- 
+    MyBatis batch implementation
+    IT DOESN'T ALLOW YOU TO USE DIFFERENT TYPE OF EXECUTORS IN THE SAME TRANSACTION!!! Work around to this
+    limitation in BatchAndSimpleSameTrx.java class (using JDBC)
+    	 
+   	MyBatis batch mappers will not be scanned because they have different base package and different interface.
+   	Session will be shared by batched and simple MyBatis mappers (so they can share the same transaction)
+   	-->
+    
+    <bean id="sqlBatchSession" class="org.mybatis.spring.SqlSessionTemplate">
+    	<constructor-arg index="0" ref="sqlSessionFactory" />
+    	<constructor-arg index="1" value="BATCH" />
+	</bean>
+    
+    <bean id="adSpringBatchMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="de.example.mybatis.batch.repository.mapper.AdSpringBatchMapper" />
+        <property name="sqlSessionTemplate" ref="sqlBatchSession" />
+    </bean>
+    
+    <bean id="exampleBatchService" class="de.example.mybatis.spring.service.ExampleBatchService">
+        <property name="adSpringBatchMapper" ref="adSpringBatchMapper" />
+        <property name="adMapper" ref="adMapper" />
+    </bean>
+    
+    <bean id="batchAndSimpleSameTrx" class="de.example.mybatis.spring.service.BatchAndSimpleSameTrx">
+        <property name="adMapper" ref="adMapper" />
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+        
 </beans>

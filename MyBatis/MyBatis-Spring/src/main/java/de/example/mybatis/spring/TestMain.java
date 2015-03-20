@@ -1,7 +1,12 @@
 package de.example.mybatis.spring;
 
-import org.apache.log4j.Logger;
+import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+
+import de.example.mybatis.spring.service.BatchAndSimpleSameTrx;
+import de.example.mybatis.spring.service.ExampleBatchService;
 import de.example.mybatis.spring.service.ExampleCustomService;
 import de.example.mybatis.spring.service.ExampleService;
 
@@ -18,14 +23,35 @@ public class TestMain {
 //        exampleService.insertNewAd();
 //
 //        exampleService.getAdsByCriteria();
-
-
-        final ExampleCustomService exampleCustomService = (ExampleCustomService) SpringContextLocator
-                .getInstance().getBean("exampleCustomService");
-
-        exampleCustomService.getAds();
+//
+//
+//        final ExampleCustomService exampleCustomService = (ExampleCustomService) SpringContextLocator
+//                .getInstance().getBean("exampleCustomService");
+//
+//        exampleCustomService.getAds();
+//        
+//        exampleCustomService.updateAds();
         
-        exampleCustomService.updateAds();
+        
+//        final ExampleBatchService exampleBatchService = (ExampleBatchService) SpringContextLocator
+//                .getInstance().getBean("exampleBatchService");
+//        
+//        exampleBatchService.insertNewAd();
+//
+//        exampleBatchService.insertBatchNewAd();
+        
+        
+        final BatchAndSimpleSameTrx batchAndSimpleSameTrx = (BatchAndSimpleSameTrx) SpringContextLocator
+                .getInstance().getBean("batchAndSimpleSameTrx");
+        
+        try {
+	        batchAndSimpleSameTrx.insertNewAd();
+        } catch (CannotGetJdbcConnectionException e) {
+        	logger.error("Error exception: ", e);
+        } catch (SQLException e) {
+        	logger.error("Error exception: ", e);
+        }
+  
     }
 
 }

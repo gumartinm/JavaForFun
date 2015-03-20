@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="de.example.mybatis.batch.repository.mapper.AdSpringBatchMapper" >
+  
+    <insert id="insert" parameterType="de.example.mybatis.model.Ad" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ad (company_id, company_categ_id, ad_mobile_image, 
+      created_at, updated_at, ad_gps
+      )
+    values (#{companyId,jdbcType=BIGINT}, #{companyCategId,jdbcType=BIGINT}, #{adMobileImage,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, #{adGps,jdbcType=LONGVARBINARY}
+      )
+  </insert>
+
+</mapper>
