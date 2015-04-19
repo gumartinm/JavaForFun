@@ -1,7 +1,11 @@
 package de.example.symfony.validator;
 
 
-public interface PostValidatorBase {
+public abstract class PostValidatorBase {
 
-	void doPostValidate(String value);
+	public void doPostValidate(String value) {
+		this.postValidate(value);
+	}
+	
+	protected abstract void postValidate(String value);
 }

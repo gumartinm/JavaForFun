@@ -14,13 +14,11 @@ public abstract class ValidatorService {
 	
 	
 	public ValidatorService(Map<String, String> params) {
-	    this.params = params;
-	    
-	    this.configureValidators();
-	    this.configurePostValidators();
+	    this.params = params; 
     }
 
 	public void doValidate() {
+		this.configureValidators();
 		
 		for (Map.Entry<String, ValidatorBase> validator : validators.entrySet()) {
 			validator.getValue().doValidate(params.get(validator.getKey()));
@@ -29,6 +27,7 @@ public abstract class ValidatorService {
 	}
 	
 	public void doPostValidate() {
+		this.configurePostValidators();
 		
 		for (Map.Entry<String, PostValidatorBase> postValidator : postValidators.entrySet()) {
 			postValidator.getValue().doPostValidate(params.get(postValidator.getKey()));

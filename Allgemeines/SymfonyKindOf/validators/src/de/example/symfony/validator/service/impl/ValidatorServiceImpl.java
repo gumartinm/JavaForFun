@@ -2,18 +2,19 @@ package de.example.symfony.validator.service.impl;
 
 import java.util.Map;
 
+import de.example.symfony.validator.PostValidatorBaseCriteria;
 import de.example.symfony.validator.ValidatorNumber;
 import de.example.symfony.validator.ValidatorString;
 import de.example.symfony.validator.service.ValidatorService;
 
 
 public class ValidatorServiceImpl extends ValidatorService {
-	private static final String FROMID = "fromId";
-	private static final String TOID = "toId";
-	private static final String DESCRIPTION = "description";
+	public static final String FROMID = "fromId";
+	public static final String TOID = "toId";
+	public static final String DESCRIPTION = "description";
 	
-	private String fromId;
-	private String toId;
+	private Long fromId;
+	private Long toId;
 	private String description;
 
 	public ValidatorServiceImpl(Map<String, String> params) {
@@ -29,26 +30,36 @@ public class ValidatorServiceImpl extends ValidatorService {
 
 	@Override
     protected void configurePostValidators() {
-		
-		postValidators.put(FROMID, value ->
-		{
-			fromId = value;
-	        System.out.println("fromId: " + fromId); 
+	
+		postValidators.put(FROMID, new PostValidatorBaseCriteria() {
+
+			@Override
+            protected void postValidate(String value) {
+				fromId = Long.valueOf(value);
+		        System.out.println("fromId: " + fromId); 
+            }
+			
 		});
 		
-		postValidators.put(TOID, value ->
-		{
-			toId = value;
-	        System.out.println("toId: " + toId);
+		postValidators.put(TOID, new PostValidatorBaseCriteria() {
 
+			@Override
+            protected void postValidate(String value) {
+				toId = Long.valueOf(value);
+		        System.out.println("toId: " + toId); 
+            }
+			
 		});
 		
-		postValidators.put(DESCRIPTION, value ->
-		{
-			description = value;
-	        System.out.println("description: " + description);
+		postValidators.put(DESCRIPTION, new PostValidatorBaseCriteria() {
 
-		});  
+			@Override
+            protected void postValidate(String value) {
+				description = value;
+		        System.out.println("description: " + description); 
+            }
+			
+		});
     }
 
 }

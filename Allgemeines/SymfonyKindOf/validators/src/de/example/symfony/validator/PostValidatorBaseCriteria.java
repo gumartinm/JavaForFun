@@ -1,45 +1,14 @@
 package de.example.symfony.validator;
 
 
-public abstract class ValidatorBase {	
-	private final boolean required;
-	private final String requiredRule;
-	private final String invalidRule;
-	
-	
-	public ValidatorBase(boolean required, String requiredRule, String invalidRule) {
-		this.required = required;
-		this.requiredRule = requiredRule;
-		this.invalidRule = invalidRule;
-	}
-	
-	public void doValidate(String value) {
-		if (isBlank(value)) {
-			if (this.isRequired()) {
-				// HTTP 422 unprocessable entity.
-		    	throw new RuntimeException(this.requiredRule);
-			}
-			
-			return;
+public abstract class PostValidatorBaseCriteria extends PostValidatorBase {
+
+	public void doPostValidate(String value) {
+		if (!isBlank(value)) {
+			this.postValidate(value);
 		}
-		
-		this.validate(value);
 	}
 	
-    public boolean isRequired() {
-    	return required;
-    }
-	
-    public String getInvalidRule() {
-    	return invalidRule;
-    }
-	
-    public String getRequiredRule() {
-    	return requiredRule;
-    }
-    
-    protected abstract void validate(String value);
-    
     /**
      * <p>Checks if a String is whitespace, empty ("") or null.</p>
      *
