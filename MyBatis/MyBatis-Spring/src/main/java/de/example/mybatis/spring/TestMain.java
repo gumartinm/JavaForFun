@@ -8,6 +8,7 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import de.example.mybatis.spring.service.BatchAndSimpleSameTrx;
 import de.example.mybatis.spring.service.ExampleBatchService;
 import de.example.mybatis.spring.service.ExampleCustomService;
+import de.example.mybatis.spring.service.ExampleInheritanceService;
 import de.example.mybatis.spring.service.ExampleService;
 
 public class TestMain {
@@ -41,17 +42,23 @@ public class TestMain {
 //        exampleBatchService.insertBatchNewAd();
         
         
-        final BatchAndSimpleSameTrx batchAndSimpleSameTrx = (BatchAndSimpleSameTrx) SpringContextLocator
-                .getInstance().getBean("batchAndSimpleSameTrx");
+//        final BatchAndSimpleSameTrx batchAndSimpleSameTrx = (BatchAndSimpleSameTrx) SpringContextLocator
+//                .getInstance().getBean("batchAndSimpleSameTrx");
+//        
+//        try {
+//	        batchAndSimpleSameTrx.insertNewAd();
+//        } catch (CannotGetJdbcConnectionException e) {
+//        	logger.error("Error exception: ", e);
+//        } catch (SQLException e) {
+//        	logger.error("Error exception: ", e);
+//        }
         
-        try {
-	        batchAndSimpleSameTrx.insertNewAd();
-        } catch (CannotGetJdbcConnectionException e) {
-        	logger.error("Error exception: ", e);
-        } catch (SQLException e) {
-        	logger.error("Error exception: ", e);
-        }
+        final ExampleInheritanceService exampleBatchService = (ExampleInheritanceService) SpringContextLocator
+        		.getInstance().getBean("exampleInheritanceService");
+       
+        exampleBatchService.selectAdsParent();
   
+        exampleBatchService.selectAdsChild();
     }
 
 }

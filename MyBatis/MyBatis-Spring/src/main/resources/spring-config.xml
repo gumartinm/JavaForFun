@@ -164,5 +164,15 @@
         <property name="adMapper" ref="adMapper" />
         <property name="dataSource" ref="dataSource" />
     </bean>
+    
+    
+    <!-- 
+    MyBatis mappers inheritance
+    -->
+    
+    <bean id="exampleInheritanceService" class="de.example.mybatis.spring.service.ExampleInheritanceService">
+        <property name="childMapper" ref="childMapper" />
+        <property name="parentMapper" ref="parentMapper" />
+    </bean>
         
 </beans>
