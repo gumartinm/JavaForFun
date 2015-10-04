@@ -1,0 +1,11 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^http://192.168.1.6/.*",
+  "name" : "apache-mod-cas",
+  "id" : 6969697,
+  "description" : "apache-mod-cas",
+  "usernameAttributeProvider" : {
+    "@class" : "org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "cn"
+  }
+}
