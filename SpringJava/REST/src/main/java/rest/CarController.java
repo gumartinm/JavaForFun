@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -68,4 +70,13 @@ public class CarController {
 
         return new Car(counter.incrementAndGet(), String.format(template, id));
     }
+    
+    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<Car> create() {
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.add("Location", "/api/cars/" + 1);
+    	
+        return new ResponseEntity<>(new Car(counter.incrementAndGet(), String.format(template, 1)), headers, HttpStatus.CREATED);
+    }
+
 }
