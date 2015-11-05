@@ -1,6 +1,5 @@
 package de.test.thread.executor.future;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,14 +11,15 @@ public class TimerSchedulerExample {
 	ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
 	public void test() {
-		ScheduledFuture<Integer> future = executor.schedule(new Callable<Integer>() {
-
-			@Override
-			public Integer call() throws Exception {
-				return 666;
-			}
-
-		}, 2000, TimeUnit.MILLISECONDS);
+		ScheduledFuture<Integer> future = executor.schedule(() -> 666, 2000, TimeUnit.MILLISECONDS);
+//		ScheduledFuture<Integer> future = executor.schedule(new Callable<Integer>() {
+//
+//			@Override
+//			public Integer call() throws Exception {
+//				return 666;
+//			}
+//
+//		}, 2000, TimeUnit.MILLISECONDS);
 
 		long delay;
 		while ((delay = future.getDelay(TimeUnit.MILLISECONDS)) > 0) {

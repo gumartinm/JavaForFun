@@ -1,6 +1,5 @@
 package de.test.thread.executor.future;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -11,14 +10,15 @@ public class FutureTaskExample {
 	
 	public Car test() {
 		Car carResult = null;
-		FutureTask<Car> task = new FutureTask<>(new Callable<Car>() {
-
-			@Override
-			public Car call() throws Exception {
-				return new Car(99);
-			}
-
-		});
+		FutureTask<Car> task = new FutureTask<>(() -> new Car(99));
+//		FutureTask<Car> task = new FutureTask<>(new Callable<Car>() {
+//
+//			@Override
+//			public Car call() throws Exception {
+//				return new Car(99);
+//			}
+//
+//		});
 
 		new Thread(task).start();
 
@@ -38,11 +38,14 @@ public class FutureTaskExample {
 	}
 
 	public static class Car {
-
-		final int id;
+		private final int id;
 
 		public Car(int id) {
 			this.id = id;
+		}
+		
+		public int getId() {
+			return id;
 		}
 	}
 
