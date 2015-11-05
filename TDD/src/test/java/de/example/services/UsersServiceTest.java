@@ -58,6 +58,12 @@ public class UsersServiceTest {
 		assertEquals(expectedUser, newUser);		
 	}
 	
+	@Test(expected=NullPointerException.class)
+	public void givenNoUserDataWhenCreateNewUserThenThrowNullPointerException() {
+		// Act
+		usersService.create(null);
+	}
+
 	@Test
 	public void givenNewUserDataWhenCreateNewUserThenCreateUserWithArgumentCaptor() {
 		// Arrange

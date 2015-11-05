@@ -1,5 +1,7 @@
 package de.example.services.impl;
 
+import java.util.Objects;
+
 import de.example.model.mapper.UsersMapper;
 import de.example.model.resource.UserResource;
 import de.example.services.UsersService;
@@ -20,6 +22,8 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
     public void create(final UserResource user) {
+		Objects.requireNonNull(user, "user");
+
 		this.spiedMethod(user);
 		
 		usersMapper.create(user); 
