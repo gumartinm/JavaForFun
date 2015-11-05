@@ -19,7 +19,6 @@ public class FileSafeWriterMain {
 	private static final File exampleFile = new File("/tmp/fileSafeWriterExample");
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		
 		final FileSafeWriter fileSafeWriter = new FileSafeWriter(new ExampleSafeWriter(9999));
 		fileSafeWriter.writeFile(exampleFile);
         
