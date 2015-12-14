@@ -1,16 +1,15 @@
 package rest;
 
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,7 +24,7 @@ public class CarController {
     private static final String template = "Car: %s";
     private final AtomicLong counter = new AtomicLong();
 
-    @RequestMapping(produces = { "application/json" }, method = RequestMethod.GET)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Car> cars() {
         final List<Car> cars = new ArrayList<>();
@@ -71,7 +70,8 @@ public class CarController {
         return new Car(counter.incrementAndGet(), String.format(template, id));
     }
     
-    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE,
+    		method = RequestMethod.POST)
     public ResponseEntity<Car> create() {
     	HttpHeaders headers = new HttpHeaders();
     	headers.add("Location", "/api/cars/" + 1);
