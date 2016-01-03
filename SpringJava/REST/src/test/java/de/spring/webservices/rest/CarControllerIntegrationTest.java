@@ -50,16 +50,16 @@ public class CarControllerIntegrationTest {
 		.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
 	}
 	
-//	@Test
-//	public void testWhenGetOneCarThenRetrieveJsonValue() throws Exception {
-//		mockMvc.perform(get("/api/cars/{id}", 1L)
-//				.accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
-//	
-//		.andExpect(status().isOk())
-//		.andExpect(jsonPath("id", any(Integer.class)))
-//		.andExpect(jsonPath("content", is("Car: 1")))
-//		.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
-//	}
+	@Test
+	public void testWhenGetOneCarThenRetrieveJsonValue() throws Exception {
+		mockMvc.perform(get("/api/cars/{id}", 1L)
+				.accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
+	
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("id", any(Integer.class)))
+		.andExpect(jsonPath("content", is("Car: 1")))
+		.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+	}
 	
 	@Test
 	public void testWhenCreateNewCarThenRetrieveJsonValue() throws Exception {
