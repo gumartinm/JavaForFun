@@ -68,5 +68,5 @@
 	<bean id="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
 
 	<mvc:default-servlet-handler />
-        
+	
 </beans>

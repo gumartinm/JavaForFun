@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+//import io.swagger.annotations.ApiOperation;
+//import io.swagger.annotations.ApiResponse;
+//import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping("/api/cars/")
 public class CarController {
@@ -28,6 +32,12 @@ public class CarController {
     
     private final AtomicLong counter = new AtomicLong();
 
+//  Do I want to release with Swagger dependencies?
+//    @ApiOperation(value = "getCars", nickname = "getAllCars", response = Car.class)
+//    @ApiResponses({
+//        @ApiResponse(code =  404, message ="Not found"),
+//        @ApiResponse(code =  400, message ="Invalid input")
+//    })
     @RequestMapping(produces = { MediaType.APPLICATION_JSON_UTF8_VALUE }, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Car> cars() {
@@ -39,6 +49,12 @@ public class CarController {
         return cars;
     }
 
+//  Do I want to release with Swagger dependencies?
+//  @ApiOperation(value = "getCar", nickname = "getsOneCar", response = Car.class)
+//  @ApiResponses({
+//      @ApiResponse(code =  404, message ="Not found"),
+//      @ApiResponse(code =  400, message ="Invalid input")
+//  })
     @RequestMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Car car(@RequestHeader(value = "MY_HEADER", required = false) String specialHeader,
@@ -74,6 +90,12 @@ public class CarController {
         return new Car(counter.incrementAndGet(), String.format(TEMPLATE, id));
     }
     
+//  Do I want to release with Swagger dependencies?
+//  @ApiOperation(value = "postCat", nickname = "createsNewCar", response = Car.class)
+//  @ApiResponses({
+//      @ApiResponse(code =  404, message ="Not found"),
+//      @ApiResponse(code =  400, message ="Invalid input")
+//  })
     @RequestMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
     		produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
     public ResponseEntity<Car> create(@RequestBody Car car) {
