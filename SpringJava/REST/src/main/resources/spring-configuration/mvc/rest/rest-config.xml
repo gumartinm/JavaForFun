@@ -9,6 +9,15 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
    
+   	<!--
+   		I am declaring my beans without the automatic annotation. :/
+   		Better because we are saving memory but it requires more configuration.
+   		
+   		See: org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
+   		<mvc:annotation-driven/>
+   	 -->
+   	 
+   
 	<context:annotation-config />
    
 	<context:component-scan base-package="de.spring.webservices.rest"/>
@@ -40,6 +49,15 @@
 			</bean>
 		</property>
 		<property name="messageConverters" ref="messageConverters" />
+		
+		
+		<property name="requestBodyAdvice">
+			<util:list>
+				<bean id="requestBodyAdvice" class="org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice"/>
+			</util:list>
+		</property>
+		
+		
 		<property name="responseBodyAdvice">
 			<util:list>
 				<bean id="responseBodyAdvice" class="org.springframework.web.servlet.mvc.method.annotation.JsonViewResponseBodyAdvice"/>
