@@ -1,3 +1,0 @@
-gradle eclipse
-gradle build
-java -jar build/libs/rest-example-0.0.1.jar

@@ -1,10 +1,12 @@
-package rest;
+package de.spring.webservices.rest;
 
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,22 +23,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/cars/")
 public class CarController {
-
-    private static final String template = "Car: %s";
+	private static final Logger LOGGER = LoggerFactory.getLogger(CarController.class);
+    private static final String TEMPLATE = "Car: %s";
+    
     private final AtomicLong counter = new AtomicLong();
 
-    @RequestMapping(produces = { "application/json" }, method = RequestMethod.GET)
+    @RequestMapping(produces = { MediaType.APPLICATION_JSON_UTF8_VALUE }, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<Car> cars() {
         final List<Car> cars = new ArrayList<>();
-        cars.add(new Car(counter.incrementAndGet(), String.format(template, 1)));
-        cars.add(new Car(counter.incrementAndGet(), String.format(template, 2)));
-        cars.add(new Car(counter.incrementAndGet(), String.format(template, 3)));
+        cars.add(new Car(counter.incrementAndGet(), String.format(TEMPLATE, 1)));
+        cars.add(new Car(counter.incrementAndGet(), String.format(TEMPLATE, 2)));
+        cars.add(new Car(counter.incrementAndGet(), String.format(TEMPLATE, 3)));
 
         return cars;
     }
 
-    @RequestMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Car car(@RequestHeader(value = "MY_HEADER", required = false) String specialHeader,
     		@PathVariable("id") long id,
@@ -44,20 +47,20 @@ public class CarController {
     		@RequestParam(value = "wheel", required = false) String[] wheelParams) {
     	    	
     	if (specialHeader != null) {
-    		System.out.println("SPECIAL HEADER: " + specialHeader);
+    		LOGGER.info("SPECIAL HEADER: " + specialHeader);
     	}
     	 
     	if (params.get("mirror") != null) {
-    		System.out.println("MIRROR: " + params.get("mirror"));	
+    		LOGGER.info("MIRROR: " + params.get("mirror"));	
     	}
     	
     	if (params.get("window") != null) {
-    		System.out.println("WINDOW: " + params.get("window"));
+    		LOGGER.info("WINDOW: " + params.get("window"));
     	}
     	
     	if (wheelParams != null) {
     		for(String wheel : wheelParams) {
-    			System.out.println(wheel);
+    			LOGGER.info(wheel);
     		}
     	}
     	
@@ -68,15 +71,17 @@ public class CarController {
         }
 
 
-        return new Car(counter.incrementAndGet(), String.format(template, id));
+        return new Car(counter.incrementAndGet(), String.format(TEMPLATE, id));
     }
     
-    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public ResponseEntity<Car> create() {
+    @RequestMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+    		produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<Car> create(@RequestBody Car car) {
+    	long count = counter.incrementAndGet();
     	HttpHeaders headers = new HttpHeaders();
-    	headers.add("Location", "/api/cars/" + 1);
+    	headers.add(HttpHeaders.LOCATION, "/api/cars/" + count);
     	
-        return new ResponseEntity<>(new Car(counter.incrementAndGet(), String.format(template, 1)), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(new Car(count, String.format(TEMPLATE, count)), headers, HttpStatus.CREATED);
     }
 
 }

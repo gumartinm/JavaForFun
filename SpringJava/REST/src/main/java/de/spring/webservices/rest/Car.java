@@ -1,16 +1,16 @@
-package rest;
+package de.spring.webservices.rest;
 
 public class Car {
 
-    private final long id;
+    private final Long id;
     private final String content;
 
-    public Car(long id, String content) {
+    public Car(Long id, String content) {
         this.id = id;
         this.content = content;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
