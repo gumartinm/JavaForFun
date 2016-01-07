@@ -53,10 +53,8 @@ public class CarClientServiceIntegrationTest {
 	@Test
 	public void whenGetAllCarsThenRetrieveRequestedCars() throws JsonProcessingException {
 		Car expectedOne = new Car(66L, "test");
-		Car expectedTwo = new Car(99L, "example");
 		List<Car> expected = new ArrayList<>();
 		expected.add(expectedOne);
-		expected.add(expectedTwo);
 		
 		mockServer.expect(requestTo(apiCarsUrl))
 					.andExpect(method(HttpMethod.GET))
@@ -66,9 +64,8 @@ public class CarClientServiceIntegrationTest {
 
 		mockServer.verify();
 		
-		assertEquals(2, cars.size());
+		assertEquals(1, cars.size());
 		assertEquals(expectedOne, cars.get(0));
-		assertEquals(expectedTwo, cars.get(1));
 	}
 	
 	@Test

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.client.CarClientService;
@@ -38,7 +39,6 @@ public class BusinessServiceTest {
 		
 		verify(carClientService, times(1)).doGetCars();
 	}
-
     
 	@Test
 	public void whenDoSomethingWithOneCarhenInvokeDoGetCar() {
@@ -50,5 +50,17 @@ public class BusinessServiceTest {
 		businessService.doSomethingWithCar(id);
 		
 		verify(carClientService, times(1)).doGetCar(id);
+	}
+	
+	@Test
+	public void whenCreateNewCarThenCreateNewOne() {
+		Car expected = new Car(66L, "test");
+		ArgumentCaptor<Car> argCar = ArgumentCaptor.forClass(Car.class);
+		
+		when(carClientService.doNewCar(argCar.capture())).thenReturn(expected);
+		
+		businessService.createsNewCar();
+		
+		verify(carClientService, times(1)).doNewCar(argCar.getValue());
 	}
 }
