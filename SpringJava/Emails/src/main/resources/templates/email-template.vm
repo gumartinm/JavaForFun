@@ -1,0 +1,21 @@
+<html>
+	<body>
+		<h3>Dears all</h3>
+		<p>
+			From - ${newMessage.name} / ${newMessage.email} 
+		</p>
+		<h3>
+			Something new and exciting.
+		</h3>
+		<p>
+			${newMessage.metadataLine}
+		</p>
+		<h3>
+			For further information.
+		</h3>
+		<p>
+			${newMessage.message}
+		</p>
+	</body>
+ 
+</html>
