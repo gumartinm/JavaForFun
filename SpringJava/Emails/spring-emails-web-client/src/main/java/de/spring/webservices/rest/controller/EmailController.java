@@ -42,7 +42,7 @@ public class EmailController {
 		this.emailMakerVelocityService = emailMakerVelocityService;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void emails() throws MessagingException {
 		final String emailSubject = emailMakerVelocityService.getSubject(SUBJECT_MESSAGE_KEY, Locale.getDefault());
