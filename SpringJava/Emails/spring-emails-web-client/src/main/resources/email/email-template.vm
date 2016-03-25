@@ -1,0 +1,17 @@
+<html>
+	<body>
+		<h1>#msg("email.header1")</h1>
+		<h2>#msg("email.header2")/h2>
+		<p>
+			${text.user} 
+		</p>
+		<p>
+			#msg("email.message")
+		</p>
+		<p>
+			${text.date}
+		</p>
+		<img src='cid:mainlogo'>
+	</body>
+ 
+</html>

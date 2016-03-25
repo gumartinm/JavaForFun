@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:task="http://www.springframework.org/schema/task"
+
+  xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                      http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context 
+                      http://www.springframework.org/schema/context/spring-context.xsd
+                      http://www.springframework.org/schema/util 
+                      http://www.springframework.org/schema/util/spring-util.xsd
+                      http://www.springframework.org/schema/task
+        			  http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+
+    <!-- Searches for beans in packages (instead of XML configuration we can use in this way annotations like @Service, @Endpoint, etc, etc)  -->
+    <context:component-scan base-package="de.spring.emails"/>
+    
+    
+    <!--  Enable Asynchronous Spring Tasks -->
+	<task:annotation-driven />
+	<task:executor id="asyncEmailSender" pool-size="0-2" keep-alive="60" queue-capacity="2" rejection-policy="CALLER_RUNS" />
+	
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gumartinm.name"/>
+		<property name="port" value="25"/>
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+
+	<bean id="mailVelocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">			
+			<props>
+	            <prop key="resource.loader">class</prop>
+	            <prop key="class.resource.loader.class">
+	                org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+	            </prop>
+	            <prop key="velocimacro.library">email/macro.vm</prop>            
+	        </props>	
+		</property>
+	</bean>
+
+	<bean name="mailMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> 
+	    <property name="basename"> 
+	        <value>email.email-messages</value> 
+	    </property> 
+	    <property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+	
+	<bean id="emailService"
+		class="de.spring.emails.services.impl.EmailServiceImpl">
+		<constructor-arg ref="mailSender" />
+	</bean>
+	
+	<bean id="emailMakerService"
+		class="de.spring.emails.services.impl.EmailMakerServiceImpl">
+		<constructor-arg ref="mailVelocityEngine" />
+		<constructor-arg ref="mailMessageSource" />
+	</bean>
+	
+</beans>

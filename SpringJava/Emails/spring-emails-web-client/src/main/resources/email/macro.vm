@@ -1,0 +1,3 @@
+#macro(msg $code)
+$messageSource.getMessage($code, null, $locale)
+#end
