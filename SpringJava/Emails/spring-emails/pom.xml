@@ -95,7 +95,7 @@
 				<artifactId>spring-context</artifactId>
 				<version>${spring.version}</version>
 				<!--
-					Required dependency for getting rid of commons logging and use my 
+					Required dependency for getting rid of commons logging and use my
 					own logging library (in my case I decided to use log4j 2 under slf4j)
 				-->
 				<exclusions>
@@ -111,7 +111,7 @@
 				<artifactId>spring-webmvc</artifactId>
 				<version>${spring.version}</version>
 				<!--
-					Required dependency for getting rid of commons logging and use my 
+					Required dependency for getting rid of commons logging and use my
 					own logging library (in my case I decided to use log4j 2 under slf4j)
 				-->
 				<exclusions>
@@ -125,6 +125,16 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-oxm</artifactId>
 				<version>${spring.version}</version>
+				<!--
+					Required dependency for getting rid of commons logging and use my
+					own logging library (in my case I decided to use log4j 2 under slf4j)
+				-->
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			
 			
@@ -168,6 +178,16 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context-support</artifactId>
 				<version>${spring.version}</version>
+				<!--
+					Required dependency for getting rid of commons logging and use my
+					own logging library (in my case I decided to use log4j 2 under slf4j)
+				-->
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.velocity</groupId>
@@ -194,8 +214,10 @@
 				<artifactId>spring-test</artifactId>
 				<version>${spring.version}</version>
 				<scope>test</scope>
-				<!-- Required dependency for getting rid of commons logging and use my 
-					own logging library (in my case I decided to use log4j 2 under slf4j) -->
+				<!--
+					Required dependency for getting rid of commons logging and use my
+					own logging library (in my case I decided to use log4j 2 under slf4j)
+				-->
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>

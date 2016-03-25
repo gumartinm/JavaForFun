@@ -14,14 +14,17 @@
                       http://www.springframework.org/schema/task
         			  http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
-
-    <!-- Searches for beans in packages (instead of XML configuration we can use in this way annotations like @Service, @Endpoint, etc, etc)  -->
+    <!--
+    	Searches for beans in packages (instead of XML configuration we can use
+    	in this way annotations like @Service, @Endpoint, etc, etc)
+    -->
     <context:component-scan base-package="de.spring.emails"/>
     
     
     <!--  Enable Asynchronous Spring Tasks -->
 	<task:annotation-driven />
-	<task:executor id="asyncEmailSender" pool-size="0-2" keep-alive="60" queue-capacity="2" rejection-policy="CALLER_RUNS" />
+	<task:executor id="asyncEmailSender" pool-size="0-2" keep-alive="60"
+		queue-capacity="2" rejection-policy="CALLER_RUNS" />
 	
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
