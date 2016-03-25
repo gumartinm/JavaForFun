@@ -13,8 +13,8 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import de.spring.emails.services.EmailMakerService;
 
 
-@Service("emailMakerService")
-public class EmailMakerServiceImpl implements EmailMakerService {
+@Service("emailMakerVelocityService")
+public class EmailMakerVelocityServiceImpl implements EmailMakerService {
 	private static final String TEMPLATES_DEFAULT_EXTENSION = ".vm";
 	private static final String TEMPLATES_DEFAULT_PATH = "email/";
 	private static final String EMAIL_CONTENT_ENCODING = "UTF-8";
@@ -23,7 +23,7 @@ public class EmailMakerServiceImpl implements EmailMakerService {
 	private final MessageSource messageSource;
 
 	@Autowired
-    public EmailMakerServiceImpl(VelocityEngine velocityEngine, MessageSource messageSource) {
+    public EmailMakerVelocityServiceImpl(VelocityEngine velocityEngine, MessageSource messageSource) {
     	this.velocityEngine = velocityEngine;
     	this.messageSource = messageSource;
     }

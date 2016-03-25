@@ -29,25 +29,28 @@ public class EmailController {
 	private static final String USER = "Gustavo Martin Morcuende";
 	private static final String USER_ADDRESS = "noemail@gumartinm.name";
 	private static final String TEMPLATE = "email-template";
+	private static final String LOGO = "logo";
+	private static final String LOGO_RESOURCE = "email/logo.png";
 	private static final String SUBJECT_MESSAGE_KEY = "email.subject";
 
 	private final EmailService emailService;
-	private final EmailMakerService emailMakerService;
+	private final EmailMakerService emailMakerVelocityService;
 	
 	@Autowired
-    public EmailController(EmailService emailService, EmailMakerService emailMakerService) {
+    public EmailController(EmailService emailService, EmailMakerService emailMakerVelocityService) {
 		this.emailService = emailService;
-		this.emailMakerService = emailMakerService;
+		this.emailMakerVelocityService = emailMakerVelocityService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public void emails() throws MessagingException {
-		final String emailSubject = emailMakerService.getSubject(SUBJECT_MESSAGE_KEY, Locale.getDefault());
+		final String emailSubject = emailMakerVelocityService.getSubject(SUBJECT_MESSAGE_KEY, Locale.getDefault());
 		final String emailText = doEmailText();
-		final String[] to = { USER_ADDRESS };	
 		final Map<String, Resource> inline = new HashMap<>();
-		inline.put("cid:mainlogo", new ClassPathResource("email/logo.png"));
+		inline.put(LOGO, new ClassPathResource(LOGO_RESOURCE));
+		final String[] to = { USER_ADDRESS };
+
 		try {
 			emailService.sendEmailAsync(to, emailSubject, emailText, true, null, inline);
 		} catch (MessagingException ex) {
@@ -60,6 +63,7 @@ public class EmailController {
 		final Map<String, String> text = new HashMap<>();
 		text.put("user", USER);
 		text.put("date", isoDateTime);
-		return emailMakerService.emailMaker(text, TEMPLATE, Locale.getDefault());
+		text.put(LOGO, LOGO);
+		return emailMakerVelocityService.emailMaker(text, TEMPLATE, Locale.getDefault());
 	}
 }

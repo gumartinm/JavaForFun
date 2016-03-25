@@ -86,6 +86,15 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
+		<!--  Required dependency for Thymeleaf -->
+		<dependency>
+    		<groupId>org.thymeleaf</groupId>
+    		<artifactId>thymeleaf</artifactId>
+		</dependency>
+			<dependency>
+    		<groupId>org.thymeleaf</groupId>
+    		<artifactId>thymeleaf-spring4</artifactId>
+		</dependency>
 
 		<!-- Unitary and integration tests -->
 		<dependency>

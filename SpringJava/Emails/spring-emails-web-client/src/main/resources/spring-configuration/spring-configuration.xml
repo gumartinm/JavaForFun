@@ -33,18 +33,6 @@
 		<property name="defaultEncoding" value="UTF-8"/>
 	</bean>
 
-	<bean id="mailVelocityEngine"
-		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-		<property name="velocityProperties">			
-			<props>
-	            <prop key="resource.loader">class</prop>
-	            <prop key="class.resource.loader.class">
-	                org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-	            </prop>
-	            <prop key="velocimacro.library">email/macro.vm</prop>            
-	        </props>	
-		</property>
-	</bean>
 
 	<bean name="mailMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> 
 	    <property name="basename"> 
@@ -58,10 +46,41 @@
 		<constructor-arg ref="mailSender" />
 	</bean>
 	
-	<bean id="emailMakerService"
-		class="de.spring.emails.services.impl.EmailMakerServiceImpl">
+	<!-- Using Velocity instead of Thymeleaf -->
+	<bean id="mailVelocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">			
+			<props>
+	            <prop key="resource.loader">class</prop>
+	            <prop key="class.resource.loader.class">
+	                org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+	            </prop>
+	            <prop key="velocimacro.library">email/macro.vm</prop>            
+	        </props>	
+		</property>
+	</bean>
+	<bean id="emailMakerVelocityService"
+		class="de.spring.emails.services.impl.EmailMakerVelocityServiceImpl">
 		<constructor-arg ref="mailVelocityEngine" />
 		<constructor-arg ref="mailMessageSource" />
 	</bean>
-	
+
+
+
+	<!-- Using Thymeleaf instead of Velocity -->
+	<bean id="thymeleafTemplateResolver"
+		class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+		<property name="prefix" value="/email/" />
+		<property name="suffix" value=".html" />
+		<property name="templateMode" value="HTML" />
+	</bean>
+	<bean id="thymeleafTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+		<property name="templateResolver" ref="thymeleafTemplateResolver" />
+	</bean>
+	<bean id="emailMakerThymeleafService"
+		class="de.spring.emails.services.impl.EmailMakerThymeleafServiceImpl">
+		<constructor-arg ref="thymeleafTemplateEngine" />
+		<constructor-arg ref="mailMessageSource" />
+	</bean>
+
 </beans>

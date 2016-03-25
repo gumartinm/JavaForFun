@@ -173,7 +173,7 @@
 
 
 
-			<!-- Required dependency for VelocityEngineUtils -->
+			<!-- Required dependencies for VelocityEngineUtils -->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context-support</artifactId>
@@ -198,6 +198,18 @@
 				<groupId>velocity-tools</groupId>
 				<artifactId>velocity-tools</artifactId>
 				<version>2.0-beta1</version>
+			</dependency>
+			
+			<!--  Required dependency for Thymeleaf -->
+			<dependency>
+    			<groupId>org.thymeleaf</groupId>
+    			<artifactId>thymeleaf</artifactId>
+    			<version>3.0.0.BETA02</version>
+			</dependency>
+			<dependency>
+    			<groupId>org.thymeleaf</groupId>
+    			<artifactId>thymeleaf-spring4</artifactId>
+    			<version>3.0.0.BETA02</version>
 			</dependency>
 
 			<!-- Required dependencies for SMTP client -->

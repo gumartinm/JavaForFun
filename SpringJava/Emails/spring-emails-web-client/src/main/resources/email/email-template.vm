@@ -1,4 +1,8 @@
 <html>
+  	<head>
+    	<title>Velocity template for HTML email</title>
+    	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  	</head>
 	<body>
 		<h1>#msg("email.header1")</h1>
 		<h2>#msg("email.header2")/h2>
@@ -11,7 +15,10 @@
 		<p>
 			${text.date}
 		</p>
-		<img src='cid:mainlogo'>
+			<img src='cid:${text.logo}'>
+		<p>
+      		Regards, <br />
+      		<em>Gustavo Martin Morcuende</em>
+    	</p>
 	</body>
- 
 </html>
