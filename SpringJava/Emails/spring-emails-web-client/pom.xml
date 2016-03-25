@@ -29,12 +29,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+		</dependency>
+
+		<!-- Required dependency for VelocityEngineUtils -->
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 		</dependency>
-					<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-oxm</artifactId>
-			</dependency>
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
@@ -43,14 +49,11 @@
 			<groupId>velocity-tools</groupId>
 			<artifactId>velocity-tools</artifactId>
 		</dependency>
+
+		<!-- Required dependencies for SMTP client -->
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
 		</dependency>
 
 		<!-- Required by spring-webmvc -->
@@ -60,16 +63,20 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Jackson JSON Processor, required by spring-webmvc. See messageConverters 
-			in rest-config.xml -->
+		<!--
+			Jackson JSON Processor, required by spring-webmvc. See messageConverters
+			in rest-config.xml
+		-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
 
-		<!-- Required by spring-context for using JSR-303. See LocalValidatorFactoryBean 
-			in rest-config.xml -->
+		<!--
+			Required by spring-context for using JSR-303. See LocalValidatorFactoryBean
+			in rest-config.xml
+		-->
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
