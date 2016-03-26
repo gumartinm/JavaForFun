@@ -54,6 +54,9 @@ public class EmailController {
 		try {
 			emailService.sendEmailAsync(to, emailSubject, emailText, true, null, inline);
 		} catch (MessagingException ex) {
+			// WARNING!!!!
+			// Because we are using @Async we will never catch thrown exceptions from sendEmailAsync.
+			// Exceptions will be caught by org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler. :(
 			LOGGER.error("Send email error", ex);
 		}
     }

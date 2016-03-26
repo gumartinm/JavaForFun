@@ -24,7 +24,7 @@
     <!--  Enable Asynchronous Spring Tasks -->
 	<task:annotation-driven />
 	<task:executor id="asyncEmailSender" pool-size="1-10" keep-alive="60"
-		queue-capacity="10" rejection-policy="CALLER_RUNS" />
+		queue-capacity="0" rejection-policy="CALLER_RUNS" />
 	
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
