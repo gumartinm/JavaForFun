@@ -16,32 +16,23 @@
     	in this way annotations like @Service, @Endpoint, etc, etc)
     -->
     <context:component-scan base-package="de.spring.stomp"/>
-    
-    <!-- SockJS -->
-    <websocket:handlers allowed-origins="*">
-    	<websocket:mapping path="/myHandler" handler="sockJsHandler"/>
-    	<!-- Using SockJS protocol -->
-    	<websocket:sockjs/>
-    	<websocket:handshake-interceptors>
-            <bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"/>
-        </websocket:handshake-interceptors>
-    </websocket:handlers>
 
-    <bean id="sockJsHandler" class="org.springframework.web.socket.sockjs.transport.handler.SockJsWebSocketHandler"/>
-    
+
     <bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
         <property name="maxTextMessageBufferSize" value="8192"/>
         <property name="maxBinaryMessageBufferSize" value="8192"/>
     </bean>
-    
     
     <!-- STOMP -->
     <websocket:message-broker application-destination-prefix="/app">
         <websocket:stomp-endpoint path="/portfolio">
             <websocket:sockjs/>
         </websocket:stomp-endpoint>
-        <!-- Full-featured broker, see: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html#websocket-stomp-handle-broker-relay -->
+        <!--
+        	Full-featured broker, see: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html#websocket-stomp-handle-broker-relay
         <websocket:stomp-broker-relay prefix="/topic,/queue" />
+        -->
+        <websocket:simple-broker prefix="/topic, /queue"/>
     </websocket:message-broker>
 
 </beans>
