@@ -83,6 +83,9 @@ public class ExampleServiceImpl implements ExampleService {
 		// If there is no transaction the cache is useless because after every DML will be cleaned up. Without transaction
 		// REUSE and SIMPLE are the same. With transaction REUSE skips the code calling getConnection. With transaction
 		// getConnection returns always the same connection. So, with transaction we can avoid some CPU cycles using REUSE.
+		
+		// With Spring-MyBatis operations are ONLY batched when running this code in some transaction. Otherwise BATCH mode is useless
+		// because statements will be flushed once they are executed.
 
 		final Ad adTestTwo = new Ad();
 		adTestTwo.setAdMobileImage("bildTwo.jpg");
@@ -100,18 +103,37 @@ public class ExampleServiceImpl implements ExampleService {
 		// WARNING!!! adTestOne.id keeps being NULL when using BATCH Executor of MyBatis!!!!
 		//            So, this code will do ANYTHING AT ALL!!!!
 		// BE CAREFUL WHEN USING BATCH MODE FOR ACCESSING DATA BASES!!!!
-		adMapper.updateByPrimaryKey(adTestOne);
+		long countOne = adMapper.updateByPrimaryKey(adTestOne);
 		
 		// WARNING!!! adTestTwo.id keeps being NULL when using BATCH Executor of MyBatis!!!!
 		//            So, this code will do ANYTHING AT ALL!!!!
 		// BE CAREFUL WHEN USING BATCH MODE FOR ACCESSING DATA BASES!!!!
 		adTestTwo.setAdMobileImage("updatedBildTwo.jpg");
-		adMapper.updateByPrimaryKey(adTestTwo);
+		long countTwo = adMapper.updateByPrimaryKey(adTestTwo);
 		
 		// IF YOU WANT BATCH MODE FOR ACCESSING DATA BASES YOUR CODE MUST BE IMPLEMENTED FOR BATCH MODE.
 		// I MEAN, IN THIS EXAMPLE SIMPLE MODE WILL WORK BUT BATCH MODE WILL NOT WORK IN ANY WAY!!!!
 		// BATCH has some implications that must not be forgotten. You can not abstract your code
 		// from the access mode to your data base!!!!!
+		
+		// BATCH MODE: no transaction
+		// countOne.id = BatchExecutor.BATCH_UPDATE_RETURN_VALUE  <-------------- IF YOU WANT TO USE BATCH MODE, YOUR CODE MUST BE IMPLEMENTED KNOWING THIS KIND OF STUFF!!!!
+		// But because there is no transaction statement is always flushed once it is executed.
+		// So, in BATCH mode and without transaction we do not return the number of updated rows but the statement was
+		// immediately flushed. :/
+		// BATCH MODE: transaction
+		// countOne.id = BatchExecutor.BATCH_UPDATE_RETURN_VALUE  <-------------- IF YOU WANT TO USE BATCH MODE, YOUR CODE MUST BE IMPLEMENTED KNOWING THIS KIND OF STUFF!!!!
+		// SIMPLE MODE: no transaction
+		// countOne.id = 1
+		// SIMPLE MODE: transaction
+		// countOne.id = 1
+		// REUSE MODE: no transaction
+		// countOne.id = 1
+		// REUSE MODE: transaction
+		// countOne.id = 1
+		
+		// With Spring-MyBatis operations are ONLY batched when running this code in some transaction. Otherwise BATCH mode is useless.
+		// because statements will be flushed once they are executed.
 		
 		
 		

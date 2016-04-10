@@ -78,6 +78,12 @@
   <plugins>
     <plugin interceptor="de.example.mybatis.interceptor.ReuseBatchExecutorInterceptor">
     </plugin>
+    <plugin interceptor="de.example.mybatis.interceptor.ChangeUpdateStatementsInRunTimeInterceptor">
+    </plugin>
+    <plugin interceptor="de.example.mybatis.interceptor.ChangeQueryStatementsInRunTimeInterceptor">
+    </plugin>
+    <plugin interceptor="de.example.mybatis.interceptor.ChangeQueryBoundStatementsInRunTimeInterceptor">
+    </plugin>
   </plugins>
   
 </configuration>
