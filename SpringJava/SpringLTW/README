@@ -1,0 +1,3 @@
+VM arguments:
+
+-javaagent:$HOME/.m2/repository/org/springframework/spring-instrument/4.2.5.RELEASE/spring-instrument-4.2.5.RELEASE.jar

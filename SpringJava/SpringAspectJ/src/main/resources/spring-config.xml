@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  						   http://www.springframework.org/schema/beans/spring-beans.xsd
+  						   http://www.springframework.org/schema/aop 
+ 		 				   http://www.springframework.org/schema/aop/spring-aop.xsd
+  						   http://www.springframework.org/schema/context 
+  						   http://www.springframework.org/schema/context/spring-context.xsd
+  						   http://www.springframework.org/schema/tx 
+  						   http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<!-- 
+			         ************* WE HAVE TO ENABLE THE ASPECTJ SUPPORT!!!!!! ************* 
+			Otherwise the @Aspect annotation (defines @AspectJ aspects) will not work
+			It relies on the Java 5 specific AspectJ reflection APIs. You can not use it on
+			JDK 1.4 and below.
+			
+			
+			We could force here the use of CGLIB.
+			See: http://static.springsource.org/spring/docs/3.1.0.RC1/spring-framework-reference/html/aop.html#aop-proxying
+			Spring detects if the bean has an interface implementation. If it has one, Spring will use J2SE 
+			(J2SE needs classes with interfaces) in other case it will use CGLIB. 
+			In this example the "test" bean does not have an interface so Spring
+			will use CGLIB. We could force the use of CGLIB in classes with interfaces.
+	-->
+	<aop:aspectj-autoproxy/>
+	
+	<!-- 
+		We can mix aspect types. Without this AOP declaration this project would be SPRING ASPECTJ
+		but, because of this, we have a Spring Advice declaration so this project will be a SPRING AOP project
+		(or at least it is not just SPRING ASPECTJ based)
+		Besides we are using AOP support used in Spring 1.2 :/
+	 -->
+	<aop:config proxy-target-class="true">
+     	<aop:advisor pointcut="de.spring.example.SystemArchitecture.pointCutMethod()"
+     				 advice-ref="springAdvice" />
+    </aop:config>
+	
+	
+	<bean id="test" class="de.spring.example.web.Test">
+    	
+    </bean>
+	
+	<bean id="myAdvice" class="de.spring.example.MyAdvice">
+    	
+    </bean>
+    
+    <bean id="systemArchitecture" class="de.spring.example.SystemArchitecture">
+    	
+    </bean>
+    
+    <bean id="springAdvice" class="de.spring.example.SpringAdvice">
+    	
+    </bean>
+	
+</beans>
