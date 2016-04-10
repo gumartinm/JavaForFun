@@ -32,6 +32,16 @@ public class MainDateFormat {
 		
 		
 		Date dateCurrentTimeFormatter = DateHourFormatter.parseToDate("12/05/2014 18:40");
+		
+		
+		LocalDate nowTomcat = LocalDate.now(ZoneId.of("America/New_York"));
+		
+		Date joer = Date.from(nowTomcat.atStartOfDay().atZone(ZoneId.of("America/New_York")).toInstant());
+		
+		System.out.println(nowTomcat);
+		
+		System.out.println(joer);
+		
 	}
 
 }

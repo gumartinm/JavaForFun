@@ -25,6 +25,41 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
+/**
+ * This class tries to give some kind of solution to this problem:
+ * Why MyBatis implementation only checks for last SQL string?
+ * If the implementation uses map of sql strings then it can reuse the statements even for the multiple queries.
+ * http://mybatis-user.963551.n3.nabble.com/Unexpected-multiple-prepared-statements-when-using-batch-executor-type-td4027708.html
+ * 
+ */
+
+// But be careful when using this Executor:
+//	If you write this:
+//	for (1000 records) {
+//  	insert into table A
+//  	update into table B
+//	}
+//
+//	you will probably expect the execution to be:
+//	insert into A
+//	insert into B
+//	insert into A
+//	...
+//
+//	And not
+//	1000 inserts into A
+//	1000 inserts into B
+//
+//	Breaking that expectation sounds like a bad idea.
+//
+//	The BatchExecutor can indeed reuse more than it does at a cost of making it more difficult to understand and control. 
+//
+//	Right now you need to understand how it works for sure, but its behaviour is simple and once you get it you can just
+//  get the same result by changing a bit your code
+//
+//	for (1000 records)  insert into table A
+//	for (1000 records)  update into table B
+
 public class ReuseBatchExecutor extends BaseExecutor {
 	public static final int BATCH_UPDATE_RETURN_VALUE = Integer.MIN_VALUE + 1002;
 

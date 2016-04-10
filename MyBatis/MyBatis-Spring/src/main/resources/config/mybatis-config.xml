@@ -23,7 +23,13 @@
     to the same objects which are stored in the local cache. Any modification of
     returned object (lists etc.) influences the local cache contents and subsequently
     the values which are returned from the cache in the lifetime of the session.
-    Therefore, as best practice, do not to modify the objects returned by MyBatis. -->
+    Therefore, as best practice, do not to modify the objects returned by MyBatis.
+    
+	SI SE MODIFICAN, CUANDO HAGA UNA BÚSQUEDA EN LA CACHE POR ESE OBJETO, YA NO LO ENCONTRARÉ,
+	SERÁ COMO SI NUNCA HUBIERA SIDO CACHEADO, Y ENTONCES LA CACHE NO SIRVE PARA NADA.
+	
+	VER CachingExecutor.
+    -->
     <setting name="cacheEnabled" value="false"/>
     <setting name="localCacheScope" value="STATEMENT"/>
     <setting name="lazyLoadingEnabled" value="false"/>

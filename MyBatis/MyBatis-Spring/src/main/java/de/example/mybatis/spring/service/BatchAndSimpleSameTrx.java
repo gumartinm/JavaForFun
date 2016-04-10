@@ -38,10 +38,7 @@ public class BatchAndSimpleSameTrx {
         adTest.setCompanyId(2L);
         adTest.setUpdatedAt(new Date());
         
-        /**
-         * No batched inserts will be sent to data base just in this very moment.
-         */
-        this.adMapper.insert(adTest); 
+
         
         /**
          * We want to use SIMPLE and BATCH operations but MyBatis complains with this exception:
@@ -74,6 +71,20 @@ public class BatchAndSimpleSameTrx {
         		 */
         		preparedStatement.addBatch();
         	}
+        	
+        	
+            final Ad adTest = new Ad();
+            adTest.setAdMobileImage("bild.jpg");
+            adTest.setCompanyCategId(200L);
+            adTest.setCreatedAt(new Date());
+            adTest.setCompanyId(2L);
+            adTest.setUpdatedAt(new Date());
+            
+            /**
+             * No batched inserts will be sent to data base just in this very moment.
+             */
+            this.adMapper.insert(adTest); 
+        	
         	
         	/**
         	 * RIGHT HERE THE BATCH STATEMENTS WILL BE SENT TO THE DATA BASE.

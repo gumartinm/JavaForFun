@@ -26,12 +26,7 @@ public class TestMain {
 //        exampleService.getAdsByCriteria();
 //
 //
-//        final ExampleCustomService exampleCustomService = (ExampleCustomService) SpringContextLocator
-//                .getInstance().getBean("exampleCustomService");
-//
-//        exampleCustomService.getAds();
-//        
-//        exampleCustomService.updateAds();
+
         
         
 //        final ExampleBatchService exampleBatchService = (ExampleBatchService) SpringContextLocator
@@ -42,23 +37,18 @@ public class TestMain {
 //        exampleBatchService.insertBatchNewAd();
         
         
-//        final BatchAndSimpleSameTrx batchAndSimpleSameTrx = (BatchAndSimpleSameTrx) SpringContextLocator
-//                .getInstance().getBean("batchAndSimpleSameTrx");
-//        
-//        try {
-//	        batchAndSimpleSameTrx.insertNewAd();
-//        } catch (CannotGetJdbcConnectionException e) {
-//        	logger.error("Error exception: ", e);
-//        } catch (SQLException e) {
-//        	logger.error("Error exception: ", e);
-//        }
+        final BatchAndSimpleSameTrx batchAndSimpleSameTrx = (BatchAndSimpleSameTrx) SpringContextLocator
+                .getInstance().getBean("batchAndSimpleSameTrx");
         
-        final ExampleInheritanceService exampleBatchService = (ExampleInheritanceService) SpringContextLocator
-        		.getInstance().getBean("exampleInheritanceService");
-       
-        exampleBatchService.selectAdsParent();
-  
-        exampleBatchService.selectAdsChild();
+        try {
+	        batchAndSimpleSameTrx.insertNewAd();
+        } catch (CannotGetJdbcConnectionException e) {
+        	logger.error("Error exception: ", e);
+        } catch (SQLException e) {
+        	logger.error("Error exception: ", e);
+        }
+        
+
     }
 
 }

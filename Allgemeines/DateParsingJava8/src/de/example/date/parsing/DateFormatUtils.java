@@ -8,6 +8,8 @@ import java.util.Date;
 
 
 public class DateFormatUtils {
+	private static final String TEST1 = "Gustavo";
+	private final String TEST2 = "Martin";
 
 	public static String format(Date date, String format) {
 		final ZoneId timeZone = ZoneId.of("America/Los_Angeles");
