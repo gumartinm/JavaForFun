@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  						   http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+  						   http://www.springframework.org/schema/context 
+  						   http://www.springframework.org/schema/context/spring-context-3.2.xsd
+  						   http://www.springframework.org/schema/tx 
+                           http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+                           http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd">
+
+
+    <!--
+    There is no need to register all your mappers one by one. Instead, you can let MyBatis-Spring scan your classpath for them.
+    <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation.
+    The annotation property specifies an annotation to search for. The marker-interface attribute specifies a parent interface
+    to search for. If both properties are specified, mappers are added for interfaces that match either criteria. By default,
+    these two properties are null, so all interfaces in the given base package(s) will be loaded as mappers.
+    See http://mybatis.org/schema/mybatis-spring.xsd for further information.
+    -->
+    <mybatis:scan base-package="de.example.mybatis.repository.mapper"
+                  marker-interface="de.example.mybatis.mapper.filter.MyBatisScanFilter"
+                  template-ref="sqlSimpleSession" /> <!-- Required because I am using SIMPLE and BATCH MyBatis Executors -->
+
+    <!-- enable the configuration of transactional behavior based on annotations -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+ 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="user" value="root"/>
+        <property name="password" value="root"/>
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <!--
+        If you are dropping like me (by means of some firewall) IPV6 connections and you feel
+        during the first MySLQ connection as if there is a huge lag and you are using
+        *NIX, you could use this system property -Djava.net.preferIPv4Stack=true
+        in order to stop using IPV6 from JVM.
+        The JVM tries to find out if IPV6 is available by means of opening a random
+        AF_INET6 POSIX socket.
+         -->
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/mybatis_example?allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8"/>
+        <property name="initialPoolSize" value="5"/>
+        <property name="maxPoolSize" value="20"/>
+        <property name="minPoolSize" value="10"/>
+        <property name="acquireIncrement" value="1"/>
+        <property name="acquireRetryAttempts" value="5"/>
+        <property name="acquireRetryDelay" value="1000"/>
+        <property name="automaticTestTable" value="con_test"/>
+        <property name="checkoutTimeout" value="5000"/>
+    </bean>
+ 
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+ 
+ 	<!-- It will be shared by SIMPLE and BATCH operations. -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:config/mybatis-config.xml" />
+    </bean>
+    
+    <!-- We need to declare in this way the SqlSessionTemplate bean because otherwise 
+         mybatis:scan will retrieve the first instantiated Spring bean of this type.
+         Because we want to create a BATCH SqlSessionTemplate we also have to create
+         a SIMPLE SqlSessionTemplate (it is SIMPLE because if we do not declare the Executor type
+         SqlSessionFactoryBean will retrieve its value from mybatis-config.xml and in that file
+         I am using defaultExecutorType=SIMPLE)-->
+    <bean id="sqlSimpleSession" class="org.mybatis.spring.SqlSessionTemplate">
+    	<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+    
+    <!-- 
+    The <mybatis:scan/> XML element will search for mappers in a very similar way than the
+    Spring built-in element <context:component-scan/>  searches for beans.
+    
+    The base-package attribute lets you set the base package for your mapper interface files.
+    You can set more than one package by using a semicolon or comma as a separator. Mappers
+    will be searched for recursively starting in the specified package(s).
+
+    Notice that there is no need to specify a SqlSessionFactory or SqlSessionTemplate as an
+    attribute in the <mybatis:scan/> element because it will create MapperFactoryBeans that can
+    be autowired. But if you are using more than one DataSource autowire may not work for you
+    (in my case I am using SIMPLE and BATCH operations, and autowire did not work for me because
+    once you declare SqlSessionTemplate bean for BATCH operations you have also to declare
+    the SqlSessionTemplate for SIMPLE operations)
+    In this case you can use the factory-ref or template-ref attributes to set the right bean
+    name to use.
+
+    <mybatis:scan/> supports filtering the mappers created by either specifying a marker
+    interface or an annotation. The annotation property specifies an annotation to
+    search for. The marker-interface attribute specifies a parent interface to search for.
+    If both properties are specified, mappers are added for interfaces that match either
+    criteria. By default, these two properties are null, so all interfaces in the given
+    base package(s) will be loaded as mappers.
+
+    Discovered mappers will be named using Spring default naming strategy for autodetected
+    components (see section 3.14.4 of the Spring manual). That is, if no annotation is
+    found, it will use the uncapitalized non-qualified class name of the mapper. But if
+    either a @Component or a JSR-330 @Named annotation is found it will get the name from
+    the annotation. Notice that you can set the annotation attribute
+    to org.springframework.stereotype.Component, javax.inject.Named (if you have JSE 6)
+    or to your own annotation (that must be itself annotated) so the annotation will work
+    both as a marker and as a name provider.
+
+    NOTE <context:component-scan/> won't be able to scan and register mappers. Mappers
+    are interfaces and, in order to register them to Spring, the scanner must know how
+    to create a MapperFactoryBean for each interface it finds. 
+    
+    <bean id="adMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="de.example.mybatis.repository.mapper.AdMapper" />
+        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+    </bean>
+    
+      -->
+    
+    <!--
+    	Using Spring @Service annotation instead of XML
+    <bean id="exampleService" class="de.example.mybatis.spring.service.ExampleService">
+        <property name="adMapper" ref="adMapper" />
+    </bean>
+    -->
+
+
+    <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
+        <property name="dataSource" ref="dataSource" />
+        <property name="changeLog" value="classpath:/liquibase/liquibaseChangeLogs.xml" />
+    </bean>
+    
+        
+</beans>

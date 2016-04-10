@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="de.example.mybatis.repository.mapper.AdMapper" >
+
+	<insert id="insert" parameterType="de.example.mybatis.model.Ad">
+		<selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+			INSERT into ad (
+				company_id,
+				company_categ_id,
+				ad_mobile_image,
+				created_at,
+				updated_at,
+				ad_gps
+			)
+			VALUES (
+				#{companyId,jdbcType=BIGINT},
+				#{companyCategId,jdbcType=BIGINT},
+				#{adMobileImage,jdbcType=VARCHAR},
+				#{createdAt,jdbcType=TIMESTAMP},
+				#{updatedAt,jdbcType=TIMESTAMP},
+				#{adGps,jdbcType=LONGVARBINARY}
+			)
+	</insert>
+
+
+	<update id="updateByPrimaryKey" parameterType="de.example.mybatis.model.Ad">
+	    UPDATE
+	    	ad
+	    SET
+	    	company_id = #{companyId,jdbcType=BIGINT},
+	      	company_categ_id = #{companyCategId,jdbcType=BIGINT},
+	      	ad_mobile_image = #{adMobileImage,jdbcType=VARCHAR},
+	      	created_at = #{createdAt,jdbcType=TIMESTAMP},
+	      	updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+	    WHERE
+	    	id = #{id,jdbcType=BIGINT}
+	</update>
+
+
+	<select id="selectAsList" resultType="de.example.mybatis.model.Ad"
+		flushCache="false" useCache="true" timeout="10000" statementType="PREPARED">
+		select * FROM ad
+	</select>
+  
+
+	<select id="selectAsSet" resultType="de.example.mybatis.model.Ad"
+	 flushCache="false" useCache="true" timeout="10000" statementType="PREPARED">
+	  	select * FROM ad
+	</select>
+</mapper>

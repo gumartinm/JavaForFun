@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!--
+    user.home property is not working with maven 2.2.1
+    <classPathEntry location="${user.home}/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar" />
+    -->
+    <classPathEntry location="/home/gustavo/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar" />
+
+    <context id="MySQLTables" targetRuntime="MyBatis3">
+
+        <plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+            <property name="searchString" value="Example$"/>
+            <property name="replaceString" value="Criteria"/>
+        </plugin>
+
+        <!-- This can be useful in paging applications -->
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin">
+        </plugin>
+
+        <!-- Not very useful because you can not rely on its results (equals/hashcode depend on bussines rules)
+        <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin">
+        </plugin>
+
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin">
+            <property name="suppressJavaInterface" value="true"/>
+        </plugin>
+        -->
+
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="false" />
+            <property name="suppressDate" value="false" />
+        </commentGenerator>
+        
+        <!--
+        If you are dropping like me (by means of some firewall) IPV6 connections and you feel
+        during the first MySLQ connection as if there is a huge lag and you are using
+        *NIX, you could use this system property -Djava.net.preferIPv4Stack=true
+        in order to stop using IPV6 from JVM.
+         -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+            connectionURL="jdbc:mysql://localhost:3306/mybatis_example?characterEncoding=UTF-8" userId="root" password="root">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="true" />
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="de.example.mybatis.model"  targetProject="MAVEN">
+            <!--property name="constructorBased" value="true" />
+            <property name="immutable" value="true" /-->
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="false" />
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="de.example.mybatis.repository.mapper" targetProject="MAVEN">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+        
+        <javaClientGenerator type="XMLMAPPER" targetPackage="de.example.mybatis.repository.mapper" 
+            targetProject="MAVEN">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!--
+            There is no need of declaring every table in data base.
+
+        <table schema="mybatis_example" tableName="ad" domainObjectName="Ad">
+            <property name="useActualColumnNames" value="false" />
+            <property name="ignoreQualifiersAtRuntime" value="true" />
+            <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
+            <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
+        </table>
+        <table schema="mybatis_example" tableName="ad_description" domainObjectName="AdDescription">
+            <property name="useActualColumnNames" value="false" />
+            <property name="ignoreQualifiersAtRuntime" value="true" />
+            <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
+            <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
+        </table>
+        -->
+
+        <table tableName="%"
+            enableSelectByExample="true"
+            enableDeleteByExample="true"
+            enableCountByExample="true"
+            enableUpdateByExample="true"
+            selectByExampleQueryId="true">
+           <property name="useActualColumnNames" value="false" />
+           <property name="ignoreQualifiersAtRuntime" value="true" />
+           <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
+           <!--
+            <mybatis:scan/> supports filtering the mappers created by either specifying a marker interface or an annotation
+           -->
+           <property name="rootInterface" value="de.example.mybatis.mapper.filter.MyBatisScanFilter" />
+            <generatedKey column="id" sqlStatement="MySql" identity="true" type="post" />
+        </table>
+    </context>
+</generatorConfiguration>
