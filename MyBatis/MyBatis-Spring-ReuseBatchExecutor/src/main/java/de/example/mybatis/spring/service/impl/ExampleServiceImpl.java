@@ -75,11 +75,21 @@ public class ExampleServiceImpl implements ExampleService {
 		LOGGER.info("Update two Ads");
 
 		adTestOne.setAdMobileImage("updatedBildOne.jpg");
+		// WARNING!!! adTestOne.id keeps being NULL when using BATCH Executor of MyBatis!!!!
+		//            So, this code will do ANYTHING AT ALL!!!!
+		// BE CAREFUL WHEN USING BATCH MODE FOR ACCESSING DATA BASES!!!!
 		adMapper.updateByPrimaryKey(adTestOne);
 		
+		// WARNING!!! adTestTwo.id keeps being NULL when using BATCH Executor of MyBatis!!!!
+		//            So, this code will do ANYTHING AT ALL!!!!
+		// BE CAREFUL WHEN USING BATCH MODE FOR ACCESSING DATA BASES!!!!
 		adTestTwo.setAdMobileImage("updatedBildTwo.jpg");
 		adMapper.updateByPrimaryKey(adTestTwo);
 		
+		// IF YOU WANT BATCH MODE FOR ACCESSING DATA BASES YOUR CODE MUST BE IMPLEMENTED FOR BATCH MODE.
+		// I MEAN, IN THIS EXAMPLE SIMPLE MODE WILL WORK BUT BATCH MODE WILL NOT WORK IN ANY WAY!!!!
+		// BATCH has some implications that must not be forgotten. You can not abstract your code
+		// from the access mode to your data base!!!!!
 		
 		
 		

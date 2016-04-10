@@ -35,6 +35,7 @@ public class ReuseBatchExecutor extends BaseExecutor {
 		super(configuration, transaction);
 	}
 
+	@Override
 	public int doUpdate(MappedStatement ms, Object parameterObject) throws SQLException {
 		final Configuration configuration = ms.getConfiguration();
 		final StatementHandler handler = configuration.newStatementHandler(this, ms, parameterObject, RowBounds.DEFAULT,
@@ -44,6 +45,7 @@ public class ReuseBatchExecutor extends BaseExecutor {
 		return BATCH_UPDATE_RETURN_VALUE;
 	}
 
+	@Override
 	public <E> List<E> doQuery(MappedStatement ms, Object parameterObject, RowBounds rowBounds,
 			ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
 		Statement stmt = null;
@@ -59,6 +61,7 @@ public class ReuseBatchExecutor extends BaseExecutor {
 		}
 	}
 
+	@Override
 	public List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException {
 
 		try {

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
+import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.plugin.Interceptor;
@@ -35,6 +36,11 @@ public class ReuseBatchExecutorInterceptor implements Interceptor {
 	public Object plugin(Object target) {
 		Object result = target;
 		
+		// It avoids one branch when target is not Executor instance.
+		if (!(target instanceof Executor)) {
+			return result;
+		}
+		
 		if (target instanceof CachingExecutor) {
 			CachingExecutor cachingExecutor = (CachingExecutor) target;
 			try {
@@ -48,7 +54,10 @@ public class ReuseBatchExecutorInterceptor implements Interceptor {
 			} catch (NoSuchFieldException e) {
 				LOGGER.error("Error: ", e);
 			}
-		} else if (target instanceof Executor){
+			// Do not override SimpleExecutor because it is used by SelectKeyGenerator (retrieves autoincremented value
+			// from database after INSERT) ReuseBatchExecutor should also work but if MyBatis wants to use SimpleExecutor
+			// why do not stick with it?
+		} else if (target instanceof BatchExecutor){
 			result = doReuseBatchExecutor((Executor) target);
 		}
 

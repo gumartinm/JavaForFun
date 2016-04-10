@@ -25,10 +25,35 @@
     the values which are returned from the cache in the lifetime of the session.
     Therefore, as best practice, do not to modify the objects returned by MyBatis.
 
-	SI SE MODIFICAN, CUANDO HAGA UNA BÚSQUEDA EN LA CACHE POR ESE OBJETO, YA NO LO ENCONTRARÉ,
-	SERÁ COMO SI NUNCA HUBIERA SIDO CACHEADO, Y ENTONCES LA CACHE NO SIRVE PARA NADA.
+	A) Ver CachingExecutor, se habilita o deshabilita con la opción cacheEnabled:
+	1. Se hace una query tipo SELECT (no DMLs como UPDATE, INSERT, etc)
+	2. Se crea una clave basada en la query (el statement)
+	3. Si la clave no está en la cache, se hace la query (se delega al Executor que haya por debajo)
+	4. Se guarda el resultado en la cache para esa query.
+	5. MODIFICO LOS OBJETOS RETORNADOS.
+	6. Una nueva query igual a la anterior será encontrada en la cache porque la clave es la misma.
+	7. Yo espero que lo que devuelva la query sea lo que está en base de datos pero como modifiqué
+	   los objetos ahora la cache me devuelve los objetos modificados!!!!! DESASTRE TOTAL.
 	
-	VER CachingExecutor.
+	CONCLUSION: o deshabilitas la cache con cacheEnabled=false o tienes mucho cuidado de NUNCA modificar
+	            los objetos retornados.
+	
+    LA CACHE SOLO SE USA CUANDO NO HAY DMLs. SI LA QUERY ES UN DML TIPO update, insert, etc, etc,
+    LA CACHE NO SE USARÁ. SOLO SE USA CON selects (POR EJEMPLO).
+    
+    
+    B) Ver BaseExecutor localCache, no puede ser nunca deshabilitada completamente, solo ponerla como
+    STATEMENT o SESSION con la opción localCacheScope:
+    Ver en BaseExecutor la siguiente linea:
+     	list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
+    Pasa exactamente lo mismo que pasaba con CachingExecutor :(
+    
+    CONCLUSIÓN: o pones localCache a nivel de STATEMENT con localCacheScope=STATEMENT o tienes mucho
+    			cuidado de NUNCA modificar los objetos retornados.
+	
+	
+	¿Para qué existe CachingExecutor si ya hay una localCache que puedo poner a nivel de SESSION?
+	
 	-->
     <setting name="cacheEnabled" value="false"/>
     <setting name="localCacheScope" value="STATEMENT"/>
@@ -38,7 +63,7 @@
     <setting name="useColumnLabel" value="false"/>
     <setting name="useGeneratedKeys" value="false"/>
     <setting name="autoMappingBehavior" value="PARTIAL"/>
-    <setting name="defaultExecutorType" value="SIMPLE"/>
+    <setting name="defaultExecutorType" value="BATCH"/>
     <setting name="defaultStatementTimeout" value="5"/>
     <setting name="safeRowBoundsEnabled" value="false"/>
     <setting name="mapUnderscoreToCamelCase" value="false"/>
