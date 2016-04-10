@@ -61,6 +61,28 @@ public class ExampleServiceImpl implements ExampleService {
 		adTestOne.setCompanyId(2L);
 		adTestOne.setUpdatedAt(new Date());
 		adMapper.insert(adTestOne);
+		// BATCH MODE: no transaction
+		// adTestOne.id = VALUE, AUTOINCREMENT FROM DATABASE
+		// BATCH MODE: transaction
+		// adTestOne.id = null  <-------------- IF YOU WANT TO USE BATCH MODE, YOUR CODE MUST BE IMPLEMENTED KNOWING THIS KIND OF STUFF!!!!
+		// SIMPLE MODE: no transaction
+		// adTestOne.id = VALUE, AUTOINCREMENT FROM DATABASE
+		// SIMPLE MODE: transaction
+		// adTestOne.id = VALUE, AUTOINCREMENT FROM DATABASE
+		// REUSE MODE: no transaction
+		// adTestOne.id = VALUE, AUTOINCREMENT FROM DATABASE
+		// REUSE MODE: transaction
+		// adTestOne.id = VALUE, AUTOINCREMENT FROM DATABASE
+		
+		// What is good about REUSE? When running this code in some transaction (using @Transactional)
+		// the PreparedStatement being used for INSERT can be reused in the next INSERT (some lines below)
+		// As always there is a cache ONLY for DMLs where the key is the statement. If the statement is the same
+		// the PreparedStatement can be reused. Reusing some PreparedStatement means there is no need to call again
+		// getConnection saving in this way CPU cycles. Besides when running in some transaction getConnection
+		// will always return the same connection so, again calling getConnection is not needed.
+		// If there is no transaction the cache is useless because after every DML will be cleaned up. Without transaction
+		// REUSE and SIMPLE are the same. With transaction REUSE skips the code calling getConnection. With transaction
+		// getConnection returns always the same connection. So, with transaction we can avoid some CPU cycles using REUSE.
 
 		final Ad adTestTwo = new Ad();
 		adTestTwo.setAdMobileImage("bildTwo.jpg");
