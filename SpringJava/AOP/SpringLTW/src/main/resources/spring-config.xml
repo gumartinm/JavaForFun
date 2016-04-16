@@ -20,9 +20,11 @@
     						   aspectj-weaving="autodetect"/>
     
 	
-	<bean id="myAdvice" class="de.spring.example.MyAdvice">
-    	
-    </bean>
+	<!--
+		There is no need of declaring aspects in Spring xml files because I am using the aop.xml file
+	<bean id="myAdvice" class="de.spring.example.aspects.MyAspect" />
+    <bean id="beforeMyAdvice" class="de.spring.example.aspects.BeforeMyAspect" />
+    -->
 
  	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
                 <property name="user" value="root"/>

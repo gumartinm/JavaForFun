@@ -17,7 +17,9 @@
     </weaver>
     
     <aspects>
-        <aspect name="de.spring.example.MyAdvice"/>        
+        <aspect name="de.spring.example.aspects.MyAspect"/>
+        <aspect name="de.spring.example.aspects.BeforeMyAspect"/>
+        <aspect name="de.spring.example.aspects.MyAspectsOrder"/>
     </aspects>
 
 </aspectj>
