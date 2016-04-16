@@ -6,23 +6,13 @@
   						   http://www.springframework.org/schema/beans/spring-beans.xsd
   						   http://www.springframework.org/schema/context 
   						   http://www.springframework.org/schema/context/spring-context.xsd">
-
-	<!-- 
-			We have to use SPRING ASPECTJ (no SPRING AOP 2.0/1.2) because we want to use
-		annotations with inner classes.
-			AspectJ under this configuration requires at least one 'META-INF/aop.xml' file
-		with the configuration about the Advices.
-			
-		This switches on the load-time weaving 
-	    See: http://static.springsource.org/spring/docs/3.1.0.M2/spring-framework-reference/html/aop.html#aop-aj-ltw-spring
-	-->
-    <context:load-time-weaver  weaver-class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"
-    						   aspectj-weaving="autodetect"/>
     
 	
-	<bean id="myAdvice" class="de.spring.example.MyAdvice">
-    	
-    </bean>
+	<!--
+		There is no need of declaring aspects in Spring xml files because I am using aspectj-maven-plugin
+	<bean id="myAdvice" class="de.spring.example.aspects.MyAspect" />
+    <bean id="beforeMyAdvice" class="de.spring.example.aspects.BeforeMyAspect" />
+    -->
 
  	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
                 <property name="user" value="root"/>

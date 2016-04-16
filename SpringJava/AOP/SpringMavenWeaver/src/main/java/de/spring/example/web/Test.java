@@ -3,6 +3,7 @@ package de.spring.example.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.spring.example.annotation.beforeInitTransactional;
 import de.spring.example.annotation.commitTransactional;
 import de.spring.example.annotation.initTransactional;
 
@@ -33,6 +34,7 @@ public class Test {
     
     // IT WORKS WHEN WEAVING!!!
     @initTransactional
+    @beforeInitTransactional
     private void annotatedPrivateMethod() {
     	LOGGER.info("The Advice should be run before even with private methods because I AM WEAVING."
     			+ " IT WORKS EVEN CALLING FROM METHOD OF THE SAME CLASS. It doesn't when using proxies AOP.");
