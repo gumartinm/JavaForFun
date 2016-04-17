@@ -1,6 +1,8 @@
 <!DOCTYPE aspectj PUBLIC
         "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
 
+	<!-- REQUIRED FILE WHEN USING LOAD TIME WEAVING!!!! -->
+
 <aspectj>
 	<!--
 		With or without logs

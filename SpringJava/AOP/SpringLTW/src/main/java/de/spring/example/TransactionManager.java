@@ -1,12 +1,10 @@
 package de.spring.example;
 
-import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 
-@Aspect
 public class TransactionManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionManager.class);
     private static TransactionManager instance = new TransactionManager();

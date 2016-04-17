@@ -204,15 +204,18 @@
                 <encoding>${project.build.sourceEncoding}</encoding>
                 <complianceLevel>1.8</complianceLevel>                    
                 <verbose>true</verbose>
+                <warn>constructorName,packageDefaultMethod,deprecation,maskedCatchBlocks,unusedLocals,unusedArguments,unusedImports</warn>
+                <crossrefs>true</crossrefs>
 				<weaveDirectories>
             		<weaveDirectory>${project.build.directory}/classes</weaveDirectory>
           		</weaveDirectories>
           		<showWeaveInfo>true</showWeaveInfo>
+          		<outxml>true</outxml>
 				<sources>
 					<source>
 						<basedir>src/main/java</basedir>
 						<includes>
-							<include>**/aspects/*.java</include>
+							<include>**/*.java</include>
 						</includes>
 						<excludes>
 							<exclude>**/logging/*.aj</exclude>
