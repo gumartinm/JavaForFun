@@ -49,4 +49,21 @@
 	 flushCache="false" useCache="true" timeout="10000" statementType="PREPARED">
 	  	select * FROM ad
 	</select>
+	
+	
+	
+INSERT INTO Customers
+	(CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES ('Cardinal','Tom B. Erichsen','Skagen 21','Stavanger','4006','Norway');
+
+
+DELETE FROM Customers
+WHERE CustomerName='Alfreds Futterkiste' AND ContactName='Maria Anders';
+
+
+UPDATE Customers
+SET ContactName='Alfred Schmidt', City='Hamburg'
+WHERE CustomerName='Alfreds Futterkiste';
+
+	
 </mapper>
