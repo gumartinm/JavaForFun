@@ -25,7 +25,7 @@
     
     <!-- STOMP -->
     <websocket:message-broker application-destination-prefix="/app">
-        <websocket:stomp-endpoint path="/portfolio">
+        <websocket:stomp-endpoint path="/portfolio" allowed-origins="*">
             <websocket:sockjs/>
         </websocket:stomp-endpoint>
         <!--
