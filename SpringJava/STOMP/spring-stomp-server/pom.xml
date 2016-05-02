@@ -77,6 +77,14 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
+		
+		
+		<!-- Full-featured broker, TCP connection management. -->
+		<dependency>
+		    <groupId>org.projectreactor</groupId>
+		    <artifactId>reactor-net</artifactId>
+		    <version>1.1.6.RELEASE</version>
+		</dependency>
 
 	</dependencies>
 	<build>

@@ -23,16 +23,98 @@
         <property name="maxBinaryMessageBufferSize" value="8192"/>
     </bean>
     
+    <!--
+    	Note that even though the STOMP CONNECT frame has "login" and "passcode" headers that can be used for
+    	authentication, Spring’s STOMP WebSocket support ignores them and currently expects users to have been
+    	authenticated already via HTTP.
+    	
+    	In some cases it may be useful to assign an identity to a WebSocket session even when the user has not
+    	been formally authenticated. For example, a mobile app might assign some identity to anonymous users,
+    	perhaps based on geographical location. The do that currently, an application can sub-class DefaultHandshakeHandler
+    	and override the determineUser method. The custom handshake handler can then be plugged in
+    	(see examples in Section 25.2.4, “Deployment Considerations”).
+    -->
+    <bean id="customHandshakeHandler" class="de.spring.stomp.handlers.CustomHandshakeHandler"/>
+    
+    <!-- Interceptors -->
+    <bean id="customChannelInterceptor" class="de.spring.stomp.interceptors.CustomChannelInterceptor"/>
+    <bean id="customHttpHandshakeInterceptor" class="de.spring.stomp.interceptors.CustomHttpHandshakeInterceptor"/>
+    
+    <!-- Listeners -->
+    <bean id="brokerAvailabilityListener" class="de.spring.stomp.listeners.BrokerAvailabilityListener"/>
+    <bean id="sessionConnectedListener" class="de.spring.stomp.listeners.SessionConnectedListener"/>
+    <bean id="sessionConnectListener" class="de.spring.stomp.listeners.SessionConnectListener"/>
+    <bean id="sessionDisconnectListener" class="de.spring.stomp.listeners.SessionDisconnectListener"/>    
+    <bean id="sessionSubscribeListener" class="de.spring.stomp.listeners.SessionSubscribeListener"/>    
+    <bean id="sessionUnsubscribeListener" class="de.spring.stomp.listeners.SessionUnsubscribeListener"/>
+        
     <!-- STOMP -->
+    <!-- Simple broker -->
     <websocket:message-broker application-destination-prefix="/app">
+    	<websocket:transport send-timeout="15000" send-buffer-size="524288" message-size="131072" />
         <websocket:stomp-endpoint path="/portfolio" allowed-origins="*">
+            <websocket:handshake-handler ref="customHandshakeHandler" />
+        	<websocket:handshake-interceptors>
+            	<ref bean="customHttpHandshakeInterceptor"/>
+        	</websocket:handshake-interceptors>
+        	<websocket:sockjs/>    
+        </websocket:stomp-endpoint>
+        <!--
+        	In memory broker.
+
+        	hearbeat: Configure the value for the heartbeat settings. The first number represents how often the server will
+			write or send a heartbeat. The second is how often the client should write. 0 means no heartbeats.
+			By default this is set to "0, 0" unless the scheduler attribute is also set in which case the
+			default becomes "10000,10000" (in milliseconds).
+			
+			Matching the value used by client.
+        -->
+        <websocket:simple-broker prefix="/topic, /queue"
+        heartbeat="0,20000" />
+        
+        <websocket:client-inbound-channel>
+			<websocket:executor core-pool-size="100" max-pool-size="200" keep-alive-seconds="600"/>
+			<websocket:interceptors>
+				<ref bean="customChannelInterceptor"/>
+			</websocket:interceptors>
+		</websocket:client-inbound-channel>
+		<websocket:client-outbound-channel>
+			<websocket:executor core-pool-size="101" max-pool-size="201" keep-alive-seconds="601"/>
+			<websocket:interceptors>
+				<ref bean="customChannelInterceptor"/>
+			</websocket:interceptors>
+		</websocket:client-outbound-channel>
+    </websocket:message-broker>
+    
+    <!-- Full-featured broker -->
+    <websocket:message-broker application-destination-prefix="/app">
+    	<websocket:transport send-timeout="15000" send-buffer-size="524288" message-size="131072" />
+        <websocket:stomp-endpoint path="/fullportfolio" allowed-origins="*">
+        	<websocket:handshake-handler ref="customHandshakeHandler" />
+        	<websocket:handshake-interceptors>
+            	<ref bean="customHttpHandshakeInterceptor"/>
+        	</websocket:handshake-interceptors>
             <websocket:sockjs/>
         </websocket:stomp-endpoint>
         <!--
-        	Full-featured broker, see: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/websocket.html#websocket-stomp-handle-broker-relay
-        <websocket:stomp-broker-relay prefix="/topic,/queue" />
+        	Full-featured broker
         -->
-        <websocket:simple-broker prefix="/topic, /queue"/>
+        <websocket:stomp-broker-relay prefix="/topic, /queue"
+        relay-host="" relay-port="" client-login="" client-passcode="" system-login="" system-passcode=""
+        heartbeat-send-interval="" heartbeat-receive-interval="" auto-startup="true" virtual-host=""/>
+        
+        <websocket:client-inbound-channel>
+			<websocket:executor core-pool-size="100" max-pool-size="200" keep-alive-seconds="600"/>
+			<websocket:interceptors>
+				<ref bean="customChannelInterceptor"/>
+			</websocket:interceptors>
+		</websocket:client-inbound-channel>
+		<websocket:client-outbound-channel>
+			<websocket:executor core-pool-size="101" max-pool-size="201" keep-alive-seconds="601"/>
+			<websocket:interceptors>
+				<ref bean="customChannelInterceptor"/>
+			</websocket:interceptors>
+		</websocket:client-outbound-channel>
     </websocket:message-broker>
 
 </beans>
