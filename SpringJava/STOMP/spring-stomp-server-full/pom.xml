@@ -1,0 +1,134 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>de.spring.stomp</groupId>
+		<artifactId>spring-stomp-bom</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>spring-stomp-server-full</artifactId>
+	<packaging>war</packaging>
+	<name>SPRING STOMP SERVER. FULL FEATURED BROKER.</name>
+	<url>https://gumartinm.name</url>
+	<description>
+        STOMP with Spring Framework. Full featured broker.
+    </description>
+	<organization>
+		<name>Gustavo Martin Morcuende</name>
+		<url>https://www.gumartinm.name</url>
+	</organization>
+	<scm>
+		<developerConnection>scm:git:http://git.gumartinm.name/JavaForFun</developerConnection>
+		<url>https://git.gumartinm.name/JavaForFun</url>
+	</scm>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+		</dependency>
+
+		<!-- Required for WebSockets -->
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-websocket</artifactId>
+    	</dependency>
+    	
+    	<!--  Required for STOMP -->
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-messaging</artifactId>
+    	</dependency>
+
+		<!-- Required by spring-webmvc -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+			Jackson JSON Processor, required by spring-webmvc. See messageConverters
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+
+		<!--
+			Required by spring-context for using JSR-303. See LocalValidatorFactoryBean
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		
+		
+		<!-- Full-featured broker, TCP connection management. -->
+		<dependency>
+		    <groupId>io.projectreactor</groupId>
+		    <artifactId>reactor-net</artifactId>
+		    <version>2.0.8.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.0.36.Final</version>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/webapp</directory>
+				<excludes>
+					<exclude>**/*.*</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources/</directory>
+				<includes>
+					<include>**/*.*</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<filtering>true</filtering>
+							<directory>src/main/webapp</directory>
+							<includes>
+								<include>WEB-INF/web.xml</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
