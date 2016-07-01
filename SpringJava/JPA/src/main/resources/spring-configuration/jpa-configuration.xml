@@ -15,7 +15,7 @@
 
 	<context:annotation-config />
 
-    <context:component-scan base-package="de.spring.jpa.repository.impl" />
+    <context:component-scan base-package="de.spring.persistence, org.resthub" />
     
     <context:property-placeholder location="classpath:jpa.properties" />
     
@@ -28,11 +28,11 @@
 				<property name="showSql" value="${jpa.show_sql}" />
 			</bean>
 		</property>
-		<property name="packagesToScan" value="de.spring.jpa.domain" />
+		<property name="packagesToScan" value="de.spring.persistence.**.domain" />
 	</bean>
 
 	<jpa:repositories entity-manager-factory-ref="jpaEntityManagerFactory"
-		base-package="de.spring.jpa.repository"
+		base-package="de.spring.persistence.**.repository"
 		transaction-manager-ref="transactionManager" />
 
 </beans>

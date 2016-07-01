@@ -3,23 +3,24 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.spring.jpa</groupId>
 	<artifactId>spring-jpa</artifactId>
+	<packaging>war</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<name>spring-jpa</name>
-	<url>http://gumartinm.name</url>
+	<url>https://gumartinm.name/</url>
 	<description>JPA Spring Framework</description>
 	<organization>
 		<name>Gustavo Martin Morcuende</name>
-		<url>http://www.gumartinm.name</url>
+		<url>https://gumartinm.name/</url>
 	</organization>
 	<scm>
-		<developerConnection>scm:git:http://git.gumartinm.name/SpringWebServicesForFun</developerConnection>
-		<url>http://git.gumartinm.name/SpringWebServicesForFun</url>
+		<developerConnection>scm:git:http://git.gumartinm.name/Spring/JPA</developerConnection>
+		<url>http://git.gumartinm.name/Spring/JPA</url>
 	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<spring.version>4.2.4.RELEASE</spring.version>
+		<spring.version>4.3.0.RELEASE</spring.version>
 	</properties>
 
 	<profiles>
@@ -42,7 +43,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>2.5</version>
+			<version>2.6.1</version>
 		</dependency>
 		<!--
 			2/3 Required dependency for log4j 2 with slf4j: log4j 2 maven plugin 
@@ -51,7 +52,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.5</version>
+			<version>2.6.1</version>
 		</dependency>
 		<!--
 			3/3 Required dependency for getting rid of commons logging. This is 
@@ -63,7 +64,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
-			<version>1.7.13</version>
+			<version>1.7.21</version>
 		</dependency>
 		
 		<dependency>
@@ -74,6 +75,28 @@
 				Required dependency for getting rid of commons logging and use my 
 				own logging library (in my case I decided to use log4j 2 under slf4j)
 			-->
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${spring.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -99,12 +122,18 @@
     		<groupId>org.springframework</groupId>
     		<artifactId>spring-orm</artifactId>
     		<version>${spring.version}</version>
+    		<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>1.9.2.RELEASE</version>
+			<version>1.10.2.RELEASE</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>
@@ -130,15 +159,53 @@
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-context</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>5.0.7.Final</version>
+			<version>5.1.0.Final</version>
 		</dependency>
 
+
+		<!-- Required by spring-webmvc -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.0-b01</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!--
+			Jackson JSON Processor, required by spring-webmvc. See messageConverters
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.6.4</version>
+		</dependency>
+
+
+		<!--
+			Required by spring-context for using JSR-303. See LocalValidatorFactoryBean 
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.1.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.2.2.Final</version>
+		</dependency>
 
 		<!-- Unitary and integration tests -->
 		<dependency>
@@ -152,6 +219,12 @@
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 			<scope>test</scope>
+							<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -172,7 +245,6 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.18.1</version>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -232,6 +304,22 @@
 					<includes>
 						<include>**/*IntegrationTest.java</include>
 					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<filtering>true</filtering>
+							<directory>src/main/webapp</directory>
+							<includes>
+								<include>WEB-INF/web.xml</include>
+							</includes>
+						</resource>
+					</webResources>
 				</configuration>
 			</plugin>
 		</plugins>
