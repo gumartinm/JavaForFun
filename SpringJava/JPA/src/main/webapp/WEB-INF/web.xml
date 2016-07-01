@@ -37,5 +37,25 @@
         <!-- REQUIRED PATTERN BY swagger-ui. IT DOESN'T WORK WITH ANY OTHER o.O -->
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+    
+    
+    <!--
+    	Se serializan objetos Entity al vuelo.
+    	
+    	1. JACKSON irá accediendo a todas las propiedades de un objeto Entity.
+    	2. Según vaya accediendo se irán haciendo queries a base de datos. NO ANTES porque se hace en
+    	modo lazy, lo que quiere decir que tenemos el objeto Entity pero sus datos (lo que se obtiene
+    	después de hacer las queries) están vacíos. Hasta que no se accede a una propiedad determinada
+    	del objeto Entity no se hará realmente la query en base de datos. 
+     -->
+    <filter>
+        <filter-name>OpenEntityManagerInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>OpenEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
 
 </web-app>

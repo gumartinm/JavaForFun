@@ -13,8 +13,8 @@
 		<url>https://gumartinm.name/</url>
 	</organization>
 	<scm>
-		<developerConnection>scm:git:http://git.gumartinm.name/Spring/JPA</developerConnection>
-		<url>http://git.gumartinm.name/Spring/JPA</url>
+		<developerConnection>scm:git:https://git.gumartinm.name/Spring/JPA</developerConnection>
+		<url>https://git.gumartinm.name/Spring/JPA</url>
 	</scm>
 
 	<properties>
@@ -104,18 +104,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>javax.inject</groupId>
+  			<artifactId>javax.inject</artifactId>
+  			<version>1</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-
-		<dependency>
-			<groupId>com.mchange</groupId>
-			<artifactId>c3p0</artifactId>
-			<version>0.9.5.2</version>
-		</dependency>
+		
 
 		<!-- Required JPA dependencies with hibernate -->
 		<dependency>

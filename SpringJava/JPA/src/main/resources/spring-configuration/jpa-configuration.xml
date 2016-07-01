@@ -19,7 +19,7 @@
     
     <context:property-placeholder location="classpath:jpa.properties" />
     
-	<bean id="jpaEntityManagerFactory"
+	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="jpaVendorAdapter">
@@ -31,7 +31,7 @@
 		<property name="packagesToScan" value="de.spring.persistence.**.domain" />
 	</bean>
 
-	<jpa:repositories entity-manager-factory-ref="jpaEntityManagerFactory"
+	<jpa:repositories entity-manager-factory-ref="entityManagerFactory"
 		base-package="de.spring.persistence.**.repository"
 		transaction-manager-ref="transactionManager" />
 
