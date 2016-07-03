@@ -20,4 +20,8 @@ public class AdController extends RepositoryBasedRestController<Ad, Long, AdRepo
     }
     
 	// I do not have to do anything here because all I need is implemented by RepositoryBasedRestController :)
+
+    // @Transactional is implemented by org.springframework.data.jpa.repository.support.SimpleJpaRepository
+    // By default, SimpleJpaRepository will be automatically implemented by my
+    // Spring JPA repositories: AdRepository and AdDescriptionRepository.
 }

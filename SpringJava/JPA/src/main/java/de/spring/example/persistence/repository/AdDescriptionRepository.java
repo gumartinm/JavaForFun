@@ -7,6 +7,13 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import de.spring.example.persistence.domain.Ad;
 import de.spring.example.persistence.domain.AdDescription;
 
+/**
+ * By default <code>org.springframework.data.jpa.repository.support.SimpleJpaRepository<code>
+ * will be the implementation for this interface.
+ * 
+ * Be careful with <code>@Transactional</code>. SimpleJpaRepository has annotated methods.
+ *
+ */
 public interface AdDescriptionRepository extends PagingAndSortingRepository<AdDescription, Long> {
 
 	// Custom Query method
