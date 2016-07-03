@@ -2,6 +2,7 @@ package de.spring.persistence.example.domain;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -21,7 +22,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import de.spring.persistence.converters.LocalDateTimeAttributeConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import de.spring.persistence.converters.OffsetDateTimeAttributeConverter;
 
 @Entity
 @Table(name="ad", schema="mybatis_example")
@@ -77,14 +80,16 @@ public class Ad implements Serializable {
 	private String adMobileImage;
 
 	@NotNull
-	@Convert(converter=LocalDateTimeAttributeConverter.class)
+	@Convert(converter=OffsetDateTimeAttributeConverter.class)
 	@Column(name="created_at", nullable=false)
-	private LocalDateTime createdAt;
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ssZ")
+	private OffsetDateTime createdAt;
 	
 	@NotNull
-	@Convert(converter=LocalDateTimeAttributeConverter.class)
+	@Convert(converter=OffsetDateTimeAttributeConverter.class)
 	@Column(name="updated_at", nullable = false)
-	private LocalDateTime updatedAt;
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ssZ")
+	private OffsetDateTime updatedAt;
 
 	// It will be used by JPA when filling the property fields with data coming from data base.
 	protected Ad() {
@@ -92,8 +97,8 @@ public class Ad implements Serializable {
 	}
 
 	// It will be used by my code (for example by Unit Tests)
-	public Ad(Long id, Long companyId, Long companyCategId, String adMobileImage, LocalDateTime createdAt,
-			LocalDateTime updatedAt) {
+	public Ad(Long id, Long companyId, Long companyCategId, String adMobileImage, OffsetDateTime createdAt,
+			OffsetDateTime updatedAt) {
 		this.id = id;
 		this.companyCategId = companyCategId;
 		this.adMobileImage = adMobileImage;
@@ -117,11 +122,11 @@ public class Ad implements Serializable {
 		return adMobileImage;
 	}
 
-	public LocalDateTime getCreatedAt() {
+	public OffsetDateTime getCreatedAt() {
 		return createdAt;
 	}
 
-	public LocalDateTime getUpdatedAt() {
+	public OffsetDateTime getUpdatedAt() {
 		return updatedAt;
 	}
 }

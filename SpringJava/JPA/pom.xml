@@ -184,12 +184,14 @@
 		<!--
 			Jackson JSON Processor, required by spring-webmvc. See messageConverters
 			in rest-config.xml
-		-->
+		
+			Non required dependency. It is already declared in jackson-datatype-jsr310
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.6.4</version>
 		</dependency>
+		-->
 		<!-- 
 			Jackson dependency required for serializing and deserializing LocalDateTime,
 			LocalDate, etc, etc objects.
