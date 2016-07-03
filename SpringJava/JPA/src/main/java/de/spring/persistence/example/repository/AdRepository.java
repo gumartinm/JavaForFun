@@ -10,11 +10,11 @@ public interface AdRepository extends PagingAndSortingRepository<Ad, Long> {
 	
 	// Named Native Query (using the native language of the store) It is not portable.
 	// See de.spring.persistence.example.domain.Ad
-	@Query(value="SELECT * FROM AD WHERE AD.ID = :id", nativeQuery=true)
+	@Query(value="SELECT * FROM ad WHERE ad.id = :id", nativeQuery=true)
 	Ad findByIdNativeQuery(@Param("id") Long id);
 	
 	// Named Query (using JPL) It is portable.
 	// See de.spring.persistence.example.domain.Ad
-	@Query("SELECT * FROM AD WHERE AD.ID = :id")
+	@Query("select a from Ad a where a.id = :id")
 	Ad findByIdQuery(@Param("id") Long id);
 }

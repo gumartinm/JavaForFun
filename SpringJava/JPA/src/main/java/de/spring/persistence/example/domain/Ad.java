@@ -11,10 +11,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+//import javax.persistence.NamedNativeQueries;
+//import javax.persistence.NamedNativeQuery;
+//import javax.persistence.NamedQueries;
+//import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
@@ -31,14 +31,14 @@ import de.spring.persistence.converters.LocalDateTimeAttributeConverter;
 //    So you'd better use @Query.
 //http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.at-query
 //See: de.spring.persistence.example.repository.AdRepository 
-@NamedQueries(
-		{
-			@NamedQuery(
-			name="Ad.findByIdQuery",
-			query="select a FROM AD a WHERE a.id = :id")
-		}
-	
-)
+//@NamedQueries(
+//		{
+//			@NamedQuery(
+//			name="Ad.findByIdQuery",
+//			query="select a from Ad a where a.id = :id)
+//		}
+//	
+//)
 // 1. Native query IS NOT JPL. It is not portable and it is written directly in the native language
 //    of the store. We can use special features at the cost of portability.
 // 2. Instead of annotating the domain class we should be using @Query annotation at the query method
@@ -46,14 +46,14 @@ import de.spring.persistence.converters.LocalDateTimeAttributeConverter;
 //    So you'd better use @Query.
 //    http://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.at-query
 //    See: de.spring.persistence.example.repository.AdRepository 
-@NamedNativeQueries(
-	{
-		@NamedNativeQuery(
-			name="Ad.findByIdNativeQuery",
-			query="SELECT * FROM AD WHERE AD.ID = :id",
-			resultClass=Ad.class)
-	}		
-)
+//@NamedNativeQueries(
+//	{
+//		@NamedNativeQuery(
+//			name="Ad.findByIdNativeQuery",
+//			query="SELECT * FROM ad WHERE ad.id = :id",
+//			resultClass=Ad.class)
+//	}		
+//)
 public class Ad implements Serializable {
 
 	@Id
