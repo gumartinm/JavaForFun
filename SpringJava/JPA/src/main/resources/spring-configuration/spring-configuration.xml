@@ -10,4 +10,6 @@
         
 	<context:component-scan base-package="de.spring.example.services"/>
 	
+	<context:property-placeholder location="classpath:jpa.properties" />
+	
 </beans>

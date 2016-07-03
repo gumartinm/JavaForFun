@@ -16,9 +16,7 @@
 	<context:annotation-config />
 
     <context:component-scan base-package="de.spring.example.persistence" />
-    
-    <context:property-placeholder location="classpath:jpa.properties" />
-    
+        
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />
