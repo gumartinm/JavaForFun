@@ -15,7 +15,7 @@
 
 	<context:annotation-config />
 
-    <context:component-scan base-package="de.spring.example.persistence, org.resthub" />
+    <context:component-scan base-package="de.spring.example.persistence" />
     
     <context:property-placeholder location="classpath:jpa.properties" />
     
