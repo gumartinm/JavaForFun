@@ -1,4 +1,4 @@
-package de.spring.persistence.example.domain;
+package de.spring.example.persistence.domain;
 
 import java.io.Serializable;
 
@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import de.spring.example.persistence.domain.Ad;
 
 @Entity
 @Table(name="ad_description", schema="mybatis_example")

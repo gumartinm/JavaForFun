@@ -1,10 +1,10 @@
-package de.spring.persistence.example.repository;
+package de.spring.example.persistence.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import de.spring.persistence.example.domain.Ad;
+import de.spring.example.persistence.domain.Ad;
 
 public interface AdRepository extends PagingAndSortingRepository<Ad, Long> {
 	

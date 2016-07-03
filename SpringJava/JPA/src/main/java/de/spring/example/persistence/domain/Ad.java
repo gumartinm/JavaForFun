@@ -1,7 +1,6 @@
-package de.spring.persistence.example.domain;
+package de.spring.example.persistence.domain;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
@@ -24,7 +23,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import de.spring.persistence.converters.OffsetDateTimeAttributeConverter;
+import de.spring.example.persistence.converters.OffsetDateTimeAttributeConverter;
 
 @Entity
 @Table(name="ad", schema="mybatis_example")

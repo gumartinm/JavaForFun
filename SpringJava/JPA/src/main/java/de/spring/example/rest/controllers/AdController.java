@@ -1,4 +1,4 @@
-package de.spring.rest.controllers;
+package de.spring.example.rest.controllers;
 
 import javax.inject.Inject;
 
@@ -6,8 +6,8 @@ import org.resthub.web.controller.RepositoryBasedRestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.spring.persistence.example.domain.Ad;
-import de.spring.persistence.example.repository.AdRepository;
+import de.spring.example.persistence.domain.Ad;
+import de.spring.example.persistence.repository.AdRepository;
 
 @RestController
 @RequestMapping("/ads/")

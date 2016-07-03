@@ -25,7 +25,7 @@
    
 	<context:annotation-config />
    
-	<context:component-scan base-package="de.spring.rest"/>
+	<context:component-scan base-package="de.spring.example.rest"/>
 	
 	<!--
 		Required beans for generating XML responses from Java objects using JAXB annotations

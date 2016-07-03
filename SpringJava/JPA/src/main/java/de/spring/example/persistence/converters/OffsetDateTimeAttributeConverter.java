@@ -1,4 +1,4 @@
-package de.spring.persistence.converters;
+package de.spring.example.persistence.converters;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
