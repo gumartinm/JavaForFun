@@ -2,8 +2,10 @@ package de.spring.example.persistence.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,8 +16,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import de.spring.example.persistence.domain.Ad;
-
 @Entity
 @Table(name="ad_description", schema="mybatis_example")
 public class AdDescription implements Serializable {
@@ -25,14 +25,13 @@ public class AdDescription implements Serializable {
 	@Column(name="id", updatable=false, nullable=false)
 	private Long id;
 	
-	@NotNull
-	@ManyToOne(optional=false)
+	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, optional=false)
 	@JoinColumn(name="ad_id", referencedColumnName="id")
 	private Ad ad;
 	
 	@NotNull
 	@Max(60)
-	@Column(name="language_id")
+	@Column(name="laguage_id")
 	private Long languageId;
 	
 	@NotNull
@@ -64,8 +63,8 @@ public class AdDescription implements Serializable {
 	public AdDescription(Long id, Ad ad, Long languageId, String adName, String adDescription,
 			String adMobileText, String adLink) {
 		this.id = id;
-		this.languageId = languageId;
 		this.ad = ad;
+		this.languageId = languageId;
 		this.adName = adName;
 		this.adDescription = adDescription;
 		this.adMobileText = adMobileText;

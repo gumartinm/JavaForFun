@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -63,7 +64,8 @@ public class Ad implements Serializable {
 	@Column(name="id", updatable=false, nullable=false)
 	private Long id;
 	
-	@OneToMany(mappedBy="ad", fetch=FetchType.LAZY, targetEntity=AdDescription.class)
+	@OneToMany(mappedBy="ad", fetch=FetchType.LAZY,
+			cascade = CascadeType.ALL, targetEntity=AdDescription.class)
 	private Set<AdDescription> adDescriptions;
 	
 	@Max(60)
@@ -96,9 +98,11 @@ public class Ad implements Serializable {
 	}
 
 	// It will be used by my code (for example by Unit Tests)
-	public Ad(Long id, Long companyId, Long companyCategId, String adMobileImage, OffsetDateTime createdAt,
-			OffsetDateTime updatedAt) {
+	public Ad(Long id, Set<AdDescription> adDescriptions, Long companyId, Long companyCategId, String adMobileImage,
+			OffsetDateTime createdAt, OffsetDateTime updatedAt) {
 		this.id = id;
+		this.adDescriptions = adDescriptions;
+		this.companyId = companyId;
 		this.companyCategId = companyCategId;
 		this.adMobileImage = adMobileImage;
 		this.createdAt = createdAt;
@@ -107,6 +111,10 @@ public class Ad implements Serializable {
 
 	public Long getId() {
 		return id;
+	}
+
+	public Set<AdDescription> getAdDescriptions() {
+		return adDescriptions;
 	}
 
 	public Long getCompanyId() {

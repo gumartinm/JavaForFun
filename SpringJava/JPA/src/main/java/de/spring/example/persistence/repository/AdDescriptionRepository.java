@@ -16,6 +16,6 @@ import de.spring.example.persistence.domain.AdDescription;
  */
 public interface AdDescriptionRepository extends PagingAndSortingRepository<AdDescription, Long> {
 
-	// Custom Query method
+	// Custom Query method (useful when the offered methods by PagingAndSortingRepository are not enough)
 	Page<AdDescription> findByAd(Ad ad, Pageable pageable);
 }
