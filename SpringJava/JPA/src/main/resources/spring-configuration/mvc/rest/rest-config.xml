@@ -47,6 +47,14 @@
         <property name="featuresToDisable">
             <array>
                 <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES"/>
+                
+                <!-- Useful when using Java 8 objects like OffsetDateTime.
+                	 I want to keep the offset in time zone if it exists.
+                	 
+                	 LIKE THIS ONE: 2014-07-03 23:27:36+0100
+                -->
+                <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE"/>
+                
                 <util:constant static-field="com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION"/>
             </array>
         </property>
