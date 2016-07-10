@@ -1,0 +1,17 @@
+
+If you want aspectj-maven-plugin to work with Eclipse do the following:
+
+Help-> Install New Software...-> Ad...
+
+
+For Eclipse NEON (4.6.0)
+
+AJDT
+http://download.eclipse.org/tools/ajdt/46/dev/update/
+
+
+
+Once AJDT is installed we must rebuild our project:
+Project-> Clean
+
+
