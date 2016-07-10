@@ -1,0 +1,47 @@
+mvn clean install
+
+mvn dependency:sources && mvn dependency:resolve -Dclassifier=javadoc
+
+
+POST /spring-jpa-1.0-SNAPSHOT/ads/ HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 4f41770f-9250-9ecf-4bf3-07ea8ad2b8d5
+
+{
+    "companyId" : 2,
+    "companyCategId" : 40,
+    "adMobileImage" : "bild.jpg",
+    "createdAt" : "2016-07-10 23:27:36+0200",
+    "updatedAt" : "2014-07-10 23:27:36+0200",
+    "adDescriptions": [{
+        "languageId": 20,
+        "adName": "babuchas",
+        "adDescription": "anuncio sobre babuchas",
+        "adMobileText": "babuchas en oferta muy buenas",
+        "adLink": "http://gumartinm.name"
+    },
+    {
+        "languageId": 20,
+        "adName": "zapatillas",
+        "adDescription": "anuncio sobre zapatillas",
+        "adMobileText": "zapatillas en oferta muy buenas",
+        "adLink": "http://gumartinm.name"
+    }]
+}
+
+
+
+GET /spring-jpa-1.0-SNAPSHOT/ads/213 HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+
+
+
+GET /spring-jpa-1.0-SNAPSHOT/ad-descriptions/23 HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+
