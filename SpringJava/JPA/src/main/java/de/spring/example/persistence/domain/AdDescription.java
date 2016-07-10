@@ -25,8 +25,8 @@ public class AdDescription implements Serializable {
 	@Column(name="id", updatable=false, nullable=false)
 	private Long id;
 	
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, optional=false)
-	@JoinColumn(name="ad_id", referencedColumnName="id")
+	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, optional=true)
+	@JoinColumn(name="ad_id", nullable=false, updatable = false, insertable = false, referencedColumnName="id")
 	private Ad ad;
 	
 	@NotNull
@@ -70,6 +70,10 @@ public class AdDescription implements Serializable {
 		this.adMobileText = adMobileText;
 		this.adLink = adLink;
 	}
+	
+	/**
+	 * WARNING: JPA REQUIRES GETTERS!!!
+	 */
 
 	public Long getId() {
 		return id;

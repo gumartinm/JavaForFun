@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 //import javax.persistence.NamedNativeQueries;
 //import javax.persistence.NamedNativeQuery;
 //import javax.persistence.NamedQueries;
@@ -66,16 +65,8 @@ public class Ad implements Serializable {
 	@Column(name="id", updatable=false, nullable=false)
 	private Long id;
 	
-//  1. Using just OneToMany:
-//	@OneToMany(mappedBy="ad", fetch=FetchType.LAZY,
-//			cascade = CascadeType.ALL, targetEntity=AdDescription.class)
-//  2. The same using @OneToMany + @JoinTable:
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, targetEntity=AdDescription.class)
-	@JoinTable(
-            name="ad_description",
-            joinColumns = @JoinColumn( name="id"),
-            inverseJoinColumns = @JoinColumn( name="ad_id")
-        )
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "ad_id", nullable = false)
 	private Set<AdDescription> adDescriptions;
 	
 	@Max(60)
@@ -119,6 +110,10 @@ public class Ad implements Serializable {
 		this.updatedAt = updatedAt;
 	}
 
+	/**
+	 * WARNING: JPA REQUIRES GETTERS!!!
+	 */
+	
 	public Long getId() {
 		return id;
 	}
