@@ -24,11 +24,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import de.spring.example.persistence.converters.OffsetDateTimeAttributeConverter;
 
 @Entity
 @Table(name="ad", schema="mybatis_example")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="jsonId")
 // 1. Named query is JPL. It is portable.
 // 2. Instead of annotating the domain class we should be using @Query annotation at the query method
 //    because it should be cleaner :)
