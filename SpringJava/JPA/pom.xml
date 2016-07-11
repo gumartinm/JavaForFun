@@ -21,6 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.version>4.3.0.RELEASE</spring.version>
+		<querydsl.version>4.1.3</querydsl.version>
 	</properties>
 
 	<profiles>
@@ -218,6 +219,19 @@
 			<version>5.2.2.Final</version>
 		</dependency>
 
+		<!-- Using Querydsl -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+
+
 		<!-- Unitary and integration tests -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -243,12 +257,6 @@
 			<version>2.0.11-beta</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -258,16 +266,6 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18.1</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.18.1</version>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -303,9 +301,49 @@
 					</archive>
 				</configuration>
 			</plugin>
+			
+			<!-- Using Querydsl -->
+			<plugin>
+			  <groupId>com.mysema.maven</groupId>
+			  <artifactId>apt-maven-plugin</artifactId>
+			  <version>1.0.4</version>
+			  <executions>
+			    <execution>
+			      <goals>
+			        <goal>process</goal>
+			      </goals>
+			      <configuration>
+			      	<outputDirectory>${project.build.directory}/generated-sources/querydsl</outputDirectory>
+			        <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+			      </configuration>
+			    </execution>
+			  </executions>
+			</plugin>
+			<!-- Required in order to work with m2e plugin for Eclipse  -->
+	        <plugin>
+	            <groupId>org.codehaus.mojo</groupId>
+	            <artifactId>build-helper-maven-plugin</artifactId>
+	            <version>1.11</version>
+	            <executions>
+	                <execution>
+	                    <id>add-source</id>
+	                    <phase>generate-sources</phase>
+	                    <goals>
+	                        <goal>add-source</goal>
+	                    </goals>
+	                    <configuration>
+	                        <sources>
+	                            <source>${project.build.directory}/generated-sources/querydsl</source>
+	                        </sources>
+	                    </configuration>
+	                </execution>
+	            </executions>
+	        </plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
 				<configuration>
 					<excludes>
 						<exclude>**/*IntegrationTest.java</exclude>
@@ -315,6 +353,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.18.1</version>
 				<executions>
 					<execution>
 						<goals>

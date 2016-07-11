@@ -4,8 +4,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.resthub.common.service.CrudServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 import de.spring.example.persistence.domain.AdDescription;
+import de.spring.example.persistence.domain.QAdDescription;
 import de.spring.example.persistence.repository.AdDescriptionRepository;
 import de.spring.example.services.AdDescriptionService;
 
@@ -24,4 +29,17 @@ public class AdDescriptionServiceImpl
 	// the JPA repositories and nothing else :)
 	
 	// In this case there is any business logic, but this is just an example.
+	
+	
+	/**
+	 * Using Querydsl. Giving some business logic to this service :)
+	 */
+	@Override
+	public Page<AdDescription> queryDslExample(Pageable pageRequest) {
+		final QAdDescription adDescription = QAdDescription.adDescription1;
+		final BooleanExpression adDescriptionHasAdLink = adDescription.adLink.contains("gumartinm");
+		final BooleanExpression adDescriptionHasDescription = adDescription.adDescription.contains("babucha");
+		
+		return repository.findAll(adDescriptionHasAdLink.and(adDescriptionHasDescription), pageRequest);
+	}
 }
