@@ -1,5 +1,6 @@
 package de.spring.example.persistence.repository;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +14,7 @@ import de.spring.example.persistence.domain.Ad;
  * Be careful with <code>@Transactional</code>. SimpleJpaRepository has annotated methods.
  *
  */
-public interface AdRepository extends PagingAndSortingRepository<Ad, Long> {
+public interface AdRepository extends PagingAndSortingRepository<Ad, Long>, JpaSpecificationExecutor<Ad> {
 	
 	// Named Native Query (using the native language of the store) It is not portable.
 	// See de.spring.persistence.example.domain.Ad

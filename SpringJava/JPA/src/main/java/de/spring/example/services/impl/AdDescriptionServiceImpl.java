@@ -33,6 +33,12 @@ public class AdDescriptionServiceImpl
 	
 	/**
 	 * Using Querydsl. Giving some business logic to this service :)
+	 * 
+	 * Querydsl: fluent interface done easy. There is no effort because it is already implemented.
+	 * 
+	 * Criteria using Specifications requires some effort.
+	 * 
+	 * See: de.spring.example.services.impl.AdServiceImpl
 	 */
 	@Override
 	public Page<AdDescription> queryDslExample(Pageable pageRequest) {
