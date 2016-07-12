@@ -17,13 +17,11 @@
 	<!--  
     <jdbc:embedded-database id="dataSource" type="H2" />
 	-->
-   <beans profile="default,development,integration,preproduction,production">
-        <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="org.h2.Driver" />
-            <property name="url" value="jdbc:h2:mem:mybatis_example;INIT=create schema if not exists mybatis_example\;SET SCHEMA mybatis_example;MODE=DB2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
-            <property name="username" value="mybatis" />
-            <property name="password" value="" />
-        </bean>
-    </beans>
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.h2.Driver" />
+		<property name="url" value="jdbc:h2:mem:mybatis_example;INIT=create schema if not exists mybatis_example\;SET SCHEMA mybatis_example;MODE=DB2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
+		<property name="username" value="mybatis" />
+		<property name="password" value="" />
+	</bean>
 	
 </beans>
