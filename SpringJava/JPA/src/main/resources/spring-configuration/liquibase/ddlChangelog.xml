@@ -1,0 +1,52 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="gustavo (generated)" id="1468267753605-1">
+        <createTable tableName="ad">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="company_id" type="BIGINT"/>
+            <column name="company_categ_id" type="BIGINT"/>
+            <column name="ad_gps" type="BLOB"/>
+            <column name="ad_mobile_image" type="VARCHAR(255)"/>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="0000-00-00 00:00:00" name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1468267753605-2">
+        <createTable tableName="ad_description">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="laguage_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ad_id" type="BIGINT"/>
+            <column name="ad_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ad_description" type="LONGTEXT"/>
+            <column name="ad_mobile_text" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ad_link" type="VARCHAR(3000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1468267753605-3">
+        <createTable tableName="con_test">
+            <column name="a" type="CHAR(1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1468267753605-4">
+        <addUniqueConstraint columnNames="id" constraintName="id" deferrable="false" disabled="false" initiallyDeferred="false" tableName="ad"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1468267753605-5">
+        <addForeignKeyConstraint baseColumnNames="ad_id" baseTableName="ad_description" constraintName="ad_description_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ad"/>
+    </changeSet>
+</databaseChangeLog>

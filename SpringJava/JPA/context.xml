@@ -45,7 +45,7 @@
 		removeAbandonedOnBorrow="true" 
 		removeAbandonedOnMaintenance="true" 
 		type="javax.sql.DataSource"
-    	url="jdbc:mysql://localhost:3306/mybatis_example?allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8"
+    	url="jdbc:mysql://localhost:3306/mybatis_example?createDatabaseIfNotExist=true&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8"
     	username="root" 
 		validationQuery="select 1" />
 

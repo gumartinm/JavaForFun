@@ -26,4 +26,6 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 	
+	<import resource="liquibase/liquibase.xml" />
+	
 </beans>
