@@ -26,7 +26,7 @@ public class AdServiceImpl
 	/**
 	 * Criteria using Specifications.
 	 * 
-	 * It is more complicated that when using Querydsl because I have to implement the
+	 * It is more complicated than when using Querydsl because I have to implement the
 	 * Specifications. Querydsl is doing everything for me.
 	 * 
 	 * See: de.spring.example.services.impl.AdDescriptionServiceImpl
