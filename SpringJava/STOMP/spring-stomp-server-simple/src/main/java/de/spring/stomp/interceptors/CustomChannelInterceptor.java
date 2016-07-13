@@ -15,12 +15,24 @@ public class CustomChannelInterceptor extends ChannelInterceptorAdapter {
 	  public Message<?> preSend(Message<?> message, MessageChannel channel) {
 	    StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 	    StompCommand command = accessor.getCommand();
-
+	    
 	    LOGGER.info("CustomChannelInterceptor preSend, StompCommand: " + command);
 	    LOGGER.info("CustomChannelInterceptor preSend, login: " + accessor.getLogin());
-	    LOGGER.info("CustomChannelInterceptor preSend, heartBeat: " + accessor.getHeartbeat());
+	    
+	    long[] heartBeats = accessor.getHeartbeat();
+	    for (long heartBeat : heartBeats) {
+	    	LOGGER.info("CustomChannelInterceptor preSend, heartBeat: " + heartBeat);
+	    }
+	    
 	    LOGGER.info("CustomChannelInterceptor preSend, destination: " + accessor.getDestination());
 	    LOGGER.info("CustomChannelInterceptor preSend, host: " + accessor.getHost());
+	    LOGGER.info("CustomChannelInterceptor preSend, message: " + accessor.getMessage());
+	    LOGGER.info("CustomChannelInterceptor preSend, sessionId: " + accessor.getSessionId());
+	    
+	    
+	    byte[] payload = (byte[])message.getPayload();
+	    String stringPayload = new String(payload);
+	    LOGGER.info("CustomChannelInterceptor preSend, payload: " + stringPayload);
 	    
 	    return message;
 	  }
@@ -32,9 +44,21 @@ public class CustomChannelInterceptor extends ChannelInterceptorAdapter {
 
 	    LOGGER.info("CustomChannelInterceptor postSend, StompCommand: " + command);
 	    LOGGER.info("CustomChannelInterceptor postSend, login: " + accessor.getLogin());
-	    LOGGER.info("CustomChannelInterceptor postSend, heartBeat: " + accessor.getHeartbeat());
+	    
+	    long[] heartBeats = accessor.getHeartbeat();
+	    for (long heartBeat : heartBeats) {
+	    	LOGGER.info("CustomChannelInterceptor postSend, heartBeat: " + heartBeat);
+	    }
+	    
 	    LOGGER.info("CustomChannelInterceptor postSend, destination: " + accessor.getDestination());
 	    LOGGER.info("CustomChannelInterceptor postSend, host: " + accessor.getHost());
+	    LOGGER.info("CustomChannelInterceptor postSend, message: " + accessor.getMessage());
+	    LOGGER.info("CustomChannelInterceptor postSend, sessionId: " + accessor.getSessionId());
+	    
+	    byte[] payload = (byte[])message.getPayload();
+	    String stringPayload = new String(payload);
+	    LOGGER.info("CustomChannelInterceptor preSend, payload: " + stringPayload);
 	    
 	  }
+
 }

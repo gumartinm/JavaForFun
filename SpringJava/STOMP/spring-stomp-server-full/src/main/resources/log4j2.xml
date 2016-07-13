@@ -34,6 +34,17 @@
         		level="TRACE" additivity="false">
             <AppenderRef ref="STDOUT" />
         </Logger>
+        
+        
+        <!-- 
+        	Separate logger to use on network IO failure after a client has gone away.
+        	See: DISCONNECTED_CLIENT_LOG_CATEGORY in org.springframework.web.socket.sockjs.transport.session.AbstractSockJsSession
+         -->
+        <Logger
+        	name="org.springframework.web.socket.sockjs.DisconnectedClient"
+        		level="TRACE" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
     
        	<!-- 
     		General logging Spring.
