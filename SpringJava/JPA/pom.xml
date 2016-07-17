@@ -170,9 +170,15 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>5.1.0.Final</version>
+			<version>5.2.1.Final</version>
 		</dependency>
 
+		<!-- Auditory using Hibernate Envers -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-envers</artifactId>
+		    <version>5.2.1.Final</version>
+		</dependency>
 
 		<!-- Required by spring-webmvc -->
 		<dependency>
@@ -216,7 +222,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>5.2.2.Final</version>
+			<version>5.2.4.Final</version>
 		</dependency>
 
 		<!-- Using Querydsl -->
