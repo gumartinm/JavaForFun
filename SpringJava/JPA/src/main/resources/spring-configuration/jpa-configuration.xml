@@ -27,6 +27,22 @@
 			</bean>
 		</property>
 		<property name="packagesToScan" value="de.spring.example.persistence.**.domain" />
+		<property name="jpaProperties">
+        	<props>
+        		<!--
+            	<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+            	-->
+            	<prop key="org.hibernate.envers.audit_table_suffix">_AUDITED</prop>
+            	<prop key="org.hibernate.envers.revision_field_name">REVISION</prop>
+            	<prop key="org.hibernate.envers.revision_type_field_name">REVISION_TYPE</prop>
+            	<prop key="org.hibernate.envers.store_data_at_delete">true</prop>
+            	<prop key="org.hibernate.envers.audit_strategy">org.hibernate.envers.strategy.ValidityAuditStrategy</prop>
+            	<prop key="org.hibernate.envers.audit_strategy_validity_end_rev_field_name">REVISION_END</prop>
+            	<prop key="org.hibernate.envers.audit_strategy_validity_store_revend_timestamp">true</prop>
+            	<prop key="org.hibernate.envers.audit_strategy_validity_revend_timestamp_field_name">REVISION_END_TIMESTAMP</prop>
+            	<prop key="org.hibernate.envers.modified_flag_suffix">_MODIFIED</prop> 	
+        	</props>
+    	</property>
 	</bean>
 
 	<jpa:repositories entity-manager-factory-ref="entityManagerFactory"

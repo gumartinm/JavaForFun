@@ -23,6 +23,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.envers.Audited;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -30,6 +32,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import de.spring.example.persistence.converters.OffsetDateTimeAttributeConverter;
 
 @Entity
+@Audited(withModifiedFlag=true)
 @Table(name="ad", schema="mybatis_example")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="jsonId")
 // 1. Named query is JPL. It is portable.
