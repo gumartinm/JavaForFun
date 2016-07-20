@@ -33,7 +33,7 @@ import de.spring.example.persistence.converters.OffsetDateTimeAttributeConverter
 
 @Entity
 @Audited(withModifiedFlag=true)
-@Table(name="ad", schema="mybatis_example")
+@Table(name="AD", schema="mybatis_example")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="jsonId")
 // 1. Named query is JPL. It is portable.
 // 2. Instead of annotating the domain class we should be using @Query annotation at the query method
@@ -68,34 +68,34 @@ public class Ad implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id", updatable=false, nullable=false)
+	@Column(name="ID", updatable=false, nullable=false)
 	private Long id;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ad_id", nullable = false)
+	@JoinColumn(name = "AD_ID", nullable = false)
 	private Set<AdDescription> adDescriptions;
 	
 	@Max(60)
-	@Column(name="company_id")
+	@Column(name="COMPANY_ID")
 	private Long companyId;
 	
 	@Max(40)
-	@Column(name="company_categ_id")
+	@Column(name="COMPANY_CATEG_ID")
 	private Long companyCategId;
 	
 	@Size(min=2, max=255)
-	@Column(name="ad_mobile_image")
+	@Column(name="AD_MOBILE_IMAGE")
 	private String adMobileImage;
 
 	@NotNull
 	@Convert(converter=OffsetDateTimeAttributeConverter.class)
-	@Column(name="created_at", nullable=false)
+	@Column(name="CREATED_AT", nullable=false)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ssZ")
 	private OffsetDateTime createdAt;
 	
 	@NotNull
 	@Convert(converter=OffsetDateTimeAttributeConverter.class)
-	@Column(name="updated_at", nullable = false)
+	@Column(name="UPDATED_AT", nullable = false)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ssZ")
 	private OffsetDateTime updatedAt;
 

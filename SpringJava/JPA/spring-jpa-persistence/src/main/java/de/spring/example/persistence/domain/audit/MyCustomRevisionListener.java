@@ -1,14 +1,18 @@
 package de.spring.example.persistence.domain.audit;
 
+import javax.inject.Inject;
+
 import org.hibernate.envers.RevisionListener;
 
 import de.spring.example.context.UsernameThreadContext;
 
 public class MyCustomRevisionListener implements RevisionListener {
-	private final UsernameThreadContext userNameThreadContext;
+	@Inject
+	private UsernameThreadContext userNameThreadContext;
 	
-	public MyCustomRevisionListener(UsernameThreadContext userNameThreadContext) {
-		this.userNameThreadContext = userNameThreadContext;
+	
+	protected MyCustomRevisionListener() {
+		
 	}
 	
 	@Override
