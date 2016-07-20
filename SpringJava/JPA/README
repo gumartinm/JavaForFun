@@ -4,7 +4,7 @@ mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
 
 
-POST /spring-jpa-1.0-SNAPSHOT/ads/ HTTP/1.1
+POST /spring-jpa-resources-1.0-SNAPSHOT/ads/ HTTP/1.1
 Host: 127.0.0.1:8080
 Content-Type: application/json
 Cache-Control: no-cache
@@ -34,14 +34,14 @@ Postman-Token: 4f41770f-9250-9ecf-4bf3-07ea8ad2b8d5
 
 
 
-GET /spring-jpa-1.0-SNAPSHOT/ads/213 HTTP/1.1
+GET /spring-jpa-resources-1.0-SNAPSHOT/ads/213 HTTP/1.1
 Host: 127.0.0.1:8080
 Content-Type: application/json
 Cache-Control: no-cache
 
 
 
-GET /spring-jpa-1.0-SNAPSHOT/ad-descriptions/23 HTTP/1.1
+GET /spring-jpa-resources-1.0-SNAPSHOT/ad-descriptions/23 HTTP/1.1
 Host: 127.0.0.1:8080
 Content-Type: application/json
 Cache-Control: no-cache
