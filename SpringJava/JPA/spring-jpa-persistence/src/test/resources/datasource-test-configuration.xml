@@ -14,9 +14,14 @@
         http://www.springframework.org/schema/jee/spring-jee.xsd">
 
 	
-	<!--  
+	<!-- 
+		In this way we can not use all the available options for H2.
+		
+		Because of that I will be using the dataSource bean where I can choose as many options
+		as I want for H2.
     <jdbc:embedded-database id="dataSource" type="H2" />
 	-->
+	
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.h2.Driver" />
 		<property name="url" value="jdbc:h2:mem:mybatis_example;INIT=create schema if not exists mybatis_example\;SET SCHEMA mybatis_example;MODE=DB2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
