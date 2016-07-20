@@ -13,11 +13,9 @@
 	<url>https://gumartinm.name/</url>
 	<description>JPA Spring Framework. Persistence.</description>
 
-
-
 	<dependencies>
 			
-					<!-- Required JPA dependencies with hibernate -->
+		<!-- Required JPA dependencies with hibernate -->
 		<dependency>
     		<groupId>org.springframework</groupId>
     		<artifactId>spring-orm</artifactId>
@@ -35,60 +33,60 @@
 		<dependency>
 		    <groupId>org.hibernate</groupId>
 		    <artifactId>hibernate-envers</artifactId>
-		</dependency>	
+		</dependency>
 
-			<!--
-				Required by spring-context for using JSR-303. See LocalValidatorFactoryBean 
-				in rest-config.xml
-			-->
-			<dependency>
-				<groupId>javax.validation</groupId>
-				<artifactId>validation-api</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-validator</artifactId>
-			</dependency>
-			
-			
-						<!--
-				Jackson JSON Processor, required by spring-webmvc. See messageConverters 
-				in rest-config.xml
-			-->
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-			</dependency>
+		<!--
+			Required by spring-context for using JSR-303. See LocalValidatorFactoryBean 
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		
+		
+		<!--
+			Jackson JSON Processor, required by spring-webmvc. See messageConverters 
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
 
-			<!-- Using Querydsl -->
-			<dependency>
-				<groupId>com.querydsl</groupId>
-				<artifactId>querydsl-apt</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>com.querydsl</groupId>
-				<artifactId>querydsl-jpa</artifactId>
-			</dependency>
+		<!-- Using Querydsl -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+		</dependency>
 
-			<!-- Loading data base in run time -->
-			<dependency>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-core</artifactId>
-			</dependency>
+		<!-- Loading data base in run time -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
 
-			<!-- Unitary and integration tests -->
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-test</artifactId>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-            	<groupId>com.h2database</groupId>
-            	<artifactId>h2</artifactId>
-            	<scope>test</scope>
-        	</dependency>
-
+		<!-- Unitary and integration tests -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+           	<groupId>com.h2database</groupId>
+           	<artifactId>h2</artifactId>
+           	<scope>test</scope>
+       	</dependency>
 	</dependencies>
+	
 	<build>
 		<plugins>			
 			<!-- Using Querydsl -->
