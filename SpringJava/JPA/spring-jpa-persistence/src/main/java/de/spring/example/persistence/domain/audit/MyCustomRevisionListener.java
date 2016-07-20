@@ -21,7 +21,7 @@ public class MyCustomRevisionListener implements RevisionListener {
 	}
 	
 	private String getSafeUsername() {
-		String userName = userNameThreadContext.getUserName();
+		String userName = userNameThreadContext.getUsername();
 		
 		if (userName == null) {
 			userName = "NO_USER";
