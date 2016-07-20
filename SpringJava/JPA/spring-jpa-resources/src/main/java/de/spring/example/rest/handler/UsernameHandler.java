@@ -29,4 +29,11 @@ public class UsernameHandler extends HandlerInterceptorAdapter {
 		
 		return super.preHandle(request, response, handler);
 	}
+	
+	@Override
+	public void afterCompletion(
+			HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+			throws Exception {
+		usernameThreadContext.clearUsername();
+	}
 }
