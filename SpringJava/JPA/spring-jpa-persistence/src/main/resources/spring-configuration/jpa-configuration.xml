@@ -30,6 +30,9 @@
 		<property name="jpaProperties">
         	<props>
         		<!--
+        			I used this configuration for creating the AUDIT tables the first time.
+        			Then I had to make some custom configurations but in general I managed to
+        			use the tables auto created by hibernate.
             	<prop key="hibernate.hbm2ddl.auto">create</prop>
             	-->
             	<prop key="org.hibernate.envers.audit_table_suffix">_AUDITED</prop>

@@ -1,6 +1,7 @@
 package de.spring.example.persistence.domain.audit;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.envers.DefaultRevisionEntity;
+/** import org.hibernate.envers.DefaultRevisionEntity; **/
 import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
@@ -19,7 +20,7 @@ import org.hibernate.envers.RevisionTimestamp;
 @Entity
 @RevisionEntity(MyCustomRevisionListener.class)
 @Table(name="CUSTOM_REVISION", schema="mybatis_example")
-public class MyCustomRevision extends DefaultRevisionEntity {
+public class MyCustomRevision /** extends DefaultRevisionEntity **/ {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -30,7 +31,7 @@ public class MyCustomRevision extends DefaultRevisionEntity {
 	@Column(name="REVISION_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@RevisionTimestamp
-	private LocalDateTime revisionDate;
+	private Date revisionDate;
 	
 	@Column(name="USERNAME")
 	private String username;
@@ -53,7 +54,7 @@ public class MyCustomRevision extends DefaultRevisionEntity {
 		return id;
 	}
 	
-    public LocalDateTime getRevisionDate() {
+    public Date getRevisionDate() {
     	return revisionDate;
     }
 	
