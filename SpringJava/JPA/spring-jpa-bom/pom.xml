@@ -76,6 +76,23 @@
 			<version>1.7.21</version>
 		</dependency>
 		
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<!--
+				Required dependency for getting rid of commons logging and use my 
+				own logging library (in my case I decided to use log4j 2 under slf4j)
+			-->
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 		<dependency>
 			<groupId>javax.inject</groupId>
   			<artifactId>javax.inject</artifactId>
@@ -104,21 +121,6 @@
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${spring.version}</version>
-				<!--
-					Required dependency for getting rid of commons logging and use my 
-					own logging library (in my case I decided to use log4j 2 under slf4j)
-				-->
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
 			
 			<!-- REST API -->
 			<dependency>
@@ -160,7 +162,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.6.4</version>
+				<version>2.8.1</version>
 			</dependency>
 
 
@@ -239,7 +241,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.6.4</version>
+			<version>2.8.1</version>
 		</dependency>
 		-->
 		<!-- 
@@ -249,7 +251,7 @@
 		<dependency>
     		<groupId>com.fasterxml.jackson.datatype</groupId>
     		<artifactId>jackson-datatype-jsr310</artifactId>
-    		<version>2.8.0.rc2</version>
+    		<version>2.8.1</version>
 		</dependency>
 
 

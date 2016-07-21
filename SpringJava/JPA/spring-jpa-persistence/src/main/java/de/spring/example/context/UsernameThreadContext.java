@@ -1,26 +1,28 @@
 package de.spring.example.context;
 
-import javax.inject.Named;
-
 import org.springframework.util.Assert;
 
-@Named("userNameThreadContext")
+/**
+ * I had to implement this class in a static way because JPA Entity objects do not allow you
+ * to inject beans. StaticContextHolder did not either work :(
+ * No way of injecting beans in JPA Entity classes :( 
+ */
 public class UsernameThreadContext {
 	public static final String USERNAME_HEADER = "USERNAME";
 	
-	private final ThreadLocal<String> contextHolder = new ThreadLocal<>();
+	private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
 	
-	public void setUsername(String username) {
+	public static final void setUsername(String username) {
 		Assert.notNull(username);
 		
 		contextHolder.set(username);
 	}
 	
-	public String getUsername() {
+	public static final String getUsername() {
 		return contextHolder.get();
 	}
 	
-	public void clearUsername() {
+	public static final void clearUsername() {
 		contextHolder.remove();
 	}
 }

@@ -1,15 +1,10 @@
 package de.spring.example.persistence.domain.audit;
 
-import javax.inject.Inject;
-
 import org.hibernate.envers.RevisionListener;
 
 import de.spring.example.context.UsernameThreadContext;
 
-public class MyCustomRevisionListener implements RevisionListener {
-	@Inject
-	private UsernameThreadContext userNameThreadContext;
-	
+public class MyCustomRevisionListener implements RevisionListener {	
 	
 	protected MyCustomRevisionListener() {
 		
@@ -25,7 +20,7 @@ public class MyCustomRevisionListener implements RevisionListener {
 	}
 	
 	private String getSafeUsername() {
-		String userName = userNameThreadContext.getUsername();
+		String userName = UsernameThreadContext.getUsername();
 		
 		if (userName == null) {
 			userName = "NO_USER";

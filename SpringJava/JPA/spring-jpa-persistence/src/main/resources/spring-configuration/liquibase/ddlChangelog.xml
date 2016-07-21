@@ -95,10 +95,10 @@
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-5" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <createTable tableName="CUSTOM_REVISION">
-            <column name="ID" type="BIGINT">
-                <constraints nullable="false"/>
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true"/>
             </column>
-            <column name="REVISION_DATE" type="BIGINT">
+            <column name="REVISION_DATE" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="USERNAME" type="VARCHAR(255)"/>
@@ -117,9 +117,6 @@
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-8" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <addPrimaryKey columnNames="ID, REVISION" constraintName="PRIMARY" tableName="AD_DESCRIPTION_AUDITED"/>
-    </changeSet>
-    <changeSet author="gustavo (generated)" id="1469119656864-9" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addPrimaryKey columnNames="ID" constraintName="PRIMARY" tableName="CUSTOM_REVISION"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-10" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <createIndex indexName="FK5kfkyp713lqaiybgbyjpjibgh" tableName="AD_DESCRIPTION">
