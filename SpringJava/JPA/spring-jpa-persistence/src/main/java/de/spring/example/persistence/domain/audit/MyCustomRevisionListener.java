@@ -6,6 +6,7 @@ import de.spring.example.context.UsernameThreadContext;
 
 public class MyCustomRevisionListener implements RevisionListener {	
 	
+	// It will be used by Hibernate.
 	protected MyCustomRevisionListener() {
 		
 	}

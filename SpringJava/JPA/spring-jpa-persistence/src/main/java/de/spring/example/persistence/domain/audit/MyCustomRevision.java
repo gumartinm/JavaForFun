@@ -1,6 +1,5 @@
 package de.spring.example.persistence.domain.audit;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import javax.persistence.Column;
