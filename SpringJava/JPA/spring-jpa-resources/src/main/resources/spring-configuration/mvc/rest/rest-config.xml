@@ -58,6 +58,7 @@
                 <util:constant static-field="com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION"/>
             </array>
         </property>
+        <property name="modulesToInstall" ref="customJacksonModules"/>
     </bean>
     
     <util:list id="messageConverters">
@@ -97,6 +98,13 @@
     
 	<bean id="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
 
+
+	<util:list id="customJacksonModules">
+		<array>
+			<value type="java.lang.Class">de.spring.example.rest.resource.modules.SpringJpaModule</value>
+		</array>		
+	</util:list>
+	
 	<mvc:default-servlet-handler />
 	
 </beans>
