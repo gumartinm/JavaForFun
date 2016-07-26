@@ -45,7 +45,10 @@ public class AdDescriptionServiceImpl
 		final QAdDescription adDescription = QAdDescription.adDescription1;
 		final BooleanExpression adDescriptionHasAdLink = adDescription.adLink.contains("gumartinm");
 		final BooleanExpression adDescriptionHasDescription = adDescription.adDescription.contains("babucha");
-		
-		return repository.findAll(adDescriptionHasAdLink.and(adDescriptionHasDescription), pageRequest);
+		/**
+		 * https://github.com/spring-projects/spring-data-envers/pull/45
+		 * return repository.findAll(adDescriptionHasAdLink.and(adDescriptionHasDescription), pageRequest);
+		 */
+		return null;
 	}
 }

@@ -16,6 +16,11 @@
 	<context:annotation-config />
 
     <context:component-scan base-package="de.spring.example.persistence" />
+
+	<jpa:repositories entity-manager-factory-ref="entityManagerFactory"
+		base-package="de.spring.example.persistence.**.repository"
+		transaction-manager-ref="transactionManager"
+		factory-class="org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean" />
         
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -48,8 +53,6 @@
     	</property>
 	</bean>
 
-	<jpa:repositories entity-manager-factory-ref="entityManagerFactory"
-		base-package="de.spring.example.persistence.**.repository"
-		transaction-manager-ref="transactionManager" />
+
 
 </beans>
