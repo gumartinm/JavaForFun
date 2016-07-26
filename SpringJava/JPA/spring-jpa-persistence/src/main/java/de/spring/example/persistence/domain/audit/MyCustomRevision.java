@@ -27,7 +27,8 @@ public class MyCustomRevision /** extends DefaultRevisionEntity **/ {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="ID", updatable=false, nullable=false)
 	@RevisionNumber
-	private Long id;
+	// BE CAREFUL!!!! spring-data-envers JUST WORKS (I couldn't make it work with anything else) WITH Integer. NOT WITH Long :(
+	private Integer id;
 	
 	@Column(name="REVISION_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -52,7 +53,7 @@ public class MyCustomRevision /** extends DefaultRevisionEntity **/ {
 	 * WARNING: JPA REQUIRES GETTERS!!!
 	 */
 	
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 	

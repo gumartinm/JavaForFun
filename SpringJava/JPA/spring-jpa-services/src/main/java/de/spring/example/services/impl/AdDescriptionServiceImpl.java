@@ -6,6 +6,7 @@ import javax.inject.Named;
 import org.resthub.common.service.CrudServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -50,5 +51,10 @@ public class AdDescriptionServiceImpl
 		 * return repository.findAll(adDescriptionHasAdLink.and(adDescriptionHasDescription), pageRequest);
 		 */
 		return null;
+	}
+
+	@Override
+	public Page<Revision<Integer, AdDescription>> findRevisions(Long id, Pageable pageable) {
+		return this.repository.findRevisions(id, pageable);
 	}
 }

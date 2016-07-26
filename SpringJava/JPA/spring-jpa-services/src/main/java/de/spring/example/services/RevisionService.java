@@ -1,16 +1,13 @@
 package de.spring.example.services;
 
-import org.resthub.common.service.CrudService;
+import java.io.Serializable;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 
-import de.spring.example.persistence.domain.AdDescription;
+public interface RevisionService<T, ID extends Serializable, N extends Number & Comparable<N>> {
 
-public interface AdDescriptionService extends CrudService<AdDescription, Long> {
-
-	public Page<AdDescription> queryDslExample(Pageable pageRequest);
-	
 	/**
 	 * Returns a {@link Page} of revisions for the entity with the given id.
 	 * 
@@ -18,5 +15,5 @@ public interface AdDescriptionService extends CrudService<AdDescription, Long> {
 	 * @param pageable
 	 * @return
 	 */
-	Page<Revision<Integer, AdDescription>> findRevisions(Long id, Pageable pageable);
+	Page<Revision<N, T>> findRevisions(ID id, Pageable pageable);
 }
