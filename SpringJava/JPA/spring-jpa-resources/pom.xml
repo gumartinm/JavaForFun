@@ -61,6 +61,14 @@
     		<groupId>com.fasterxml.jackson.datatype</groupId>
     		<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
+		<!-- 
+			Jackson dependency required for serializing and deserializing org.joda.time.DateTime objects.
+			See: org.springframework.data.history.Revision getRevisionDate
+		 -->
+		<dependency>
+    		<groupId>com.fasterxml.jackson.datatype</groupId>
+    		<artifactId>jackson-datatype-joda</artifactId>
+		</dependency>
 
 		<!-- Unitary and integration tests -->
 		<dependency>
