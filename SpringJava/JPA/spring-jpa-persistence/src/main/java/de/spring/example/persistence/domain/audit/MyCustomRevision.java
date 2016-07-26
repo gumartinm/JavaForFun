@@ -16,6 +16,8 @@ import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @RevisionEntity(MyCustomRevisionListener.class)
 @Table(name="CUSTOM_REVISION", schema="mybatis_example")
@@ -30,6 +32,7 @@ public class MyCustomRevision /** extends DefaultRevisionEntity **/ {
 	@Column(name="REVISION_DATE")
 	@Temporal(TemporalType.TIMESTAMP)
 	@RevisionTimestamp
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
 	private Date revisionDate;
 	
 	@Column(name="USERNAME")
