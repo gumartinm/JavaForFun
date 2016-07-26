@@ -107,4 +107,9 @@
 	
 	<mvc:default-servlet-handler />
 	
+	
+	<mvc:interceptors>
+		<bean class="de.spring.example.rest.handler.UsernameHandler"/>
+	</mvc:interceptors>
+	
 </beans>
