@@ -48,6 +48,23 @@ Cache-Control: no-cache
 
 
 
+PUT /spring-jpa-resources-1.0-SNAPSHOT/ads/217 HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 003b0d68-bdae-4a1f-748a-c4156745dedb
+
+{
+    "id" : 217,
+    "companyId" : 2,
+    "companyCategId" : 14,
+    "adMobileImage" : "bild.jpg",
+    "createdAt" : "2016-07-30 23:27:36+0200",
+    "updatedAt" : "2014-07-30 23:27:36+0200"
+}
+
+
+
 # Useful commands for liquibase that I used in order to create the changelog files from an existing schema.
 # Changelog from DDL. Creates DDL changelog from current database (if schema was previously created without liquibase as above)
 /opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/ddlChangelog.xml --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root generateChangeLog
