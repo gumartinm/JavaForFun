@@ -30,8 +30,11 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>4.3.0.RELEASE</spring.version>
         <querydsl.version>4.1.3</querydsl.version>
+
+        <!-- Be careful these two paths must match the ones configured in SONARQUBE JaCoCo plugin -->
         <jacoco.it.execution.data.file>${project.basedir}/target/jacoco-it.exec</jacoco.it.execution.data.file>
         <jacoco.ut.execution.data.file>${project.basedir}/target/jacoco.exec</jacoco.ut.execution.data.file>
+
         <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>true</skip.integration.tests>
 	</properties>
@@ -557,6 +560,25 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.9</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <reportSets>
+                    <reportSet>
+                        <id>html</id>
+                        <configuration>
+                            <!-- default value is http://localhost:9000 -->
+                            <doctitle>API for ${project.name} ${project.version}</doctitle>
+                            <windowtitle>API for ${project.name} ${project.version}</windowtitle>
+                        </configuration>
+                        <reports>
+                            <report>javadoc</report>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

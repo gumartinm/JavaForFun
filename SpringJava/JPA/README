@@ -1,8 +1,10 @@
 mvn clean install
 mvn clean install -Dmaven.test.skip=true
-mvn clean install -Pintegration 
+mvn clean install -Pintegration
+mvn clean install site -Pintegration
 mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
+mvn sonar:sonar -Dsonar.host.url=http://172.17.0.3:9091/sonarqube
 
 
 POST /spring-jpa-resources-1.0-SNAPSHOT/ads/ HTTP/1.1
