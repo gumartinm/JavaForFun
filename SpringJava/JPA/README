@@ -1,5 +1,6 @@
 mvn clean install
 mvn clean install -Dmaven.test.skip=true
+mvn clean install -Pintegration 
 mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
 
