@@ -12,7 +12,7 @@ import org.sonar.plugins.java.api.tree.Tree.Kind;
 
 import com.google.common.collect.ImmutableList;
 
-@Rule(key = "HELLOWORLDO001")
+@Rule(key = "HELLOWORLD0001")
 public class HelloWorldCheck extends IssuableSubscriptionVisitor {
 
 	@Override

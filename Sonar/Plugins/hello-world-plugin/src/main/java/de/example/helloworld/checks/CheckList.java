@@ -2,11 +2,13 @@ package de.example.helloworld.checks;
 
 import java.util.List;
 
-import org.sonar.api.internal.google.common.collect.ImmutableList;
 import org.sonar.plugins.java.api.JavaCheck;
 
+import com.google.common.collect.ImmutableList;
+
 public final class CheckList {
-	public static final String REPOSITORY_KEY = "gushelloworld";
+	public static final String REPOSITORY_KEY = "helloworld";
+	public static final String REPOSITORY_NAME = "Hello World";
 
 	private CheckList() {
 	}

@@ -29,12 +29,15 @@ import de.example.helloworld.checks.CheckList;
  * Definition of rules.
  */
 public class HelloWorldRulesDefinition implements RulesDefinition {
-	private static final String RESOURCE_BASE_PATH = "/de/example/l10n/helloworld/rules/gushelloworld";
+	private static final String RESOURCE_BASE_PATH = "/de/example/l10n/helloworld/rules/helloworld";
+	
 	private final Gson gson = new Gson();
 	
 	@Override
 	public void define(Context context) {
-		NewRepository repository = context.createRepository(CheckList.REPOSITORY_KEY, Java.KEY).setName("Gus HelloWorld Definition");
+		NewRepository repository = context
+				.createRepository(CheckList.REPOSITORY_KEY, Java.KEY)
+				.setName(CheckList.REPOSITORY_NAME);
 		List<Class> checks = CheckList.getChecks();
 		new RulesDefinitionAnnotationLoader().load(repository, Iterables.toArray(checks, Class.class));
 		for (Class ruleClass : checks) {
