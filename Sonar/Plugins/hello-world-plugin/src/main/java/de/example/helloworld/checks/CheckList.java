@@ -14,14 +14,31 @@ public final class CheckList {
 	}
 
 	public static List<Class> getChecks() {
-		return ImmutableList.<Class>builder().addAll(getJavaChecks())
+		return ImmutableList.<Class>builder()
+				.addAll(getJavaChecks())
+				.addAll(getJavaTestChecks())
+				.addAll(getXmlChecks())
 				.build();
 	}
 
-	  public static List<Class<? extends JavaCheck>> getJavaChecks() {
-		    return ImmutableList.<Class<? extends JavaCheck>>builder()
-		      .add(HelloWorldCheck.class)
-		      .build();
-	  }
+	public static List<Class<? extends JavaCheck>> getJavaChecks() {
+		return ImmutableList.<Class<? extends JavaCheck>>builder()
+				.add(HelloWorldCheck.class)
+				.build();
+	}
 
+	public static List<Class<? extends JavaCheck>> getJavaTestChecks() {
+		return ImmutableList.<Class<? extends JavaCheck>>builder()
+				.build();
+	}
+
+	public static List<Class<? extends JavaCheck>> getXmlChecks() {
+		return ImmutableList.<Class<? extends JavaCheck>>builder()
+				.build();
+	}
+
+	private static List<Class<? extends JavaCheck>> getMavenChecks() {
+		return ImmutableList.<Class<? extends JavaCheck>>builder()
+				.build();
+	}
 }

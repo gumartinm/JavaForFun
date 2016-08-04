@@ -12,8 +12,9 @@ public class HelloWorldPlugin implements Plugin {
     
     ImmutableList.Builder<Object> builder = ImmutableList.builder();
     builder.add(
-      HelloWorldRulesDefinition.class);
+    		HelloWorldRulesDefinition.class,
+    		HelloWorldRulesCheckRegistrar.class);
+    
     context.addExtensions(builder.build());
-
   }
 }

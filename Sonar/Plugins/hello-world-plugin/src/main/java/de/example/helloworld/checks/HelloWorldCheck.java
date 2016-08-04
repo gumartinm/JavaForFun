@@ -2,6 +2,8 @@ package de.example.helloworld.checks;
 
 import java.util.List;
 
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.semantic.Symbol.MethodSymbol;
@@ -14,6 +16,8 @@ import com.google.common.collect.ImmutableList;
 
 @Rule(key = "HELLOWORLD0001")
 public class HelloWorldCheck extends IssuableSubscriptionVisitor {
+	private static final Logger LOG = Loggers.get(HelloWorldCheck.class);
+
 
 	@Override
 	public List<Kind> nodesToVisit() {
@@ -22,6 +26,8 @@ public class HelloWorldCheck extends IssuableSubscriptionVisitor {
 
 	@Override
 	public void visitNode(Tree tree) {
+		LOG.info("Visiting Node");
+
 		MethodTree method = (MethodTree) tree;
 		
 		if (method.parameters().size() == 1) {
