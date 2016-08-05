@@ -7,6 +7,6 @@ public class HelloWorldCheckTest {
 
 	@Test
 	public void test() {
-		JavaCheckVerifier.verify("src/test/files/HelloWorldCheck.java", new HelloWorldCheck());
+		JavaCheckVerifier.verify("src/test/files/checks/HelloWorldCheck.java", new HelloWorldCheck());
 	}
 }

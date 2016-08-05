@@ -14,7 +14,7 @@ import org.sonar.plugins.java.api.tree.Tree.Kind;
 
 import com.google.common.collect.ImmutableList;
 
-@Rule(key = "HELLOWORLD0001")
+@Rule(key = "GU0001")
 public class HelloWorldCheck extends IssuableSubscriptionVisitor {
 	private static final Logger LOG = Loggers.get(HelloWorldCheck.class);
 

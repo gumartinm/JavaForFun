@@ -24,6 +24,7 @@ public final class CheckList {
 	public static List<Class<? extends JavaCheck>> getJavaChecks() {
 		return ImmutableList.<Class<? extends JavaCheck>>builder()
 				.add(HelloWorldCheck.class)
+				.add(SpringServiceInstanceFieldCheck.class)
 				.build();
 	}
 

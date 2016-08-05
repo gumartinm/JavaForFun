@@ -2,18 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.example.plugins</groupId>
-  <artifactId>helloworld-plugin</artifactId>
-  <packaging>sonar-plugin</packaging>
-  <version>0.1-SNAPSHOT</version>
+    <parent>
+        <groupId>de.example.plugins</groupId>
+        <artifactId>custom-sonar-plugins</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
 
-  <name>HelloWorld</name>
-  <description>HelloWorld example plugin for SonarQube</description>
-  <url>https://gumartinm.name/</url>
-  <organization>
-      <name>Gustavo Martin Morcuende</name>
-      <url>https://gumartinm.name/</url>
-  </organization>
+  <artifactId>sonar-custom-java-plugin</artifactId>
+  <packaging>sonar-plugin</packaging>
+
+  <name>SonarQube custom Java plugin</name>
+  <description>Java plugin for SonarQube</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
