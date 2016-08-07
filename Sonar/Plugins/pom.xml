@@ -21,6 +21,7 @@
 
   <modules>
     <module>sonar-custom-java-plugin</module>
+    <module>sonar-custom-javascript-plugin</module>
   </modules>
 
 
