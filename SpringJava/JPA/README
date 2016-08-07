@@ -67,6 +67,21 @@ Postman-Token: 003b0d68-bdae-4a1f-748a-c4156745dedb
 }
 
 
+GET /spring-jpa-resources-1.0-SNAPSHOT/ads/217/revisions/ HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: e097029b-70c6-9ca1-c22b-0915d0a92be1
+
+
+
+GET /spring-jpa-resources-1.0-SNAPSHOT/ad-descriptions/40/revisions/ HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 62441d69-daab-b4d2-e73a-efca92d93aeb
+
+
 
 # Useful commands for liquibase that I used in order to create the changelog files from an existing schema.
 # Changelog from DDL. Creates DDL changelog from current database (if schema was previously created without liquibase as above)
