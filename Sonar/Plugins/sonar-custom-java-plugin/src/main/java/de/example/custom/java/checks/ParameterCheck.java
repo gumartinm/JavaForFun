@@ -14,7 +14,7 @@ import org.sonar.plugins.java.api.tree.Tree.Kind;
 
 import com.google.common.collect.ImmutableList;
 
-@Rule(key = "GU0001")
+@Rule(key = "GUJ0001")
 public class ParameterCheck extends IssuableSubscriptionVisitor {
 	private static final Logger LOG = Loggers.get(ParameterCheck.class);
 

@@ -10,7 +10,7 @@ public class CustomSensor implements Sensor {
 	@Override
 	public void describe(SensorDescriptor descriptor) {
 	    descriptor.onlyOnLanguage(Java.KEY);
-	    descriptor.name("Custom Sensor");
+	    descriptor.name("Custom Java Sensor");
 	}
 
 	@Override
