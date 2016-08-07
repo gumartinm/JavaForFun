@@ -1,4 +1,4 @@
-package de.example.plugins.custom;
+package de.example.plugins.custom.java;
 
 import java.io.IOException;
 import java.net.URL;

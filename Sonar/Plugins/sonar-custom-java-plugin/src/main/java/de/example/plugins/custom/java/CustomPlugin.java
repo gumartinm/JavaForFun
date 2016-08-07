@@ -1,4 +1,4 @@
-package de.example.plugins.custom;
+package de.example.plugins.custom.java;
 
 import org.sonar.api.Plugin;
 

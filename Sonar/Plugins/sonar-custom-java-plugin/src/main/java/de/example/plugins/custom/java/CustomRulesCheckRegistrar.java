@@ -1,8 +1,8 @@
-package de.example.plugins.custom;
+package de.example.plugins.custom.java;
 
 import org.sonar.plugins.java.api.CheckRegistrar;
 
-import de.example.custom.checks.CheckList;
+import de.example.custom.java.checks.CheckList;
 
 public class CustomRulesCheckRegistrar implements CheckRegistrar {
 

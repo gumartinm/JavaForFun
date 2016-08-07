@@ -1,4 +1,4 @@
-package de.example.custom.checks;
+package de.example.custom.java.checks;
 
 import java.util.List;
 

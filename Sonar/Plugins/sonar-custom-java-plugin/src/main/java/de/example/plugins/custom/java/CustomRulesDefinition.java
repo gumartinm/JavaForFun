@@ -1,4 +1,4 @@
-package de.example.plugins.custom;
+package de.example.plugins.custom.java;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,7 +23,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
 
-import de.example.custom.checks.CheckList;
+import de.example.custom.java.checks.CheckList;
 
 /**
  * Definition of rules.
