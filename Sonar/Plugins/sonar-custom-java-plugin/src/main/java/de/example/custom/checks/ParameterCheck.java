@@ -1,4 +1,4 @@
-package de.example.helloworld.checks;
+package de.example.custom.checks;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ import org.sonar.plugins.java.api.tree.Tree.Kind;
 import com.google.common.collect.ImmutableList;
 
 @Rule(key = "GU0001")
-public class HelloWorldCheck extends IssuableSubscriptionVisitor {
-	private static final Logger LOG = Loggers.get(HelloWorldCheck.class);
+public class ParameterCheck extends IssuableSubscriptionVisitor {
+	private static final Logger LOG = Loggers.get(ParameterCheck.class);
 
 
 	@Override

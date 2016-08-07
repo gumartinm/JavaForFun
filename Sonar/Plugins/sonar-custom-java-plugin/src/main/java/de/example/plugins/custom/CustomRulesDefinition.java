@@ -1,4 +1,4 @@
-package de.example.plugins.helloworld;
+package de.example.plugins.custom;
 
 import java.io.IOException;
 import java.net.URL;
@@ -23,13 +23,13 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
 
-import de.example.helloworld.checks.CheckList;
+import de.example.custom.checks.CheckList;
 
 /**
  * Definition of rules.
  */
-public class HelloWorldRulesDefinition implements RulesDefinition {
-	private static final String RESOURCE_BASE_PATH = "/de/example/l10n/helloworld/rules/helloworld";
+public class CustomRulesDefinition implements RulesDefinition {
+	private static final String RESOURCE_BASE_PATH = "/de/example/l10n/java/rules/custom";
 	
 	private final Gson gson = new Gson();
 	
@@ -96,7 +96,7 @@ public class HelloWorldRulesDefinition implements RulesDefinition {
   }
 
   private static void addHtmlDescription(NewRule rule, String metadataKey) {
-    URL resource = HelloWorldRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.html");
+    URL resource = CustomRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.html");
     if (resource != null) {
       rule.setHtmlDescription(readResource(resource));
     }

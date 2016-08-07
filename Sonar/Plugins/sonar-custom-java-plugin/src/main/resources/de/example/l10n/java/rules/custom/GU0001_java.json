@@ -1,5 +1,5 @@
 {
-  "title": "HelloWorld SonarQube rule",
+  "title": "Custom SonarQube rule",
   "status": "ready",
   "remediation": {
     "func": "Constant\/Issue",

@@ -1,4 +1,4 @@
-package de.example.helloworld.checks;
+package de.example.custom.checks;
 
 import org.junit.Test;
 import org.sonar.java.checks.verifier.JavaCheckVerifier;
@@ -6,7 +6,7 @@ import org.sonar.java.checks.verifier.JavaCheckVerifier;
 public class SpringServiceInstanceFieldCheckTest {
 	  private static final String FILENAME = "src/test/files/checks/SpringServiceInstanceFieldCheck.java";
 
-	  @Test
+	  //@Test
 	  public void test() {
 	    JavaCheckVerifier.verify(FILENAME, new SpringServiceInstanceFieldCheck());
 	  }

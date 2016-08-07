@@ -1,10 +1,10 @@
-package de.example.plugins.helloworld;
+package de.example.plugins.custom;
 
 import org.sonar.plugins.java.api.CheckRegistrar;
 
-import de.example.helloworld.checks.CheckList;
+import de.example.custom.checks.CheckList;
 
-public class HelloWorldRulesCheckRegistrar implements CheckRegistrar {
+public class CustomRulesCheckRegistrar implements CheckRegistrar {
 
 	@Override
 	public void register(RegistrarContext registrarContext) {

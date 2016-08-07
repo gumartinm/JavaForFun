@@ -1,4 +1,4 @@
-package de.example.helloworld.checks;
+package de.example.custom.checks;
 
 import java.util.List;
 

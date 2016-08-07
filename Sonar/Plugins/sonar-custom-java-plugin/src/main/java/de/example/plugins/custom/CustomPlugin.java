@@ -1,19 +1,19 @@
-package de.example.plugins.helloworld;
+package de.example.plugins.custom;
 
 import org.sonar.api.Plugin;
 
 import com.google.common.collect.ImmutableList;
 
 
-public class HelloWorldPlugin implements Plugin {
+public class CustomPlugin implements Plugin {
 
   @Override
   public void define(Context context) {    
     
     ImmutableList.Builder<Object> builder = ImmutableList.builder();
     builder.add(
-    		HelloWorldRulesDefinition.class,
-    		HelloWorldRulesCheckRegistrar.class);
+    		CustomRulesDefinition.class,
+    		CustomRulesCheckRegistrar.class);
     
     context.addExtensions(builder.build());
   }

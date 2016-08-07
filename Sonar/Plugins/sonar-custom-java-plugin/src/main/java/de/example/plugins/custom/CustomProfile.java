@@ -1,4 +1,4 @@
-package de.example.plugins.helloworld;
+package de.example.plugins.custom;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,18 +19,18 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
 
-public class HelloWorldProfile extends ProfileDefinition {
+public class CustomProfile extends ProfileDefinition {
 
 	  private final Gson gson = new Gson();
 	  private final RuleFinder ruleFinder;
-	  public HelloWorldProfile(RuleFinder ruleFinder) {
+	  public CustomProfile(RuleFinder ruleFinder) {
 	    this.ruleFinder = ruleFinder;
 	  }
 
 	  @Override
 	  public RulesProfile createProfile(ValidationMessages messages) {
 	    RulesProfile profile = RulesProfile.create("Sonar way", Java.KEY);
-	    URL resource = JavaRulesDefinition.class.getResource("/org/sonar/l10n/java/rules/squid/Sonar_way_profile.json");
+	    URL resource = JavaRulesDefinition.class.getResource("/org/sonar/l10n/java/rules/custom/Custom_profile.json");
 	    Profile jsonProfile = gson.fromJson(readResource(resource), Profile.class);
 	    Map<String, String> keys = legacyKeys();
 	    for (String key : jsonProfile.ruleKeys) {

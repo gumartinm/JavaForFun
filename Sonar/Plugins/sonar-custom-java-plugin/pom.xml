@@ -19,7 +19,7 @@
     <sonar.apiVersion>5.6.1</sonar.apiVersion>
     <java.plugin.version>4.0</java.plugin.version>
     <jdk.min.version>1.8</jdk.min.version>
-    <sonar.pluginKey>helloworld</sonar.pluginKey>
+    <sonar.pluginKey>customjavaplugin</sonar.pluginKey>
   </properties>
 
   <dependencies>
@@ -153,7 +153,7 @@
         <version>1.17</version>
         <extensions>true</extensions>
         <configuration>
-          <pluginClass>de.example.plugins.helloworld.HelloWorldPlugin</pluginClass>
+          <pluginClass>de.example.plugins.custom.CustomPlugin</pluginClass>
         </configuration>
       </plugin>
       <plugin>
