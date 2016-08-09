@@ -29,7 +29,7 @@ public class CustomProfile extends ProfileDefinition {
 
 	  @Override
 	  public RulesProfile createProfile(ValidationMessages messages) {
-	    RulesProfile profile = RulesProfile.create("Sonar way", Java.KEY);
+	    RulesProfile profile = RulesProfile.create("Custom Java Profile", Java.KEY);
 	    URL resource = JavaRulesDefinition.class.getResource("/org/sonar/l10n/java/rules/custom/Custom_profile.json");
 	    Profile jsonProfile = gson.fromJson(readResource(resource), Profile.class);
 	    Map<String, String> keys = legacyKeys();
