@@ -1,0 +1,13 @@
+{
+  "title": "Spring services should not have mutable instance fields",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "30min"
+  },
+  "tags": [
+    "multi-threading",
+    "bug"
+  ],
+  "defaultSeverity": "Major"
+}
