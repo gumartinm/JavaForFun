@@ -12,10 +12,8 @@ import org.sonar.api.server.debt.DebtRemediationFunction;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader;
 import org.sonar.api.utils.AnnotationUtils;
-import org.sonar.check.Cardinality;
 import org.sonar.plugins.java.Java;
 import org.sonar.squidbridge.annotations.RuleTemplate;
-import org.sonar.squidbridge.rules.ExternalDescriptionLoader;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
@@ -61,10 +59,9 @@ public class CustomRulesDefinition implements RulesDefinition {
     if (rule == null) {
       throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
     }
+    
+    // Check whether it is a Rule Template.
     rule.setTemplate(AnnotationUtils.getAnnotation(ruleClass, RuleTemplate.class) != null);
-    if (ruleAnnotation.cardinality() == Cardinality.MULTIPLE) {
-      throw new IllegalArgumentException("Cardinality is not supported, use the RuleTemplate annotation instead for " + ruleClass);
-    }
     ruleMetadata(ruleClass, rule);
   }
 
@@ -81,7 +78,7 @@ public class CustomRulesDefinition implements RulesDefinition {
   }
 
   private void addMetadata(NewRule rule, String metadataKey) {
-    URL resource = ExternalDescriptionLoader.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.json");
+    URL resource = CustomRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.json");
     if (resource != null) {
       RuleMetatada metatada = gson.fromJson(readResource(resource), RuleMetatada.class);
       rule.setSeverity(metatada.defaultSeverity.toUpperCase());
