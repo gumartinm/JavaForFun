@@ -13,7 +13,9 @@ public class CustomPlugin implements Plugin {
     ImmutableList.Builder<Object> builder = ImmutableList.builder();
     builder.add(
     		CustomRulesDefinition.class,
-    		CustomRulesCheckRegistrar.class);
+    		CustomRulesCheckRegistrar.class,
+    		CustomProfile.class,
+    		CustomSensor.class);
     
     context.addExtensions(builder.build());
   }

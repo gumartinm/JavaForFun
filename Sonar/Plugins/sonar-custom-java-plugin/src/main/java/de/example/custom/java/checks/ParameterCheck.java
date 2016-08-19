@@ -35,7 +35,8 @@ public class ParameterCheck extends IssuableSubscriptionVisitor {
 			Type firstParameterType = symbol.parameterTypes().get(0);
 			Type returnType = symbol.returnType().type();
 			if(returnType.is(firstParameterType.fullyQualifiedName())) {
-				reportIssue(method.simpleName(), "Never do that!");
+				reportIssue(method.simpleName(),
+						"Remove this method");
 			}
 		}
 		

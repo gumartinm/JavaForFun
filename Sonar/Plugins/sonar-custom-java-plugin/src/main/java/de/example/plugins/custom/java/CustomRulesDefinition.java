@@ -92,14 +92,14 @@ public class CustomRulesDefinition implements RulesDefinition {
     }
   }
 
-  private static void addHtmlDescription(NewRule rule, String metadataKey) {
+  private void addHtmlDescription(NewRule rule, String metadataKey) {
     URL resource = CustomRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.html");
     if (resource != null) {
       rule.setHtmlDescription(readResource(resource));
     }
   }
 
-  private static String readResource(URL resource) {
+  private String readResource(URL resource) {
     try {
       return Resources.toString(resource, Charsets.UTF_8);
     } catch (IOException e) {
