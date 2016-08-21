@@ -1,12 +1,13 @@
 {
-  "title": "Function names should comply with a naming convention",
+  "title": "Do not use $rootScope.$on in AngularJS Controllers",
   "status": "ready",
   "remediation": {
     "func": "Constant\/Issue",
     "constantCost": "5min"
   },
   "tags": [
-    "bug"
+    "bug",
+    "angularjs"
   ],
   "defaultSeverity": "Major"
 }

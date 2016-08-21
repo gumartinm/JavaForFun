@@ -1,18 +1,21 @@
-<p>Custom rule description.</p>
+<p>AngularJS Controllers are instantiated every time a web page is loaded. <code>$rootScope.$on</code> do not automatically release the pointer to 
+the Controller where it was called and <code>$rootScope</code> is an AngularJS singleton. After a couple of web page refreshes we end up having 
+many instantiated Controllers that will not be used and they can not be reclaimed by the garbage collector because there is a reference to them 
+from <code>$rootScope</code>. As a good practice we will not use <code>$rootScope.$on</code> in AngularJS Controllers.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
-class MyClass {
-	
-	int foo1(int value) { return 0; }
-		
-	MyClass foo2(MyClass value) { return null; }
-	
-	...
- 
+function MyController($rootScope, USERS) {
+    var vm = this;
+
+    $rootScope.$on(USERS.ROOTSCOPE.BROADCAST, usersChildOnRootBroadcast); //$rootScope is a singleton, it is not released and either MyController
+        
+    function usersChildOnRootBroadcast(events, broadcastUser) {
+        vm.broadcastUser = broadcastUser;
+    }
 }
 </pre>
 <h2>See</h2>
 <ul>
-  <li> <a href="https://www.securecoding.cert.org/confluence/x/EYBUC">CERT, MSC11-J.</a> - You are doing wrong!!! </li>
+  <li> <a href="https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$destroy">AngularJS</a> - Do not use $rootScope.$on in AngularJS Controllers</li>
 </ul>
 
