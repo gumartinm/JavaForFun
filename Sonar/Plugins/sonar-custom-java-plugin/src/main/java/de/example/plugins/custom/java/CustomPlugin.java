@@ -14,8 +14,7 @@ public class CustomPlugin implements Plugin {
     builder.add(
     		CustomRulesDefinition.class,
     		CustomRulesCheckRegistrar.class,
-    		CustomProfile.class,
-    		CustomSensor.class);
+    		CustomProfile.class);
     
     context.addExtensions(builder.build());
   }
