@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
 import org.sonar.api.rule.RuleStatus;
 import org.sonar.api.server.debt.DebtRemediationFunction;
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader;
@@ -17,6 +16,7 @@ import org.sonar.squidbridge.annotations.RuleTemplate;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
@@ -29,7 +29,7 @@ import de.example.custom.javascript.checks.CheckList;
  * org.sonar.plugins.javascript.JavaScriptSquidSensor.
  * 
  * It seems like the SonarQube developers in charge of writing the JavaScript plugin tried to
- * make easy the creation of custom Java plugins.
+ * make easy the creation of custom JavaScript plugins.
  * 
  * So, JavaScriptSquidSensor will be the object that will run my rules (my Checks) whenever it finds JavaScript code.
  * I do not have to do anything else, what is great!
@@ -40,28 +40,31 @@ public class CustomRulesDefinition extends CustomJavaScriptRulesDefinition {
 	
 	private final Gson gson = new Gson();
 	
-	  @Override
-	  public String repositoryName() {
-	    return CheckList.REPOSITORY_NAME;
-	  }
+	@Override
+	public String repositoryName() {
+		return CheckList.REPOSITORY_NAME;
+	}
 
-	  @Override
-	  public String repositoryKey() {
-	    return CheckList.REPOSITORY_KEY;
-	  }
+	@Override
+	public String repositoryKey() {
+		return CheckList.REPOSITORY_KEY;
+	}
 
-	  @Override
-	  public Class[] checkClasses() {
-	    return CheckList.getChecks().toArray();
-	  }
+	@Override
+	public Class[] checkClasses() {
+		return CheckList.getChecks().stream().toArray(Class[]::new);
+//		return CheckList.getChecks().stream().toArray(size -> {
+//			return new Class[size];
+//		});
+	}
 	
-	  /**
-	   * I do not want to use the define method implemented in org.sonar.plugins.javascript.api.CustomJavaScriptRulesDefinition.
-	   */
+	/**
+	 * I do not want to use the define method implemented in
+	 * org.sonar.plugins.javascript.api.CustomJavaScriptRulesDefinition.
+	 */
 	@Override
 	public void define(Context context) {
-		NewRepository repository = context
-				.createRepository(repositoryKey(), JavaScriptLanguage.KEY)
+		NewRepository repository = context.createRepository(repositoryKey(), JavaScriptLanguage.KEY)
 				.setName(repositoryName());
 		List<Class> checks = CheckList.getChecks();
 		new RulesDefinitionAnnotationLoader().load(repository, Iterables.toArray(checks, Class.class));
@@ -79,7 +82,7 @@ public class CustomRulesDefinition extends CustomJavaScriptRulesDefinition {
       throw new IllegalArgumentException("No Rule annotation was found on " + ruleClass);
     }
     String ruleKey = ruleAnnotation.key();
-    if (StringUtils.isEmpty(ruleKey)) {	
+    if (Strings.isNullOrEmpty(ruleKey)) {
       throw new IllegalArgumentException("No key is defined in Rule annotation of " + ruleClass);
     }
     NewRule rule = repository.rule(ruleKey);
