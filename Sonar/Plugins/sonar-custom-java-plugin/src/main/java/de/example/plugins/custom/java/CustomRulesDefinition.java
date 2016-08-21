@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
 import org.sonar.api.rule.RuleStatus;
 import org.sonar.api.server.debt.DebtRemediationFunction;
 import org.sonar.api.server.rule.RulesDefinition;
@@ -17,6 +16,7 @@ import org.sonar.squidbridge.annotations.RuleTemplate;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.google.gson.Gson;
@@ -52,7 +52,7 @@ public class CustomRulesDefinition implements RulesDefinition {
       throw new IllegalArgumentException("No Rule annotation was found on " + ruleClass);
     }
     String ruleKey = ruleAnnotation.key();
-    if (StringUtils.isEmpty(ruleKey)) {
+    if (Strings.isNullOrEmpty(ruleKey)) {
       throw new IllegalArgumentException("No key is defined in Rule annotation of " + ruleClass);
     }
     NewRule rule = repository.rule(ruleKey);
@@ -67,11 +67,6 @@ public class CustomRulesDefinition implements RulesDefinition {
 
   private void ruleMetadata(Class<?> ruleClass, NewRule rule) {
     String metadataKey = rule.key();
-    org.sonar.java.RspecKey rspecKeyAnnotation = AnnotationUtils.getAnnotation(ruleClass, org.sonar.java.RspecKey.class);
-    if (rspecKeyAnnotation != null) {
-      metadataKey = rspecKeyAnnotation.value();
-      rule.setInternalKey(metadataKey);
-    }
     addHtmlDescription(rule, metadataKey);
     addMetadata(rule, metadataKey);
 

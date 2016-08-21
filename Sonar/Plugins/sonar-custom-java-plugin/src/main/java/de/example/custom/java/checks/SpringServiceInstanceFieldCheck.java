@@ -6,6 +6,7 @@ import java.util.List;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 import org.sonar.java.model.ModifiersUtils;
 import org.sonar.plugins.java.api.IssuableSubscriptionVisitor;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
@@ -16,15 +17,24 @@ import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.tree.Tree.Kind;
 import org.sonar.plugins.java.api.tree.VariableTree;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
 @Rule(key = "GUJ0002")
 public class SpringServiceInstanceFieldCheck extends IssuableSubscriptionVisitor {
 	private static final Logger LOG = Loggers.get(SpringServiceInstanceFieldCheck.class);
+	private static final Splitter ANNOTATIONS_SPLITTER = Splitter.on(',').trimResults().omitEmptyStrings();
+	private static final String DEFAULT = "javax.inject.Named, org.springframework.stereotype.Service";
 
 	private final List<VariableTree> issuableVariables = new ArrayList<>();
 
 	private boolean isSpringService = false;
+	
+	@RuleProperty(
+		key = "annotations",
+		description = "Annotations to be checked. Multiple values comma separated.",
+		defaultValue = "" + DEFAULT)
+	public String annotations = DEFAULT;
 
 	@Override
 	public void scanFile(JavaFileScannerContext context) {
@@ -58,25 +68,29 @@ public class SpringServiceInstanceFieldCheck extends IssuableSubscriptionVisitor
 
 	}
 
-	private static boolean isOwnedByASpringService(VariableTree variable) {
-		if (variable.symbol().owner().metadata().isAnnotatedWith("javax.inject.Named") ||
-				variable.symbol().owner().metadata().isAnnotatedWith("org.springframework.stereotype.Service")) {
-			return true;
+	private boolean isOwnedByASpringService(VariableTree variable) {
+		List<String> annotationsToBeChecked = ANNOTATIONS_SPLITTER.splitToList(annotations);
+		for (String annotation : annotationsToBeChecked) {
+			if (variable.symbol().owner().metadata().isAnnotatedWith(annotation)) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	private static boolean isSpringService(ClassTree tree) {
-		if (tree.symbol().metadata().isAnnotatedWith("javax.inject.Named") ||
-				tree.symbol().metadata().isAnnotatedWith("org.springframework.stereotype.Service")) {
-			return true;
+	private boolean isSpringService(ClassTree tree) {
+		List<String> annotationsToBeChecked = ANNOTATIONS_SPLITTER.splitToList(annotations);
+		for (String annotation : annotationsToBeChecked) {
+			if (tree.symbol().metadata().isAnnotatedWith(annotation)) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	private static boolean isStaticOrFinal(VariableTree variable) {
+	private boolean isStaticOrFinal(VariableTree variable) {
 		ModifiersTree modifiers = variable.modifiers();
 		return ModifiersUtils.hasModifier(modifiers, Modifier.STATIC)
 				|| ModifiersUtils.hasModifier(modifiers, Modifier.FINAL);

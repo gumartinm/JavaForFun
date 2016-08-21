@@ -23,40 +23,47 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.sonarsource.sonarqube</groupId>
-      <artifactId>sonar-plugin-api</artifactId>
-      <version>${sonar.apiVersion}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.sonarsource.java</groupId>
-      <artifactId>sonar-java-plugin</artifactId>
-      <type>sonar-plugin</type>
-      <version>${java.plugin.version}</version>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+		<groupId>org.sonarsource.sonarqube</groupId>
+		<artifactId>sonar-plugin-api</artifactId>
+		<version>${sonar.apiVersion}</version>
+		<scope>provided</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.sonarsource.java</groupId>
+		<artifactId>sonar-java-plugin</artifactId>
+		<type>sonar-plugin</type>
+		<version>${java.plugin.version}</version>
+		<scope>provided</scope>
+		<exclusions>
+			<!-- We are already using our required guava version -->
+			<exclusion>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+			</exclusion>
+		</exclusions>
+	</dependency>
+	<dependency>
+	    <groupId>org.sonarsource.sslr-squid-bridge</groupId>
+	    <artifactId>sslr-squid-bridge</artifactId>
+	    <version>2.6.1</version>
+	    <exclusions>
+	    	<!-- We are already using our required guava version -->
+	      	<exclusion>
+	      		<groupId>com.google.guava</groupId>
+	      		<artifactId>guava</artifactId>
+	      	</exclusion>
+	     </exclusions>
+	</dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>2.6.2</version>
-        <scope>compile</scope>
       </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>19.0</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
-    </dependency>
-
-          <dependency>
-      <groupId>org.sonarsource.java</groupId>
-      <artifactId>java-frontend</artifactId>
-      <version>${java.plugin.version}</version>
     </dependency>
       
     
