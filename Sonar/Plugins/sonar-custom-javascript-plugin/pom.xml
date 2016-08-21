@@ -33,6 +33,7 @@
   <dependency>
       <groupId>org.sonarsource.javascript</groupId>
       <artifactId>sonar-javascript-plugin</artifactId>
+      <type>sonar-plugin</type>
       <version>${javascript.plugin.version}</version>
   </dependency>
       <dependency>
