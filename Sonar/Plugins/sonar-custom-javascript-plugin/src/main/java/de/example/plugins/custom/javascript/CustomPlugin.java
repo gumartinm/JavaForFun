@@ -10,7 +10,7 @@ public class CustomPlugin implements Plugin {
 	public void define(Context context) {
 	    ImmutableList.Builder<Object> builder = ImmutableList.builder();
 	    builder.add(
-	    		);
+	    		CustomRulesDefinition.class);
 	    
 	    context.addExtensions(builder.build());
 	}

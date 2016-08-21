@@ -9,13 +9,11 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang.StringUtils;
 import org.sonar.api.rule.RuleStatus;
 import org.sonar.api.server.debt.DebtRemediationFunction;
-import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader;
 import org.sonar.api.utils.AnnotationUtils;
-import org.sonar.check.Cardinality;
 import org.sonar.plugins.javascript.JavaScriptLanguage;
+import org.sonar.plugins.javascript.api.CustomJavaScriptRulesDefinition;
 import org.sonar.squidbridge.annotations.RuleTemplate;
-import org.sonar.squidbridge.rules.ExternalDescriptionLoader;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
@@ -25,16 +23,46 @@ import com.google.gson.Gson;
 
 import de.example.custom.javascript.checks.CheckList;
 
-public class CustomRulesDefinition implements RulesDefinition {
+
+/**
+ * This class will be injected (SonarQube is using PicoContainer) in
+ * org.sonar.plugins.javascript.JavaScriptSquidSensor.
+ * 
+ * It seems like the SonarQube developers in charge of writing the JavaScript plugin tried to
+ * make easy the creation of custom Java plugins.
+ * 
+ * So, JavaScriptSquidSensor will be the object that will run my rules (my Checks) whenever it finds JavaScript code.
+ * I do not have to do anything else, what is great!
+ *
+ */
+public class CustomRulesDefinition extends CustomJavaScriptRulesDefinition {
 	private static final String RESOURCE_BASE_PATH = "/de/example/l10n/javascript/rules/custom";
 	
 	private final Gson gson = new Gson();
 	
+	  @Override
+	  public String repositoryName() {
+	    return CheckList.REPOSITORY_NAME;
+	  }
+
+	  @Override
+	  public String repositoryKey() {
+	    return CheckList.REPOSITORY_KEY;
+	  }
+
+	  @Override
+	  public Class[] checkClasses() {
+	    return CheckList.getChecks().toArray();
+	  }
+	
+	  /**
+	   * I do not want to use the define method implemented in org.sonar.plugins.javascript.api.CustomJavaScriptRulesDefinition.
+	   */
 	@Override
 	public void define(Context context) {
 		NewRepository repository = context
-				.createRepository(CheckList.REPOSITORY_KEY, JavaScriptLanguage.KEY)
-				.setName(CheckList.REPOSITORY_NAME);
+				.createRepository(repositoryKey(), JavaScriptLanguage.KEY)
+				.setName(repositoryName());
 		List<Class> checks = CheckList.getChecks();
 		new RulesDefinitionAnnotationLoader().load(repository, Iterables.toArray(checks, Class.class));
 		for (Class ruleClass : checks) {
@@ -51,17 +79,16 @@ public class CustomRulesDefinition implements RulesDefinition {
       throw new IllegalArgumentException("No Rule annotation was found on " + ruleClass);
     }
     String ruleKey = ruleAnnotation.key();
-    if (StringUtils.isEmpty(ruleKey)) {
+    if (StringUtils.isEmpty(ruleKey)) {	
       throw new IllegalArgumentException("No key is defined in Rule annotation of " + ruleClass);
     }
     NewRule rule = repository.rule(ruleKey);
     if (rule == null) {
       throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
     }
+    
+    // Check whether it is a Rule Template.
     rule.setTemplate(AnnotationUtils.getAnnotation(ruleClass, RuleTemplate.class) != null);
-    if (ruleAnnotation.cardinality() == Cardinality.MULTIPLE) {
-      throw new IllegalArgumentException("Cardinality is not supported, use the RuleTemplate annotation instead for " + ruleClass);
-    }
     ruleMetadata(ruleClass, rule);
   }
 
@@ -73,7 +100,7 @@ public class CustomRulesDefinition implements RulesDefinition {
   }
 
   private void addMetadata(NewRule rule, String metadataKey) {
-    URL resource = ExternalDescriptionLoader.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.json");
+    URL resource = CustomRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_javascript.json");
     if (resource != null) {
       RuleMetatada metatada = gson.fromJson(readResource(resource), RuleMetatada.class);
       rule.setSeverity(metatada.defaultSeverity.toUpperCase());
@@ -87,14 +114,14 @@ public class CustomRulesDefinition implements RulesDefinition {
     }
   }
 
-  private static void addHtmlDescription(NewRule rule, String metadataKey) {
-    URL resource = CustomRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.html");
+  private void addHtmlDescription(NewRule rule, String metadataKey) {
+    URL resource = CustomRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_javascript.html");
     if (resource != null) {
       rule.setHtmlDescription(readResource(resource));
     }
   }
 
-  private static String readResource(URL resource) {
+  private String readResource(URL resource) {
     try {
       return Resources.toString(resource, Charsets.UTF_8);
     } catch (IOException e) {

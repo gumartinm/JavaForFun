@@ -17,9 +17,9 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.apiVersion>5.6.1</sonar.apiVersion>
-    <javascript.plugin.version>2.14</javascript.plugin.version>
+    <javascript.plugin.version>2.15</javascript.plugin.version>
     <jdk.min.version>1.8</jdk.min.version>
-    <sonar.pluginKey>helloworld</sonar.pluginKey>
+    <sonar.pluginKey>customjavascriptplugin</sonar.pluginKey>
   </properties>
 
   <dependencies>
@@ -56,6 +56,12 @@
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-testing-harness</artifactId>
       <version>${sonar.apiVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.sonarsource.java</groupId>
+      <artifactId>javascript-checks-testkit</artifactId>
+      <version>${javascript.plugin.version}</version>
       <scope>test</scope>
     </dependency>
     	<dependency>
