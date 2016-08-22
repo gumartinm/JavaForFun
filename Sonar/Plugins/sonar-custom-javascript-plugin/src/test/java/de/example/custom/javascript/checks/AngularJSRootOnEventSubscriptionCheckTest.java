@@ -10,7 +10,7 @@ public class AngularJSRootOnEventSubscriptionCheckTest {
 	  private AngularJSRootOnEventSubscriptionCheck check = new AngularJSRootOnEventSubscriptionCheck();
 
 	  @Test
-	  public void testDefault() {
+	  public void whenUsingRootScopeOnEventThenGenerateIssues() {
 	    JavaScriptCheckVerifier.verify(check, new File("src/test/files/checks/AngularJSRootOnEventSubscriptionCheck.js"));
 	  }
 }
