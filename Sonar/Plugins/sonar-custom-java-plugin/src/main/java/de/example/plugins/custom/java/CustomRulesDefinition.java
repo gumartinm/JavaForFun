@@ -14,7 +14,6 @@ import org.sonar.api.utils.AnnotationUtils;
 import org.sonar.plugins.java.Java;
 import org.sonar.squidbridge.annotations.RuleTemplate;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -44,33 +43,31 @@ public class CustomRulesDefinition implements RulesDefinition {
 		repository.done();
 	}
   
-  @VisibleForTesting
-  protected void newRule(Class<?> ruleClass, NewRepository repository) {
+	protected void newRule(Class<?> ruleClass, NewRepository repository) {
 
-    org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(ruleClass, org.sonar.check.Rule.class);
-    if (ruleAnnotation == null) {
-      throw new IllegalArgumentException("No Rule annotation was found on " + ruleClass);
-    }
-    String ruleKey = ruleAnnotation.key();
-    if (Strings.isNullOrEmpty(ruleKey)) {
-      throw new IllegalArgumentException("No key is defined in Rule annotation of " + ruleClass);
-    }
-    NewRule rule = repository.rule(ruleKey);
-    if (rule == null) {
-      throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
-    }
-    
-    // Check whether it is a Rule Template.
-    rule.setTemplate(AnnotationUtils.getAnnotation(ruleClass, RuleTemplate.class) != null);
-    ruleMetadata(ruleClass, rule);
-  }
+		org.sonar.check.Rule ruleAnnotation = AnnotationUtils.getAnnotation(ruleClass, org.sonar.check.Rule.class);
+		if (ruleAnnotation == null) {
+			throw new IllegalArgumentException("No Rule annotation was found on " + ruleClass);
+		}
+		String ruleKey = ruleAnnotation.key();
+		if (Strings.isNullOrEmpty(ruleKey)) {
+			throw new IllegalArgumentException("No key is defined in Rule annotation of " + ruleClass);
+		}
+		NewRule rule = repository.rule(ruleKey);
+		if (rule == null) {
+			throw new IllegalStateException("No rule was created for " + ruleClass + " in " + repository.key());
+		}
 
-  private void ruleMetadata(Class<?> ruleClass, NewRule rule) {
-    String metadataKey = rule.key();
-    addHtmlDescription(rule, metadataKey);
-    addMetadata(rule, metadataKey);
+		// Check whether it is a Rule Template.
+		rule.setTemplate(AnnotationUtils.getAnnotation(ruleClass, RuleTemplate.class) != null);
+		ruleMetadata(ruleClass, rule);
+	}
 
-  }
+	private void ruleMetadata(Class<?> ruleClass, NewRule rule) {
+		String metadataKey = rule.key();
+		addHtmlDescription(rule, metadataKey);
+		addMetadata(rule, metadataKey);
+	}
 
   private void addMetadata(NewRule rule, String metadataKey) {
     URL resource = CustomRulesDefinition.class.getResource(RESOURCE_BASE_PATH + "/" + metadataKey + "_java.json");
@@ -113,11 +110,11 @@ public class CustomRulesDefinition implements RulesDefinition {
   }
 
   private static class Remediation {
-    String func;
-    String constantCost;
-    String linearDesc;
-    String linearOffset;
-    String linearFactor;
+    private String func;
+    private String constantCost;
+    private String linearDesc;
+    private String linearOffset;
+    private String linearFactor;
 
     public DebtRemediationFunction remediationFunction(DebtRemediationFunctions drf) {
       if(func.startsWith("Constant")) {
