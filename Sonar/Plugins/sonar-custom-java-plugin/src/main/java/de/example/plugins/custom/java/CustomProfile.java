@@ -25,7 +25,7 @@ public class CustomProfile extends ProfileDefinition {
 		Profile jsonProfile = gson.fromJson(readResource(resource), Profile.class);
 		RulesProfile profile = RulesProfile.create(jsonProfile.getName(), Java.KEY);
 		
-		for (String key : jsonProfile.ruleKeys) {
+		for (String key : jsonProfile.getRuleKeys()) {
 			Rule rule = Rule.create(CheckList.REPOSITORY_KEY, key);
 			profile.activateRule(rule, null);
 		}
@@ -42,8 +42,8 @@ public class CustomProfile extends ProfileDefinition {
 	}
 
 	private static class Profile {
-		String name;
-		List<String> ruleKeys;
+		private String name;
+		private List<String> ruleKeys;
 		
 		public String getName() {
 			return name;

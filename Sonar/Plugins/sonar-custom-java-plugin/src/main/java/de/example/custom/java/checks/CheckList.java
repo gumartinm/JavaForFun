@@ -18,6 +18,7 @@ public final class CheckList {
 				.addAll(getJavaChecks())
 				.addAll(getJavaTestChecks())
 				.addAll(getXmlChecks())
+				.addAll(getMavenChecks())
 				.build();
 	}
 

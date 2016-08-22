@@ -26,8 +26,6 @@ public class ParameterCheck extends IssuableSubscriptionVisitor {
 
 	@Override
 	public void visitNode(Tree tree) {
-		LOG.info("Visiting Node");
-
 		MethodTree method = (MethodTree) tree;
 		
 		if (method.parameters().size() == 1) {
