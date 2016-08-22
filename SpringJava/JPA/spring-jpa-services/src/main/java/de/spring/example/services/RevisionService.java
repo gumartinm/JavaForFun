@@ -12,8 +12,8 @@ public interface RevisionService<T, ID extends Serializable, N extends Number & 
 	 * Returns a {@link Page} of revisions for the entity with the given id.
 	 * 
 	 * @param id must not be {@literal null}.
-	 * @param pageable
-	 * @return
+	 * @param pageable page request.
+	 * @return a new {@link Page} with the content of the current one mapped by the given {@link Pageable}.
 	 */
 	Page<Revision<N, T>> findRevisions(ID id, Pageable pageable);
 }

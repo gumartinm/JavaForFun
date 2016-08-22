@@ -15,10 +15,11 @@ public interface RevisionRestController<T, ID extends Serializable, N extends Nu
     /**
      * Returns a {@link Page} of revisions for the entity with the given id
      *
+     * @param id         The identifier of the resource to find.
      * @param page       Page number starting from 0. default to 0
      * @param size       Number of resources by pages. default to 10
      * @param direction  Optional sort direction, could be "asc" or "desc"
-     * @param properties Ordered list of comma separeted properies used for sorting resulats. At least one property should be provided if direction is specified
+     * @param properties Ordered list of comma separated properties used for sorting results. At least one property should be provided if direction is specified
      * @return OK http status code if the request has been correctly processed, with the a paginated collection of all resource enclosed in the body.
      */
     @RequestMapping(value="{id}/revisions/", method = RequestMethod.GET)

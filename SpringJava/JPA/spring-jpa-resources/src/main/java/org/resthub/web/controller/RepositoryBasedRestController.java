@@ -17,7 +17,6 @@ import java.util.Set;
 
 /**
  * Abstract REST controller using a repository implementation
- * <p/>
  * <p>
  * You should extend this class when you want to use a 2 layers pattern : Repository and Controller. This is the default
  * controller implementation to use if you have no service (also called business) layer. You will be able to transform
@@ -26,7 +25,7 @@ import java.util.Set;
  *
  * <p>Default implementation uses "id" field (usually a Long) in order to identify resources in web request.
  * If your want to identity resources by a slug (human readable identifier), your should override findById() method with for example :
- *
+ * </p>
  * <pre>
  * <code>
    {@literal @}Override

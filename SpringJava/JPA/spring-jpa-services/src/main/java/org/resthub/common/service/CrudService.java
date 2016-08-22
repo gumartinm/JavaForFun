@@ -45,7 +45,7 @@ public interface CrudService<T, ID extends Serializable> {
     void delete(ID id);
 
     /**
-     * Delete all existing resource. Do not use cascade remove (not a choice -> JPA specs)
+     * Delete all existing resource. Do not use cascade remove (not a choice -&gt; JPA specs)
      */
     void deleteAll();
 
@@ -80,8 +80,8 @@ public interface CrudService<T, ID extends Serializable> {
     /**
      * Find all resources (pageable).
      *
-     * @param pageRequest page request
-     * @return resources
+     * @param pageRequest page request.
+	 * @return a new {@link Page} with the content of the current one mapped by the given {@link Pageable}.
      */
     Page<T> findAll(Pageable pageRequest);
 

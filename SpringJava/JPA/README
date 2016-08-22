@@ -4,6 +4,7 @@ mvn clean install -Pintegration
 mvn clean install site -Pintegration
 mvn dependency:sources
 mvn dependency:resolve -Dclassifier=javadoc
+mvn site
 mvn sonar:sonar -Dsonar.host.url=http://172.17.0.3:9091/sonarqube
 
 

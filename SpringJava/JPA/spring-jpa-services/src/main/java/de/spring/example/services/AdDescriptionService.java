@@ -15,8 +15,8 @@ public interface AdDescriptionService extends CrudService<AdDescription, Long> {
 	 * Returns a {@link Page} of revisions for the entity with the given id.
 	 * 
 	 * @param id must not be {@literal null}.
-	 * @param pageable
-	 * @return
+	 * @param pageable page request.
+	 * @return a new {@link Page} with the content of the current one mapped by the given {@link Pageable}.
 	 */
 	Page<Revision<Integer, AdDescription>> findRevisions(Long id, Pageable pageable);
 }
