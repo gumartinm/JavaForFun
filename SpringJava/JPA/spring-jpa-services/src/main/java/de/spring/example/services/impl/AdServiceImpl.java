@@ -3,6 +3,7 @@ package de.spring.example.services.impl;
 import static org.springframework.data.jpa.domain.Specifications.where;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.resthub.common.service.CrudServiceImpl;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import de.spring.example.persistence.domain.specifications.AdSpectifications;
 import de.spring.example.persistence.repository.AdRepository;
 import de.spring.example.services.AdService;
 
+@Named("adService")
 public class AdServiceImpl
 	extends CrudServiceImpl<Ad, Long, AdRepository>
 	implements AdService {

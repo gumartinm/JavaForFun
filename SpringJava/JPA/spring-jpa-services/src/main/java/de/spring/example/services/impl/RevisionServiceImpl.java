@@ -2,6 +2,8 @@ package de.spring.example.services.impl;
 
 import java.io.Serializable;
 
+import javax.inject.Named;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
@@ -11,6 +13,7 @@ import org.springframework.util.Assert;
 
 import de.spring.example.services.RevisionService;
 
+@Named("revisionService")
 public class RevisionServiceImpl<T, ID extends Serializable, N extends Number & Comparable<N>, R extends RevisionRepository<T, ID, N>>
 	implements RevisionService<T, ID, N> {
 

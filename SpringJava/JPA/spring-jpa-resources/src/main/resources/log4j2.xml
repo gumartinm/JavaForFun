@@ -56,7 +56,7 @@
 
 
 	<!-- 
-		Anything else will be using TRACE logging level.
+		Anything else will be using INFO logging level.
 	-->        
     <Root level="INFO">
     	<AppenderRef ref="STDOUT"/>
