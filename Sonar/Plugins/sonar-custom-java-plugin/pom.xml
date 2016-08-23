@@ -19,8 +19,8 @@
     <sonar.apiVersion>5.6.1</sonar.apiVersion>
     <java.plugin.version>4.0</java.plugin.version>
     <jdk.min.version>1.8</jdk.min.version>
-	 <maven.javadoc.version>2.10.4</maven.javadoc.version>
-	 <maven.source.version>3.0.1</maven.source.version>
+	<maven.javadoc.version>2.10.4</maven.javadoc.version>
+	<maven.source.version>3.0.1</maven.source.version>
     <!-- Be careful these two paths must match the ones configured in SONARQUBE JaCoCo plugin -->
     <jacoco.it.execution.data.file>${project.basedir}/target/jacoco-it.exec</jacoco.it.execution.data.file>
     <jacoco.ut.execution.data.file>${project.basedir}/target/jacoco.exec</jacoco.ut.execution.data.file>

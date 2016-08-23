@@ -143,11 +143,11 @@ public class CustomRulesDefinition extends CustomJavaScriptRulesDefinition {
   }
 
   private static class Remediation {
-    String func;
-    String constantCost;
-    String linearDesc;
-    String linearOffset;
-    String linearFactor;
+    private String func;
+    private String constantCost;
+    private String linearDesc;
+    private String linearOffset;
+    private String linearFactor;
 
     public DebtRemediationFunction remediationFunction(DebtRemediationFunctions drf) {
       if(func.startsWith("Constant")) {
