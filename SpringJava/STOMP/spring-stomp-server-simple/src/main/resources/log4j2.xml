@@ -34,12 +34,32 @@
         		level="INFO" additivity="false">
             <AppenderRef ref="STDOUT" />
         </Logger>
+
+
+    	<!-- 
+    		SockJS logs. Requires TRACE or DEBUG levels.
+    	-->
+        <Logger
+        	name="org.springframework.web.socket.handler.LoggingWebSocketHandlerDecorator"
+        		level="TRACE" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+
+ 
+     	<!-- 
+    		SockJS Exceptions. Requires ERROR or DEBUG levels.
+    	-->
+        <Logger
+        	name="org.springframework.web.socket.handler.ExceptionWebSocketHandlerDecorator"
+        		level="DEBUG" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
     	
     	
-    	 <!-- 
+    	<!-- 
     		SockJS client disconnects. Requires TRACE level always.
     		It works because I know for sure I will be using WebSockets when using SockJS.
-    	 -->
+    	-->
         <Logger
         	name="org.springframework.web.socket.sockjs.transport.session.WebSocketServerSockJsSession"
         		level="TRACE" additivity="false">
