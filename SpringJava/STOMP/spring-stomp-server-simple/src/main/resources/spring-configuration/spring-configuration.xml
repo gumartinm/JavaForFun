@@ -48,8 +48,24 @@
     <bean id="sessionSubscribeListener" class="de.spring.stomp.listeners.SessionSubscribeListener"/>    
     <bean id="sessionUnsubscribeListener" class="de.spring.stomp.listeners.SessionUnsubscribeListener"/>
         
-    <!-- Scheduler --> 
-    <bean id="simpleBrokerScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler" />   
+    <!-- Heart beat scheduler --> 
+    <bean id="simpleBrokerScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+    	<property name="threadNamePrefix" value="StompHeartBeatBroker-"/>
+    	<property name="poolSize" value="4"/>
+		<property name="removeOnCancelPolicy" value="true"/>
+	</bean>
+    
+    <!-- Message broker scheduler
+    	 See: org.springframework.web.socket.config.annotationWebSocketMessageBrokerConfigurationSupport
+    	 	  org.springframework.messaging.simp.config.AbstractMessageBrokerConfiguration
+    	 	  org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurationSupport
+    
+     -->
+    <bean id="messageBrokerTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler"> 
+		<property name="threadNamePrefix" value="MessageBroker-"/>
+    	<property name="poolSize" value="4"/>
+		<property name="removeOnCancelPolicy" value="true"/>
+	</bean>
      
     <!-- STOMP -->
     <!-- Simple broker -->
@@ -73,7 +89,7 @@
 			Matching the value used by client.
         -->
         <websocket:simple-broker prefix="/topic, /queue"
-        	scheduler="simpleBrokerScheduler" heartbeat="0,20000" />
+        	scheduler="simpleBrokerScheduler" heartbeat="20000,20000" />
         
         <websocket:client-inbound-channel>
 			<websocket:executor core-pool-size="100" max-pool-size="200" keep-alive-seconds="600"/>

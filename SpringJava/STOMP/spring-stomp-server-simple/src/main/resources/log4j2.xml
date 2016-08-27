@@ -20,11 +20,22 @@
                 
     <Appenders>
         <Appender type="Console" name="STDOUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %t %class{36} %L %M - %msg%xEx%n"/>
         </Appender>
     </Appenders>
     <Loggers>
     
+    
+    	<!-- 
+    		State and counters. Requires INFO level.
+    	 -->
+        <Logger
+        	name="org.springframework.web.socket.config.WebSocketMessageBrokerStats"
+        		level="INFO" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+    	
+    	
     	 <!-- 
     		SockJS client disconnects. Requires TRACE level always.
     		It works because I know for sure I will be using WebSockets when using SockJS.

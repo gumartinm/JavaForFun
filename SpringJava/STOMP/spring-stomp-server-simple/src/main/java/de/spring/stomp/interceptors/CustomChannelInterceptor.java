@@ -57,7 +57,7 @@ public class CustomChannelInterceptor extends ChannelInterceptorAdapter {
 	    
 	    byte[] payload = (byte[])message.getPayload();
 	    String stringPayload = new String(payload);
-	    LOGGER.info("CustomChannelInterceptor preSend, payload: " + stringPayload);
+	    LOGGER.info("CustomChannelInterceptor postSend, payload: " + stringPayload);
 	    
 	  }
 
