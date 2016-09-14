@@ -90,3 +90,11 @@ Postman-Token: 62441d69-daab-b4d2-e73a-efca92d93aeb
 
 # Changelog for DML. Creates DML changelog from current database (if there are data)
 /opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/dmlChangelog.xml --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root --diffTypes="data" generateChangeLog
+
+# Update changelog DDL with new changeSets.
+/opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/ddlChangelog.xml --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root update
+
+# Update changelog DDL with selected changeSets (based on label expressions)
+/opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/ddlChangelog.xml --labels='!VERSIONC' --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root update
+
+

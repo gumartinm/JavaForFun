@@ -1,5 +1,28 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <!--
+        Liquibase update database with new change sets. Examples.
+
+    <changeSet author="gustavo test" id="1" labels="VERSIONA">
+        <sql>
+            CREATE TABLE VERSIONA (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci
+        </sql>
+    </changeSet>
+
+    <changeSet author="gustavo test" id="2" labels="VERSIONB">
+        <sql>
+            CREATE TABLE VERSIONB (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci
+        </sql>
+    </changeSet>
+
+    <changeSet author="gustavo test" id="3" labels="VERSIONC">
+        <sql>
+            CREATE TABLE VERSIONC (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci
+        </sql>
+    </changeSet>
+    -->
+
     <changeSet author="gustavo (generated)" id="1469119656864-1" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <createTable tableName="AD">
             <column autoIncrement="true" name="ID" type="BIGINT">
