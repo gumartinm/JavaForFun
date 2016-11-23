@@ -17,6 +17,7 @@ public class TripServiceShould {
 	private static final User REGISTERED_USER = new User();
 	private static final User ANOTHER_USER = new User();
 	private static final Trip TO_BRAZIL = new Trip();
+	private static final Trip TO_BERLIN = new Trip();
 	private User loggedInUser;
 	private TripService tripService;
 	
@@ -47,11 +48,33 @@ public class TripServiceShould {
 		assertThat(friendTrips.size(), is(0));
 	}
 	
+	@Test public void
+	return_friend_trips_when_users_are_friends() {
+		loggedInUser = REGISTERED_USER;
+		
+		User friend = new User();
+		friend.addFriend(loggedInUser);
+		friend.addFriend(ANOTHER_USER);
+		friend.addTrip(TO_BRAZIL);
+		friend.addTrip(TO_BERLIN);
+		
+		List<Trip> friendTrips = tripService.getTripsByUser(friend); 
+		// You must always begin writing the assert.
+		// Remember: the assert must match the unit test method's name!!
+		// In this case, no trips must be returned.
+		assertThat(friendTrips.size(), is(2));
+	}
+	
 	private class TesteableTripService extends TripService {
 
 		@Override
 		protected User getLoggedInUser() {
 			return loggedInUser;
+		}
+
+		@Override
+		protected List<Trip> tripsBy(User user) {
+			return user.trips();
 		}
 		
 	}

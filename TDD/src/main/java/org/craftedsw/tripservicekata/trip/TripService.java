@@ -11,7 +11,8 @@ public class TripService {
 
 	public List<Trip> getTripsByUser(User user) throws UserNotLoggedInException {
 		List<Trip> tripList = new ArrayList<Trip>();
-		// In Unit Test we shouldn't invoke other classes :(
+		// In Unit Test we shouldn't invoke other classes because
+		// other classes could be using data base, network, etc, etc.
 		// User loggedUser = UserSession.getInstance().getLoggedUser();
 		User loggedUser = getLoggedInUser();
 		boolean isFriend = false;
@@ -23,12 +24,18 @@ public class TripService {
 				}
 			}
 			if (isFriend) {
-				tripList = TripDAO.findTripsByUser(user);
+				tripList = tripsBy(user);
 			}
 			return tripList;
 		} else {
 			throw new UserNotLoggedInException();
 		}
+	}
+
+	protected List<Trip> tripsBy(User user) {
+		List<Trip> tripList;
+		tripList = TripDAO.findTripsByUser(user);
+		return tripList;
 	}
 
 	protected User getLoggedInUser() {
