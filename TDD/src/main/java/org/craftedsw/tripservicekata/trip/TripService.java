@@ -16,7 +16,6 @@ public class TripService {
 		// User loggedUser = UserSession.getInstance().getLoggedUser();
 		User loggedInUser = getLoggedInUser();
 		if (loggedInUser != null) {
-			boolean isFriend = user.isFriendsWith(loggedInUser);		
 			// The deepest branch. For refactoring legacy code we must begin from the
 			// deepest branch. This is just the opposite for creating the unit test
 			// for our legacy code.
@@ -26,7 +25,7 @@ public class TripService {
 			// to shortest branch. Modifications in the legacy code may be hand made.
 			// In this case we can not do anything with this code (this is the deepest branch)
 			// so we will have to start with the for loop (which is the second deepest branch)
-			if (isFriend) {
+			if (user.isFriendsWith(loggedInUser)) {
 				tripList = tripsBy(user);
 			}
 			return tripList;
