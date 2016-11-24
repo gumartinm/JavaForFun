@@ -15,16 +15,9 @@ public class TripService {
 			throw new UserNotLoggedInException();
 		}
 		
-		// Getting rid of variables in legacy code is great because if we do it,
-		// it will be easier for us to refactor the code.
-		// Once we take away as many variables as posible we can remake optimizations
-		// but not before.
-		// We managed to get a symmetrical if (ternary operation)
-		if (user.isFriendsWith(loggedInUser)) {
-			return tripsBy(user);
-		} else {
-			return new ArrayList<>();
-		}
+		return user.isFriendsWith(loggedInUser)
+				? tripsBy(user)
+			    : new ArrayList<>();
 	}
 
 	protected List<Trip> tripsBy(User user) {
