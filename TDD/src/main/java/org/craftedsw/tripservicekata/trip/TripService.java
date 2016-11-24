@@ -14,16 +14,9 @@ public class TripService {
 		// In Unit Test we shouldn't invoke other classes because
 		// other classes could be using data base, network, etc, etc.
 		// User loggedUser = UserSession.getInstance().getLoggedUser();
-		User loggedUser = getLoggedInUser();
-		boolean isFriend = false;
-		if (loggedUser != null) {
-			// Feature envy. TripService envies User class. This should be done by User class.
-			for (User friend : user.getFriends()) {
-				if (friend.equals(loggedUser)) {
-					isFriend = true;
-					break;
-				}
-			}
+		User loggedInUser = getLoggedInUser();
+		if (loggedInUser != null) {
+			boolean isFriend = user.isFriendsWith(loggedInUser);		
 			// The deepest branch. For refactoring legacy code we must begin from the
 			// deepest branch. This is just the opposite for creating the unit test
 			// for our legacy code.
