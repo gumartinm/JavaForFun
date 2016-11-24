@@ -10,28 +10,16 @@ import org.craftedsw.tripservicekata.user.UserSession;
 public class TripService {
 
 	public List<Trip> getTripsByUser(User user) throws UserNotLoggedInException {
-		List<Trip> tripList = new ArrayList<Trip>();
-		// In Unit Test we shouldn't invoke other classes because
-		// other classes could be using data base, network, etc, etc.
-		// User loggedUser = UserSession.getInstance().getLoggedUser();
 		User loggedInUser = getLoggedInUser();
-		if (loggedInUser != null) {
-			// The deepest branch. For refactoring legacy code we must begin from the
-			// deepest branch. This is just the opposite for creating the unit test
-			// for our legacy code.
-			// 1. Write the unit test from the shortest to deepest branch. Modifications
-			// in legacy code must be done JUST with the automatic tools provided by the IDE.
-			// 2. Once the legacy code is under test start refactoring from deepest
-			// to shortest branch. Modifications in the legacy code may be hand made.
-			// In this case we can not do anything with this code (this is the deepest branch)
-			// so we will have to start with the for loop (which is the second deepest branch)
-			if (user.isFriendsWith(loggedInUser)) {
-				tripList = tripsBy(user);
-			}
-			return tripList;
-		} else {
+		if (loggedInUser == null) {
 			throw new UserNotLoggedInException();
 		}
+		
+		List<Trip> tripList = new ArrayList<Trip>();
+		if (user.isFriendsWith(loggedInUser)) {
+			tripList = tripsBy(user);
+		}
+		return tripList;
 	}
 
 	protected List<Trip> tripsBy(User user) {
