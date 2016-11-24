@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.craftedsw.tripservicekata.UserBuilder;
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
 import org.junit.Before;
@@ -60,45 +61,6 @@ public class TripServiceShould {
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
 		assertThat(friendTrips.size(), is(2));
-	}
-	
-	
-	public static class UserBuilder {
-		private User[] friends = new User[]{};
-		private Trip[] trips = new Trip[]{};
-		
-		public static UserBuilder aUser() {
-			return new UserBuilder();
-		}
-
-		public UserBuilder withTrips(Trip...trips) {
-			this.trips  = trips;
-			return this;
-		}
-
-		public UserBuilder friendsWith(User...friends) {
-			this.friends = friends;
-			return this;
-		}
-		
-		public User build() {
-			User user = new User();
-			addTripsTo(user);
-			addFriendsTo(user);
-			return user;
-		}
-
-		private void addFriendsTo(User user) {
-			for (User friend : friends) {
-				user.addFriend(friend);
-			}		
-		}
-
-		private void addTripsTo(User user) {
-			for (Trip trip : trips) {
-				user.addTrip(trip);
-			}
-		}
 	}
 	
 	private class TesteableTripService extends TripService {
