@@ -29,6 +29,8 @@ public class TripService {
 		return tripList;
 	}
 
+	// In MVC the Model layer should know nothing about the view.
+	// Service is in Model layer, so we have to get rid of this method.
 	protected User getLoggedInUser() {
 		User loggedUser = UserSession.getInstance().getLoggedUser();
 		return loggedUser;
