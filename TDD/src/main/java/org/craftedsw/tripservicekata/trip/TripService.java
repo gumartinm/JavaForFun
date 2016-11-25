@@ -9,12 +9,12 @@ import org.craftedsw.tripservicekata.user.UserSession;
 
 public class TripService {
 
-	public List<Trip> getTripsByUser(User user) throws UserNotLoggedInException {
-		if (getLoggedInUser() == null) {
+	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
+		if (loggedInUser == null) {
 			throw new UserNotLoggedInException();
 		}
 		
-		return user.isFriendsWith(getLoggedInUser())
+		return user.isFriendsWith(loggedInUser)
 				? tripsBy(user)
 			    : noTrips();
 	}
@@ -28,12 +28,4 @@ public class TripService {
 		tripList = TripDAO.findTripsByUser(user);
 		return tripList;
 	}
-
-	// In MVC the Model layer should know nothing about the view.
-	// Service is in Model layer, so we have to get rid of this method.
-	protected User getLoggedInUser() {
-		User loggedUser = UserSession.getInstance().getLoggedUser();
-		return loggedUser;
-	}
-	
 }

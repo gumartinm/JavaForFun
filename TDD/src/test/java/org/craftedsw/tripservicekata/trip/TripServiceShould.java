@@ -32,7 +32,7 @@ public class TripServiceShould {
 	throw_an_exception_when_user_is_not_logged_in() {
 		loggedInUser = GUEST;
 		
-		tripService.getTripsByUser(UNUSED_USER);
+		tripService.getTripsByUser(UNUSED_USER, GUEST);
 	}
 	
 	@Test public void
@@ -42,7 +42,7 @@ public class TripServiceShould {
 						.withTrips(TO_BRAZIL)
 						.build();
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend); 
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, loggedInUser); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
@@ -56,7 +56,7 @@ public class TripServiceShould {
 						.withTrips(TO_BRAZIL, TO_BERLIN)
 						.build();
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend); 
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, loggedInUser); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
@@ -64,11 +64,6 @@ public class TripServiceShould {
 	}
 	
 	private class TesteableTripService extends TripService {
-
-		@Override
-		protected User getLoggedInUser() {
-			return loggedInUser;
-		}
 
 		@Override
 		protected List<Trip> tripsBy(User user) {
