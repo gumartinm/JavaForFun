@@ -19,19 +19,15 @@ public class TripServiceShould {
 	private static final User ANOTHER_USER = new User();
 	private static final Trip TO_BRAZIL = new Trip();
 	private static final Trip TO_BERLIN = new Trip();
-	private User loggedInUser;
 	private TripService tripService;
 	
 	@Before
 	public void setUp() {
 		tripService = new TesteableTripService();
-		loggedInUser = REGISTERED_USER;
 	}
 
 	@Test(expected=UserNotLoggedInException.class) public void
-	throw_an_exception_when_user_is_not_logged_in() {
-		loggedInUser = GUEST;
-		
+	throw_an_exception_when_user_is_not_logged_in() {		
 		tripService.getTripsByUser(UNUSED_USER, GUEST);
 	}
 	
@@ -42,7 +38,7 @@ public class TripServiceShould {
 						.withTrips(TO_BRAZIL)
 						.build();
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend, loggedInUser); 
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERED_USER); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
@@ -52,11 +48,11 @@ public class TripServiceShould {
 	@Test public void
 	return_friend_trips_when_users_are_friends() {
 		User friend = UserBuilder.aUser()
-						.friendsWith(ANOTHER_USER, loggedInUser)
+						.friendsWith(ANOTHER_USER, REGISTERED_USER)
 						.withTrips(TO_BRAZIL, TO_BERLIN)
 						.build();
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend, loggedInUser); 
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERED_USER); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
