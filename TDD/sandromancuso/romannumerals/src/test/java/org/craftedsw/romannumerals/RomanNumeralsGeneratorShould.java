@@ -23,6 +23,7 @@ public class RomanNumeralsGeneratorShould {
 		// the pattern to extract the algorithm for the IV number.
 		assertThat(romanFor(5), is("V"));
 		assertThat(romanFor(7), is("VII"));
+		assertThat(romanFor(10), is("X"));
 	}
 
 }
