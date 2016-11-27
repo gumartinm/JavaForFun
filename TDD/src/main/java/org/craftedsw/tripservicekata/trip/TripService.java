@@ -18,13 +18,17 @@ public class TripService {
 	}
 
 	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
-		if (loggedInUser == null) {
-			throw new UserNotLoggedInException();
-		}
+		validate(loggedInUser);
 		
 		return user.isFriendsWith(loggedInUser)
 				? tripsBy(user)
 			    : noTrips();
+	}
+
+	private void validate(User loggedInUser) {
+		if (loggedInUser == null) {
+			throw new UserNotLoggedInException();
+		}
 	}
 
 	private ArrayList<Trip> noTrips() {
