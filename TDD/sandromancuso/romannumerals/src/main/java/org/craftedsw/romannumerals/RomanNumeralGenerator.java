@@ -10,16 +10,14 @@ public class RomanNumeralGenerator {
 				decimal -= romanToDecimal.decimal;
 			}
 		}
-		for (int i = 0; i < decimal; i++) {
-			roman  += "I";
-		}
 		
 		return roman;
 	}
 
 	enum RomanToDecimal {
 		TEN("X", 10),
-		FIVE("V", 5);
+		FIVE("V", 5),
+		ONE("I", 1);
 		
 		private final String roman;
 		private final int decimal;
