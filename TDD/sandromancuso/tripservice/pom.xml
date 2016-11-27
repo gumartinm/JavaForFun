@@ -5,12 +5,12 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.craftedsw</groupId>
-    <artifactId>sandromancuso</artifactId>
+    <artifactId>tripservce</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>tdd-by-example</name>
+    <name>tripservice</name>
     <url>http://gumartinm.name</url>
-    <description>TDD by example</description>
+    <description>TDD codurance</description>
     <organization>
         <name>Gustavo Martin Morcuende</name>
         <url>http://www.gumartinm.name</url>
