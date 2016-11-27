@@ -18,6 +18,10 @@ public class RomanNumeralsGeneratorShould {
 		assertThat(romanFor(1), is("I"));
 		assertThat(romanFor(2), is("II"));
 		assertThat(romanFor(3), is("III"));
+		// We jump to five because IV is an exception, it is
+		// going to be more complicated and we do not already have
+		// the pattern to extract the algorithm for the IV number.
+		assertThat(romanFor(5), is("V"));
 	}
 
 }
