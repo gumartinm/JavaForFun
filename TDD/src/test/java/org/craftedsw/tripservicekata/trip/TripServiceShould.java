@@ -2,6 +2,7 @@ package org.craftedsw.tripservicekata.trip;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 
@@ -27,18 +28,16 @@ public class TripServiceShould {
 	private static final Trip TO_BERLIN = new Trip();
 	
 	@Mock TripDAO tripDAO;
-	@InjectMocks @Spy private TripService realTripService;
-	private TripService tripService;
+	@InjectMocks @Spy private TripService tripService;
 	
 	@Before
 	public void setUp() {
-		realTripService = new TripService(tripDAO);
-		tripService = new TesteableTripService();
+		tripService = new TripService(tripDAO);
 	}
 
 	@Test(expected=UserNotLoggedInException.class) public void
 	throw_an_exception_when_user_is_not_logged_in() {		
-		realTripService.getTripsByUser(UNUSED_USER, GUEST);
+		tripService.getTripsByUser(UNUSED_USER, GUEST);
 	}
 	
 	@Test public void
@@ -48,7 +47,7 @@ public class TripServiceShould {
 						.withTrips(TO_BRAZIL)
 						.build();
 		
-		List<Trip> friendTrips = realTripService.getTripsByUser(friend, REGISTERED_USER); 
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERED_USER); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
@@ -61,24 +60,12 @@ public class TripServiceShould {
 						.friendsWith(ANOTHER_USER, REGISTERED_USER)
 						.withTrips(TO_BRAZIL, TO_BERLIN)
 						.build();
+		given(tripDAO.tripsBy(friend)).willReturn(friend.trips());
 		
-		List<Trip> friendTrips = realTripService.getTripsByUser(friend, REGISTERED_USER); 
+		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERED_USER); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
 		assertThat(friendTrips.size(), is(2));
-	}
-	
-	private class TesteableTripService extends TripService {
-
-		public TesteableTripService() {
-			super(new TripDAO());
-		}
-
-		@Override
-		protected List<Trip> tripsBy(User user) {
-			return user.trips();
-		}
-		
 	}
 }
