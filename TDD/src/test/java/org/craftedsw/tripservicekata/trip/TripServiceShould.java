@@ -10,7 +10,11 @@ import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TripServiceShould {
 	
 	private static final User GUEST = null;
@@ -19,6 +23,9 @@ public class TripServiceShould {
 	private static final User ANOTHER_USER = new User();
 	private static final Trip TO_BRAZIL = new Trip();
 	private static final Trip TO_BERLIN = new Trip();
+	
+	@Mock TripDAO tripDAO;
+	private TripService realTripService;
 	private TripService tripService;
 	
 	@Before
