@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    * name: The name of the configuration.
+    * dest: Either "err", which will send output to stderr, or a file path or URL.
+    * status: The level of internal Log4j events that should be logged to the console. Valid values for this attribute are "trace",
+      "debug", "info", "warn", "error" and "fatal". Log4j will log details about initialization, rollover and other internal
+      actions to the status logger.
+    * strict: Enables the use of the strict XML format. Not supported in JSON configurations.
+    * monitorInterval: If the monitorInterval attribute is specified on the configuration element and is set to a non-zero value
+      then the file will be checked the next time a log event is evaluated and/or logged and the monitorInterval has elapsed
+      since the last check.
+    * packages: A comma separated list of package names to search for plugins. Plugins are only loaded once per classloader so
+      changing this value may not have any effect upon reconfiguration.
+-->
+<Configuration name="XMLConfigTest" dest="err" status="trace" strict="true" monitorInterval="30" packages="org.apache.logging.log4j.test">
+    <!--
+        Log4j 2 supports the ability to specify tokens in the configuration as references to properties defined elsewhere. Some of
+        these properties will be resolved when the configuration file is interpreted while others may be passed to components
+        where they will be evaluated at runtime.
+    -->
+    <Properties>
+        <Property name="filename">target/fileappender.log</Property>
+        <Property name="filerandomname">target/filerandomappender.log</Property>
+    </Properties>
+
+    <!--
+         Filters may be configured in one of four locations:
+
+        Context-wide Filters are configured directly in the configuration. Events that are rejected by these filters
+        will not be passed to loggers for further processing. Once an event has been accepted by a Context-wide filter it will not be evaluated by any other Context-wide Filters nor will the Logger's Level be used to filter the event. The event will be evaluated by Logger and Appender Filters however.
+    Logger Filters are configured on a specified Logger. These are evaluated after the Context-wide Filters and the Log Level for the Logger. Events that are rejected by these filters will be discarded and the event will not be passed to a parent Logger regardless of the additivity setting.
+    Appender Filters are used to determine if a specific Appender should handle the formatting and publication of the event.
+    Appender Reference Filters are used to determine if a Logger should route the event to an appender.
+
+    <Filter type="ThresholdFilter" level="debug"/>
+    -->
+    
+    <Appenders>
+        <Appender type="Console" name="STDOUT">
+            <!--
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            -->
+            <Filter type="ThresholdFilter" level="trace"/>
+            <!--
+            <Layout type="PatternLayout" pattern="%d{ABSOLUTE} %5p %c{1}:%L %m%n"/>
+            -->
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx - %X{id} %X{name} %X{surname}%n"/>
+            <!--  
+            <Filters>
+                See: FlowTracingExample class in this project.
+                <Filter type="MarkerFilter" marker="FLOW" onMatch="ENTER" onMismatch="NEUTRAL"/>
+                <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="CATCHING" onMismatch="ACCEPT"/>
+                
+                See: MarkersExample class in this project.
+                ¿Cómo usar esto cuando hago logger.debug(QUERY_MARKER, "SELECT * FROM {}", table);?
+                ¿Sería marker="DEBUG"?
+                <Filter type="MarkerFilter" marker="FLOW" onMatch="SQL_UPDATE" onMismatch="NEUTRAL"/>
+                <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="SQL_QUERY" onMismatch="ACCEPT"/>
+            </Filters>
+            -->
+        </Appender>
+        <Appender type="Console" name="FLOW">
+            <Layout type="PatternLayout" pattern="%C{1}.%M %m %ex%n"/><!-- class and line number -->
+            <Filters>
+                <Filter type="MarkerFilter" marker="FLOW" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <Filter type="MarkerFilter" marker="EXCEPTION" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </Appender>
+        <!--
+            ¿Puedo mezclar bufferedIO=true con immediateFlush=true?
+            LOG4J 1.2: bufferedIO="false" immediateFlush="true" (es como se ejecuta actualmente la N2A)
+            JUGAR CON ESOS 2 VALORES A VER QUE TAL... :/
+        -->
+        <Appender type="File" name="FileAppender" fileName="${filename}" bufferedIO="false" immediateFlush="true" append="true">
+            <Layout type="PatternLayout">
+                <!--
+                <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+                -->
+                <Pattern>"%d{yyyyMMddHHmmssSSS} - %-5p - [%t] - %m%n"</Pattern>
+                <Charset>UTF-8</Charset> 
+            </Layout>
+        </Appender>
+         <!--
+           * Asynchronous Loggers are a new addition to Log4j 2. Their aim is to return from the call to Logger.log to the application
+             as soon as possible. You can choose between making all Loggers asynchronous or using a mixture of synchronous and asynchronous
+             Loggers. Making all Loggers asynchronous will give the best performance, while mixing gives you more flexibility.
+           * LMAX Disruptor technology. Asynchronous Loggers internally use the Disruptor, a lock-free inter-thread communication library,
+             instead of queues, resulting in higher throughput and lower latency.
+           * Asynchronous Appenders already existed in Log4j 1.x, but have been enhanced to flush to disk at the end of a batch
+             (when the queue is empty). This produces the same result as configuring "immediateFlush=true", that is, all received log events
+             are always available on disk, but is more efficient because it does not need to touch the disk on each and every log event.
+             (Async Appenders use ArrayBlockingQueue internally and do not need the disruptor jar on the classpath.)
+           * (For synchronous and asynchronous use) Random Access File Appenders are an alternative to Buffered File Appenders. Under the hood,
+             these new appenders use a ByteBuffer + RandomAccessFile instead of a BufferedOutputStream. In our testing this was about 20-200%
+             faster. These appenders can also be used with synchronous loggers and will give the same performance benefits. Random Access
+             File Appenders do not need the disruptor jar on the classpath.
+        -->
+        <!-- El random access file siempre es con buffer!!!
+             When set to true - the default, each write will be followed by a flush. This will guarantee the data is written
+             to disk but could impact performance.
+
+             Flushing after every write is only useful when using this appender with synchronous loggers. Asynchronous loggers
+             and appenders will automatically flush at the end of a batch of events, even if immediateFlush is set to false.
+             This also guarantees the data is written to disk but is more efficient. 
+        -->
+        <Appender type="RandomAccessFile" name="RandomAccessFileAppender" fileName="${filerandomname}" immediateFlush="true" append="true">
+            <Layout type="PatternLayout">
+                <Pattern>"%d{yyyyMMddHHmmssSSS} - %-5p - [%t] - %m%n"</Pattern>
+                <Charset>UTF-8</Charset> 
+            </Layout>
+        </Appender>
+        <!--
+            El AsyncAppender siempre es bufferado y hace siempre un immediateFlush ¿independientemente del appender ref? SÍ, mira:
+
+            Mejor usar includeLocation=false proque el AsyncAppender siempre debe hacer la localización del log (nombre de clase, método y línea)
+            independientemente de si luego se va a loguear o no (porque haya filtros por ejemplo) Esto es así porque el asyncappender
+            debe generar toda la info necesaria antes de pasar esta info a la cola. Una vez en la cola asíncrona esa info ya no puede
+            ser generada. Por tanto, aunque ese log finalmente no se use, siempre se pone en la cola asíncrona con todos sus datos.
+
+            Extracting location is an expensive operation (it can make logging 5 - 20 times slower). To improve performance, location
+            is not included by default when adding a log event to the queue. You can change this by setting includeLocation="true".
+            Para extraer la localización al parecer hay que recorrer el stacktrace por eso es una operacion pesada.
+        -->
+        <Appender type="Async" name="AsyncAppender" blocking="true" bufferSize="128" errorRef="FileAppender" ignoreExceptions="false" includeLocation="false">
+                <!--
+                Probar las dos configuraciones
+                <AppenderRef ref="RandomAccessFileAppender"/>
+                -->
+                <AppenderRef ref="FileAppender"/>
+        </Appender>
+
+    </Appenders>
+     
+    <Loggers>
+        <!--
+        <Logger name="de.loggers.test" level="debug" additivity="false">
+            <Filter type="ThreadContextMapFilter">
+                <KeyValuePair key="test" value="123"/>
+            </Filter>
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+        -->
+    
+        <!-- 
+        <Logger name="de.loggers.test" level="debug" additivity="false">
+            <AppenderRef ref="File"/>
+        </Logger>
+        -->
+
+        <Logger name="de.loggers.test.simple" level="TRACE">
+            <!--
+              * Because THIS logger has additivity="true" by default THIS logger will use the same appender as its parent's logger,
+                which in this case is the logger Root.
+              * Because THIS logger has additivity="true" by default if we use this AppenderRef we will see for
+                classes in de.loggers.test.simple the same messages twice. One from this logger and one from its parent's logger,
+                which in this case is the logger Root.
+            <AppenderRef ref="STDOUT"/>
+            -->
+        </Logger>
+        <Logger name="de.loggers.test.formatter" level="TRACE" additivity="false">
+            <!--
+              * Because THIS logger has additivity="false" THIS logger will not use the same appender as its parent's logger.
+            -->
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+        <!--
+            By default, location is not passed to the I/O thread by asynchronous loggers. If one of your layouts or custom
+            filters needs location information, you need to set "includeLocation=true" in the configuration of all relevant loggers,
+            including the root logger.
+        -->
+
+
+
+        <!--
+           * Asynchronous Loggers are a new addition to Log4j 2. Their aim is to return from the call to Logger.log to the application
+             as soon as possible. You can choose between making all Loggers asynchronous or using a mixture of synchronous and asynchronous
+             Loggers. Making all Loggers asynchronous will give the best performance, while mixing gives you more flexibility.
+           * LMAX Disruptor technology. Asynchronous Loggers internally use the Disruptor, a lock-free inter-thread communication library,
+             instead of queues, resulting in higher throughput and lower latency.
+           * Asynchronous Appenders already existed in Log4j 1.x, but have been enhanced to flush to disk at the end of a batch
+             (when the queue is empty). This produces the same result as configuring "immediateFlush=true", that is, all received log events
+             are always available on disk, but is more efficient because it does not need to touch the disk on each and every log event.
+             (Async Appenders use ArrayBlockingQueue internally and do not need the disruptor jar on the classpath.)
+           * (For synchronous and asynchronous use) Random Access File Appenders are an alternative to Buffered File Appenders. Under the hood,
+             these new appenders use a ByteBuffer + RandomAccessFile instead of a BufferedOutputStream. In our testing this was about 20-200%
+             faster. These appenders can also be used with synchronous loggers and will give the same performance benefits. Random Access
+             File Appenders do not need the disruptor jar on the classpath.
+        -->
+        <AsyncLogger name="de.loggers.test.loggernames" level="TRACE" includeLocation="false">
+            <AppenderRef ref="RandomAccessFileAppender"/>
+        </AsyncLogger>
+        <Root level="TRACE">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+     
+</Configuration>
