@@ -27,11 +27,12 @@ public class TripServiceShould {
 	private static final Trip TO_BERLIN = new Trip();
 	
 	@Mock TripDAO tripDAO;
-	@InjectMocks @Spy private TripService realTripService = new TripService();
+	@InjectMocks @Spy private TripService realTripService;
 	private TripService tripService;
 	
 	@Before
 	public void setUp() {
+		realTripService = new TripService(tripDAO);
 		tripService = new TesteableTripService();
 	}
 
@@ -69,6 +70,10 @@ public class TripServiceShould {
 	}
 	
 	private class TesteableTripService extends TripService {
+
+		public TesteableTripService() {
+			super(new TripDAO());
+		}
 
 		@Override
 		protected List<Trip> tripsBy(User user) {

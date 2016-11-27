@@ -3,10 +3,19 @@ package org.craftedsw.tripservicekata.trip;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
 
 public class TripService {
+	
+	private final TripDAO tripDAO;
+
+	@Inject
+	public TripService(TripDAO tripDAO) {
+		this.tripDAO = tripDAO;
+	}
 
 	public List<Trip> getTripsByUser(User user, User loggedInUser) throws UserNotLoggedInException {
 		if (loggedInUser == null) {
@@ -23,8 +32,6 @@ public class TripService {
 	}
 
 	protected List<Trip> tripsBy(User user) {
-		List<Trip> tripList;
-		tripList = TripDAO.findTripsByUser(user);
-		return tripList;
+		return tripDAO.tripsBy(user);
 	}
 }
