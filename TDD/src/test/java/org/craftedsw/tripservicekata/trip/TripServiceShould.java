@@ -11,7 +11,9 @@ import org.craftedsw.tripservicekata.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -25,7 +27,7 @@ public class TripServiceShould {
 	private static final Trip TO_BERLIN = new Trip();
 	
 	@Mock TripDAO tripDAO;
-	private TripService realTripService;
+	@InjectMocks @Spy private TripService realTripService = new TripService();
 	private TripService tripService;
 	
 	@Before
@@ -35,7 +37,7 @@ public class TripServiceShould {
 
 	@Test(expected=UserNotLoggedInException.class) public void
 	throw_an_exception_when_user_is_not_logged_in() {		
-		tripService.getTripsByUser(UNUSED_USER, GUEST);
+		realTripService.getTripsByUser(UNUSED_USER, GUEST);
 	}
 	
 	@Test public void
@@ -45,7 +47,7 @@ public class TripServiceShould {
 						.withTrips(TO_BRAZIL)
 						.build();
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERED_USER); 
+		List<Trip> friendTrips = realTripService.getTripsByUser(friend, REGISTERED_USER); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
@@ -59,7 +61,7 @@ public class TripServiceShould {
 						.withTrips(TO_BRAZIL, TO_BERLIN)
 						.build();
 		
-		List<Trip> friendTrips = tripService.getTripsByUser(friend, REGISTERED_USER); 
+		List<Trip> friendTrips = realTripService.getTripsByUser(friend, REGISTERED_USER); 
 		// You must always begin writing the assert.
 		// Remember: the assert must match the unit test method's name!!
 		// In this case, no trips must be returned.
