@@ -1,4 +1,5 @@
 Sandro Mancuso: testing a refactoring legacy code
+https://www.youtube.com/watch?v=_NnElPO5BU0
 
 Rules for refactoring legacy code.
 
