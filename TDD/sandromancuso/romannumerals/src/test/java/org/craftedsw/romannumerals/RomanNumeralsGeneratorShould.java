@@ -16,6 +16,7 @@ public class RomanNumeralsGeneratorShould {
 		// You must always start from the assert!!!
 		// Method's name must describe what the assert is doing!!!
 		assertThat(romanFor(1), is("I"));
+		assertThat(romanFor(2), is("II"));
 	}
 
 }
