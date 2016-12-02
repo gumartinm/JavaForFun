@@ -1,0 +1,7 @@
+Sandro Mancuso: test-driving algorithms
+https://www.youtube.com/watch?v=iZjgj1S0FCY
+
+Attention, we do not use complicated structures like switch/case because they are more difficult to refactor,
+once you add more cases to switch there is no way back, we can not refactor that. 
+Statement if with elses are also complicated, because of that we use if with returns.
+
