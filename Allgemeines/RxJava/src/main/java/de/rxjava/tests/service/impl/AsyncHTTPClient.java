@@ -1,6 +1,7 @@
 package de.rxjava.tests.service.impl;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.rxjava.tests.httpclient.CustomHTTPClient;
@@ -32,6 +33,8 @@ public class AsyncHTTPClient {
     	try {	
 			Thread.sleep(30000);
 		} catch (InterruptedException exception) {
+			// Do not forget good patterns when dealing with InterruptedException :(
+			Thread.currentThread().interrupt();
 		}
 
 	}
@@ -51,7 +54,12 @@ public class AsyncHTTPClient {
 				
 				// Making it slower as if having a bad connection :)
 				Thread.sleep(2000);
-			} catch (IOException | InterruptedException exception) {
+			} catch (InterruptedException exception) {
+				// Do not forget good patterns when dealing with InterruptedException :(
+				Thread.currentThread().interrupt();
+				
+				observer.onError(exception);
+			} catch (IOException exception) {
 				observer.onError(exception);
 			}
 
