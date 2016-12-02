@@ -35,12 +35,15 @@ public class CustomHTTPClient {
         try {
             connection.setRequestProperty("User-Agent", userAgent);
             connection.setRequestProperty("Cache-Control", "no-cache");
-            final InputStream in = new BufferedInputStream(connection.getInputStream());
-            final ByteArrayOutputStream buffer = readInputStream(in);
-            // No easy way of retrieving the charset from urlConnection.getContentType()
-            // Currently OpenWeatherMap returns: application/json; charset=utf-8
-            // Let's hope they will not change the content-type :/
-            return new String(buffer.toByteArray(), Charset.forName("UTF-8"));
+            
+            try (final InputStream in = new BufferedInputStream(connection.getInputStream());
+            	 final ByteArrayOutputStream buffer = readInputStream(in)) {
+            	
+	            // No easy way of retrieving the charset from urlConnection.getContentType()
+	            // Currently OpenWeatherMap returns: application/json; charset=utf-8
+	            // Let's hope they will not change the content-type :/
+	            return new String(buffer.toByteArray(), Charset.forName("UTF-8"));
+        	}
         } finally {
             connection.disconnect();
         }
