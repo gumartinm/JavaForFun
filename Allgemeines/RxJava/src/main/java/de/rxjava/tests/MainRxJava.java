@@ -1,12 +1,12 @@
 package de.rxjava.tests;
 
 import de.rxjava.tests.service.impl.AsyncHTTPClient;
+import de.rxjava.tests.service.impl.FlatMapTestImpl;
 
 public class MainRxJava {
 
 	public static void main(String[] args) {
-		AsyncHTTPClient asyncHTTPClient = new AsyncHTTPClient();
-		
-		asyncHTTPClient.getPages();
+		new AsyncHTTPClient().getPages();
+		new FlatMapTestImpl().getWords();
 	}
 }

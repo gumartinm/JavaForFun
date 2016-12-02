@@ -1,7 +1,6 @@
 package de.rxjava.tests.service.impl;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.rxjava.tests.httpclient.CustomHTTPClient;
@@ -27,7 +26,7 @@ public class AsyncHTTPClient {
 		});
 		
 		
-		System.out.println("YOU SEE ME FIRST!!!!");
+		System.out.println("AsyncHTTPClient: YOU SEE ME FIRST!!!!");
 		
 		
     	try {	
@@ -42,7 +41,7 @@ public class AsyncHTTPClient {
 	private Observable<String> getDataAsync(String uri) {
         return getDataSync(uri)
         		.subscribeOn(Schedulers.io());  // Creates a pool of threads for us which will run the code implemented below :)
-                                                // THIE METHOD DOES NOT START TO RUN MY CODE!!! IT IS DONE BY subscribe METHOD!!!
+                                                // THIS METHOD DOES NOT START TO RUN MY CODE!!! IT IS DONE BY subscribe METHOD!!!
     }
 	
 	private Observable<String> getDataSync(String uri) {
@@ -52,7 +51,7 @@ public class AsyncHTTPClient {
         	try {
 				data = CustomHTTPClient.newInstance("RxJavaTest").retrieveDataAsString(new URL(uri));
 				
-				// Making it slower as if having a bad connection :)
+				// Making it slower as if I had a bad connection :)
 				Thread.sleep(2000);
 			} catch (InterruptedException exception) {
 				// Do not forget good patterns when dealing with InterruptedException :(
