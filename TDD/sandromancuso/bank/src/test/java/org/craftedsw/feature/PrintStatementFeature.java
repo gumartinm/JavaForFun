@@ -17,7 +17,10 @@ public class PrintStatementFeature {
 	
 	@Before
 	public void initialise() {
-		account = new Account();
+		// Acceptance test is using the real repository because the acceptance test
+		// is testing the system as a whole. We are just mocking the external world (the Console)
+		TransactionRepository transactionRepository = new TransactionRepository(); 
+		account = new Account(transactionRepository);
 	}
 	
 	@Test public void
