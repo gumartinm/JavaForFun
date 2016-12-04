@@ -19,7 +19,8 @@ public class TransactionRepository {
 	}
 
 	public void addWithdrawal(int amount) {
-		throw new UnsupportedOperationException();
+		Transaction withdrawalTransaction = new Transaction(clock.todayAsString(), -amount);
+		transactions.add(withdrawalTransaction);
 	}
 
 	public List<Transaction> allTransactions() {
