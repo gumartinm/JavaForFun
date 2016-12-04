@@ -1,5 +1,7 @@
 package org.craftedsw.feature;
 
+import java.util.List;
+
 public class TransactionRepository {
 
 	public void addDeposit(int amount) {
@@ -7,6 +9,10 @@ public class TransactionRepository {
 	}
 
 	public void addWithdrawal(int amount) {
+		throw new UnsupportedOperationException();
+	}
+
+	public List<Transaction> allTransactions() {
 		throw new UnsupportedOperationException();
 	}
 
