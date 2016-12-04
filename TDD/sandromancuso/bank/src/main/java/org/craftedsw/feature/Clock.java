@@ -16,6 +16,7 @@ public class Clock {
 		// QUESTION FOR SANDRO MANCUSO:
 		// This line of code is not under test, so if someone makes
 		// a change here our unit tests will not fail!!! :/
+		// See possible answer in my ClockGus and ClockGusShould implementations.
 		return LocalDate.now();
 		// If someone writes:
 		// return null
