@@ -2,6 +2,7 @@ package org.craftedsw.feature;
 
 import static org.mockito.Mockito.verify;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,10 +12,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class PrintStatementFeature {
 
 	@Mock private Console console;
+	private Account account;
+	
+	@Before
+	public void initialise() {
+		account = new Account();
+	}
 	
 	@Test public void
 	print_statement_containing_all_transactions() {
-		account.deposti(1000);
+		account.deposit(1000);
 		// No negative value, instead we use the verb withdraw.
 		// Semantics are very important in the code!!!
 		account.withdraw(100);
