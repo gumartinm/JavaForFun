@@ -14,6 +14,11 @@ public class PrintStatementFeature {
 	
 	@Test public void
 	print_statement_containing_all_transactions() {
+		account.deposti(1000);
+		// No negative value, instead we use the verb withdraw.
+		// Semantics are very important in the code!!!
+		account.withdraw(100);
+		account.deposit(500);
 		
 		account.printStatement();
 		
