@@ -5,10 +5,15 @@ import java.time.format.DateTimeFormatter;
 
 public class Clock {
 
+	private static final DateTimeFormatter DD_MM_YYYY = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 	public String todayAsString() {
-		// We need to control this random stuff for our tests. :(
-		LocalDate today = LocalDate.now();
-		return today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		return today().format(DD_MM_YYYY);
+	}
+
+	// We isolated the randomness in here.
+	protected LocalDate today() {
+		return LocalDate.now();
 	}
 
 }
