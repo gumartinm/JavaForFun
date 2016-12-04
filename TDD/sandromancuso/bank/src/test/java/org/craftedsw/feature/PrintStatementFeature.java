@@ -1,10 +1,11 @@
 package org.craftedsw.feature;
 
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.inOrder;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -29,12 +30,11 @@ public class PrintStatementFeature {
 		
 		account.printStatement();
 		
-		// console will be some kind of interface that will represent my class console
-		// (always using interfaces for external stuff, like databases, etc, etc)
-		verify(console).printLine("DATE | AMOUNT | BALANCE");
-		verify(console).printLine("10 / 04 / 2014 | 500.00 | 1400.00");
-		verify(console).printLine("02 / 04 / 2014 | -100.00 | 900.00");
-		verify(console).printLine("01 / 04 / 2014 | 1000.00 | 1000.00");
+		InOrder inOrder = inOrder(console);
+		inOrder.verify(console).printLine("DATE | AMOUNT | BALANCE");
+		inOrder.verify(console).printLine("10 / 04 / 2014 | 500.00 | 1400.00");
+		inOrder.verify(console).printLine("02 / 04 / 2014 | -100.00 | 900.00");
+		inOrder.verify(console).printLine("01 / 04 / 2014 | 1000.00 | 1000.00");
 	}
 
 }
