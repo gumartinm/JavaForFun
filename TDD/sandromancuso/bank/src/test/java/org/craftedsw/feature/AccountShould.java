@@ -2,6 +2,8 @@ package org.craftedsw.feature;
 
 import static org.mockito.Mockito.verify;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +15,7 @@ public class AccountShould {
 
 	@Mock private TransactionRepository transactionRepository;
 	private Account account;
+	private StatementPrinter statementPrinter;
 
 	@Before
 	public void initialise() {
@@ -32,4 +35,11 @@ public class AccountShould {
 		
 		verify(transactionRepository).addWithdrawal(100);
 	}
-}
+	
+	@Test public void
+	print_a_statement() {
+		List<Transaction> transactions = null;
+		
+		verify(statementPrinter).print(transactions);
+	}
+ }
