@@ -13,13 +13,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class PrintStatementFeature {
 
 	@Mock private Console console;
+	// We treat Clock as an external thing. We need to control it,
+	// that is why we mock it.
+	@Mock private Clock clock;
+	
 	private Account account;
 	
 	@Before
 	public void initialise() {
 		// Acceptance test is using the real repository because the acceptance test
 		// is testing the system as a whole. We are just mocking the external world (the Console)
-		TransactionRepository transactionRepository = new TransactionRepository(); 
+		TransactionRepository transactionRepository = new TransactionRepository(clock); 
 		StatementPrinter statementPrinter = new StatementPrinter();
 		account = new Account(transactionRepository, statementPrinter);
 	}
