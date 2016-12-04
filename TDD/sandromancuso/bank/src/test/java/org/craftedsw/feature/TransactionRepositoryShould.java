@@ -27,11 +27,11 @@ public class TransactionRepositoryShould {
 	@Before
 	public void initialise() {
 		transactionRepository = new TransactionRepository(clock);
+		given(clock.todayAsString()).willReturn(TODAY);
 	}
 
 	@Test public void
 	create_and_store_a_deposit_transaction() {
-		given(clock.todayAsString()).willReturn(TODAY);
 		transactionRepository.addDeposit(100);
 		
 		List<Transaction> transactions = transactionRepository.allTransactions();
@@ -42,7 +42,6 @@ public class TransactionRepositoryShould {
 	
 	@Test public void
 	create_and_store_a_withdrawal_transaction() {
-		given(clock.todayAsString()).willReturn(TODAY);
 		transactionRepository.addWithdrawal(100);
 		
 		List<Transaction> transactions = transactionRepository.allTransactions();
