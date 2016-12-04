@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
@@ -17,21 +18,25 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class StatementPrinterShould {
 
 	private static final List<Transaction> NO_TRANSACTIONS = Collections.emptyList();
+	
+	private StatementPrinter statementPrinter;
+	
 	@Mock private Console console;
 
+	@Before
+	public void initialise() {
+		statementPrinter = new StatementPrinter(console);
+	}
+	
 	@Test public void
 	always_print_the_header() {
-		StatementPrinter statementPrinter = new StatementPrinter(console);
-		
 		statementPrinter.print(NO_TRANSACTIONS);
 		
 		verify(console).printLine("DATE | AMOUNT | BALANCE");
 	}
 
 	@Test public void
-	print_transactions_in_reverse_chronological_order() {
-		StatementPrinter statementPrinter = new StatementPrinter(console);
-		
+	print_transactions_in_reverse_chronological_order() {		
 		List<Transaction> transactions = transactionsContaining(
 				deposit("01/04/2014", 1000),
 				withdrawal("02/04/2014", 100),
