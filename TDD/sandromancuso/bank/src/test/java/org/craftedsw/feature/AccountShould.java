@@ -21,7 +21,7 @@ public class AccountShould {
 
 	@Before
 	public void initialise() {
-		account = new Account(transactionRepository);
+		account = new Account(transactionRepository, statementPrinter);
 	}
 	
 	@Test public void
