@@ -1,14 +1,21 @@
 package org.craftedsw.feature;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PrintStatementFeature {
 
+	@Mock private Console console;
+	
 	@Test public void
 	print_statement_containing_all_transactions() {
 		
+		account.printStatement();
 		
 		// console will be some kind of interface that will represent my class console
 		// (always using interfaces for external stuff, like databases, etc, etc)
