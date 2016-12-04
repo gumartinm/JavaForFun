@@ -13,7 +13,13 @@ public class Clock {
 
 	// We isolated the randomness in here.
 	protected LocalDate today() {
+		// QUESTION FOR SANDRO MANCUSO:
+		// This line of code is not under test, so if someone makes
+		// a change here our unit tests will not fail!!! :/
 		return LocalDate.now();
+		// If someone writes:
+		// return null
+		// nothing happens, tests keep going green... :(
 	}
 
 }
