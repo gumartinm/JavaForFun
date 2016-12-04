@@ -18,6 +18,10 @@ public class StatementPrinter {
 
 	public void print(List<Transaction> transactions) {
 		console.printLine(STATEMENT_HEADER);
+		printStatementLines(transactions);	
+	}
+
+	private void printStatementLines(List<Transaction> transactions) {
 		AtomicInteger runningBalance = new AtomicInteger(0);
 		transactions.stream()
 					.map(transaction -> statementLine(transaction, runningBalance))
