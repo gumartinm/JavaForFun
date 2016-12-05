@@ -19,12 +19,12 @@ public class ClockGusShould {
 	return_todays_date_in_dd_MM_yyyy_format() {
 		ClockGus clock = spy(new ClockGus());
 		LocalDate today = today();
-		given(clock.formattedToday(today)).willReturn(today.format(DD_MM_YYYY));
+		given(clock.format(today)).willReturn(today.format(DD_MM_YYYY));
 		
 		String date = clock.todayAsString();
 		
 		assertThat(date, is(today.format(DD_MM_YYYY)));
-		verify(clock, times(1)).formattedToday(today);
+		verify(clock, times(1)).format(today);
 	}
 	
 	@Test public void
@@ -32,7 +32,7 @@ public class ClockGusShould {
 		ClockGus clock = new ClockGus();
 		LocalDate today = today();
 		
-		String date = clock.formattedToday(today);
+		String date = clock.format(today);
 		
 		assertThat(date, is(today.format(DD_MM_YYYY)));
 	}
