@@ -15,13 +15,24 @@ public class ThreadTest {
         //We have a pool with 2 threads.
         //The third task will wait in a Queue until one thread of that pool is freed.
         for (int i = 0; i < 3 ; i++) {
+        	
+        	// When using Runnable if you use the second parameter of ExecutorService.submit()
+        	// when calling future[i].get() what you will ALWAYS have as returned value will be the string
+        	// passed as input parameter to the submit() method.
+        	// I have never used it, if I have something to return it will come from the
+        	// Callable and in that case I will not be using a Runnable :/
+        	
+        	// this.exec.submit(new ThreadExecutor(i), "Returned string when calling future[i].get");
+        	
             future[i] = this.exec.submit(new ThreadExecutor(i));
         }
 
         for (int i = 0; i < 3 ; i++) {
             try {
+            	// We are using Runnable with submit() with one input parameter, so get() returns nothing :(
                 future[i].get();
             } catch (final InterruptedException e) {
+    			Thread.currentThread().interrupt();
                 e.printStackTrace();
             } catch (final ExecutionException e) {
                 //The exception thrown in the threads is caught by the main thread here.
@@ -29,7 +40,7 @@ public class ThreadTest {
                         + Thread.currentThread().getName() + "\n");
                 final Throwable cause = e.getCause();
                 // try { Uncomment this code in order to run the test. :(
-                this.launderThrowable(cause);
+                throw this.launderThrowable(cause);
                 // } catch (final Throwable exception) {
                 // exception.printStackTrace();
                 // }
@@ -41,7 +52,7 @@ public class ThreadTest {
         try {
             Thread.sleep(4000);
         } catch (final InterruptedException e) {
-            // TODO Auto-generated catch block
+			Thread.currentThread().interrupt();
             e.printStackTrace();
         }
 
@@ -104,7 +115,7 @@ public class ThreadTest {
             try {
                 Thread.sleep(4000);
             } catch (final InterruptedException e) {
-                // TODO Auto-generated catch block
+    			Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
             System.out.println(Thread.currentThread().getName() + " number: " + this.i + "\n");
