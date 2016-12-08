@@ -36,6 +36,13 @@ public class ForkJoinTaskExample {
 	//	java.util.concurrent.ForkJoinPool.common.threadFactory - the class name of a ForkJoinPool.ForkJoinWorkerThreadFactory
 	//	java.util.concurrent.ForkJoinPool.common.exceptionHandler - the class name of a Thread.UncaughtExceptionHandler
 		
+	
+	// ForkJoinPool.makeCommonPool() tiene la lógica para calcular el parallelism. El parallelism indica el número de hilos
+	// en el pool del ForkJoinPool común (compartido en una misma JVM)
+	// Viene dado o por la propiedad del sistema java.util.concurrent.ForkJoinPool.common.parallelism
+	// o por el número de CPUs que tenemos Runtime.getRuntime().availableProcessors()
+	
+	
 	// By default there is no value for java.util.concurrent.ForkJoinPool.common.exceptionHandler
 	// SO BY DEFAULT, UNCAUGHT EXCEPTIONS ARE LOST FOREVER!!!! :/
 	final ForkJoinPool pool = new ForkJoinPool();
