@@ -7,12 +7,11 @@ public class ThreadMain {
 	
 	public static void main(String[] args) {
 //		ThreadTest test = new ThreadTest();
-//
 //		test.start();
 		
-		FutureTaskExample lol = new FutureTaskExample();
-		Car jeje = lol.test();
+		new CompletableFutureExample().doRun();
 		
-		System.out.println(jeje.getId());
+		Car car = new FutureTaskExample().test();
+		System.out.println(car.getId());
 	}
 }
