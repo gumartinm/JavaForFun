@@ -18,7 +18,14 @@ public class FlatMapTestImpl {
 		.subscribe(word -> {               //Unlike JavaScript Promises, we can call many times the same promise without resolving it.
 			                               //This stuff would be impossible in JavaScript :)
 			System.out.println(word);
-		});
+		}, exception -> exception.printStackTrace());
+		
+		
+		// The same with method references!!!
+		getWordsAsync()
+		.flatMap(Observable::from)
+		.subscribe(System.out::println, Throwable::printStackTrace);
+		
 		
 		System.out.println("FlatMapTestImpl: YOU SEE ME FIRST!!!!");
 		

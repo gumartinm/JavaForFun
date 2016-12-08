@@ -12,18 +12,28 @@ public class AsyncHTTPClient {
 	public void getPages() {
 				
 		getDataAsync("https://github.com/gumartinm")
-			// fancy Java way of using lambdas.
-			.subscribe(System.out::println); //The subscribe method starts to run the code implemented in getDataSync
-		                                     //subscribeOn just declares who is going to run my code (a pool of threads)
-		                                     //subscribe is the guy who starts to run my code!!!
-		                                     //JavaScript does the same with Promises but in a cleaner way (IMHO), it does not
-		                                     //need a subscribe method for starting the machinery (the machinery is underneath
-											 //implemented by the Web Browser with its asynchronous callbacks) 
-		getDataAsync("http://www.google.de").subscribe(page -> {
-			System.out.println("Another way, no so cool (with lambdas)");
-			System.out.println(Thread.currentThread().getName());
-			System.out.println(page);
-		});
+			// fancy Java way of using lambdas. Called method reference :)
+			.subscribe(System.out::println,		//The subscribe method starts to run the code implemented in getDataSync
+					Throwable::printStackTrace);//subscribeOn just declares who is going to run my code (a pool of threads)
+												//subscribe is the guy who starts to run my code!!!
+												//JavaScript does the same with Promises but in a cleaner way (IMHO), it does not
+												//need a subscribe method for starting the machinery (the machinery is underneath
+												//implemented by the Web Browser with its asynchronous callbacks)
+											 	 
+		
+		getDataAsync("http://www.google.de").
+			subscribe(page -> {                               // It will be called on success :)
+				System.out.println("Another way, no so cool (with lambdas)");
+				System.out.println(Thread.currentThread().getName());
+				System.out.println(page);
+				
+			}, exception -> exception.printStackTrace());     // It will be called on error. :)
+		
+		
+		// The same with method reference :)
+		getDataAsync("http://www.google.es").
+		subscribe(System.out::println,             // It will be called on success :)
+				  Throwable::printStackTrace);     // It will be called on error. :)
 		
 		
 		System.out.println("AsyncHTTPClient: YOU SEE ME FIRST!!!!");
