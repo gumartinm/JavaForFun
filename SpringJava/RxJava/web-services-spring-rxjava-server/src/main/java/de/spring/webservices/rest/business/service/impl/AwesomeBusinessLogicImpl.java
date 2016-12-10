@@ -1,5 +1,6 @@
 package de.spring.webservices.rest.business.service.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,7 +27,7 @@ public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {
         cars.add(new Car(counter.incrementAndGet(), String.format(TEMPLATE, 3)));
         
         try {
-            Thread.sleep(300000);
+            Thread.sleep(10000);
         } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
@@ -38,7 +39,7 @@ public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {
 	public Car findById(long id) {
 		
         try {
-            Thread.sleep(300000);
+            Thread.sleep(10000);
         } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
@@ -48,15 +49,21 @@ public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {
 	}
 
 	@Override
-	public Car create(Car resource) {
+	public Car create(Car car) {
 		long count = counter.incrementAndGet();
 		
         try {
-            Thread.sleep(300000);
+            Thread.sleep(10000);
         } catch(InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
         
 		return new Car(count, String.format(TEMPLATE, count));
+	}
+	
+	@Override
+	public Car createThrowable(Car car) throws IOException {
+		
+		throw new IOException("createThrowable FATAL ERROR");
 	}
 }

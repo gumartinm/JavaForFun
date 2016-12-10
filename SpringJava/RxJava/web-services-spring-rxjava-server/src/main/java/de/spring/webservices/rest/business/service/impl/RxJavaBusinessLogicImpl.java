@@ -1,7 +1,11 @@
 package de.spring.webservices.rest.business.service.impl;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,18 +14,13 @@ import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 import de.spring.webservices.rest.business.service.RxJavaBusinessLogic;
 import rx.Observable;
-
-/**
- * 
- * 
- * TODO: WHAT ABOUT EXCEPTIONS FROM awesomeBusinessLogic? RuntimeExceptions for example
- * I guess they will be caught by my adapter in controller layer but I must try it.
- *
- */
+import rx.exceptions.Exceptions;
 
 
 @Service("rxJavaBusinessLogic")
 public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RxJavaBusinessLogicImpl.class);
+
     private final AwesomeBusinessLogic awesomeBusinessLogic;
     
     @Inject
@@ -43,5 +42,24 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 	@Override
 	public Observable<Car> create(Car car) {	
 		return Observable.create(observer -> observer.onNext(awesomeBusinessLogic.create(car)));
+	}
+	
+	@Override
+	public Observable<Car> createThrowable(Car car) {	
+		return Observable.create(observer -> {
+
+				try {
+					observer.onNext(awesomeBusinessLogic.createThrowable(car));
+				} catch (IOException ex) {
+					// I could use this implementation. Instead, I will wrap my exception because
+					// that is what you would be doing if you were using any other method from RxJava (like map() for example)
+					// observer.onError(ex);
+					
+					LOGGER.error("createThrowable error: ", ex);
+					
+					Exceptions.propagate(ex);
+				}
+	
+		});
 	}
 }

@@ -90,11 +90,11 @@ public class RxJavaCarController {
     private Observable<ResponseEntity<Car>> createAsync(Car car) {
     	
     	return rxJavaBusinessLogic
-    			.create(car)
+    			.createThrowable(car)
     			.map(this::createResponseCar);		
     }
     
-    private ResponseEntity<Car> createResponseCar(Car car) {		
+    private ResponseEntity<Car> createResponseCar(Car car) {
 		HttpHeaders headers = new HttpHeaders();
 	    headers.add(HttpHeaders.LOCATION, "/api/cars/" + car.getId());
 	    return new ResponseEntity<>(car, headers, HttpStatus.CREATED);

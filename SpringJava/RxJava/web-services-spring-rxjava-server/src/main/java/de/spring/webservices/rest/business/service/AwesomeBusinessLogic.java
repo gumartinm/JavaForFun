@@ -1,5 +1,7 @@
 package de.spring.webservices.rest.business.service;
 
+import java.io.IOException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,6 +14,8 @@ public interface AwesomeBusinessLogic {
 	
 	public Car findById(long id);
 	
-	public Car create(Car resource);
+	public Car create(Car car);
+	
+	public Car createThrowable(Car car) throws IOException;
 	
 }

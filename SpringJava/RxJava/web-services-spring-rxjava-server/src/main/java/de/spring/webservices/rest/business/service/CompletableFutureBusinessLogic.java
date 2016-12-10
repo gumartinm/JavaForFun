@@ -16,4 +16,6 @@ public interface CompletableFutureBusinessLogic {
 	
 	public CompletableFuture<Car> create(Car resource);
 	
+	public CompletableFuture<Car> createThrowable(Car car);
+
 }

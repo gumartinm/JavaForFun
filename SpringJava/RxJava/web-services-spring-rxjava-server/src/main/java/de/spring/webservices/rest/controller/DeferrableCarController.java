@@ -90,7 +90,7 @@ public class DeferrableCarController {
     private CompletableFuture<ResponseEntity<Car>> createAsync(Car car) {
     	
     	return completableFutureBusinessLogic
-    			.create(car)
+    			.createThrowable(car)
     			.thenComposeAsync(newCar -> 
 		    		CompletableFuture.supplyAsync(() -> createResponseCar(newCar))
     		

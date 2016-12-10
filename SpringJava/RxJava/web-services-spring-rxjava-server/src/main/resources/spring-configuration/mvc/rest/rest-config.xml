@@ -16,7 +16,8 @@
    		See: org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
    		<mvc:annotation-driven/>
    	 -->
-   	 
+    <!-- Required for making work @ControllerAdvice -->
+    <mvc:annotation-driven/> 
    
 	<context:annotation-config />
    

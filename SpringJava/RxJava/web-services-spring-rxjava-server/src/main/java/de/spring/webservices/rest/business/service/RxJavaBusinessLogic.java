@@ -13,6 +13,8 @@ public interface RxJavaBusinessLogic {
 	
 	public Observable<Car> findById(long id);
 	
-	public Observable<Car> create(Car resource);
+	public Observable<Car> create(Car car);
+	
+	public Observable<Car> createThrowable(Car car);
 	
 }
