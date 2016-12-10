@@ -27,21 +27,20 @@ public class CompletableFutureAdapter {
 		public T doCall();
 	}
 	
-	
-	public static final <T> DeferredResult<T> callAdapter(DeferredCall<T> deferredCall) {
+	public static final <T> DeferredResult<T> deferredAdapter(CompletableFuture<T> completableFuture) {
 		
     	DeferredResult<T> deferredResult = new DeferredResult<>(ASYNC_TIMEOUT);
-    	CompletableFuture
-    		.supplyAsync(deferredCall::doCall)
+
+    	completableFuture
     		.thenAcceptAsync(deferredResult::setResult)
-    		.exceptionally(exception -> {
-    			
-    			LOGGER.error("findById error: ", exception);
-    			
-    			deferredResult.setErrorResult(exception);
-    			
-    			return null;
-    		});
+	    	.exceptionally(exception -> {
+				
+				LOGGER.error("error: ", exception);
+				
+				deferredResult.setErrorResult(exception);
+				
+				return null;
+			});
     	
         return deferredResult;	
 	}
