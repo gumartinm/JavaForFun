@@ -12,6 +12,15 @@ import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 import de.spring.webservices.rest.business.service.CompletableFutureBusinessLogic;
 
+/**
+ * 
+ * 
+ * TODO: WHAT ABOUT EXCEPTIONS FROM awesomeBusinessLogic? RuntimeExceptions for example
+ * I guess they will be caught by my adapter in controller layer but I must try it.
+ *
+ */
+
+
 @Service("completableFutureBusinessLogic")
 public class CompletablefutureBusinessLogicImpl implements CompletableFutureBusinessLogic {
     private final AwesomeBusinessLogic awesomeBusinessLogic;

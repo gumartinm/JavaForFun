@@ -1,0 +1,42 @@
+package de.spring.webservices.rest.controller.adapters;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.async.DeferredResult;
+
+import rx.Observable;
+import rx.schedulers.Schedulers;
+
+public class RxJavaAdapter {
+	private static final Logger LOGGER = LoggerFactory.getLogger(RxJavaAdapter.class);
+
+	/**
+	 * 
+	 * WHEN EXCEPTION IN setErrorResult, Spring WILL TRIGGER THE Spring Exception Handler AS YOU KNOW IT (I HOPE)
+	 * SO, YOU COULD HOOK UP THE HANDLER AND RETURN YOUR CUSTOM MESSAGESS (as usual)
+	 * 
+	 */
+	
+	// With no value, we depend on the Tomcat/Jboss/Jetty/etc timeout value for asynchronous requests.
+	// Spring will answer after 60 secs with an empty response (by default) and HTTP 503 status (by default) when timeout.
+	private static final long ASYNC_TIMEOUT = 60000;  /* milliseconds */
+
+	
+	@FunctionalInterface
+	public interface DeferredCall<T> {
+		
+		public T doCall();
+	}
+	
+	public static final <T> DeferredResult<T> deferredAdapter(Observable<T> observable) {
+		
+    	DeferredResult<T> deferredResult = new DeferredResult<>(ASYNC_TIMEOUT);
+
+    	observable
+    		.subscribeOn(Schedulers.io())
+    		.subscribe(deferredResult::setResult, exception -> LOGGER.error("error: ", exception));
+    	
+        return deferredResult;	
+	}
+	
+}
