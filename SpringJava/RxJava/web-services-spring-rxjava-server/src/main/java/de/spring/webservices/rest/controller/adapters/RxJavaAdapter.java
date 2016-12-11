@@ -4,8 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 public class RxJavaAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RxJavaAdapter.class);
@@ -18,7 +19,7 @@ public class RxJavaAdapter {
 	public static final <T> DeferredResult<T> deferredAdapter(Observable<T> observable) {
 
     	DeferredResult<T> deferredResult = new DeferredResult<>(ASYNC_TIMEOUT);
-
+    	
     	observable
     		.subscribeOn(Schedulers.io())
     		.subscribe(deferredResult::setResult, exception -> {
@@ -30,6 +31,23 @@ public class RxJavaAdapter {
 			});
 
         return deferredResult;	
+	}
+	
+	public static final <T> DeferredResult<T> deferredAdapter(Single<T> single) {
+
+    	DeferredResult<T> deferredResult = new DeferredResult<>(ASYNC_TIMEOUT);
+
+    	single
+    		.subscribeOn(Schedulers.io())
+    		.subscribe(deferredResult::setResult, exception -> {
+				Throwable realException = launderException(exception);
+	
+				LOGGER.error("error: ", realException);
+
+			deferredResult.setErrorResult(realException);
+		});
+
+        return deferredResult;
 	}
 	
 	private static final Throwable launderException(Throwable exception) {

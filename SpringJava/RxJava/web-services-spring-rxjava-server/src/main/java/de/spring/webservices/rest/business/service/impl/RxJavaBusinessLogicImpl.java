@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 import de.spring.webservices.rest.business.service.RxJavaBusinessLogic;
-import rx.Observable;
-import rx.exceptions.Exceptions;
+import io.reactivex.Observable;
+import io.reactivex.exceptions.Exceptions;
 
 
 @Service("rxJavaBusinessLogic")
@@ -59,7 +59,7 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 					
 					Exceptions.propagate(ex);
 				}
-	
+
 		});
 	}
 }

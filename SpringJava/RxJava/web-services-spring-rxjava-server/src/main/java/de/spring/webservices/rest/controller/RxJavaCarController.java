@@ -26,7 +26,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.RxJavaBusinessLogic;
-import rx.Observable;
+import io.reactivex.Observable;
 
 @RestController
 @RequestMapping("/api/rxjava/cars/")
