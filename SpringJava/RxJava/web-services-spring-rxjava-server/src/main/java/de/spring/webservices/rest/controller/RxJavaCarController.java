@@ -96,7 +96,7 @@ public class RxJavaCarController {
     
     private ResponseEntity<Car> createResponseCar(Car car) {
 		HttpHeaders headers = new HttpHeaders();
-	    headers.add(HttpHeaders.LOCATION, "/api/cars/" + car.getId());
+	    headers.add(HttpHeaders.LOCATION, "/api/rxjava/cars/" + car.getId());
 	    return new ResponseEntity<>(car, headers, HttpStatus.CREATED);
     }
 }
