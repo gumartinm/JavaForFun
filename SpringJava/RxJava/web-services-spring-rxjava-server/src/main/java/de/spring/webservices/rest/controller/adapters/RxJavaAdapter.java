@@ -8,6 +8,13 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
+/**
+ * 
+ * Instead of using this class, you could create you own implementation of
+ * org.springframework.web.servlet.mvc.method.annotation.DeferredResultAdapter
+ * for Observable and Single.
+ *
+ */
 public class RxJavaAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RxJavaAdapter.class);
 	

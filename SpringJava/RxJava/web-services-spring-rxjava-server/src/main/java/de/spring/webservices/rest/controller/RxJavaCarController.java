@@ -45,8 +45,14 @@ public class RxJavaCarController {
 	@RequestMapping(produces = { MediaType.APPLICATION_JSON_UTF8_VALUE }, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public DeferredResult<Page<Car>> cars() {
+		
+		// BE CAREFUL: I am returning Page object but when using io.reactivex.Observable (stream) instead of io.reactivex.Single (only one element)
+		// if you want this code to work you will have to return DeferredResult<List<Car>> and you will have to call
+		// the toList() method of Observable.
+		// The toList() method is the only way I know for returning Observable (stream) perhaps in Spring 5.0.0 there will be something better.
+		// Until then, this is the only way I know for using Observable with Spring.
 		    			
-		return deferredAdapter(rxJavaBusinessLogic.findAll(new PageRequest(PAGE, PAGE_SIZE)));
+		return deferredAdapter(rxJavaBusinessLogic.findAll(new PageRequest(PAGE, PAGE_SIZE)) /** .toList() **/);
     }
 
     @RequestMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
@@ -73,8 +79,14 @@ public class RxJavaCarController {
     			LOGGER.info(wheel);
     		}
     	}
+    	
+		// BE CAREFUL: I am returning Page object but when using io.reactivex.Observable (stream) instead of io.reactivex.Single (only one element)
+		// if you want this code to work you will have to return DeferredResult<List<Car>> and you will have to call
+		// the toList() method of Observable.
+		// The toList() method is the only way I know for returning Observable (stream) perhaps in Spring 5.0.0 there will be something better.
+		// Until then, this is the only way I know for using Observable with Spring.
     	    	
-		return deferredAdapter(rxJavaBusinessLogic.findById(id));
+		return deferredAdapter(rxJavaBusinessLogic.findById(id) /** .toList() **/);
 
     }
     
@@ -89,9 +101,15 @@ public class RxJavaCarController {
     
     private Observable<ResponseEntity<Car>> createAsync(Car car) {
     	
+		// BE CAREFUL: I am returning Page object but when using io.reactivex.Observable (stream) instead of io.reactivex.Single (only one element)
+		// if you want this code to work you will have to return DeferredResult<List<Car>> and you will have to call
+		// the toList() method of Observable.
+		// The toList() method is the only way I know for returning Observable (stream) perhaps in Spring 5.0.0 there will be something better.
+		// Until then, this is the only way I know for using Observable with Spring.
+    	
     	return rxJavaBusinessLogic
     			.createThrowable(car)
-    			.map(this::createResponseCar);		
+    			.map(this::createResponseCar) /** .toList() **/;		
     }
     
     private ResponseEntity<Car> createResponseCar(Car car) {
