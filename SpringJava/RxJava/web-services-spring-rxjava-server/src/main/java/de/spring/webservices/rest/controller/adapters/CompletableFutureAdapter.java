@@ -12,13 +12,7 @@ public class CompletableFutureAdapter {
 	// With no value, we depend on the Tomcat/Jboss/Jetty/etc timeout value for asynchronous requests.
 	// Spring will answer after 60 secs with an empty response (by default) and HTTP 503 status (by default) when timeout.
 	private static final long ASYNC_TIMEOUT = 60000;  /* milliseconds */
-
 	
-	@FunctionalInterface
-	public interface DeferredCall<T> {
-		
-		public T doCall();
-	}
 	
 	public static final <T> DeferredResult<T> deferredAdapter(CompletableFuture<T> completableFuture) {
 

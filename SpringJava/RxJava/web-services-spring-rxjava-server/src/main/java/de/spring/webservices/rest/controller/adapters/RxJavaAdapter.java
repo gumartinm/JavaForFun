@@ -15,12 +15,6 @@ public class RxJavaAdapter {
 	private static final long ASYNC_TIMEOUT = 60000;  /* milliseconds */
 
 	
-	@FunctionalInterface
-	public interface DeferredCall<T> {
-		
-		public T doCall();
-	}
-	
 	public static final <T> DeferredResult<T> deferredAdapter(Observable<T> observable) {
 
     	DeferredResult<T> deferredResult = new DeferredResult<>(ASYNC_TIMEOUT);
