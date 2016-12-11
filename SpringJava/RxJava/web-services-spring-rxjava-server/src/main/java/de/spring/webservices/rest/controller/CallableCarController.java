@@ -29,7 +29,7 @@ import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 @RestController
 @RequestMapping("/api/callable/cars/")
 public class CallableCarController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeferrableCarController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CallableCarController.class);
 	private static final int PAGE = 2;
 	private static final int PAGE_SIZE = 10;
     
@@ -146,7 +146,7 @@ public class CallableCarController {
 			Car createdCar = awesomeBusinessLogic.create(car);
 	        
 	        HttpHeaders headers = new HttpHeaders();
-	    	headers.add(HttpHeaders.LOCATION, "/api/cars/" + createdCar.getId());
+	    	headers.add(HttpHeaders.LOCATION, "/api/callable/cars/" + createdCar.getId());
 	    	return new ResponseEntity<>(createdCar, headers, HttpStatus.CREATED);
 		};
 		
