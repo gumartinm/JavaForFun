@@ -20,12 +20,18 @@ public class RxJavaAdapter {
 	
 	// With no value, we depend on the Tomcat/Jboss/Jetty/etc timeout value for asynchronous requests.
 	// Spring will answer after 60 secs with an empty response (by default) and HTTP 503 status (by default) when timeout.
-	private static final long ASYNC_TIMEOUT = 60000;  /* milliseconds */
 
+	// You'd rather better rely on the server values. IMHO this is something to be controlled
+	// by the server administrator no the developer.
+	// private static final long ASYNC_TIMEOUT = 60000;  /* milliseconds */
+
+	private RxJavaAdapter() {
+		
+	}
 	
 	public static final <T> DeferredResult<T> deferredAdapter(Observable<T> observable) {
 
-    	DeferredResult<T> deferredResult = new DeferredResult<>(ASYNC_TIMEOUT);
+    	DeferredResult<T> deferredResult = new DeferredResult<>(/** ASYNC_TIMEOUT **/);
     	
     	observable
     		.subscribeOn(Schedulers.io())
@@ -42,7 +48,7 @@ public class RxJavaAdapter {
 	
 	public static final <T> DeferredResult<T> deferredAdapter(Single<T> single) {
 
-    	DeferredResult<T> deferredResult = new DeferredResult<>(ASYNC_TIMEOUT);
+    	DeferredResult<T> deferredResult = new DeferredResult<>(/** ASYNC_TIMEOUT **/);
 
     	single
     		.subscribeOn(Schedulers.io())
