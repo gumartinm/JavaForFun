@@ -27,7 +27,7 @@ import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 @RestController
 @RequestMapping("/api/cars/")
 public class CarController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeferrableCarController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompletableFutureCarController.class);
 	private static final int PAGE = 2;
 	private static final int PAGE_SIZE = 10;
     

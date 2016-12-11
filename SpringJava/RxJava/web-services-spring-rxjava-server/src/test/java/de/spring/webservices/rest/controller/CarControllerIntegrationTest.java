@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageImpl;
@@ -34,7 +33,8 @@ import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 
 
-@Ignore
+// jsonPath, how to: https://github.com/jayway/JsonPath | http://jsonpath.herokuapp.com/ 
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath*:spring-configuration/mvc/rest/*.xml"})
 public class CarControllerIntegrationTest {
@@ -57,26 +57,21 @@ public class CarControllerIntegrationTest {
 	public void testWhenGetAllCarsThenRetrieveJsonValues() throws Exception {
         final List<Car> cars = new ArrayList<>();
         cars.add(new Car(1L, String.format(TEMPLATE, 1)));
-        cars.add(new Car(2L, String.format(TEMPLATE, 2)));
-        cars.add(new Car(3L, String.format(TEMPLATE, 3)));
-        
 		given(awesomeBusinessLogic.findAll(new PageRequest(PAGE, PAGE_SIZE))).willReturn(new PageImpl<>(cars));
 		
 		mockMvc.perform(get("/api/cars/")
 				.accept(MediaType.APPLICATION_JSON_UTF8))
 		
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$[0].id", any(Integer.class)))
-		.andExpect(jsonPath("$[0].content", is("Car: 1")))
-		.andExpect(jsonPath("$[1].content", is("Car: 2")))
-		.andExpect(jsonPath("$[1].id", any(Integer.class)))
-		.andExpect(jsonPath("$[2].content", is("Car: 3")))
-		.andExpect(jsonPath("$[2].id", any(Integer.class)))
+		.andExpect(jsonPath("$.content[0].id", any(Integer.class)))
+		.andExpect(jsonPath("$.content[0].content", is("Car: 1")))
 		.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 	}
 	
 	@Test
 	public void testWhenGetOneCarThenRetrieveJsonValue() throws Exception {
+		given(awesomeBusinessLogic.findById(1L)).willReturn(new Car(1L, String.format(TEMPLATE, 1)));
+
 		mockMvc.perform(get("/api/cars/{id}", 1L)
 				.accept(MediaType.APPLICATION_JSON_UTF8))
 	
@@ -88,7 +83,9 @@ public class CarControllerIntegrationTest {
 	
 	@Test
 	public void testWhenCreateNewCarThenRetrieveJsonValue() throws Exception {
-		Car car = new Car(2L, "nothing");
+		Car car = new Car(null, "nothing");
+		given(awesomeBusinessLogic.create(car)).willReturn(new Car(1L, String.format(TEMPLATE, 1)));
+
 		mockMvc.perform(post("/api/cars/")
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.content(asJsonString(car))
