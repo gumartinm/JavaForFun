@@ -3,8 +3,8 @@ package de.rxjava.tests.service.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 public class FlatMapTestImpl {
 
@@ -13,7 +13,7 @@ public class FlatMapTestImpl {
 		
 		getWordsAsync()
 		.flatMap(words -> {                // flatmap method enables us to return one Observable. The subscribe method does not have such feature.
-			return Observable.from(words);
+			return Observable.fromArray(words.toArray());
 		})
 		.subscribe(word -> {               //Unlike JavaScript Promises, we can call many times the same promise without resolving it.
 			                               //This stuff would be impossible in JavaScript :)
@@ -23,7 +23,9 @@ public class FlatMapTestImpl {
 		
 		// The same with method references!!!
 		getWordsAsync()
-		.flatMap(Observable::from)
+		.flatMap((List<String> words) -> {
+			return Observable.fromArray(words.toArray());
+		})
 		.subscribe(System.out::println, Throwable::printStackTrace);
 		
 		
