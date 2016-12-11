@@ -29,16 +29,16 @@ import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.CompletableFutureBusinessLogic;
 
 @RestController
-@RequestMapping("/api/deferrable/cars/")
-public class DeferrableCarController {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeferrableCarController.class);
+@RequestMapping("/api/completablefuture/cars/")
+public class CompletableFutureCarController {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompletableFutureCarController.class);
 	private static final int PAGE = 2;
 	private static final int PAGE_SIZE = 10;
     	
 	private final CompletableFutureBusinessLogic completableFutureBusinessLogic;
 
 	@Inject
-    public DeferrableCarController(CompletableFutureBusinessLogic completableFutureBusinessLogic) {
+    public CompletableFutureCarController(CompletableFutureBusinessLogic completableFutureBusinessLogic) {
 		this.completableFutureBusinessLogic = completableFutureBusinessLogic;
 	}
 
@@ -99,7 +99,7 @@ public class DeferrableCarController {
     
     private ResponseEntity<Car> createResponseCar(Car car) {		
 		HttpHeaders headers = new HttpHeaders();
-	    headers.add(HttpHeaders.LOCATION, "/api/cars/" + car.getId());
+	    headers.add(HttpHeaders.LOCATION, "/api/completablefuture/cars/" + car.getId());
 	    return new ResponseEntity<>(car, headers, HttpStatus.CREATED);
     }
 }
