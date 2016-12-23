@@ -1,6 +1,7 @@
 package de.spring.example.persitence.domain;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -34,12 +35,13 @@ public class AdTest {
 	public void whenCallingConstructorWithParametersThenCreateObject() {
 		Ad ad = createAd();
 		
-		assertEquals(ad.getAdDescriptions(), AD_DESCRIPTIONS);
-		assertEquals(ad.getAdMobileImage(), AD_MOBILE_IMAGE);
-		assertEquals(ad.getCompanyCategId(), COMPANY_CATEG_ID);
-		assertEquals(ad.getCreatedAt(), CREATED_AT);
-		assertEquals(ad.getUpdatedAt(), UPDATED_AT);
-		assertEquals(ad.getId(), AD_ID);
+		assertThat(ad.getAdDescriptions(), is(AD_DESCRIPTIONS));
+		assertThat(ad.getAdMobileImage(), is(AD_MOBILE_IMAGE));
+		assertThat(ad.getCompanyCategId(), is(COMPANY_CATEG_ID));
+		assertThat(ad.getCompanyId(), is(COMPANY_ID));
+		assertThat(ad.getCreatedAt(), is(CREATED_AT));
+		assertThat(ad.getUpdatedAt(), is(UPDATED_AT));
+		assertThat(ad.getId(), is(AD_ID));
 	}
 	
 	private static final Ad createAd() {	
