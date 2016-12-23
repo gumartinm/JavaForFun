@@ -142,43 +142,43 @@
         <addPrimaryKey columnNames="ID, REVISION" constraintName="PRIMARY" tableName="AD_DESCRIPTION_AUDITED"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-10" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex indexName="FK5kfkyp713lqaiybgbyjpjibgh" tableName="AD_DESCRIPTION">
+        <createIndex indexName="IND_01_AD_DESCRIPTION" tableName="AD_DESCRIPTION">
             <column name="AD_ID"/>
         </createIndex>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-11" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex indexName="FK96c2brah4r0lo3uevpptryfgc" tableName="AD_DESCRIPTION_AUDITED">
+        <createIndex indexName="IND_01_AD_DESCRIPTION_AUDITED" tableName="AD_DESCRIPTION_AUDITED">
             <column name="REVISION"/>
         </createIndex>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-12" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex indexName="FKdii961w5phmscfhw04iv3ur76" tableName="AD_AUDITED">
+        <createIndex indexName="IND_01_AD_AUDITED" tableName="AD_AUDITED">
             <column name="REVISION"/>
         </createIndex>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-13" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex indexName="FKgw7fxrsc46dchjriobk8ivqwx" tableName="AD_AUDITED">
+        <createIndex indexName="IND_02_AD_AUDITED" tableName="AD_AUDITED">
             <column name="REVISION_END"/>
         </createIndex>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-14" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <createIndex indexName="FKjox6d8yc1qj061bfidmu3gl4d" tableName="AD_DESCRIPTION_AUDITED">
+        <createIndex indexName="IND_02_AD_DESCRIPTION_AUDITED" tableName="AD_DESCRIPTION_AUDITED">
             <column name="REVISION_END"/>
         </createIndex>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-15" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="AD_ID" baseTableName="AD_DESCRIPTION" constraintName="FK5kfkyp713lqaiybgbyjpjibgh" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="AD"/>
+        <addForeignKeyConstraint baseColumnNames="AD_ID" baseTableName="AD_DESCRIPTION" constraintName="FK_01_AD_DESCRIPTION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="AD"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-16" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="REVISION" baseTableName="AD_DESCRIPTION_AUDITED" constraintName="FK96c2brah4r0lo3uevpptryfgc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+        <addForeignKeyConstraint baseColumnNames="REVISION" baseTableName="AD_DESCRIPTION_AUDITED" constraintName="FK_01_AD_DESCRIPTION_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-17" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="REVISION" baseTableName="AD_AUDITED" constraintName="FKdii961w5phmscfhw04iv3ur76" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+        <addForeignKeyConstraint baseColumnNames="REVISION" baseTableName="AD_AUDITED" constraintName="FK_01_AD_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="REVISION_END" baseTableName="AD_AUDITED" constraintName="FKgw7fxrsc46dchjriobk8ivqwx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+        <addForeignKeyConstraint baseColumnNames="REVISION_END" baseTableName="AD_AUDITED" constraintName="FK_02_AD_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-19" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addForeignKeyConstraint baseColumnNames="REVISION_END" baseTableName="AD_DESCRIPTION_AUDITED" constraintName="FKjox6d8yc1qj061bfidmu3gl4d" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+        <addForeignKeyConstraint baseColumnNames="REVISION_END" baseTableName="AD_DESCRIPTION_AUDITED" constraintName="FK_02_AD_DESCRIPTION_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
     </changeSet>
 </databaseChangeLog>
