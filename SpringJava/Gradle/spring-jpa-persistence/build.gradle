@@ -1,0 +1,118 @@
+group 'de.spring.jpa'
+version '1.0-SNAPSHOT'
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.7"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'com.ewerk.gradle.plugins.querydsl'
+
+
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 1/3 Required dependency for log4j 2 with slf4j: binding between log4j2 and slf4j
+    compile('org.apache.logging.log4j:log4j-slf4j-impl:2.7')
+    // 2/3 Required dependency for log4j 2 with slf4j: log4j 2 maven plugin (it is the log4j 2 implementation)
+    compile('org.apache.logging.log4j:log4j-core:2.7')
+    // 3/3 Required dependency for getting rid of commons logging. This is the BRIDGE (no binding) between Jakarta Commons Logging (used by Spring)
+    // and whatever I am using for logging (in this case I am using log4j 2) See: http://www.slf4j.org/legacy.html
+    // We need exclusions in every dependency using Jakarta Commons Logging (see Spring dependencies below)
+    compile('org.slf4j:jcl-over-slf4j:1.7.22')
+
+
+    compile('org.springframework:spring-context:4.3.5.RELEASE') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile('javax.inject:javax.inject:1')
+    compile('cglib:cglib:3.2.4')
+
+
+    // Required JPA dependencies with hibernate
+    compile('org.springframework:spring-orm:4.3.5.RELEASE')
+    compile('org.springframework.data:spring-data-jpa:1.10.5.RELEASE')
+    // Included dependency in spring-data-jpa
+    // compile('org.hibernate:hibernate-entitymanager:')
+
+
+    // Auditory using Hibernate Envers
+    compile('org.springframework.data:spring-data-envers:1.0.5.RELEASE')
+    // Included dependency in spring-data-envers
+    // compile('org.hibernate:hibernate-envers:5.2.5.Final')
+
+
+    // Required by spring-context for using JSR-303. See LocalValidatorFactoryBean
+    // in rest-config.xml
+    compile('javax.validation:validation-api:1.1.0.Final')
+    compile('org.hibernate:hibernate-validator:5.3.4.Final')
+
+
+    // Jackson JSON Processor, required by spring-webmvc. See messageConverters
+    // in rest-config.xml
+    compile('com.fasterxml.jackson.core:jackson-databind:2.8.5')
+
+
+    //  Loading data base in run time
+    compile("org.liquibase:liquibase-core:3.5.3")
+
+
+    // Jackson Java time support
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.4')
+
+    
+    // Using Querydsl
+    // Included in spring-data-jpa
+    // compile('com.querydsl:querydsl-apt:4.1.3')
+    // compile('com.querydsl:querydsl-jpa:4.1.3')
+
+
+    // Unit tests
+    testCompile('junit:junit:4.12')
+    testCompile('org.mockito:mockito-core:2.4.1')
+    testCompile('org.springframework:spring-test:4.3.5.RELEASE')
+
+
+    // Integration tests
+    // Either using H2
+    testCompile('com.h2database:h2:1.4.193')
+    // or MYSQL with docker :)
+    testCompile('mysql:mysql-connector-java:6.0.5')
+}
+
+
+test {
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+    }
+}
+
+
+querydsl {
+  library = 'com.querydsl:querydsl-apt:4.1.3'
+  querydslSourcesDir = "${buildDir}/generated-sources/querydsl"
+  jpa = true
+}
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Spring JPA Persistence, gradle example', 'Implementation-Version': version
+    }
+}
+
