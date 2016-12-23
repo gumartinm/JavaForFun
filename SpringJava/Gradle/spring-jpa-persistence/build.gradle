@@ -15,6 +15,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'jacoco'
 apply plugin: 'com.ewerk.gradle.plugins.querydsl'
 
 
@@ -100,12 +101,18 @@ test {
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
     }
+    
+    jacoco {
+        append = false
+        destinationFile = file("$buildDir/jacoco/jacoco.exec")
+        classDumpFile = file("$buildDir/jacoco/classpathdumps")
+    }
 }
 
 
 querydsl {
   library = 'com.querydsl:querydsl-apt:4.1.3'
-  querydslSourcesDir = "${buildDir}/generated-sources/querydsl"
+  querydslSourcesDir = "$buildDir/generated-sources/querydsl"
   jpa = true
 }
 
@@ -116,3 +123,15 @@ jar {
     }
 }
 
+jacoco {
+    toolVersion = '0.7.6.201602180812'
+    reportsDir = file("$buildDir/reports/jacoco")
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacoco/"
+    }
+}
