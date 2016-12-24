@@ -96,6 +96,17 @@ dependencies {
     testCompile('mysql:mysql-connector-java:6.0.5')
 }
 
+sourceSets {
+  	integTest {
+    	compileClasspath += main.output + test.output
+    	runtimeClasspath += main.output + test.output
+  	}
+}
+
+configurations {
+  integTestCompile.extendsFrom testCompile
+  integTestRuntime.extendsFrom testRuntime
+}
 
 test {
     testLogging {
@@ -109,6 +120,19 @@ test {
     }
 }
 
+task integTest(type: Test) {
+	// dependsOn startApp
+	// finalizedBy stopApp
+
+  	testClassesDir = sourceSets.integTest.output.classesDir
+  	classpath = sourceSets.integTest.runtimeClasspath
+
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+    }
+    
+    // mustRunAfter test
+}
 
 querydsl {
   library = 'com.querydsl:querydsl-apt:4.1.3'
