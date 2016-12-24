@@ -12,7 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 //import javax.persistence.NamedNativeQueries;
 //import javax.persistence.NamedNativeQuery;
 //import javax.persistence.NamedQueries;
@@ -29,12 +28,13 @@ import org.hibernate.envers.Audited;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import de.spring.example.persistence.converters.OffsetDateTimeAttributeConverter;
 
 @Entity
-//@Audited(withModifiedFlag=true)
+@Audited(withModifiedFlag=true)
 @Table(name="AD", schema="mybatis_example")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="jsonId")
 // 1. Named query is JPL. It is portable.
@@ -68,42 +68,35 @@ import de.spring.example.persistence.converters.OffsetDateTimeAttributeConverter
 //)
 public class Ad implements Serializable {
 
-	@Audited(withModifiedFlag=true)
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="ID", updatable=false, nullable=false)
 	private Long id;
 	
-	// NO WAY OF AUDITING THIS COLUMN :(. AM I MESSING SOMETHING UP WITH JPA AND RELATIONS BETWEEN TABLES?
 	@AuditJoinTable(name="AD_DESCRIPTION_AUDITED")
-	@AuditMappedBy(mappedBy="ad", positionMappedBy="id")
-	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "AD_ID", nullable = false)
+	@AuditMappedBy(mappedBy="ad")
+	@OneToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="ad")
+	@JsonManagedReference
 	private Set<AdDescription> adDescriptions;
 	
-	@Audited(withModifiedFlag=true)
 	@Max(60)
 	@Column(name="COMPANY_ID")
 	private Long companyId;
 	
-	@Audited(withModifiedFlag=true)
 	@Max(40)
 	@Column(name="COMPANY_CATEG_ID")
 	private Long companyCategId;
 	
-	@Audited(withModifiedFlag=true)
 	@Size(min=2, max=255)
 	@Column(name="AD_MOBILE_IMAGE")
 	private String adMobileImage;
 
-	@Audited(withModifiedFlag=true)
 	@NotNull
 	@Convert(converter=OffsetDateTimeAttributeConverter.class)
 	@Column(name="CREATED_AT", nullable=false)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ssZ")
 	private OffsetDateTime createdAt;
 	
-	@Audited(withModifiedFlag=true)
 	@NotNull
 	@Convert(converter=OffsetDateTimeAttributeConverter.class)
 	@Column(name="UPDATED_AT", nullable = false)

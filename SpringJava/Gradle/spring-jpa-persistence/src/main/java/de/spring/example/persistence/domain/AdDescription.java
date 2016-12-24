@@ -2,14 +2,12 @@ package de.spring.example.persistence.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
@@ -18,6 +16,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.envers.Audited;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -32,8 +31,8 @@ public class AdDescription implements Serializable {
 	@Column(name="ID", updatable=false, nullable=false)
 	private Long id;
 	
-	@ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL, optional=true)
-	@JoinColumn(name="AD_ID", nullable=false, updatable = false, insertable = false, referencedColumnName="ID")
+	@ManyToOne(fetch=FetchType.LAZY, optional=false)
+	@JsonBackReference
 	private Ad ad;
 	
 	@NotNull
