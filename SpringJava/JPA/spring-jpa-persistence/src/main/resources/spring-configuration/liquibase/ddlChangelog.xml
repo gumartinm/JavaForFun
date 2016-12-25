@@ -35,7 +35,7 @@
             <column defaultValueComputed="CURRENT_TIMESTAMP" name="CREATED_AT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="0000-00-00 00:00:00" name="UPDATED_AT" type="TIMESTAMP">
+            <column defaultValue="1970-01-01 00:00:01" name="UPDATED_AT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -136,10 +136,10 @@
         </createTable>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-7" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addPrimaryKey columnNames="ID, REVISION" constraintName="PRIMARY" tableName="AD_AUDITED"/>
+        <addPrimaryKey columnNames="ID, REVISION" constraintName="PK_AD_AUDITED" tableName="AD_AUDITED"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-8" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
-        <addPrimaryKey columnNames="ID, REVISION" constraintName="PRIMARY" tableName="AD_DESCRIPTION_AUDITED"/>
+        <addPrimaryKey columnNames="ID, REVISION" constraintName="PK_AD_DESCRIPTION_AUDITED" tableName="AD_DESCRIPTION_AUDITED"/>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-10" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
         <createIndex indexName="IND_01_AD_DESCRIPTION" tableName="AD_DESCRIPTION">
