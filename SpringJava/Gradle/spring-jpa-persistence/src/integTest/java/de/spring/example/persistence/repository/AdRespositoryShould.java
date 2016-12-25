@@ -31,7 +31,7 @@ public class AdRespositoryShould {
 	AdRepository adRepository;
 	
 	@Test public void
-	find_one_Ad_by_id() {
+	find_one_ad_by_id() {
 		Ad ad = createAd();
 		Ad createdAd = adRepository.save(ad);
 		
@@ -41,7 +41,7 @@ public class AdRespositoryShould {
 	}
 	
 	@Test public void
-	find_one_Ad_by_id_using_native_query() {
+	find_one_ad_by_id_using_native_query() {
 		Ad ad = createAd();
 		Ad createdAd = adRepository.save(ad);
 		
@@ -51,7 +51,7 @@ public class AdRespositoryShould {
 	}
 	
 	@Test public void
-	find_one_Ad_by_id_using_named_query() {
+	find_one_ad_by_id_using_named_query() {
 		Ad ad = createAd();
 		Ad createdAd = adRepository.save(ad);
 		
