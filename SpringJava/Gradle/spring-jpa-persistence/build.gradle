@@ -27,6 +27,13 @@ repositories {
     mavenCentral()
 }
 
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
 dependencies {
     // 1/3 Required dependency for log4j 2 with slf4j: binding between log4j2 and slf4j
     compile('org.apache.logging.log4j:log4j-slf4j-impl:2.7')
@@ -38,7 +45,7 @@ dependencies {
     compile('org.slf4j:jcl-over-slf4j:1.7.22')
 
 
-    compile('org.springframework:spring-context:4.3.5.RELEASE') {
+    compile('org.springframework:spring-context:4.3.0.RELEASE') {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
     compile('javax.inject:javax.inject:1')
@@ -46,27 +53,33 @@ dependencies {
 
 
     // Required JPA dependencies with hibernate
-    compile('org.springframework:spring-orm:4.3.5.RELEASE')
-    compile('org.springframework.data:spring-data-jpa:1.10.5.RELEASE')
-    // Included dependency in spring-data-jpa
-    // compile('org.hibernate:hibernate-entitymanager:')
+    compile('org.springframework:spring-orm:4.3.0.RELEASE')
+    compile('org.springframework.data:spring-data-jpa:1.10.2.RELEASE') {
+    	exclude group: 'org.springframework', module: 'spring-beans'
+    	exclude group: 'org.springframework', module: 'spring-jdbc'
+    	exclude group: 'org.springframework', module: 'spring-orm'
+    	exclude group: 'org.springframework', module: 'spring-core'
+    	exclude group: 'org.springframework', module: 'spring-aop'
+    	exclude group: 'org.springframework', module: 'spring-context'
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    compile('org.hibernate:hibernate-entitymanager:5.2.1.Final')
 
 
     // Auditory using Hibernate Envers
-    compile('org.springframework.data:spring-data-envers:1.0.5.RELEASE')
-    // Included dependency in spring-data-envers
-    // compile('org.hibernate:hibernate-envers:5.2.5.Final')
+    compile('org.springframework.data:spring-data-envers:1.0.2.RELEASE')
+    compile('org.hibernate:hibernate-envers:5.2.1.Final')
 
 
     // Required by spring-context for using JSR-303. See LocalValidatorFactoryBean
     // in rest-config.xml
     compile('javax.validation:validation-api:1.1.0.Final')
-    compile('org.hibernate:hibernate-validator:5.3.4.Final')
+    compile('org.hibernate:hibernate-validator:5.2.4.Final')
 
 
     // Jackson JSON Processor, required by spring-webmvc. See messageConverters
     // in rest-config.xml
-    compile('com.fasterxml.jackson.core:jackson-databind:2.8.5')
+    compile('com.fasterxml.jackson.core:jackson-databind:2.8.1')
 
 
     //  Loading data base in run time
@@ -74,19 +87,20 @@ dependencies {
 
 
     // Jackson Java time support
-    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.4')
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.1')
 
     
     // Using Querydsl
-    // Included in spring-data-jpa
-    // compile('com.querydsl:querydsl-apt:4.1.3')
-    // compile('com.querydsl:querydsl-jpa:4.1.3')
+    compile('com.querydsl:querydsl-apt:4.1.3')
+    compile('com.querydsl:querydsl-jpa:4.1.3')
 
 
     // Unit tests
     testCompile('junit:junit:4.12')
     testCompile('org.mockito:mockito-core:2.4.1')
-    testCompile('org.springframework:spring-test:4.3.5.RELEASE')
+    testCompile('org.springframework:spring-test:4.3.0.RELEASE') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
 
 
     // Integration tests
