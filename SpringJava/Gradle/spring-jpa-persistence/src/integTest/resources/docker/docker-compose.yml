@@ -1,0 +1,7 @@
+mysql:
+  image: mysql
+  ports:
+    - "3737:3306"
+  privileged: true
+  environment:
+    MYSQL_ROOT_PASSWORD: "root"

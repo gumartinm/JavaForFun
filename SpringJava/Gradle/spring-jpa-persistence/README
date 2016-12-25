@@ -1,0 +1,3 @@
+
+Custom version of docker-compose. Variable required by docker-compose-rule.
+export DOCKER_COMPOSE_LOCATION=/mnt/docker/docker-compose

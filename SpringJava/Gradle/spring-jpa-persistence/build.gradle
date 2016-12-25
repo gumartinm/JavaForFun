@@ -25,6 +25,7 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url 'https://dl.bintray.com/palantir/releases' }
 }
 
 eclipse {
@@ -108,6 +109,7 @@ dependencies {
     testCompile('com.h2database:h2:1.4.193')
     // or MYSQL with docker :)
     testCompile('mysql:mysql-connector-java:6.0.5')
+    testCompile 'com.palantir.docker.compose:docker-compose-rule:0.28.1'
 }
 
 sourceSets {
