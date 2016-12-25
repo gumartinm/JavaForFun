@@ -18,8 +18,8 @@ Postman-Token: 4f41770f-9250-9ecf-4bf3-07ea8ad2b8d5
     "companyId" : 2,
     "companyCategId" : 40,
     "adMobileImage" : "bild.jpg",
-    "createdAt" : "2016-07-10 23:27:36+0200",
-    "updatedAt" : "2014-07-10 23:27:36+0200",
+    "createdAt" : "2016-07-10 23:27:36+0100",
+    "updatedAt" : "2014-07-10 23:27:36+0100",
     "adDescriptions": [{
         "languageId": 20,
         "adName": "babuchas",
@@ -63,8 +63,8 @@ Postman-Token: 003b0d68-bdae-4a1f-748a-c4156745dedb
     "companyId" : 2,
     "companyCategId" : 14,
     "adMobileImage" : "bild.jpg",
-    "createdAt" : "2016-07-30 23:27:36+0200",
-    "updatedAt" : "2014-07-30 23:27:36+0200"
+    "createdAt" : "2016-07-30 23:27:36+0100",
+    "updatedAt" : "2014-07-30 23:27:36+0100"
 }
 
 
