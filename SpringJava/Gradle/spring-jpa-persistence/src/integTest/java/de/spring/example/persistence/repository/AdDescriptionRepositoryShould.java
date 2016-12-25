@@ -1,16 +1,16 @@
 package de.spring.example.persistence.repository;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import javax.inject.Inject;
 
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.palantir.docker.compose.DockerComposeRule;
-import com.palantir.docker.compose.connection.waiting.HealthChecks;
 
 import de.spring.example.persistence.domain.AdDescription;
 
@@ -22,20 +22,14 @@ public class AdDescriptionRepositoryShould {
 	
 	@Inject
 	AdDescriptionRepository adDescriptionRepository;
-
-	@ClassRule
-    public static final DockerComposeRule DOCKER = DockerComposeRule.builder()
-            .file("src/integTest/resources/docker/docker-compose.yml")
-            .waitingForService("mysql", HealthChecks.toHaveAllPortsOpen())
-            .saveLogsTo("build/dockerLogs")
-            .build();
 	
 	@Test public void
 	find_ad_descriptions_by_ad() {
 		Iterable<AdDescription> adDescriptions = adDescriptionRepository.findAll();
 		
-		Iterable<AdDescription> lol = adDescriptions;
-		
+		for (AdDescription adDescription : adDescriptions) {
+			assertThat(adDescription, is(notNullValue()));
+		}
 	}
 	
 }

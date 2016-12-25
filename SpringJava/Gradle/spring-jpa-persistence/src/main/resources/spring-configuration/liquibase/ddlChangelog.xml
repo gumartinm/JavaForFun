@@ -35,7 +35,7 @@
             <column defaultValueComputed="CURRENT_TIMESTAMP" name="CREATED_AT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="0000-00-00 00:00:00" name="UPDATED_AT" type="TIMESTAMP">
+            <column defaultValue="1970-01-01 00:00:01" name="UPDATED_AT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>

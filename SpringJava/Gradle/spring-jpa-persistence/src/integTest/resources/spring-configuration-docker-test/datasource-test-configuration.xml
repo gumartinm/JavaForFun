@@ -24,7 +24,21 @@
 	 -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://127.0.0.1:3737/mybatis_example?createDatabaseIfNotExist=true&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8" />
+
+		<!-- DATABASE_PORT should be a system or environment property
+			 If running tests from the IDE, we must configure JUnit for using
+			 this property with the right value.
+
+			 It is useful if we want to run just one test from our IDE but it requires
+			 to have a database always running.
+
+			 There is no collision with gradle integTest command because docker-compose is using
+			 a random port. So we can run tests one by one from our IDE (but it requires database running)
+			 and also run our tests from the command console by means of gradle integTest (it will
+			 start a new data base in a random and available port)
+			 This feature is also required by systems like Travis where we do not control the available ports.
+		 -->
+		<property name="url" value="jdbc:mysql://127.0.0.1:{DATABASE_PORT}/mybatis_example?createDatabaseIfNotExist=true&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
 	</bean>

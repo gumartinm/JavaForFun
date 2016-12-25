@@ -8,7 +8,8 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
-        classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.7"
+        classpath 'gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.7'
+        classpath 'com.avast.gradle:docker-compose-gradle-plugin:0.3.16'
     }
 }
 
@@ -17,6 +18,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'com.ewerk.gradle.plugins.querydsl'
+apply plugin: 'docker-compose'
 
 
 targetCompatibility = 1.8
@@ -109,6 +111,20 @@ dependencies {
     testCompile('com.h2database:h2:1.4.193')
     // or MYSQL with docker :)
     testCompile('mysql:mysql-connector-java:6.0.5')
+
+	// DockerComposeRule DOES NOT WORK FOR THESE REASONS:
+	// 1. Spring context is loaded before the DockerComposeRule
+	// 2. DockerComposeRule can work with random ports, the problem is:
+	// the Spring Context was loaded before DockerComposeRule and dataSource
+	// requires some port for connection to data base.
+
+	// These issues can be fixed using org.junit.Suite and running
+	// DockerComposeRule in the Suite instead of in every Test.
+	// But if I want to run just one test that solution does not work because
+	// DockerComposeRule will be declared in the Suite instead of in the Test.
+	// We will have to run our tests always from the Suite not being able to run
+	// just one Test from the IDE :(
+	// See: AdDescriptionRepositoryDockerComposeRuleShould
     testCompile 'com.palantir.docker.compose:docker-compose-rule:0.28.1'
 }
 
@@ -148,6 +164,24 @@ task integTest(type: Test) {
     }
     
     // mustRunAfter test
+}
+
+integTest.doFirst {
+	// It is required in order to run data bases in random ports.
+	// We need it for running tests from IDE and from command console but
+	// also it will be required by systems like Travis where we do not control
+	// the available ports.
+	def mysqlInfo = dockerCompose.servicesInfos.mysql
+	systemProperty 'DATABASE_PORT', mysqlInfo.ports[3306]
+}
+
+dockerCompose.isRequiredBy(integTest)
+dockerCompose {
+    useComposeFiles = ['src/integTest/resources/docker/docker-compose.yml']
+    captureContainersOutput = false
+    stopContainers = true
+    removeContainers = true
+    buildBeforeUp = false
 }
 
 querydsl {
