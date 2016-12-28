@@ -38,7 +38,7 @@
 			 start a new data base in a random and available port)
 			 This feature is also required by systems like Travis where we do not control the available ports.
 		 -->
-		<property name="url" value="jdbc:mysql://127.0.0.1:{DATABASE_PORT}/mybatis_example?createDatabaseIfNotExist=true&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:#{systemProperties.DATABASE_PORT}/mybatis_example?createDatabaseIfNotExist=true&amp;allowMultiQueries=true&amp;autoReconnect=true&amp;characterEncoding=UTF-8" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
 	</bean>
