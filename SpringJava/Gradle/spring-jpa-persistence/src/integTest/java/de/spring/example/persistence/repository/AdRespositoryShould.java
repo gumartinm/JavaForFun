@@ -17,7 +17,7 @@ import de.spring.example.persistence.domain.Ad;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( {"classpath*:spring-configuration/*.xml",
-	"classpath*:spring-configuration-test/*.xml"} )
+	"classpath*:spring-configuration-h2-test/*.xml"} )
 @Transactional
 public class AdRespositoryShould {
 	// Ad
