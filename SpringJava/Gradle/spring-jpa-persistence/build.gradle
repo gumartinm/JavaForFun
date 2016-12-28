@@ -25,6 +25,7 @@ targetCompatibility = 1.8
 sourceCompatibility = 1.8
 
 
+
 repositories {
     mavenCentral()
     maven { url 'https://dl.bintray.com/palantir/releases' }
@@ -85,8 +86,10 @@ dependencies {
     compile('com.fasterxml.jackson.core:jackson-databind:2.8.1')
 
 
-    //  Loading data base in run time
-    compile("org.liquibase:liquibase-core:3.5.3")
+    //  Loading data base in run time either using liquibase
+    compile('org.liquibase:liquibase-core:3.5.3')
+    // or flyway
+    compile('org.flywaydb:flyway-core:4.0.3')
 
 
     // Jackson Java time support
@@ -128,17 +131,6 @@ dependencies {
     testCompile 'com.palantir.docker.compose:docker-compose-rule:0.28.1'
 }
 
-sourceSets {
-  	integTest {
-    	compileClasspath += main.output + test.output
-    	runtimeClasspath += main.output + test.output
-  	}
-}
-
-configurations {
-  integTestCompile.extendsFrom testCompile
-  integTestRuntime.extendsFrom testRuntime
-}
 
 test {
     testLogging {
@@ -151,6 +143,22 @@ test {
         classDumpFile = file("$buildDir/jacoco/classpathdumps")
     }
 }
+
+
+// ****************** CUSTOM TASK FOR INTEGRATION TESTS (something like  maven-failsafe-plugin) *********************
+
+sourceSets {
+  	integTest {
+    	compileClasspath += main.output + test.output
+    	runtimeClasspath += main.output + test.output
+  	}
+}
+
+configurations {
+  integTestCompile.extendsFrom testCompile
+  integTestRuntime.extendsFrom testRuntime
+}
+
 
 task integTest(type: Test) {
 	// dependsOn startApp
@@ -165,6 +173,7 @@ task integTest(type: Test) {
     
     // mustRunAfter test
 }
+
 
 integTest.doFirst {
 	// It is required in order to run data bases in random ports.
@@ -183,6 +192,10 @@ dockerCompose {
     removeContainers = true
     buildBeforeUp = false
 }
+
+// ************************************************************************************************************************
+
+
 
 querydsl {
   library = 'com.querydsl:querydsl-apt:4.1.3'
