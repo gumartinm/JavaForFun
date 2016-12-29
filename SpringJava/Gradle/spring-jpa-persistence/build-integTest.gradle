@@ -1,0 +1,45 @@
+sourceSets {
+    integTest {
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+configurations {
+  integTestCompile.extendsFrom testCompile
+  integTestRuntime.extendsFrom testRuntime
+}
+
+
+task integTest(type: Test) {
+    // dependsOn startApp
+    // finalizedBy stopApp
+
+    testClassesDir = sourceSets.integTest.output.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+    }
+
+    // mustRunAfter test
+}
+
+
+integTest.doFirst {
+    // It is required in order to run data bases in random ports.
+    // We need it for running tests from IDE and from command console but
+    // also it will be required by systems like Travis where we do not control
+    // the available ports.
+    def mysqlInfo = dockerCompose.servicesInfos.mysql
+    systemProperty 'DATABASE_PORT', mysqlInfo.ports[3306]
+}
+
+dockerCompose.isRequiredBy(integTest)
+dockerCompose {
+    useComposeFiles = ['src/integTest/resources/docker/docker-compose.yml']
+    captureContainersOutput = false
+    stopContainers = true
+    removeContainers = true
+    buildBeforeUp = false
+}
