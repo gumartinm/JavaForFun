@@ -33,6 +33,10 @@
 	 -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.h2.Driver" />
+
+        <!-- For debugging H2 use TRACE_LEVEL_SYSTEM_OUT=3 option :)
+        <property name="url" value="jdbc:h2:mem:mybatis_example;INIT=create schema if not exists mybatis_example\;SET SCHEMA mybatis_example;TRACE_LEVEL_SYSTEM_OUT=3;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
+        -->
 		<property name="url" value="jdbc:h2:mem:mybatis_example;INIT=create schema if not exists mybatis_example\;SET SCHEMA mybatis_example;MODE=DB2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
 		<property name="username" value="mybatis" />
 		<property name="password" value="" />
