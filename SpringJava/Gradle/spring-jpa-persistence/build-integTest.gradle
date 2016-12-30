@@ -24,6 +24,12 @@ task integTest(type: Test) {
         events "PASSED", "FAILED", "SKIPPED"
     }
 
+    jacoco {
+        append = false
+        destinationFile = file("$buildDir/jacoco/jacoco-it.exec")
+        classDumpFile = file("$buildDir/jacoco/classpathIntegdumps")
+    }
+
     // mustRunAfter test
 }
 
