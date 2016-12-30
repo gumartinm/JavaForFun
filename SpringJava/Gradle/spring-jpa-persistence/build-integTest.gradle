@@ -14,6 +14,8 @@ configurations {
 task integTest(type: Test) {
     // dependsOn startApp
     // finalizedBy stopApp
+    description = 'Runs integration tests';
+    group = 'verification';
 
     testClassesDir = sourceSets.integTest.output.classesDir
     classpath = sourceSets.integTest.runtimeClasspath
@@ -24,7 +26,6 @@ task integTest(type: Test) {
 
     // mustRunAfter test
 }
-
 
 integTest.doFirst {
     // It is required in order to run data bases in random ports.
@@ -43,3 +44,5 @@ dockerCompose {
     removeContainers = true
     buildBeforeUp = false
 }
+
+project.tasks.check.dependsOn(integTest)
