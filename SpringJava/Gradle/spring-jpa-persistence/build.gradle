@@ -20,6 +20,7 @@ apply plugin: 'jacoco'
 apply plugin: 'com.ewerk.gradle.plugins.querydsl'
 apply plugin: 'docker-compose'
 
+apply from: 'build-test.gradle'
 apply from: 'build-integTest.gradle'
 
 
@@ -132,20 +133,6 @@ dependencies {
 	// See: AdDescriptionRepositoryDockerComposeRuleShould
     testCompile 'com.palantir.docker.compose:docker-compose-rule:0.28.1'
 }
-
-
-test {
-    testLogging {
-        events "PASSED", "FAILED", "SKIPPED"
-    }
-    
-    jacoco {
-        append = false
-        destinationFile = file("$buildDir/jacoco/jacoco.exec")
-        classDumpFile = file("$buildDir/jacoco/classpathdumps")
-    }
-}
-
 
 querydsl {
   library = 'com.querydsl:querydsl-apt:4.1.3'

@@ -1,0 +1,12 @@
+test {
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+    }
+
+    jacoco {
+        append = false
+        destinationFile = file("$buildDir/jacoco/jacoco.exec")
+        classDumpFile = file("$buildDir/jacoco/classpathdumps")
+    }
+}
+
