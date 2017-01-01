@@ -37,6 +37,7 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 			@Override
 			public void call(Subscriber<? super Page<Car>> observer) {
 				observer.onNext( awesomeBusinessLogic.findAll(pageRequest));
+				observer.onCompleted();
 			}
 		}).subscribeOn(Schedulers.io());
 	}
@@ -47,22 +48,25 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 			@Override
 			public void call(Subscriber<? super Page<Car>> observer) {
 				observer.onNext( awesomeBusinessLogic.findAll(pageRequest));
+				observer.onCompleted();
 			}
 		}).subscribeOn(Schedulers.io());
 	}
 
 	@Override
 	public Observable<Car> findById(long id) {
-    	return Observable.create((Subscriber<? super Car> observer) ->
-    				observer.onNext( awesomeBusinessLogic.findById(id)))
-    			.subscribeOn(Schedulers.io());
+    	return Observable.create((Subscriber<? super Car> observer) -> {
+    				observer.onNext( awesomeBusinessLogic.findById(id));
+    				observer.onCompleted();
+    			}).subscribeOn(Schedulers.io());
 	}
 
 	@Override
 	public Observable<Car> create(Car car) {	
-		return Observable.create((Subscriber<? super Car> observer) ->
-					observer.onNext(awesomeBusinessLogic.create(car)))
-				.subscribeOn(Schedulers.io());
+		return Observable.create((Subscriber<? super Car> observer) -> {
+					observer.onNext(awesomeBusinessLogic.create(car));
+					observer.onCompleted();
+				}).subscribeOn(Schedulers.io());
 	}
 	
 	@Override
@@ -71,6 +75,7 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 
 				try {
 					observer.onNext(awesomeBusinessLogic.createThrowable(car));
+					observer.onCompleted();
 				} catch (IOException ex) {
 					// I could use this implementation. Instead, I will wrap my exception because
 					// that is what you would be doing if you were using any other method from RxJava (like map() for example)
@@ -80,9 +85,6 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 					
 					Exceptions.propagate(ex);
 				}
-				
-				// No idea when to use this stuff :(
-				// observer.onCompleted();
 
 		}).subscribeOn(Schedulers.io());
 	}

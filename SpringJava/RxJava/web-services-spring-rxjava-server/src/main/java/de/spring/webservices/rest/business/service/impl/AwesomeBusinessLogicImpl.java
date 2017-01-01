@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
+import rx.exceptions.Exceptions;
 
 @Service("awesomeBusinessLogic")
 public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {
@@ -65,5 +66,9 @@ public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {
 	public Car createThrowable(Car car) throws IOException {
 		
 		throw new IOException("createThrowable FATAL ERROR");
+		// Spring sees both exceptions.
+		// It seems like calling Exceptions.propagate(ex) in RxJava code is only required
+		// for no RuntimeExceptions :/
+		// throw new RuntimeException("createThrowable FATAL ERROR");
 	}
 }
