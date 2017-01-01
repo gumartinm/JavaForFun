@@ -83,6 +83,8 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 					
 					LOGGER.error("createThrowable error: ", ex);
 					
+					// This method is only required when wrapping catchable exceptions.
+					// RuntimeExceptions do not require this stuff and they are seen by Spring MVC.
 					Exceptions.propagate(ex);
 				}
 

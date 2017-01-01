@@ -21,6 +21,13 @@ public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {
 	
 	@Override
 	public Page<Car> findAll(Pageable pageRequest) {
+
+		// It seems like calling Exceptions.propagate(ex) in RxJava code is only required
+		// for no RuntimeExceptions (for catchable exceptions)
+		// Spring will see this exception :)
+		// So no catchable exceptions do not require anything at all for being seen by Spring :)
+		// throw new RuntimeException("createThrowable FATAL ERROR");
+
         final List<Car> cars = new ArrayList<>();
         cars.add(new Car(counter.incrementAndGet(), String.format(TEMPLATE, 1)));
         cars.add(new Car(counter.incrementAndGet(), String.format(TEMPLATE, 2)));
@@ -68,6 +75,8 @@ public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {
 		// Spring sees both exceptions.
 		// It seems like calling Exceptions.propagate(ex) in RxJava code is only required
 		// for no RuntimeExceptions :/
+		// Spring will see this exception :)
+		// So no catchable exceptions do not require anything at all for being seen by Spring :)
 		// throw new RuntimeException("createThrowable FATAL ERROR");
 	}
 }
