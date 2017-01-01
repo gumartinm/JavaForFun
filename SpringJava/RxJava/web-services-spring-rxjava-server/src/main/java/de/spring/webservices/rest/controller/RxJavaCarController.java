@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.netflix.rx.RxResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
@@ -23,10 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.RxJavaBusinessLogic;
-import io.reactivex.Observable;
+import rx.Observable;
+import rx.Single;
 
 @RestController
 @RequestMapping("/api/rxjava/cars/")
@@ -44,20 +47,19 @@ public class RxJavaCarController {
 
 	@RequestMapping(produces = { MediaType.APPLICATION_JSON_UTF8_VALUE }, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public DeferredResult<Page<Car>> cars() {
-		
-		// BE CAREFUL: I am returning Page object but when using io.reactivex.Observable (stream) instead of io.reactivex.Single (only one element)
-		// if you want this code to work you will have to return DeferredResult<List<Car>> and you will have to call
-		// the toList() method of Observable.
-		// The toList() method is the only way I know for returning Observable (stream) perhaps in Spring 5.0.0 there will be something better.
-		// Until then, this is the only way I know for using Observable with Spring.
-		    			
-		return deferredAdapter(rxJavaBusinessLogic.findAll(new PageRequest(PAGE, PAGE_SIZE)) /** .toList() **/);
+    public Single<Page<Car>> cars() {
+		return rxJavaBusinessLogic.findAll(new PageRequest(PAGE, PAGE_SIZE)).toSingle();
+    }
+
+	@RequestMapping(path = "stream", produces = { MediaType.APPLICATION_JSON_UTF8_VALUE }, method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public SseEmitter carsStream() {
+		return RxResponse.sse(rxJavaBusinessLogic.findAllStream(new PageRequest(PAGE, PAGE_SIZE)));
     }
 
     @RequestMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public DeferredResult<Car> car(@RequestHeader(value = "MY_HEADER", required = false) String specialHeader,
+    public ResponseEntity<Single<Car>> car(@RequestHeader(value = "MY_HEADER", required = false) String specialHeader,
     			@PathVariable("id") long id,
     			@RequestParam Map<String, String> params,
     			@RequestParam(value = "wheel", required = false) String[] wheelParams) {
@@ -85,8 +87,9 @@ public class RxJavaCarController {
 		// the toList() method of Observable.
 		// The toList() method is the only way I know for returning Observable (stream) perhaps in Spring 5.0.0 there will be something better.
 		// Until then, this is the only way I know for using Observable with Spring.
-    	    	
-		return deferredAdapter(rxJavaBusinessLogic.findById(id) /** .toList() **/);
+    	Single<Car> car = rxJavaBusinessLogic.findById(id).toSingle();
+    	
+		return ResponseEntity.status(HttpStatus.OK).body(car);
 
     }
     

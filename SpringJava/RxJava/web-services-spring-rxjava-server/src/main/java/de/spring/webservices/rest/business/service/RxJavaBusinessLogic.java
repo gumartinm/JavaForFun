@@ -4,11 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import de.spring.webservices.domain.Car;
-import io.reactivex.Observable;
+import rx.Observable;
 
 
 public interface RxJavaBusinessLogic {
 
+	public Observable<Page<Car>> findAllStream(Pageable pageRequest);
+	
 	public Observable<Page<Car>> findAll(Pageable pageRequest);
 	
 	public Observable<Car> findById(long id);

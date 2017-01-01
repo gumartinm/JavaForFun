@@ -16,12 +16,25 @@
    		See: org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
    		<mvc:annotation-driven/>
    	 -->
-    <!-- Required for making work @ControllerAdvice -->
-    <mvc:annotation-driven/> 
+    <!-- Required for making work @ControllerAdvice and setting our custom return value handlers -->
+    <mvc:annotation-driven>
+    	<mvc:return-value-handlers>
+    		<bean class="org.springframework.cloud.netflix.rx.SingleReturnValueHandler" />
+ 		 </mvc:return-value-handlers>
+    </mvc:annotation-driven>
+    
+    <!--
+    	 Instead of annotation-driven we could use @EnableWebMvc (Java code instead of XML files)
+    
+    	 If annotation-driven works with org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
+    	    @EnableWebMvc does the same with org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
+    	    
+    	 Here I am using XML fiels intead of Java code :/
+     -->
    
 	<context:annotation-config />
    
-	<context:component-scan base-package="de.spring.webservices.rest"/>
+	<context:component-scan base-package="de.spring.webservices.rest, org.springframework.cloud.netflix.rx"/>
 	
 	<!--
 		Required beans for generating XML responses from Java objects using JAXB annotations
@@ -66,7 +79,6 @@
 			</bean>
 		</property>
 		<property name="messageConverters" ref="messageConverters" />
-		
 		
 		<property name="requestBodyAdvice">
 			<util:list>

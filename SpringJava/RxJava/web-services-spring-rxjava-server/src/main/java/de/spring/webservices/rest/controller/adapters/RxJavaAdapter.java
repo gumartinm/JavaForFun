@@ -4,15 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
+import rx.Observable;
+import rx.Single;
 
 /**
  * 
  * Instead of using this class, you could create you own implementation of
  * org.springframework.web.servlet.mvc.method.annotation.DeferredResultAdapter
  * for Observable and Single.
+ *
+ * spring netflix is already doing this stuff for me.
  *
  */
 public class RxJavaAdapter {
@@ -34,7 +35,6 @@ public class RxJavaAdapter {
     	DeferredResult<T> deferredResult = new DeferredResult<>(/** ASYNC_TIMEOUT **/);
     	
     	observable
-    		.subscribeOn(Schedulers.io())
     		.subscribe(deferredResult::setResult, exception -> {
     			Throwable realException = launderException(exception);
 
@@ -51,7 +51,6 @@ public class RxJavaAdapter {
     	DeferredResult<T> deferredResult = new DeferredResult<>(/** ASYNC_TIMEOUT **/);
 
     	single
-    		.subscribeOn(Schedulers.io())
     		.subscribe(deferredResult::setResult, exception -> {
 				Throwable realException = launderException(exception);
 	

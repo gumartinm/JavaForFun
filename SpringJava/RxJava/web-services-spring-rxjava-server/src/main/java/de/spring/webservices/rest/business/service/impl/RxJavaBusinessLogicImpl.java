@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 import de.spring.webservices.rest.business.service.RxJavaBusinessLogic;
-import io.reactivex.Observable;
-import io.reactivex.exceptions.Exceptions;
+import rx.Observable;
+import rx.Observable.OnSubscribe;
+import rx.Subscriber;
+import rx.exceptions.Exceptions;
+import rx.schedulers.Schedulers;
 
 
 @Service("rxJavaBusinessLogic")
@@ -30,23 +33,41 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 
 	@Override
 	public Observable<Page<Car>> findAll(Pageable pageRequest) {
-    	return Observable.create(observer -> observer.onNext( awesomeBusinessLogic.findAll(pageRequest)));
-
+    	return Observable.create(new OnSubscribe<Page<Car>>() {
+			@Override
+			public void call(Subscriber<? super Page<Car>> observer) {
+				observer.onNext( awesomeBusinessLogic.findAll(pageRequest));
+			}
+		}).subscribeOn(Schedulers.io());
+	}
+	
+	@Override
+	public Observable<Page<Car>> findAllStream(Pageable pageRequest) {
+    	return Observable.create(new OnSubscribe<Page<Car>>() {
+			@Override
+			public void call(Subscriber<? super Page<Car>> observer) {
+				observer.onNext( awesomeBusinessLogic.findAll(pageRequest));
+			}
+		}).subscribeOn(Schedulers.io());
 	}
 
 	@Override
 	public Observable<Car> findById(long id) {
-    	return Observable.create(observer -> observer.onNext( awesomeBusinessLogic.findById(id)));
+    	return Observable.create((Subscriber<? super Car> observer) ->
+    				observer.onNext( awesomeBusinessLogic.findById(id)))
+    			.subscribeOn(Schedulers.io());
 	}
 
 	@Override
 	public Observable<Car> create(Car car) {	
-		return Observable.create(observer -> observer.onNext(awesomeBusinessLogic.create(car)));
+		return Observable.create((Subscriber<? super Car> observer) ->
+					observer.onNext(awesomeBusinessLogic.create(car)))
+				.subscribeOn(Schedulers.io());
 	}
 	
 	@Override
 	public Observable<Car> createThrowable(Car car) {	
-		return Observable.create(observer -> {
+		return Observable.create((Subscriber<? super Car> observer) -> {
 
 				try {
 					observer.onNext(awesomeBusinessLogic.createThrowable(car));
@@ -59,7 +80,10 @@ public class RxJavaBusinessLogicImpl implements RxJavaBusinessLogic {
 					
 					Exceptions.propagate(ex);
 				}
+				
+				// No idea when to use this stuff :(
+				// observer.onCompleted();
 
-		});
+		}).subscribeOn(Schedulers.io());
 	}
 }
