@@ -15,22 +15,14 @@
    		
    		See: org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
    		<mvc:annotation-driven/>
+
+   		With XML annotation-driven works with org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
+    	With Java annotations @EnableWebMvc does the same with org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
+    	
+    	So annotation-driven and @EnableWebMvc are the same. The first one using XML files and the second one using Java annotations :/
+    	
+    	All this stuff could be done by means of annotation-driven or @EnableWebMvc but in this way I have more control :/
    	 -->
-    <!-- Required for making work @ControllerAdvice and setting our custom return value handlers -->
-    <mvc:annotation-driven>
-    	<mvc:return-value-handlers>
-    		<bean class="org.springframework.cloud.netflix.rx.SingleReturnValueHandler" />
- 		 </mvc:return-value-handlers>
-    </mvc:annotation-driven>
-    
-    <!--
-    	 Instead of annotation-driven we could use @EnableWebMvc (Java code instead of XML files)
-    
-    	 If annotation-driven works with org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
-    	    @EnableWebMvc does the same with org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
-    	    
-    	 Here I am using XML fiels intead of Java code :/
-     -->
    
 	<context:annotation-config />
    
@@ -67,8 +59,9 @@
     </util:list>
 
 
+	<bean id="singleReturnValueHandler" class="org.springframework.cloud.netflix.rx.SingleReturnValueHandler" />
 	<bean name="handlerAdapter"
-		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+			class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
 		<property name="webBindingInitializer">
 			<bean
 				class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
@@ -80,6 +73,8 @@
 		</property>
 		<property name="messageConverters" ref="messageConverters" />
 		
+		<property name="customReturnValueHandlers" ref="singleReturnValueHandler" />
+
 		<property name="requestBodyAdvice">
 			<util:list>
 				<bean id="requestBodyAdvice" class="org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice"/>

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.Page;
@@ -43,7 +42,6 @@ import de.spring.webservices.rest.business.service.CompletableFutureBusinessLogi
 
 // jsonPath, how to: https://github.com/jayway/JsonPath | http://jsonpath.herokuapp.com/ 
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath*:spring-configuration/mvc/rest/*.xml"})
 public class CompletableFutureCarControllerIntegrationTest {

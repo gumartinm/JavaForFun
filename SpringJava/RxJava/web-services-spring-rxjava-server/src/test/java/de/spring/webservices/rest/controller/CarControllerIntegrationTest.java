@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageImpl;
@@ -36,7 +35,6 @@ import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
 
 // jsonPath, how to: https://github.com/jayway/JsonPath | http://jsonpath.herokuapp.com/ 
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath*:spring-configuration/mvc/rest/*.xml"})
 public class CarControllerIntegrationTest {

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import de.spring.webservices.domain.Car;
 import de.spring.webservices.rest.business.service.AwesomeBusinessLogic;
-import rx.exceptions.Exceptions;
 
 @Service("awesomeBusinessLogic")
 public class AwesomeBusinessLogicImpl implements AwesomeBusinessLogic {

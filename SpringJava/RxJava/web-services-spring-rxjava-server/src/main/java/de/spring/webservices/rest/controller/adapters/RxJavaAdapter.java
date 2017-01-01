@@ -15,6 +15,10 @@ import rx.Single;
  *
  * spring netflix is already doing this stuff for me.
  *
+ * I DO NOT THINK THIS IS THE RIGHT WAY FOR DOING IT. I MEAN I AM USING subscribe()
+ * AND spring netflix DOES NOT. SO, I GUESS, CALLING subscribe() IS NOT THE RIGHT WAY OF DOING THIS STUFF :(
+ *
+ * YOU'D BETTER USE THE spring netflix IMPLEMENTATION INSTEAD OF THIS ONE :(
  */
 public class RxJavaAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RxJavaAdapter.class);
