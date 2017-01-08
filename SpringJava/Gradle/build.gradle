@@ -1,0 +1,52 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'jacoco'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+
+    group 'de.spring.jpa'
+    version '1.0-SNAPSHOT'
+
+    targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/palantir/releases' }
+    }
+
+    buildscript {
+        repositories {
+            mavenCentral()
+            maven { url 'https://plugins.gradle.org/m2/' }
+        }
+    }
+
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'Spring JPA Persistence, gradle example', 'Implementation-Version': version
+        }
+    }
+
+    apply plugin: 'jacoco'
+
+    apply from: "$rootProject.projectDir/build-test.gradle"
+    apply from: "$rootProject.projectDir/build-integTest.gradle"
+
+    jacoco {
+        toolVersion = '0.7.6.201602180812'
+        reportsDir = file("$buildDir/reports/jacoco")
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.destination "${buildDir}/jacoco/"
+        }
+    }
+
+}
+

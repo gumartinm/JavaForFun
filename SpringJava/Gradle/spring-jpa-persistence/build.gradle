@@ -1,45 +1,13 @@
-group 'de.spring.jpa'
-version '1.0-SNAPSHOT'
-
-
 buildscript {
-    repositories {
-        mavenCentral()
-        maven { url 'https://plugins.gradle.org/m2/' }
-    }
+
     dependencies {
         classpath 'gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.7'
         classpath 'com.avast.gradle:docker-compose-gradle-plugin:0.3.16'
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'jacoco'
 apply plugin: 'com.ewerk.gradle.plugins.querydsl'
 apply plugin: 'docker-compose'
-
-apply from: 'build-test.gradle'
-apply from: 'build-integTest.gradle'
-
-
-targetCompatibility = 1.8
-sourceCompatibility = 1.8
-
-
-
-repositories {
-    mavenCentral()
-    maven { url 'https://dl.bintray.com/palantir/releases' }
-}
-
-eclipse {
-    classpath {
-        downloadJavadoc = true
-        downloadSources = true
-    }
-}
 
 dependencies {
     // 1/3 Required dependency for log4j 2 with slf4j: binding between log4j2 and slf4j
@@ -140,22 +108,20 @@ querydsl {
   jpa = true
 }
 
-
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Spring JPA Persistence, gradle example', 'Implementation-Version': version
-    }
+integTest.doFirst {
+    // It is required in order to run data bases in random ports.
+    // We need it for running tests from IDE and from command console but
+    // also it will be required by systems like Travis where we do not control
+    // the available ports.
+    def mysqlInfo = dockerCompose.servicesInfos.mysql
+    systemProperty 'DATABASE_PORT', mysqlInfo.ports[3306]
 }
 
-jacoco {
-    toolVersion = '0.7.6.201602180812'
-    reportsDir = file("$buildDir/reports/jacoco")
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.destination "${buildDir}/jacoco/"
-    }
+dockerCompose.isRequiredBy(integTest)
+dockerCompose {
+    useComposeFiles = ['src/integTest/resources/docker/docker-compose.yml']
+    captureContainersOutput = false
+    stopContainers = true
+    removeContainers = true
+    buildBeforeUp = false
 }
