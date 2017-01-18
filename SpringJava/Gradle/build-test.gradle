@@ -1,4 +1,8 @@
 test {
+
+    // explicitly include or exclude tests
+    exclude '**/*IntegrationShould.class'
+
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
     }

@@ -2,12 +2,14 @@ sourceSets {
     integTest {
         compileClasspath += main.output + test.output
         runtimeClasspath += main.output + test.output
+        output.classesDir = test.output.classesDir
+        output.resourcesDir = test.output.resourcesDir
     }
 }
 
 configurations {
-  integTestCompile.extendsFrom testCompile
-  integTestRuntime.extendsFrom testRuntime
+    integTestCompile.extendsFrom testCompile
+    integTestRuntime.extendsFrom testRuntime
 }
 
 
@@ -19,6 +21,12 @@ task integTest(type: Test) {
 
     testClassesDir = sourceSets.integTest.output.classesDir
     classpath = sourceSets.integTest.runtimeClasspath
+    reports.junitXml.destination = "${buildDir}/test-results/test"
+
+    // explicitly include or exclude tests
+    filter {
+        includeTestsMatching "*IntegrationShould"
+    }
 
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
