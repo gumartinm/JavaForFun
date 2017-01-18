@@ -1,3 +1,5 @@
+project.ext.springVersion='4.3.0.RELEASE'
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
@@ -10,12 +12,36 @@ subprojects {
 
     targetCompatibility = 1.8
     sourceCompatibility = 1.8
-
+    
 
     repositories {
         mavenCentral()
         maven { url 'https://dl.bintray.com/palantir/releases' }
     }
+
+    dependencies {
+        // 1/3 Required dependency for log4j 2 with slf4j: binding between log4j2 and slf4j
+        compile('org.apache.logging.log4j:log4j-slf4j-impl:2.7')
+        // 2/3 Required dependency for log4j 2 with slf4j: log4j 2 maven plugin (it is the log4j 2 implementation)
+        compile('org.apache.logging.log4j:log4j-core:2.7')
+        // 3/3 Required dependency for getting rid of commons logging. This is the BRIDGE (no binding) between Jakarta Commons Logging (used by Spring)
+        // and whatever I am using for logging (in this case I am using log4j 2) See: http://www.slf4j.org/legacy.html
+        // We need exclusions in every dependency using Jakarta Commons Logging (see Spring dependencies below)
+        compile('org.slf4j:jcl-over-slf4j:1.7.22')
+
+
+        compile("org.springframework:spring-context:${springVersion}") {
+            exclude group: 'commons-logging', module: 'commons-logging'
+        }
+        compile('javax.inject:javax.inject:1')
+        compile('cglib:cglib:3.2.4')
+
+
+        // Unit tests
+        testCompile('junit:junit:4.12')
+        testCompile('org.mockito:mockito-core:2.4.1')
+    }
+
 
     buildscript {
         repositories {
