@@ -1,0 +1,9 @@
+dependencies {
+
+    compile(project(":spring-jpa-persistence"))
+    
+    testCompile('org.springframework:spring-test:4.3.0.RELEASE') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+
+}

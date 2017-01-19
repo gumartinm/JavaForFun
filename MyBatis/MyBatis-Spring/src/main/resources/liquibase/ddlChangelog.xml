@@ -21,7 +21,7 @@
              it is inherited from schema to tables and rows) anyhow this is just an example of what you can do.
  		-->
         <modifySql dbms="mysql">
-            <append value="ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci"/>
+            <append value="ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1424631556445-2">
@@ -51,7 +51,7 @@
              it is inherited from schema to tables and rows) anyhow this is just an example of what you can do.
  		-->
         <modifySql dbms="mysql">
-            <append value="ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci"/>
+            <append value="ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1424631556445-3">
