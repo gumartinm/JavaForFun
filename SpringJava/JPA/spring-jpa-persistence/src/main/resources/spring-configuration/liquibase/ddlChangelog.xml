@@ -6,19 +6,19 @@
 
     <changeSet author="gustavo test" id="1" labels="VERSIONA">
         <sql>
-            CREATE TABLE VERSIONA (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci
+            CREATE TABLE VERSIONA (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci
         </sql>
     </changeSet>
 
     <changeSet author="gustavo test" id="2" labels="VERSIONB">
         <sql>
-            CREATE TABLE VERSIONB (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci
+            CREATE TABLE VERSIONB (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci
         </sql>
     </changeSet>
 
     <changeSet author="gustavo test" id="3" labels="VERSIONC">
         <sql>
-            CREATE TABLE VERSIONC (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8, COLLATE=utf8_unicode_ci
+            CREATE TABLE VERSIONC (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci
         </sql>
     </changeSet>
     -->
@@ -35,12 +35,12 @@
             <column defaultValueComputed="CURRENT_TIMESTAMP" name="CREATED_AT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column defaultValue="1970-01-01 00:00:01" name="UPDATED_AT" type="TIMESTAMP">
+            <column defaultValue="1971-01-01 00:00:01" name="UPDATED_AT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
         <modifySql dbms="mysql">
-            <append value="ENGINE=InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci"/>
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-2" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -67,7 +67,7 @@
             <column name="adDescriptions_MODIFIED" type="BIT(1)"/>
         </createTable>
         <modifySql dbms="mysql">
-            <append value="ENGINE=InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci"/>
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-3" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -91,7 +91,7 @@
             </column>
         </createTable>
         <modifySql dbms="mysql">
-            <append value="ENGINE=InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci"/>
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-4" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -113,7 +113,7 @@
             <column name="AD_ID" type="BIGINT"/>
         </createTable>
         <modifySql dbms="mysql">
-            <append value="ENGINE=InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci"/>
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-5" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
@@ -127,7 +127,7 @@
             <column name="USERNAME" type="VARCHAR(255)"/>
         </createTable>
         <modifySql dbms="mysql">
-            <append value="ENGINE=InnoDB CHARSET=utf8 COLLATE utf8_unicode_ci"/>
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
         </modifySql>
     </changeSet>
     <changeSet author="gustavo (generated)" id="1469119656864-6" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
