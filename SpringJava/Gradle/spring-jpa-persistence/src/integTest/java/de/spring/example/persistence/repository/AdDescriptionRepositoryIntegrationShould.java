@@ -18,7 +18,7 @@ import de.spring.example.persistence.domain.AdDescription;
 @ContextConfiguration( {"classpath*:spring-configuration/*.xml",
 	"classpath*:spring-configuration-docker-test/*.xml"} )
 @Transactional
-public class AdDescriptionRepositoryShould {
+public class AdDescriptionRepositoryIntegrationShould {
 	
 	@Inject
 	AdDescriptionRepository adDescriptionRepository;

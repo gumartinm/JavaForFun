@@ -19,7 +19,7 @@ import de.spring.example.persistence.domain.Ad;
 @ContextConfiguration( {"classpath*:spring-configuration/*.xml",
 	"classpath*:spring-configuration-h2-test/*.xml"} )
 @Transactional
-public class AdRespositoryShould {
+public class AdRespositoryIntegrationShould {
 	// Ad
 	public static final Long COMPANY_ID = 2L;
 	public static final Long COMPANY_CATEG_ID = 3L;

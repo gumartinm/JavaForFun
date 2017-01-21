@@ -37,7 +37,7 @@ import de.spring.example.persistence.domain.AdDescription;
 // We will have to run our tests always from the Suite not being able to run
 // just one Test from the IDE :(
 @Ignore
-public class AdDescriptionRepositoryDockerComposeRuleShould {
+public class AdDescriptionRepositoryDockerComposeRuleIntegrationShould {
 	
 	@Inject
 	AdDescriptionRepository adDescriptionRepository;
