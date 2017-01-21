@@ -1,4 +1,46 @@
-project.ext.springVersion='4.3.0.RELEASE'
+project.ext {
+
+    // Compile dependencies
+    // Spring
+    springVersion='4.3.0.RELEASE'
+    // Spring JPA
+    springJPAVersion='1.10.2.RELEASE'
+    // Spring Envers
+    springDataEnversVersion='1.0.2.RELEASE'
+    hibernateEnversVersion='5.2.1.Final'
+    // Hibernate
+    hibernateValidatorVersion='5.2.4.Final'
+    hibernateEntityManagerVersion='5.2.1.Final'
+    // QueryDSL
+    queryDslAptVersion='4.1.3'
+    // Liquibase or FlyWay
+    liquibaseVersion='3.5.3'
+    flyWayVersion='4.0.3'
+    // Jackson.
+    jacksonVersion='2.8.1'
+    // Validation API. JSR-303
+    validationAPIVersion='1.1.0.Final'
+
+    // LOG4J2 dependencies
+    slf4jVersion='2.7'
+    log4jCoreVersion='2.7'
+    jclOverSlf4jVersion='1.7.22'
+
+    // Unit test dependencies
+    dockerComposeRuleVersion='0.28.1'
+    mockitoVersion='2.4.1'
+    junitVersion='4.12'
+
+    // Integration test dependencies
+    h2DatabaseVersion='1.4.193'
+    mysqlConnectorVersion='6.0.5'
+
+    // Plugins
+    queryDslPluginVersion='1.0.7'
+    dockerComposePluginVersion='0.3.16'
+
+}
+
 
 subprojects {
     apply plugin: 'java'
@@ -21,13 +63,13 @@ subprojects {
 
     dependencies {
         // 1/3 Required dependency for log4j 2 with slf4j: binding between log4j2 and slf4j
-        compile('org.apache.logging.log4j:log4j-slf4j-impl:2.7')
+        compile("org.apache.logging.log4j:log4j-slf4j-impl:${slf4jVersion}")
         // 2/3 Required dependency for log4j 2 with slf4j: log4j 2 maven plugin (it is the log4j 2 implementation)
-        compile('org.apache.logging.log4j:log4j-core:2.7')
+        compile("org.apache.logging.log4j:log4j-core:${log4jCoreVersion}")
         // 3/3 Required dependency for getting rid of commons logging. This is the BRIDGE (no binding) between Jakarta Commons Logging (used by Spring)
         // and whatever I am using for logging (in this case I am using log4j 2) See: http://www.slf4j.org/legacy.html
         // We need exclusions in every dependency using Jakarta Commons Logging (see Spring dependencies below)
-        compile('org.slf4j:jcl-over-slf4j:1.7.22')
+        compile("org.slf4j:jcl-over-slf4j:${jclOverSlf4jVersion}")
 
 
         compile("org.springframework:spring-context:${springVersion}") {
@@ -38,8 +80,8 @@ subprojects {
 
 
         // Unit tests
-        testCompile('junit:junit:4.12')
-        testCompile('org.mockito:mockito-core:2.4.1')
+        testCompile("junit:junit:${junitVersion}")
+        testCompile("org.mockito:mockito-core:${mockitoVersion}")
     }
 
 

@@ -1,8 +1,8 @@
 buildscript {
 
     dependencies {
-        classpath 'gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.7'
-        classpath 'com.avast.gradle:docker-compose-gradle-plugin:0.3.16'
+        classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${queryDslPluginVersion}"
+        classpath "com.avast.gradle:docker-compose-gradle-plugin:${dockerComposePluginVersion}"
     }
 }
 
@@ -13,7 +13,7 @@ dependencies {
 
     // Required JPA dependencies with hibernate
     compile("org.springframework:spring-orm:${springVersion}")
-    compile('org.springframework.data:spring-data-jpa:1.10.2.RELEASE') {
+    compile("org.springframework.data:spring-data-jpa:${springJPAVersion}") {
     	exclude group: 'org.springframework', module: 'spring-beans'
     	exclude group: 'org.springframework', module: 'spring-jdbc'
     	exclude group: 'org.springframework', module: 'spring-orm'
@@ -22,38 +22,38 @@ dependencies {
     	exclude group: 'org.springframework', module: 'spring-context'
         exclude group: 'commons-logging', module: 'commons-logging'
     }
-    compile('org.hibernate:hibernate-entitymanager:5.2.1.Final')
+    compile("org.hibernate:hibernate-entitymanager:${hibernateEntityManagerVersion}")
 
 
     // Auditory using Hibernate Envers
-    compile('org.springframework.data:spring-data-envers:1.0.2.RELEASE')
-    compile('org.hibernate:hibernate-envers:5.2.1.Final')
+    compile("org.springframework.data:spring-data-envers:${springDataEnversVersion}")
+    compile("org.hibernate:hibernate-envers:${hibernateEnversVersion}")
 
 
     // Required by spring-context for using JSR-303. See LocalValidatorFactoryBean
     // in rest-config.xml
-    compile('javax.validation:validation-api:1.1.0.Final')
-    compile('org.hibernate:hibernate-validator:5.2.4.Final')
+    compile("javax.validation:validation-api:${validationAPIVersion}")
+    compile("org.hibernate:hibernate-validator:${hibernateValidatorVersion}")
 
 
     // Jackson JSON Processor, required by spring-webmvc. See messageConverters
     // in rest-config.xml
-    compile('com.fasterxml.jackson.core:jackson-databind:2.8.1')
+    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
 
 
     //  Loading data base in run time either using liquibase
-    compile('org.liquibase:liquibase-core:3.5.3')
+    compile("org.liquibase:liquibase-core:${liquibaseVersion}")
     // or flyway
-    compile('org.flywaydb:flyway-core:4.0.3')
+    compile("org.flywaydb:flyway-core:${flyWayVersion}")
 
 
     // Jackson Java time support
-    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.1')
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}")
 
     
     // Using Querydsl
-    compile('com.querydsl:querydsl-apt:4.1.3')
-    compile('com.querydsl:querydsl-jpa:4.1.3')
+    compile("com.querydsl:querydsl-apt:${queryDslAptVersion}")
+    compile("com.querydsl:querydsl-jpa:${queryDslAptVersion}")
 
 
     // Integration tests
@@ -62,9 +62,9 @@ dependencies {
     }
 
     // Either using H2
-    testCompile('com.h2database:h2:1.4.193')
+    testCompile("com.h2database:h2:${h2DatabaseVersion}")
     // or MYSQL with docker :)
-    testCompile('mysql:mysql-connector-java:6.0.5')
+    testCompile("mysql:mysql-connector-java:${mysqlConnectorVersion}")
 
 	// DockerComposeRule DOES NOT WORK FOR THESE REASONS:
 	// 1. Spring context is loaded before the DockerComposeRule
@@ -79,11 +79,11 @@ dependencies {
 	// We will have to run our tests always from the Suite not being able to run
 	// just one Test from the IDE :(
 	// See: AdDescriptionRepositoryDockerComposeRuleShould
-    testCompile 'com.palantir.docker.compose:docker-compose-rule:0.28.1'
+    testCompile "com.palantir.docker.compose:docker-compose-rule:${dockerComposeRuleVersion}"
 }
 
 querydsl {
-  library = 'com.querydsl:querydsl-apt:4.1.3'
+  library = "com.querydsl:querydsl-apt:${queryDslAptVersion}"
   querydslSourcesDir = "$buildDir/generated-sources/querydsl"
   jpa = true
 }
