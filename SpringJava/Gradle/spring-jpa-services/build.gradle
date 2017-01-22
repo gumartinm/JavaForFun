@@ -2,7 +2,7 @@ dependencies {
 
     compile(project(":spring-jpa-persistence"))
     
-    testCompile('org.springframework:spring-test:4.3.0.RELEASE') {
+    testCompile("org.springframework:spring-test:${springVersion}") {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
 
