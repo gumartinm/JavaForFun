@@ -1,3 +1,6 @@
+
+// *****************   UNIT TESTS, COMMON CONFIGURATION   *****************
+
 test {
 
     // explicitly include or exclude tests

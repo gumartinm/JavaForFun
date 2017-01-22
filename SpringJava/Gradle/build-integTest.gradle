@@ -1,3 +1,11 @@
+
+// *****************   INTEGRATION TESTS, COMMON CONFIGURATION   *****************
+
+// Using another directory for integration tests enable me to run all the unit tests quickly from my IDE (InteliJ or Eclipse)
+// If I had in the same directory both types of test when I want to run all the unit tests from the root of the src/test directory
+// I would be also running the integration tests, and they are slower :(
+
+// Integration tests will be located in this path: src/integTest
 sourceSets {
     integTest {
         compileClasspath += main.output + test.output
