@@ -1,1 +1,1 @@
-include ':spring-jpa-persistence', ':spring-jpa-services'
+include ':spring-jpa-persistence', ':spring-jpa-services', ':spring-jpa-resources'

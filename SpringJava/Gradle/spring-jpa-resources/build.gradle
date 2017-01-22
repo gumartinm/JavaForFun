@@ -1,0 +1,32 @@
+dependencies {
+
+    compile(project(":spring-jpa-services"))
+
+    // REST API
+    compile("org.springframework:spring-webmvc:${springVersion}")
+    compile("org.springframework:spring-oxm:${springVersion}")
+
+    // Provided dependency. Unlike maven they are not included on the test classpath. Gradle sucks?!
+    compileOnly("javax.servlet:javax.servlet-api:${servletApiVersion}")
+
+   
+ 
+    // Jackson JSON Processor, required by spring-webmvc. See messageConverters in rest-config.xml
+    // Non required dependency. It is already declared in jackson-datatype-jsr310
+    // compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    
+    // Jackson dependency required for serializing and deserializing LocalDateTime,
+    // LocalDate, etc, etc objects.
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}")
+ 
+    // Jackson dependency required for serializing and deserializing org.joda.time.DateTime objects.
+    // See: org.springframework.data.history.Revision getRevisionDate
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-joda:${jacksonVersion}")
+
+
+
+    // Integration tests
+    testCompile("org.springframework:spring-test:${springVersion}") {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+}

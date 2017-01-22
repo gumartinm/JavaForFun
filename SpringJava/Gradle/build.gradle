@@ -21,6 +21,10 @@ project.ext {
     // Validation API. JSR-303
     validationAPIVersion='1.1.0.Final'
 
+    // Provided dependencies.
+    // Provided dependencies are compileOnly in Gradle. Unlike maven they are not included on the test classpath. Gradle sucks?!
+    servletApiVersion='4.0.0-b01'
+
     // LOG4J2 dependencies
     slf4jVersion='2.7'
     log4jCoreVersion='2.7'
