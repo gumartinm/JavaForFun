@@ -1,3 +1,5 @@
+apply plugin: 'war'
+
 dependencies {
 
     compile(project(":spring-jpa-services"))
