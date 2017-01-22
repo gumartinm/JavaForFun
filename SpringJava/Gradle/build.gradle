@@ -101,7 +101,12 @@ subprojects {
 
     jar {
         manifest {
-            attributes 'Implementation-Title': 'Spring JPA Persistence, gradle example', 'Implementation-Version': version
+            attributes('Implementation-Title': 'Spring JPA Persistence, gradle example',
+                'Implementation-Version': version,
+                'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version')
+            )
         }
     }
 
