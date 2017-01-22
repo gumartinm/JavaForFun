@@ -52,6 +52,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'eclipse'
     apply plugin: 'idea'
+    apply plugin: 'maven-publish'
 
     group 'de.spring.jpa'
     version '1.0-SNAPSHOT'
@@ -63,6 +64,50 @@ subprojects {
     repositories {
         mavenCentral()
         maven { url 'https://dl.bintray.com/palantir/releases' }
+    }
+
+
+    task javadocJar(type: Jar) {
+        from javadoc
+        classifier 'javadoc'
+    }
+
+    task sourceJar(type: Jar) {
+        from sourceSets.main.java
+        classifier 'sources'
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                if (plugins.withType(WarPlugin)) {
+                    from components.web
+                } else {
+                    from components.java
+                }
+
+                artifact sourceJar {
+                    classifier 'sources'
+                }
+                artifact javadocJar {
+                    classifier 'javadoc'
+                }
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username project.artifactory_username
+                    password project.artifactory_password
+                }
+
+                if(project.version.endsWith('-SNAPSHOT')) {
+                    url 'http://artifactory/artifactory/libs-snapshot-local'
+                } else {
+                    url 'http://artifactory/artifactory/libs-release-local'
+                }
+            }
+        }
     }
 
     dependencies {
