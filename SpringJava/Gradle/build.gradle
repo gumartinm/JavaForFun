@@ -5,7 +5,7 @@ allprojects {
 
 
     // You could use your gradle 'BOM' file in this way:
-    // apply from: 'http://artifactory:8888/artifactory/libs-snapshot-local/build-BOM-1.0-SNAPSHOT.gradle
+    // apply from: 'http://artifactory/artifactory/libs-snapshot-local/build-BOM-1.0-SNAPSHOT.gradle
 
     apply from: "$rootProject.projectDir/build-BOM-1.0-SNAPSHOT.gradle"
 }
