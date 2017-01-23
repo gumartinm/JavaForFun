@@ -1,6 +1,0 @@
-
-Custom version of docker-compose. Variable required by docker-compose-rule.
-export DOCKER_COMPOSE_LOCATION=/mnt/docker/docker-compose
-
-Required by docker-compose-gradle-plugin
-export PATH=/mnt/docker:$PATH
