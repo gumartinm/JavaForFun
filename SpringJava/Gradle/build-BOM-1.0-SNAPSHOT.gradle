@@ -101,6 +101,7 @@ subprojects {
                     classifier 'javadoc'
                 }
 
+                // By default, Maven scope will be runtime. We want scope compile :/
                 pom.withXml {
                     asNode().dependencies.'*'.findAll() {
                         it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
@@ -120,9 +121,9 @@ subprojects {
                 }
 
                 if(project.version.endsWith('-SNAPSHOT')) {
-                    url 'http://artifactory:8888/artifactory/libs-snapshot-local'
+                    url 'http://artifactory/artifactory/libs-snapshot-local'
                 } else {
-                    url 'http://artifactory:8888/artifactory/libs-release-local'
+                    url 'http://artifactory/artifactory/libs-release-local'
                 }
             }
         }
