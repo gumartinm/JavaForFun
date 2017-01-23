@@ -31,9 +31,12 @@ task integTest(type: Test) {
     classpath = sourceSets.integTest.runtimeClasspath
     reports.junitXml.destination = "${buildDir}/test-results/test"
 
+
+
     // explicitly include or exclude tests
     filter {
         includeTestsMatching "*IntegrationShould"
+        failOnNoMatchingTests = false
     }
 
     testLogging {
