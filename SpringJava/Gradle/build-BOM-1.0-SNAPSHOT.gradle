@@ -179,10 +179,83 @@ subprojects {
     }
 
 
+
+    // *****************   UNIT TESTS, COMMON CONFIGURATION   *****************
+    test {
+    
+        // explicitly include or exclude tests
+        exclude '**/*IntegrationShould.class'
+    
+        testLogging {
+            events "PASSED", "FAILED", "SKIPPED"
+        }
+    
+        jacoco {
+            append = false
+            destinationFile = file("$buildDir/jacoco/jacoco.exec")
+            classDumpFile = file("$buildDir/jacoco/classpathdumps")
+        }
+    }
+
+
+    // *****************   INTEGRATION TESTS, COMMON CONFIGURATION   *****************
+    // Using another directory for integration tests enable me to run all the unit tests quickly from my IDE (InteliJ or Eclipse)
+    // If I had in the same directory both types of test when I want to run all the unit tests from the root of the src/test directory
+    // I would be also running the integration tests, and they are slower :(
+    
+    // Integration tests will be located in this path: src/integTest
+    sourceSets {
+        integTest {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            output.classesDir = test.output.classesDir
+            output.resourcesDir = test.output.resourcesDir
+        }
+    }
+    
+    configurations {
+        integTestCompile.extendsFrom testCompile
+        integTestRuntime.extendsFrom testRuntime
+    }
+    
+    
+    task integTest(type: Test) {
+        // dependsOn startApp
+        // finalizedBy stopApp
+        description = 'Runs integration tests';
+        group = 'verification';
+    
+        testClassesDir = sourceSets.integTest.output.classesDir
+        classpath = sourceSets.integTest.runtimeClasspath
+        reports.junitXml.destination = "${buildDir}/test-results/test"
+    
+    
+    
+        // explicitly include or exclude tests
+        filter {
+            includeTestsMatching "*IntegrationShould"
+            failOnNoMatchingTests = false
+        }
+    
+        testLogging {
+            events "PASSED", "FAILED", "SKIPPED"
+        }
+    
+        jacoco {
+            append = false
+            destinationFile = file("$buildDir/jacoco/jacoco-it.exec")
+            classDumpFile = file("$buildDir/jacoco/classpathIntegdumps")
+        }
+    
+        // mustRunAfter test
+    }
+    
+    project.tasks.check.dependsOn(integTest)
+
+
+
     // *****************   COVERAGE   *****************
     apply plugin: 'jacoco'
-    apply from: "$rootProject.projectDir/build-test.gradle"
-    apply from: "$rootProject.projectDir/build-integTest.gradle"
 
     jacoco {
         toolVersion = '0.7.6.201602180812'
