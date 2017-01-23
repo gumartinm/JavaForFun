@@ -1,5 +1,9 @@
 allprojects {
 
+    group='de.spring.jpa'
+    version='1.0-SNAPSHOT'
+
+
     // You could use your gradle 'BOM' file in this way:
     // apply from: 'http://artifactory:8888/artifactory/libs-snapshot-local/build-BOM-1.0-SNAPSHOT.gradle
 
