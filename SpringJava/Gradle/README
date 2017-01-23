@@ -1,2 +1,5 @@
 gradle clean build
 gradle publish
+
+# Making work docker-compose (I do not have it in my PATH)
+export PATH="/mnt/docker:${PATH}"
