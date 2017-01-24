@@ -4,46 +4,46 @@ project.ext {
 
     // Compile dependencies
     // Spring
-    springVersion='4.3.0.RELEASE'
+    springVersion = '4.3.0.RELEASE'
     // Spring JPA
-    springJPAVersion='1.10.2.RELEASE'
+    springJPAVersion = '1.10.2.RELEASE'
     // Spring Envers
-    springDataEnversVersion='1.0.2.RELEASE'
-    hibernateEnversVersion='5.2.1.Final'
+    springDataEnversVersion = '1.0.2.RELEASE'
+    hibernateEnversVersion = '5.2.1.Final'
     // Hibernate
-    hibernateValidatorVersion='5.2.4.Final'
-    hibernateEntityManagerVersion='5.2.1.Final'
+    hibernateValidatorVersion = '5.2.4.Final'
+    hibernateEntityManagerVersion = '5.2.1.Final'
     // QueryDSL
-    queryDslAptVersion='4.1.3'
-    // Liquibase or FlyWay
-    liquibaseVersion='3.5.3'
-    flyWayVersion='4.0.3'
+    queryDslAptVersion = '4.1.3'
+    // Liquibase or Flyway
+    liquibaseVersion = '3.5.3'
+    flyWayVersion = '4.0.3'
     // Jackson.
-    jacksonVersion='2.8.1'
+    jacksonVersion = '2.8.1'
     // Validation API. JSR-303
-    validationAPIVersion='1.1.0.Final'
+    validationAPIVersion = '1.1.0.Final'
 
     // Provided dependencies.
     // Provided dependencies are compileOnly in Gradle. Unlike maven they are not included on the test classpath. Gradle sucks?!
-    servletApiVersion='4.0.0-b01'
+    servletApiVersion = '4.0.0-b01'
 
     // LOG4J2 dependencies
-    slf4jVersion='2.7'
-    log4jCoreVersion='2.7'
-    jclOverSlf4jVersion='1.7.22'
+    slf4jVersion = '2.7'
+    log4jCoreVersion = '2.7'
+    jclOverSlf4jVersion = '1.7.22'
 
     // Unit test dependencies
-    dockerComposeRuleVersion='0.28.1'
-    mockitoVersion='2.4.1'
-    junitVersion='4.12'
+    dockerComposeRuleVersion = '0.28.1'
+    mockitoVersion = '2.4.1'
+    junitVersion = '4.12'
 
     // Integration test dependencies
-    h2DatabaseVersion='1.4.193'
-    mysqlConnectorVersion='6.0.5'
+    h2DatabaseVersion = '1.4.193'
+    mysqlConnectorVersion = '6.0.5'
 
     // Plugins
-    queryDslPluginVersion='1.0.7'
-    dockerComposePluginVersion='0.3.16'
+    queryDslPluginVersion = '1.0.7'
+    dockerComposePluginVersion = '0.3.16'
 
 }
 
