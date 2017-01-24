@@ -1,3 +1,5 @@
+rootProject.name='spring-jpa'
+
 include ':spring-jpa-persistence'
 include ':spring-jpa-services'
 include ':spring-jpa-resources'
