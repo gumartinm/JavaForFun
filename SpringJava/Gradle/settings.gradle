@@ -1,4 +1,4 @@
-rootProject.name='spring-jpa'
+rootProject.name = theName
 
 include ':spring-jpa-persistence'
 include ':spring-jpa-services'

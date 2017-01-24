@@ -1,7 +1,8 @@
 allprojects {
 
-    group='de.spring.jpa'
-    version='1.0-SNAPSHOT'
+
+    group = theGroup
+    version = theVersion
 
 
     // You could use your gradle 'BOM' file in this way:
