@@ -15,7 +15,7 @@ public class Application {
   @Bean
   CommandLineRunner lookup(Sender sender) {
     return args -> {
-      String topic = "example.topic";
+      String topic = "test";
       String message = "example message";
 
 

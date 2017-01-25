@@ -1,9 +1,8 @@
 logging:
   level:
     org:
-      springframework:
-        ws: debug
-    ROOT: debug
+      springframework: info
+    ROOT: info
 
 spring:
   main:

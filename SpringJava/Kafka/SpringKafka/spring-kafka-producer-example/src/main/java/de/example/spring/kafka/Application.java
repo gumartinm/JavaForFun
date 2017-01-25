@@ -15,14 +15,7 @@ public class Application {
   @Bean
   CommandLineRunner lookup(Receiver receiver) {
     return args -> {
-      String sleepTime = "60000";
 
-
-      if (args.length > 0) {
-        sleepTime = args[0];
-      }
-
-      Thread.sleep(Long.valueOf(sleepTime));
     };
   }
 
