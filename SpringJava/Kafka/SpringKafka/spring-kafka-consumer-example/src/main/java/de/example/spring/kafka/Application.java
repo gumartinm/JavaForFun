@@ -13,18 +13,9 @@ public class Application {
   }
 
   @Bean
-  CommandLineRunner lookup(Sender sender) {
+  CommandLineRunner lookup(Receiver receiver) {
     return args -> {
-      String topic = "test";
-      String message = "example message";
 
-
-      if (args.length > 0) {
-        topic = args[0];
-        message = args[1];
-      }
-
-      sender.sendMessage(topic, message);
     };
   }
 
