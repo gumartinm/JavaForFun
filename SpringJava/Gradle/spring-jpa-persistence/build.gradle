@@ -93,7 +93,8 @@ integTest.doFirst {
     // We need it for running tests from IDE and from command console but
     // also it will be required by systems like Travis where we do not control
     // the available ports.
-    def mysqlInfo = dockerCompose.servicesInfos.mysql
+    println dockerCompose.servicesInfos.'spring-jpa-persistence-mysql'
+    def mysqlInfo = dockerCompose.servicesInfos.'spring-jpa-persistence-mysql'
     systemProperty 'DATABASE_PORT', mysqlInfo.ports[3306]
 }
 

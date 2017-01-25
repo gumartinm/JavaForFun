@@ -1,7 +1,9 @@
-mysql:
-  image: mysql
-  ports:
-    - "3306"
-  privileged: true
-  environment:
-    MYSQL_ROOT_PASSWORD: "root"
+version: '2'
+services:
+  spring-jpa-persistence-mysql:
+    image: mysql
+    ports:
+      - "3306"
+    privileged: true
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
