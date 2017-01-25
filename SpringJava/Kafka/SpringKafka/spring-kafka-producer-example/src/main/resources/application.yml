@@ -1,0 +1,15 @@
+logging:
+  level:
+    org:
+      springframework:
+        ws: debug
+    ROOT: debug
+
+spring:
+  main:
+    banner-mode: "off"
+
+kafka:
+  bootstrap:
+    servers: "kafka:9092,kafka:9093,kafka:9094"
+

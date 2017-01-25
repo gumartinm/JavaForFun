@@ -1,0 +1,65 @@
+
+project.ext {
+    springKafkaVersion = '1.1.2.RELEASE'
+}
+
+
+buildscript {
+    ext {
+        springBootGradlePluginVersion = '1.4.3.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootGradlePluginVersion}")
+    }
+}
+ 
+
+
+allprojects {
+
+    group = theGroup
+    version = theVersion
+}
+
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+    
+    repositories {
+        mavenCentral()
+    }
+    
+    
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    
+    // *****************   MANIFEST FILE   *****************
+    jar {
+        manifest {
+            attributes('Implementation-Title': 'Spring Kafka example',
+                'Implementation-Version': theVersion,
+                'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Built-By': System.getProperty('user.name'),
+                'Built-JDK': System.getProperty('java.version')
+            )
+        }
+    }
+    
+    
+    dependencies {
+        compile('org.springframework.boot:spring-boot-starter')
+        compile('javax.inject:javax.inject:1')
+        compile("org.springframework.kafka:spring-kafka:${springKafkaVersion}")
+    
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile("org.springframework.kafka:spring-kafka-test:${springKafkaVersion}")
+    }
+
+}
+
