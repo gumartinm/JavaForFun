@@ -12,6 +12,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+
+        // The spring-boot plugin automatically applies the Dependency Management Plugin and configures it to import the spring-boot-starter-parent bom.
+        // This provides a similar dependency management experience to the one that is enjoyed by Maven users. For example, it allows you to omit version numbers when declaring
+        // dependencies that are managed in the bom. To make use of this functionality, simply declare dependencies in the usual way, but leave the version number empty.
+        // Details of the versions that are provided can be found in: http://docs.spring.io/spring-boot/docs/current/reference/html/appendix-dependency-versions.html
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootGradlePluginVersion}")
     }
 }
@@ -53,11 +58,20 @@ subprojects {
     
     
     dependencies {
+        // The spring-boot plugin automatically applies the Dependency Management Plugin and configures it to import the spring-boot-starter-parent bom.
+        // This provides a similar dependency management experience to the one that is enjoyed by Maven users. For example, it allows you to omit version numbers when declaring
+        // dependencies that are managed in the bom. To make use of this functionality, simply declare dependencies in the usual way, but leave the version number empty.
+        // Details of the versions that are provided can be found in: http://docs.spring.io/spring-boot/docs/current/reference/html/appendix-dependency-versions.html
         compile('org.springframework.boot:spring-boot-starter')
         compile('javax.inject:javax.inject:1')
+
+        // Not included in spring-boot-gradle-plugin
         compile("org.springframework.kafka:spring-kafka:${springKafkaVersion}")
-    
+
+
         testCompile('org.springframework.boot:spring-boot-starter-test')
+
+        // Not included in spring-boot-gradle-plugin
         testCompile("org.springframework.kafka:spring-kafka-test:${springKafkaVersion}")
     }
 
