@@ -26,7 +26,7 @@ public class ReceiverConfig {
   @Bean
   public MessageConverter avroMessageConverter() throws IOException {
       AvroSchemaMessageConverter converter = new AvroSchemaMessageConverter(MimeType.valueOf("avro/bytes"));
-      converter.setSchemaLocation(new ClassPathResource("schemas/User.avro"));
+      //converter.setSchemaLocation(new ClassPathResource("schemas/User.avro"));
       return converter;
     }
 }

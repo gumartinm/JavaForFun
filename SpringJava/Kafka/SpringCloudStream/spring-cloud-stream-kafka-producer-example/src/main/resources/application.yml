@@ -7,11 +7,6 @@ logging:
 spring:
   main:
     banner-mode: "off"
-
-
-
-# *************************** BINDERS CONFIGURATION ***************************
-spring:
   cloud:
     stream:
       bindings:
@@ -24,6 +19,7 @@ spring:
       instanceIndex: 0
       kafka:
         binder:
+          zkNodes: "kafka:2181"
           brokers: "kafka:9092,kafka:9093,kafka:9094"
           autoCreateTopics: true
 

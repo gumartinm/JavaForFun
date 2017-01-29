@@ -4,18 +4,13 @@ logging:
       springframework: info
     ROOT: info
 
-spring:
-  main:
-    banner-mode: "off"
-
 kafka:
   topic: test
   messageKey: keyTest
 
-
-
-# *************************** BINDERS CONFIGURATION ***************************
 spring:
+  main:
+    banner-mode: "off"
   cloud:
     stream:
       bindings:
@@ -29,11 +24,12 @@ spring:
             partitioned: false
             headerMode: raw
             maxAttempts: 3
-            backOffInitialInterval:
+            backOffInitialInterval: 1000
       instanceCount: 1
       instanceIndex: 0
       kafka:
         binder:
+          zkNodes: "kafka:2181"
           brokers: "kafka:9092,kafka:9093,kafka:9094"
           autoCreateTopics: true
 
