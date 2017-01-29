@@ -3,7 +3,7 @@ package de.example.spring.kafka;
 import org.springframework.cloud.stream.schema.avro.AvroSchemaMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+//import org.springframework.core.io.ClassPathResource;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.util.MimeType;
 
@@ -28,5 +28,5 @@ public class ReceiverConfig {
       AvroSchemaMessageConverter converter = new AvroSchemaMessageConverter(MimeType.valueOf("avro/bytes"));
       //converter.setSchemaLocation(new ClassPathResource("schemas/User.avro"));
       return converter;
-    }
+  }
 }

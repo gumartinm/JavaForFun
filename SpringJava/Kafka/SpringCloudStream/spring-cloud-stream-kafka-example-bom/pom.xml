@@ -39,7 +39,30 @@
             <artifactId>spring-cloud-starter-stream-kafka</artifactId>
             <version>1.1.1.RELEASE</version>
         </dependency>
-    
+
+        <!-- Required for using Kafka 0.10.1.1 -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>1.1.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-kafka</artifactId>
+            <version>2.1.0.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.11</artifactId>
+            <version>0.10.1.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- Required for using Apache Avro -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
