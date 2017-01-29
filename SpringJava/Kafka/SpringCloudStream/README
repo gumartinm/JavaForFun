@@ -1,0 +1,8 @@
+It does not work on gradle. Going back to the old and good maven configuration.
+
+
+Documentation: http://docs.spring.io/spring-cloud-stream/docs/current/reference/html/
+               https://github.com/mbogoevici/spring-cloud-stream
+
+Examples: https://github.com/spring-cloud/spring-cloud-stream-samples
+
