@@ -1,7 +1,5 @@
 package de.example.spring.kafka;
 
-import java.nio.charset.Charset;
-
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.util.MimeType;
 

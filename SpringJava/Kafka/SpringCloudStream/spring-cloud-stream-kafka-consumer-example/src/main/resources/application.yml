@@ -11,6 +11,8 @@ kafka:
 spring:
   main:
     banner-mode: "off"
+    # We do not need Tomcat running (this application runs from console)
+    web-environment: false
   cloud:
     stream:
       bindings:
@@ -19,6 +21,7 @@ spring:
           destination: test
           group: helloworld
           contentType: application/json
+          startOffset: latest
           consumer:
             concurrency: 1
             partitioned: false

@@ -7,7 +7,7 @@ logging:
 spring:
   main:
     banner-mode: "off"
-    # We do not need Tomcat running (this application runs as a client)
+    # We do not need Tomcat running (this application runs from console)
     web-environment: false
   cloud:
     stream:
@@ -15,10 +15,10 @@ spring:
         output:
           binder: kafka
           destination: test
+          # Requires work around, see: MyCustomMessageConverter
           contentType: application/json
-          # headerMode value is used only when input bindings :(
-          # headerMode: raw
-          #contentType: "application/example"
+          # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
+          headerMode: embeddedHeaders
       instanceCount: 1
       instanceIndex: 0
       kafka:
