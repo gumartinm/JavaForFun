@@ -15,12 +15,10 @@ public class Application {
   @Bean
   CommandLineRunner lookup(Sender sender) {
     return args -> {
-      String topic = "test";
       String message = "example message";
 
 
       if (args.length > 0) {
-        topic = args[0];
         message = args[1];
       }
 
