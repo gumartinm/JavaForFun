@@ -18,6 +18,8 @@
     </scm>
 
     <modules>
+        <module>spring-cloud-stream-kafka-example-bom</module>
+        <module>spring-cloud-stream-kafka-common-example</module>
         <module>spring-cloud-stream-kafka-consumer-example</module>
         <module>spring-cloud-stream-kafka-producer-example</module>
     </modules>

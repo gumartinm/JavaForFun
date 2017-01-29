@@ -19,7 +19,7 @@ public class Application {
 
 
       if (args.length > 0) {
-        message = args[1];
+        message = args[0];
       }
 
       sender.sendMessage(message);

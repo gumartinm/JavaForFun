@@ -11,8 +11,9 @@ public class Receiver {
   private static final Logger LOGGER = LoggerFactory.getLogger(Receiver.class);
 
   @StreamListener(Sink.INPUT)
-  public void handle(String message) {
-    LOGGER.info("received message='{}'", message);
+  public void handle(Product product) {
+    LOGGER.info("product name='{}'", product.getName());
+    LOGGER.info("product description='{}'", product.getDescription());
   }
 
 }

@@ -7,14 +7,18 @@ logging:
 spring:
   main:
     banner-mode: "off"
+    # We do not need Tomcat running (this application runs as a client)
+    web-environment: false
   cloud:
     stream:
       bindings:
         output:
           binder: kafka
           destination: test
-          contentType: ""
-          headerMode: raw
+          contentType: application/json
+          # headerMode value is used only when input bindings :(
+          # headerMode: raw
+          #contentType: "application/example"
       instanceCount: 1
       instanceIndex: 0
       kafka:

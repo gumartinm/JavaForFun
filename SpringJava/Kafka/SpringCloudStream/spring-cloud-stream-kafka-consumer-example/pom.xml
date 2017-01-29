@@ -24,4 +24,28 @@
         <url>https://git.gumartinm.name/JavaForFun</url>
     </scm>
 
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.example.spring.kafka</groupId>
+            <artifactId>spring-cloud-stream-kafka-common-example</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+             </plugin>
+        </plugins>
+    </build>
+
 </project>

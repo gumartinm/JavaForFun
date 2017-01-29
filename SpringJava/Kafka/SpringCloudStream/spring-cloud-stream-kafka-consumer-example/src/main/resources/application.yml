@@ -18,11 +18,12 @@ spring:
           binder: kafka
           destination: test
           group: helloworld
-          contentType: ""
+          contentType: application/json
           consumer:
             concurrency: 1
             partitioned: false
-            headerMode: raw
+            # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
+            headerMode: embeddedHeaders
             maxAttempts: 3
             backOffInitialInterval: 1000
       instanceCount: 1

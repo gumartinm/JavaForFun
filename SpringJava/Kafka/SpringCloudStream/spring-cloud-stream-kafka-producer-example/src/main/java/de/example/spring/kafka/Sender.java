@@ -17,6 +17,7 @@ public class Sender {
   }
 
   public void sendMessage(String message) {
-    source.output().send(MessageBuilder.withPayload(message).build());
+	  Product product = new Product(message, "this is some description");
+	  source.output().send(MessageBuilder.withPayload(product).build());
   }
 }

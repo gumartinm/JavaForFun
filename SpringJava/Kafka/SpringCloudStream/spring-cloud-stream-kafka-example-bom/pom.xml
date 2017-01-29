@@ -75,6 +75,7 @@
             <version>1.8.1</version>
         </dependency>
     </dependencies>
+    
 	<build>
 		<plugins>
             <plugin>
@@ -159,23 +160,27 @@
                     </execution>
                 </executions>
             </plugin>
+      	</plugins>
 
-            <!--
-                 It will create our running jar file.
-                 The main class must be located in: src/main/java/de/example/spring/kafka
-                 otherwise you need an explicit declaration using this property
-                 <start-class>de.exmaple.spring.kafka.Application</start-class>
+         <pluginManagement>
+            <plugins>
+                <!--
+                      It will create our running jar file.
+                      The main class must be located in: src/main/java/de/example/spring/kafka
+                      otherwise you need an explicit declaration using this property
+                      <start-class>de.exmaple.spring.kafka.Application</start-class>
 
-                 The start-class property is automatically populated by spring-boot-maven-plugin and it is
-                 used in spring-boot-starter-parent.
-               
-                 See: http://docs.spring.io/spring-boot/docs/1.0.1.RELEASE/reference/html/build-tool-plugins-maven-plugin.html#build-tool-plugins-maven-packaging-optional-params
-            -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>1.4.4.RELEASE</version>
-            </plugin>
-	</plugins>
+                      The start-class property is automatically populated by spring-boot-maven-plugin and it is
+                      used in spring-boot-starter-parent.
+                    
+                      See: http://docs.spring.io/spring-boot/docs/1.0.1.RELEASE/reference/html/build-tool-plugins-maven-plugin.html#build-tool-plugins-maven-packaging-optional-params
+                 -->
+                 <plugin>
+                     <groupId>org.springframework.boot</groupId>
+                     <artifactId>spring-boot-maven-plugin</artifactId>
+                     <version>1.4.4.RELEASE</version>
+                 </plugin>
+            </plugins>
+         </pluginManagement>
 	</build>
 </project>
