@@ -12,7 +12,7 @@
 Debugging from Eclipse/IntelliJ does not work because it needs to search for resources in /BOOT-INF/lib and /BOOT-INF/classes directories.
 By default Eclipse/IntelliJ do not know anything about those folders :(
 
-spring-boot-maven-plugin creates META-INF/MANIFEST.MF in target/my.jar file whe this value:
+spring-boot-maven-plugin creates META-INF/MANIFEST.MF in target/my.jar file whith this value:
 Main-Class: org.springframework.boot.loader.JarLauncher
 
 JarLauncher contains: https://github.com/spring-projects/spring-boot/blob/master/spring-boot-tools/spring-boot-loader/src/main/java/org/springframework/boot/loader/JarLauncher.java

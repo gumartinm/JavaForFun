@@ -21,6 +21,6 @@ public class MyCustomMessageConverter extends AbstractMessageConverter {
 
     logger.info("convertFromInternal, payload: " + payload);
 
-	return (payload instanceof String ? payload : new String((byte[]) payload));
+	return payload instanceof String ? payload : new String((byte[]) payload);
   }
 }
