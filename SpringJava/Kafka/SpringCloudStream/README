@@ -1,8 +1,27 @@
-It does not work on gradle. Going back to the old and good maven configuration.
+1. It does not work on gradle. Going back to the old and good maven configuration.
 
 
-Documentation: http://docs.spring.io/spring-cloud-stream/docs/current/reference/html/
+2. Documentation: http://docs.spring.io/spring-cloud-stream/docs/current/reference/html/
                https://github.com/mbogoevici/spring-cloud-stream
 
-Examples: https://github.com/spring-cloud/spring-cloud-stream-samples
+3. Examples: https://github.com/spring-cloud/spring-cloud-stream-samples
 
+
+4. Issues while debugging.
+
+Debugging from Eclipse/IntelliJ does not work because it needs to search for resources in /BOOT-INF/lib and /BOOT-INF/classes directories.
+By default Eclipse/IntelliJ do not know anything about those folders :(
+
+spring-boot-maven-plugin creates META-INF/MANIFEST.MF in target/my.jar file whe this value:
+Main-Class: org.springframework.boot.loader.JarLauncher
+
+JarLauncher contains: https://github.com/spring-projects/spring-boot/blob/master/spring-boot-tools/spring-boot-loader/src/main/java/org/springframework/boot/loader/JarLauncher.java
+
+static final String BOOT_INF_CLASSES = "BOOT-INF/classes/";
+static final String BOOT_INF_LIB = "BOOT-INF/lib/";
+
+
+The best you can do for debugging spring boot applications is running from console in this way:
+java -jar -Djaxp.debug=1 -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n target/spring-cloud-stream-kafka-consumer-example-1.0-SNAPSHOT.jar
+
+And then you must use the remote debugging option from Eclipse/IntelliJ
