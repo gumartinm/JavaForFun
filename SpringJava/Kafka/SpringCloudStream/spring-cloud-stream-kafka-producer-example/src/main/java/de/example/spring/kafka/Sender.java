@@ -8,7 +8,7 @@ import org.springframework.messaging.support.MessageBuilder;
 
 @EnableBinding(Source.class)
 public class Sender {
-  // Aquí podrías haber usado tu custom interface: InputOutputChannels :)
+  // You could use here your custom interface. See: InputOutputChannels :)
   private final Source source;
 
   @Inject

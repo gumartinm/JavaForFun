@@ -3,9 +3,6 @@ package de.example.spring.kafka;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.converter.MessageConverter;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 public class SenderConfig {
@@ -15,16 +12,16 @@ public class SenderConfig {
     return new Sender(source);
   }
   
-  @Bean
-  public MessageConverter customMessageConverter(ObjectMapper objectMapper) {
-	  MyCustomMessageConverter converter = new MyCustomMessageConverter();
-	  converter.setSerializedPayloadClass(String.class);
-	  if (objectMapper != null) {
-		  converter.setObjectMapper(objectMapper);
-	  }
-	  
-	  return converter;
-  }
+//  @Bean
+//  public MessageConverter customMessageConverter(ObjectMapper objectMapper) {
+//	  MyCustomMessageConverter converter = new MyCustomMessageConverter();
+//	  converter.setSerializedPayloadClass(String.class);
+//	  if (objectMapper != null) {
+//		  converter.setObjectMapper(objectMapper);
+//	  }
+//	  
+//	  return converter;
+//  }
 
 //  @Bean
 //  public MessageConverter avroMessageConverter() throws IOException {

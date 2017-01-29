@@ -15,7 +15,6 @@ spring:
         output:
           binder: kafka
           destination: test
-          # Requires work around, see: MyCustomMessageConverter
           contentType: application/json
           # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
           headerMode: embeddedHeaders
