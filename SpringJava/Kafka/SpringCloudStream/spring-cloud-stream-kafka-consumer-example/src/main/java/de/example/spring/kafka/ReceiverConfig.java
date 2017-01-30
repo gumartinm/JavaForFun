@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 public class ReceiverConfig {
 
   @Bean
-  public Receiver receiver() {
-    return new Receiver();
+  public Receiver receiver(DummyService dummyService) {
+    return new Receiver(dummyService);
   }
 
 
