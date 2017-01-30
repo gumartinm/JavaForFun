@@ -1,0 +1,14 @@
+logging:
+  level:
+    org:
+      springframework: info
+    ROOT: info
+
+server:
+  port: 8888
+spring:
+  cloud:
+    stream:
+      schema:
+        server:
+          path: schema
