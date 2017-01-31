@@ -10,12 +10,13 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
+import org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { Sender.class })
+@SpringBootTest(classes = { Sender.class, TestSupportBinderAutoConfiguration.class })
 @DirtiesContext
 public class SenderIntegrationTest {
 
