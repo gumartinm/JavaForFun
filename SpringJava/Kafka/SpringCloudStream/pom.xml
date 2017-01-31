@@ -22,6 +22,7 @@
         <module>spring-stream-kafka-common</module>
         <module>spring-stream-kafka-consumer</module>
         <module>spring-stream-kafka-producer</module>
+        <module>spring-stream-kafka-registry</module>
     </modules>
 
 </project>

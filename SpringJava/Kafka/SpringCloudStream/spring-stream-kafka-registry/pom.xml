@@ -41,7 +41,7 @@
         
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-stream-server</artifactId>
+            <artifactId>spring-cloud-stream-schema-server</artifactId>
         </dependency>
        
     </dependencies>
