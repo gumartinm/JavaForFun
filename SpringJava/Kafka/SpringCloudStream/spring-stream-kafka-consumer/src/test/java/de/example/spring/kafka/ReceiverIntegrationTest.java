@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { Receiver.class })
 @DirtiesContext
-public class ReceiverShould {
+public class ReceiverIntegrationTest {
 
 	@Inject
 	Sink source;

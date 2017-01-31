@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { Sender.class })
 @DirtiesContext
-public class SenderShould {
+public class SenderIntegrationTest {
 
 	@Inject
 	Source source;
