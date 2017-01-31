@@ -2,10 +2,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.example.spring.kafka</groupId>
-    <artifactId>spring-cloud-stream-kafka-example</artifactId>
+    <artifactId>spring-stream-kafka-example</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>spring-cloud-stream-kafka-example</name>
+    <name>spring-stream-kafka-example</name>
     <url>https://gumartinm.name/</url>
     <description>Spring Cloud Stream Kafka</description>
     <organization>
@@ -18,10 +18,10 @@
     </scm>
 
     <modules>
-        <module>spring-cloud-stream-kafka-example-bom</module>
-        <module>spring-cloud-stream-kafka-common-example</module>
-        <module>spring-cloud-stream-kafka-consumer-example</module>
-        <module>spring-cloud-stream-kafka-producer-example</module>
+        <module>spring-stream-kafka-bom</module>
+        <module>spring-stream-kafka-common</module>
+        <module>spring-stream-kafka-consumer</module>
+        <module>spring-stream-kafka-producer</module>
     </modules>
 
 </project>

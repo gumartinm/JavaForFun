@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>de.example.spring.kafka</groupId>
-	<artifactId>spring-cloud-stream-kafka-example-bom</artifactId>
+	<artifactId>spring-stream-kafka-bom</artifactId>
 	<version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>spring-cloud-stream-kafka-example-bom</name>
+    <name>spring-stream-kafka-bom</name>
 	
 	<url>https://gumartinm.name</url>
 	<description>Spring Cloud Stream Kafka BOM example</description>
@@ -92,13 +92,13 @@
 
         <!--
             Schema Registry Server. See: http://docs.spring.io/spring-cloud-stream/docs/current/reference/html/contenttypemanagement.html
-        -->
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-stream-server</artifactId>
             </dependency>
         </dependencies>
+        -->
 
     </dependencyManagement>
     

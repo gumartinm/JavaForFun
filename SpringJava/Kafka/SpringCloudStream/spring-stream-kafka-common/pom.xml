@@ -7,12 +7,12 @@
 
     <parent>
         <groupId>de.example.spring.kafka</groupId>
-        <artifactId>spring-cloud-stream-kafka-example-bom</artifactId>
+        <artifactId>spring-stream-kafka-bom</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-	<artifactId>spring-cloud-stream-kafka-common-example</artifactId>
-	<name>spring-cloud-stream-kafka-common-example</name>
+	<artifactId>spring-stream-kafka-common</artifactId>
+	<name>spring-stream-kafka-common</name>
 	<url>https://gumartinm.name</url>
 	<description>Spring Cloud Stream Kafka Commons</description>
 	<organization>

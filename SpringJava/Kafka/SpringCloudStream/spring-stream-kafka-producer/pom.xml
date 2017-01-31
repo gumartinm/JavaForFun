@@ -7,14 +7,14 @@
 
     <parent>
         <groupId>de.example.spring.kafka</groupId>
-        <artifactId>spring-cloud-stream-kafka-example-bom</artifactId>
+        <artifactId>spring-stream-kafka-bom</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-	<artifactId>spring-cloud-stream-kafka-registry-example</artifactId>
-	<name>spring-cloud-stream-kafka-registry-example</name>
+	<artifactId>spring-stream-kafka-producer</artifactId>
+	<name>spring-stream-kafka-producer</name>
 	<url>https://gumartinm.name</url>
-	<description>Spring Cloud Stream Kafka Registry</description>
+	<description>Spring Cloud Stream Kafka Producer</description>
 	<organization>
 	    <name>gumartinm</name>
 	    <url>https://gumartinm.name</url>
@@ -24,8 +24,7 @@
         <url>https://git.gumartinm.name/JavaForFun</url>
     </scm>
 
-
-    <dependencies>
+	<dependencies>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -37,19 +36,12 @@
             <artifactId>spring-cloud-stream-kafka-common-example</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-
-        
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-stream-server</artifactId>
-        </dependency>
-       
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
+        	<plugin>
+            	<groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
              </plugin>
         </plugins>
