@@ -1,4 +1,4 @@
-### 1. This project does not work on gradle 3.1  but it does on maven :)
+### This project does not work on gradle 3.1  but it does on maven :)
     Gradle is a pain in ass when working with hierarchical projects.
 
 
