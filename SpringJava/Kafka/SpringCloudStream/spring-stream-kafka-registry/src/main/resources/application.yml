@@ -11,4 +11,4 @@ spring:
     stream:
       schema:
         server:
-          path: schema
+          path: schema-registry
