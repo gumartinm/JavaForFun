@@ -87,6 +87,10 @@
     </dependencies>
 
 	<build>
+
+        <!--
+            WARNING!!! Plugins versions are located in parent pom spring-boot-dependencies.
+        -->
 		<plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
