@@ -6,13 +6,13 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 
 /**
- * En lugar de esta definicion "custom" usaremos las dos que
- * vienen por defecto en:
+ * Instead of this "custom" definition we will use the ones
+ * already implemented by Spring:
  * org.springframework.cloud.stream.messaging.Sink
  * org.springframework.cloud.stream.messaging.Source
  *
- * Esta definicion custom se usaría igual que Sink y Source :)
- * Donde veas Sink y Source podrías haber puesto esto en su lugar ;)
+ * This "custom" definition would be used in the same way as Sink and Source :)
+ * Wherever you see Sink and Source you could replace them by this interface ;)
  */
 public interface InputOutputChannels {
 
