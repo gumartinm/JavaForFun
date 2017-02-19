@@ -6,12 +6,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.stream.schema.client.EnableSchemaRegistryClient;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * Using arguments with CommandLineRunner:
+ *
+ * Example: java -jar -Dtarget/spring-stream-kafka-producer-1.0-SNAPSHOT.jar "HELLO GUS"
+ *
+ */
 @SpringBootApplication
 @EnableSchemaRegistryClient
 public class Application {
 
   public static void main(String[] args) {
-    SpringApplication.run(Application.class);
+    SpringApplication.run(Application.class, args);
   }
 
   @Bean
