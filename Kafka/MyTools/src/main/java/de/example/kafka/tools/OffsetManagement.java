@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import kafka.api.OffsetRequest;
-
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
@@ -20,10 +18,16 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import kafka.admin.AdminClient;
-import kafka.admin.TopicCommand;
+import kafka.api.OffsetRequest;
 import kafka.utils.ZkUtils;
 
 
+/**
+ * Only tested on KAFKA 0.10.1.1 
+ *
+ * Based on {@link https://github.com/apache/kafka/blob/trunk/core/src/main/scala/kafka/tools/StreamsResetter.java}
+ *
+ */
 public class OffsetManagement {
     private static final int EXIT_CODE_SUCCESS = 0;
     private static final int EXIT_CODE_ERROR = 1;
@@ -36,18 +40,18 @@ public class OffsetManagement {
     private static OptionSpec<Integer> partitionOption;
 
 
-    private OptionSet options = null;
-    private final Properties consumerConfig = new Properties();
+    private OptionSet options;
     private final List<String> allTopics = new LinkedList<>();
 
+    public static void main(final String[] args) {
+        System.exit(new OffsetManagement().run(args));
+    }
+    
     public int run(final String[] args) {
         return run(args, new Properties());
     }
 
     public int run(final String[] args, final Properties config) {
-        consumerConfig.clear();
-        consumerConfig.putAll(config);
-
         int exitCode = EXIT_CODE_SUCCESS;
 
         AdminClient adminClient = null;
@@ -56,18 +60,15 @@ public class OffsetManagement {
             parseArguments(args);
 
             adminClient = AdminClient.createSimplePlaintext(this.options.valueOf(bootstrapServerOption));
-            final String groupId = this.options.valueOf(applicationIdOption);
-
+            
             zkUtils = ZkUtils.apply(options.valueOf(zookeeperOption),
                 30000,
                 30000,
                 JaasUtils.isZkSecurityEnabled());
 
-            allTopics.clear();
             allTopics.addAll(scala.collection.JavaConversions.seqAsJavaList(zkUtils.getAllTopics()));
 
-            resetInputAndInternalAndSeekToEndIntermediateTopicOffsets();
-            deleteInternalTopics(zkUtils);
+            resetInputAndSeekToEndIntermediateTopicOffsets();
         } catch (final Throwable e) {
             exitCode = EXIT_CODE_ERROR;
             System.err.println("ERROR: " + e.getMessage());
@@ -124,7 +125,7 @@ public class OffsetManagement {
         }
     }
 
-    private void resetInputAndInternalAndSeekToEndIntermediateTopicOffsets() {
+    private void resetInputAndSeekToEndIntermediateTopicOffsets() {
         final List<String> inputTopics = options.valuesOf(inputTopicsOption);
 
         if (inputTopics.size() == 0) {
@@ -132,12 +133,11 @@ public class OffsetManagement {
             return;
         } else {
             if (inputTopics.size() != 0) {
-                System.out.println("Resetting offsets to zero for input topics " + inputTopics + " and all internal topics.");
+                System.out.println("Resetting offsets to zero for input topics " + inputTopics);
             }
         }
 
         final Properties config = new Properties();
-        config.putAll(consumerConfig);
         config.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, options.valueOf(bootstrapServerOption));
         config.setProperty(ConsumerConfig.GROUP_ID_CONFIG, options.valueOf(applicationIdOption));
         config.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
@@ -145,13 +145,8 @@ public class OffsetManagement {
         final Set<String> topicsToSubscribe = new HashSet<>(inputTopics.size());
         for (final String topic : inputTopics) {
             if (!allTopics.contains(topic)) {
-                System.err.println("Input topic " + topic + " not found. Skipping.");
+                System.out.println("Input topic " + topic + " not found. Skipping.");
             } else {
-                topicsToSubscribe.add(topic);
-            }
-        }
-        for (final String topic : allTopics) {
-            if (isInternalTopic(topic)) {
                 topicsToSubscribe.add(topic);
             }
         }
@@ -161,19 +156,19 @@ public class OffsetManagement {
             client.poll(1);
 
             final Set<TopicPartition> partitions = client.assignment();
-            final Set<TopicPartition> inputAndInternalTopicPartitions = new HashSet<>();
+            final Set<TopicPartition> inputTopicPartitions = new HashSet<>();
 
-            for (final TopicPartition p : partitions) {
-                final String topic = p.topic();
-                if (isInputTopic(topic) || isInternalTopic(topic)) {
-                    inputAndInternalTopicPartitions.add(p);
+            for (final TopicPartition partition : partitions) {
+                final String topic = partition.topic();
+                if (isInputTopic(topic)) {
+                    inputTopicPartitions.add(partition);
                 } else {
-                    System.err.println("Skipping invalid partition: " + p);
+                    System.out.println("Skipping partition: " + partition);
                 }
             }
 
-            if (inputAndInternalTopicPartitions.size() > 0) {
-                client.seekToBeginning(inputAndInternalTopicPartitions);
+            if (inputTopicPartitions.size() > 0) {
+                client.seekToBeginning(inputTopicPartitions);
             }
 
             Integer partition = options.valueOf(partitionOption);
@@ -215,35 +210,6 @@ public class OffsetManagement {
 
     private boolean isInputTopic(final String topic) {
         return options.valuesOf(inputTopicsOption).contains(topic);
-    }
-    
-    private void deleteInternalTopics(final ZkUtils zkUtils) {
-        System.out.println("Deleting all internal/auto-created topics for application " + options.valueOf(applicationIdOption));
-
-        for (final String topic : allTopics) {
-            if (isInternalTopic(topic)) {
-                final TopicCommand.TopicCommandOptions commandOptions = new TopicCommand.TopicCommandOptions(new String[]{
-                    "--zookeeper", options.valueOf(zookeeperOption),
-                    "--delete", "--topic", topic});
-                try {
-                    TopicCommand.deleteTopic(zkUtils, commandOptions);
-                } catch (final RuntimeException e) {
-                    System.err.println("ERROR: Deleting topic " + topic + " failed.");
-                    throw e;
-                }
-            }
-        }
-
-        System.out.println("Done.");
-    }
-
-    private boolean isInternalTopic(final String topicName) {
-        return topicName.startsWith(options.valueOf(applicationIdOption) + "-")
-            && (topicName.endsWith("-changelog") || topicName.endsWith("-repartition"));
-    }
-
-    public static void main(final String[] args) {
-        System.exit(new OffsetManagement().run(args));
     }
 
 }
