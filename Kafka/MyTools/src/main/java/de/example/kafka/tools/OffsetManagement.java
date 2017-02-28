@@ -1,11 +1,12 @@
 package de.example.kafka.tools;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -17,7 +18,6 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
-import kafka.admin.AdminClient;
 import kafka.api.OffsetRequest;
 import kafka.utils.ZkUtils;
 
@@ -25,7 +25,7 @@ import kafka.utils.ZkUtils;
 /**
  * Only tested on KAFKA 0.10.1.1 
  *
- * Based on {@link https://github.com/apache/kafka/blob/trunk/core/src/main/scala/kafka/tools/StreamsResetter.java}
+ * Originally taken from {@link https://github.com/apache/kafka/blob/trunk/core/src/main/scala/kafka/tools/StreamsResetter.java}
  *
  */
 public class OffsetManagement {
@@ -35,50 +35,27 @@ public class OffsetManagement {
     private static OptionSpec<String> bootstrapServerOption;
     private static OptionSpec<String> zookeeperOption;
     private static OptionSpec<String> applicationIdOption;
-    private static OptionSpec<String> inputTopicsOption;
+    private static OptionSpec<String> inputTopicOption;
     private static OptionSpec<Long> offsetOption;
     private static OptionSpec<Integer> partitionOption;
 
 
     private OptionSet options;
-    private final List<String> allTopics = new LinkedList<>();
 
     public static void main(final String[] args) {
         System.exit(new OffsetManagement().run(args));
     }
-    
-    public int run(final String[] args) {
-        return run(args, new Properties());
-    }
 
-    public int run(final String[] args, final Properties config) {
+    public int run(final String[] args) {
         int exitCode = EXIT_CODE_SUCCESS;
 
-        AdminClient adminClient = null;
-        ZkUtils zkUtils = null;
         try {
             parseArguments(args);
-
-            adminClient = AdminClient.createSimplePlaintext(this.options.valueOf(bootstrapServerOption));
-            
-            zkUtils = ZkUtils.apply(options.valueOf(zookeeperOption),
-                30000,
-                30000,
-                JaasUtils.isZkSecurityEnabled());
-
-            allTopics.addAll(scala.collection.JavaConversions.seqAsJavaList(zkUtils.getAllTopics()));
-
             resetInputAndSeekToEndIntermediateTopicOffsets();
         } catch (final Throwable e) {
             exitCode = EXIT_CODE_ERROR;
+            
             System.err.println("ERROR: " + e.getMessage());
-        } finally {
-            if (adminClient != null) {
-                adminClient.close();
-            }
-            if (zkUtils != null) {
-                zkUtils.close();
-            }
         }
 
         return exitCode;
@@ -101,12 +78,13 @@ public class OffsetManagement {
             .ofType(String.class)
             .defaultsTo("localhost:2181")
             .describedAs("url");
-        inputTopicsOption = optionParser.accepts("input-topics", "Comma-separated list of user input topics")
+        inputTopicOption = optionParser.accepts("input-topic", "Topic name")
             .withRequiredArg()
             .ofType(String.class)
             .withValuesSeparatedBy(',')
-            .describedAs("list");
-        offsetOption = optionParser.accepts("offset", "The offset id to consume from, default to -2 which means from beginning; while value -1 means from end")
+            .required()
+            .describedAs("topic name");
+        offsetOption = optionParser.accepts("offset", "The new offset value, default to -2 which means from beginning; while value -1 means from end")
                 .withRequiredArg()
                 .describedAs("consume offset")
                 .ofType(Long.class)
@@ -126,79 +104,60 @@ public class OffsetManagement {
     }
 
     private void resetInputAndSeekToEndIntermediateTopicOffsets() {
-        final List<String> inputTopics = options.valuesOf(inputTopicsOption);
+        final String inputTopic = options.valueOf(inputTopicOption);
 
-        if (inputTopics.size() == 0) {
-            System.out.println("No input or intermediate topics specified. Skipping seek.");
+        System.out.println("Resetting offsets for input topic " + inputTopic);
+ 
+        if (!topicExist(inputTopic)) {
+            System.err.println("ERROR: chosen topic does not exist: " + inputTopic);
+            
             return;
-        } else {
-            if (inputTopics.size() != 0) {
-                System.out.println("Resetting offsets to zero for input topics " + inputTopics);
-            }
         }
+        
 
         final Properties config = new Properties();
         config.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, options.valueOf(bootstrapServerOption));
         config.setProperty(ConsumerConfig.GROUP_ID_CONFIG, options.valueOf(applicationIdOption));
         config.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        try (final KafkaConsumer<byte[], byte[]>  client = new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer())) {
 
-        final Set<String> topicsToSubscribe = new HashSet<>(inputTopics.size());
-        for (final String topic : inputTopics) {
-            if (!allTopics.contains(topic)) {
-                System.out.println("Input topic " + topic + " not found. Skipping.");
-            } else {
-                topicsToSubscribe.add(topic);
-            }
-        }
-
-        try (final KafkaConsumer<byte[], byte[]> client = new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer())) {
+            Collection<String> topicsToSubscribe = new ArrayList<>();
+            topicsToSubscribe.add(inputTopic);
             client.subscribe(topicsToSubscribe);
             client.poll(1);
 
-            final Set<TopicPartition> partitions = client.assignment();
-            final Set<TopicPartition> inputTopicPartitions = new HashSet<>();
-
-            for (final TopicPartition partition : partitions) {
-                final String topic = partition.topic();
-                if (isInputTopic(topic)) {
-                    inputTopicPartitions.add(partition);
-                } else {
-                    System.out.println("Skipping partition: " + partition);
-                }
+            final Collection<TopicPartition> partitions = client.assignment();
+            final Collection<TopicPartition> inputTopicPartitions = filterTopicPartition(partitions);
+            if (inputTopicPartitions.isEmpty()) {
+            	System.err.println("ERROR: no topics with the chosen name: " + inputTopic);
+            	return;
             }
-
-            if (inputTopicPartitions.size() > 0) {
-                client.seekToBeginning(inputTopicPartitions);
-            }
-
-            Integer partition = options.valueOf(partitionOption);
-            if (partition == Integer.MIN_VALUE) {
-            	
-            	for (final TopicPartition p : partitions) {
-            		client.position(p);
-            		
-            		Long offset = options.valueOf(offsetOption);
-            		if (offset != OffsetRequest.EarliestTime()) {
-            			client.seek(p, options.valueOf(offsetOption));
-            		}
-            	}
-            	
-            } else {
-            	for (final TopicPartition p : partitions) {
-            		
-            		if (partition == p.partition()) {
-                		client.position(p);
-                		
-                		Long offset = options.valueOf(offsetOption);
-                		if (offset != OffsetRequest.EarliestTime()) {
-                			client.seek(p, options.valueOf(offsetOption));
-                		}
-            		}
-            		
-            	}
-            }
-            client.commitSync();
             
+            final Collection<TopicPartition> filteredTopicPartitions = filterInputTopicPartition(inputTopicPartitions);
+            if (filteredTopicPartitions.isEmpty()) {
+            	System.err.println("ERROR: no partitions with the chosen value: " + options.valueOf(partitionOption));
+            	
+            	return;
+            }
+            
+            
+            Long offset = options.valueOf(offsetOption);
+            if (offset.equals(OffsetRequest.EarliestTime())) {
+            	
+                client.seekToBeginning(filteredTopicPartitions);
+                for (final TopicPartition p : filteredTopicPartitions) {
+            		client.position(p);
+            	}
+
+            } else {
+            	
+            	for (final TopicPartition p : filteredTopicPartitions) {
+            		client.seek(p, offset);
+            		client.position(p);
+            	}
+            }
+
+            client.commitSync();
             
         } catch (final RuntimeException e) {
             System.err.println("ERROR: Resetting offsets failed.");
@@ -208,9 +167,79 @@ public class OffsetManagement {
         System.out.println("Done.");
     }
 
-    private boolean isInputTopic(final String topic) {
-        return options.valuesOf(inputTopicsOption).contains(topic);
+    private boolean isInputTopic(final TopicPartition partition) {
+        final String topic = partition.topic();
+        if (options.valueOf(inputTopicOption).compareTo(topic) == 0) {
+        	return true;
+        }
+        
+        return false;
+    }
+    
+    private boolean isInputPartition(final TopicPartition partition) {
+    	Integer partitionNumber = partition.partition();
+	
+    	Integer inputPartitionNumber = options.valueOf(partitionOption);
+    	if (inputPartitionNumber == Integer.MIN_VALUE) {
+    		return true;
+    	}
+        
+    	return inputPartitionNumber.equals(partitionNumber);
     }
 
+    
+    private boolean topicExist(String inputTopic) {
+        List<String> allTopics = retrieveAllTopics();
+		if (!allTopics.contains(inputTopic)) {
+			return false;
+		}
+		
+		return true;
+    }
+    
+    private List<String> retrieveAllTopics() {
+        List<String> allTopics = new LinkedList<>();
+        ZkUtils zkUtils = null;
+        try {
+            zkUtils = ZkUtils.apply(options.valueOf(zookeeperOption),
+            						30000,
+            						30000,
+            						JaasUtils.isZkSecurityEnabled());
+            allTopics.addAll(scala.collection.JavaConversions.seqAsJavaList(zkUtils.getAllTopics()));
+        } finally {
+        	
+            if (zkUtils != null) {
+                zkUtils.close();
+            }
+        }
+        
+        return allTopics;
+    }
+    
+    private Collection<TopicPartition> filterTopicPartition(Collection<TopicPartition> partitions) {
+        final Collection<TopicPartition> inputTopicPartitions = new HashSet<>();
+        for (final TopicPartition partition : partitions) {
+            if (isInputTopic(partition)) {
+                inputTopicPartitions.add(partition);
+            } else {
+                System.out.println("Skipping partition: " + partition);
+            }
+        }
+        
+        return inputTopicPartitions;
+    }
+    
+    private Collection<TopicPartition> filterInputTopicPartition(Collection<TopicPartition> partitions) {
+        final Collection<TopicPartition> inputTopicPartitions = new HashSet<>();
+        for (final TopicPartition partition : partitions) {
+            if (isInputPartition(partition)) {
+                inputTopicPartitions.add(partition);
+            } else {
+                System.out.println("Skipping partition: " + partition);
+            }
+        }
+        
+        return inputTopicPartitions;
+    }
 }
 

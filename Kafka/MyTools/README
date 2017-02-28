@@ -1,17 +1,17 @@
 
 - Run:
 By default reset offsets to the first value in every topic's partition:
-java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topics mytopic
+java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topic mytopic
 
 We can do the same for just one topic's partition:
-java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topics mytopic --partition 0
+java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topic mytopic --partition 0
 
 We choose offset for just one topic's partition:
-java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topics mytopic --offset 24 --partition 0
+java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topic mytopic --offset 24 --partition 0
 
 
 - Debug:
-java -jar -Djaxp.debug=1 -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topics mytopic
+java -jar -Djaxp.debug=1 -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --application-id mygroup --input-topic mytopic
 
 
 You must stop consumers before running this command. If there are consumers running this command sometimes works, but the most of time it does not :(
