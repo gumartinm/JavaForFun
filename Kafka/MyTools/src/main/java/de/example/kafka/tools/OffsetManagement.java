@@ -50,7 +50,7 @@ public class OffsetManagement {
 
         try {
             parseArguments(args);
-            resetInputAndSeekToEndIntermediateTopicOffsets();
+            manageOffsets();
         } catch (final Throwable ex) {
             exitCode = EXIT_CODE_ERROR;
             
@@ -103,7 +103,7 @@ public class OffsetManagement {
         }
     }
 
-    private void resetInputAndSeekToEndIntermediateTopicOffsets() {
+    private void manageOffsets() {
         final String inputTopic = options.valueOf(inputTopicOption);
         System.out.println("Resetting offsets for input topic " + inputTopic);
  
