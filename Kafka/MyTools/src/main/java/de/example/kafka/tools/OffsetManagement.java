@@ -51,10 +51,11 @@ public class OffsetManagement {
         try {
             parseArguments(args);
             resetInputAndSeekToEndIntermediateTopicOffsets();
-        } catch (final Throwable e) {
+        } catch (final Throwable ex) {
             exitCode = EXIT_CODE_ERROR;
             
-            System.err.println("ERROR: " + e.getMessage());
+            System.err.println("ERROR: ");
+            ex.printStackTrace();
         }
 
         return exitCode;
@@ -154,10 +155,6 @@ public class OffsetManagement {
             }
 
             client.commitSync();
-            
-        } catch (final RuntimeException e) {
-            System.err.println("ERROR: Resetting offsets failed.");
-            throw e;
         }
 
         System.out.println("Done.");
