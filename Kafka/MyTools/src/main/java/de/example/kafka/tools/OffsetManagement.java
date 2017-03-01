@@ -3,10 +3,10 @@ package de.example.kafka.tools;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -23,9 +23,8 @@ import kafka.utils.ZkUtils;
 
 
 /**
+ * 
  * Only tested on KAFKA 0.10.1.1 
- *
- * Originally taken from {@link https://github.com/apache/kafka/blob/trunk/core/src/main/scala/kafka/tools/StreamsResetter.java}
  *
  */
 public class OffsetManagement {
@@ -34,7 +33,7 @@ public class OffsetManagement {
 
     private static OptionSpec<String> bootstrapServerOption;
     private static OptionSpec<String> zookeeperOption;
-    private static OptionSpec<String> applicationIdOption;
+    private static OptionSpec<String> groupIdOption;
     private static OptionSpec<String> inputTopicOption;
     private static OptionSpec<Long> offsetOption;
     private static OptionSpec<Integer> partitionOption;
@@ -63,10 +62,10 @@ public class OffsetManagement {
 
     private void parseArguments(final String[] args) throws IOException {
         final OptionParser optionParser = new OptionParser();
-        applicationIdOption = optionParser.accepts("application-id", "The Kafka Streams application ID (application.id)")
+        groupIdOption = optionParser.accepts("group-id", "Consumers group ID")
             .withRequiredArg()
             .ofType(String.class)
-            .describedAs("id")
+            .describedAs("consumers group id")
             .required();
         bootstrapServerOption = optionParser.accepts("bootstrap-servers", "Comma-separated list of broker urls with format: HOST1:PORT1,HOST2:PORT2")
             .withRequiredArg()
@@ -86,7 +85,7 @@ public class OffsetManagement {
             .describedAs("topic name");
         offsetOption = optionParser.accepts("offset", "The new offset value, default to -2 which means from beginning; while value -1 means from end")
                 .withRequiredArg()
-                .describedAs("consume offset")
+                .describedAs("new offset")
                 .ofType(Long.class)
                 .defaultsTo(OffsetRequest.EarliestTime());
         partitionOption = optionParser.accepts("partition", "The partition number. All partitions by default.")
@@ -105,21 +104,19 @@ public class OffsetManagement {
 
     private void resetInputAndSeekToEndIntermediateTopicOffsets() {
         final String inputTopic = options.valueOf(inputTopicOption);
-
         System.out.println("Resetting offsets for input topic " + inputTopic);
  
-        if (!topicExist(inputTopic)) {
+        if (!isAvailable(inputTopic)) {
             System.err.println("ERROR: chosen topic does not exist: " + inputTopic);
-            
             return;
         }
         
 
         final Properties config = new Properties();
         config.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, options.valueOf(bootstrapServerOption));
-        config.setProperty(ConsumerConfig.GROUP_ID_CONFIG, options.valueOf(applicationIdOption));
+        config.setProperty(ConsumerConfig.GROUP_ID_CONFIG, options.valueOf(groupIdOption));
         config.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        try (final KafkaConsumer<byte[], byte[]>  client = new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer())) {
+        try (final KafkaConsumer<byte[], byte[]> client = new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer())) {
 
             Collection<String> topicsToSubscribe = new ArrayList<>();
             topicsToSubscribe.add(inputTopic);
@@ -127,13 +124,12 @@ public class OffsetManagement {
             client.poll(1);
 
             final Collection<TopicPartition> partitions = client.assignment();
-            final Collection<TopicPartition> inputTopicPartitions = filterTopicPartition(partitions);
-            if (inputTopicPartitions.isEmpty()) {
-            	System.err.println("ERROR: no topics with the chosen name: " + inputTopic);
+            if (partitions.isEmpty()) {
+            	System.err.println("ERROR: no partitions for input topic: " + inputTopic);
             	return;
             }
             
-            final Collection<TopicPartition> filteredTopicPartitions = filterInputTopicPartition(inputTopicPartitions);
+            final Collection<TopicPartition> filteredTopicPartitions = filterTopicPartition(partitions);
             if (filteredTopicPartitions.isEmpty()) {
             	System.err.println("ERROR: no partitions with the chosen value: " + options.valueOf(partitionOption));
             	
@@ -145,15 +141,15 @@ public class OffsetManagement {
             if (offset.equals(OffsetRequest.EarliestTime())) {
             	
                 client.seekToBeginning(filteredTopicPartitions);
-                for (final TopicPartition p : filteredTopicPartitions) {
-            		client.position(p);
+                for (final TopicPartition partition : filteredTopicPartitions) {
+            		client.position(partition);
             	}
 
             } else {
             	
-            	for (final TopicPartition p : filteredTopicPartitions) {
-            		client.seek(p, offset);
-            		client.position(p);
+            	for (final TopicPartition partition : filteredTopicPartitions) {
+            		client.seek(partition, offset);
+            		client.position(partition);
             	}
             }
 
@@ -165,36 +161,6 @@ public class OffsetManagement {
         }
 
         System.out.println("Done.");
-    }
-
-    private boolean isInputTopic(final TopicPartition partition) {
-        final String topic = partition.topic();
-        if (options.valueOf(inputTopicOption).compareTo(topic) == 0) {
-        	return true;
-        }
-        
-        return false;
-    }
-    
-    private boolean isInputPartition(final TopicPartition partition) {
-    	Integer partitionNumber = partition.partition();
-	
-    	Integer inputPartitionNumber = options.valueOf(partitionOption);
-    	if (inputPartitionNumber == Integer.MIN_VALUE) {
-    		return true;
-    	}
-        
-    	return inputPartitionNumber.equals(partitionNumber);
-    }
-
-    
-    private boolean topicExist(String inputTopic) {
-        List<String> allTopics = retrieveAllTopics();
-		if (!allTopics.contains(inputTopic)) {
-			return false;
-		}
-		
-		return true;
     }
     
     private List<String> retrieveAllTopics() {
@@ -216,30 +182,31 @@ public class OffsetManagement {
         return allTopics;
     }
     
-    private Collection<TopicPartition> filterTopicPartition(Collection<TopicPartition> partitions) {
-        final Collection<TopicPartition> inputTopicPartitions = new HashSet<>();
-        for (final TopicPartition partition : partitions) {
-            if (isInputTopic(partition)) {
-                inputTopicPartitions.add(partition);
-            } else {
-                System.out.println("Skipping partition: " + partition);
-            }
-        }
-        
-        return inputTopicPartitions;
+    private boolean isAvailable(String inputTopic) {
+        List<String> allTopics = retrieveAllTopics();
+		if (!allTopics.contains(inputTopic)) {
+			return false;
+		}
+		
+		return true;
     }
     
-    private Collection<TopicPartition> filterInputTopicPartition(Collection<TopicPartition> partitions) {
-        final Collection<TopicPartition> inputTopicPartitions = new HashSet<>();
-        for (final TopicPartition partition : partitions) {
-            if (isInputPartition(partition)) {
-                inputTopicPartitions.add(partition);
-            } else {
-                System.out.println("Skipping partition: " + partition);
-            }
-        }
+    private Collection<TopicPartition> filterTopicPartition(Collection<TopicPartition> partitions) {        
+        return partitions
+        		.stream() 			
+        		.filter(this::isInputPartition)	
+        		.collect(Collectors.toList());
+    }
+    
+    private boolean isInputPartition(final TopicPartition partition) {
+    	Integer inputPartitionNumber = options.valueOf(partitionOption);
+    	if (inputPartitionNumber == Integer.MIN_VALUE) {
+    		return true;
+    	}
         
-        return inputTopicPartitions;
+    	Integer partitionNumber = partition.partition();
+
+    	return inputPartitionNumber.equals(partitionNumber);
     }
 }
 
