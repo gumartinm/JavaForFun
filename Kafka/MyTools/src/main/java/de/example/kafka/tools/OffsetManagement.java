@@ -97,18 +97,16 @@ public class OffsetManagement {
 
         try {
             options = optionParser.parse(args);
-        } catch (final OptionException e) {
+        } catch (final OptionException ex) {
             optionParser.printHelpOn(System.err);
-            throw e;
+            throw ex;
         }
     }
 
     private void manageOffsets() {
         final String inputTopic = options.valueOf(inputTopicOption);
-        System.out.println("Resetting offsets for input topic " + inputTopic);
- 
         if (!isAvailable(inputTopic)) {
-            System.err.println("ERROR: chosen topic does not exist: " + inputTopic);
+            System.err.println("Chosen topic does not exist: " + inputTopic);
             return;
         }
         
@@ -126,13 +124,13 @@ public class OffsetManagement {
 
             final Collection<TopicPartition> partitions = client.assignment();
             if (partitions.isEmpty()) {
-            	System.err.println("ERROR: no partitions for input topic: " + inputTopic);
+            	System.err.println("No partitions for input topic: " + inputTopic);
             	return;
             }
             
             final Collection<TopicPartition> filteredTopicPartitions = filterTopicPartition(partitions);
             if (filteredTopicPartitions.isEmpty()) {
-            	System.err.println("ERROR: no partitions with the chosen value: " + options.valueOf(partitionOption));
+            	System.err.println("No partitions with the chosen value: " + options.valueOf(partitionOption));
             	
             	return;
             }
@@ -156,8 +154,6 @@ public class OffsetManagement {
 
             client.commitSync();
         }
-
-        System.out.println("Done.");
     }
     
     private List<String> retrieveAllTopics() {
