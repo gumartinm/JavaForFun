@@ -72,12 +72,14 @@ public class OffsetManagement {
             .withRequiredArg()
             .ofType(String.class)
             .defaultsTo("localhost:9092")
-            .describedAs("urls");
+            .describedAs("urls")
+            .required();
         zookeeperOption = optionParser.accepts("zookeeper", "Format: HOST:POST")
             .withRequiredArg()
             .ofType(String.class)
             .defaultsTo("localhost:2181")
-            .describedAs("url");
+            .describedAs("url")
+            .required();
         inputTopicOption = optionParser.accepts("input-topic", "Topic name")
             .withRequiredArg()
             .ofType(String.class)
