@@ -14,17 +14,17 @@ mytopic:0:27,19
 #### 2. Running on CLI: 
 * By default reset offsets to the earliest value in every topic's partition:
 ```bash
-java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic
+java -jar build/libs/kafka-tool-offset-management-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic
 ```
 
 * We can do the same for just one topic's partition:
 ```bash
-java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic --partition 0
+java -jar build/libs/kafka-tool-offset-management-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic --partition 0
 ```
 
 * Choosing the offset value for just one topic's partition:
 ```bash
-java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic --offset 24 --partition 0
+java -jar build/libs/kafka-tool-offset-management-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic --offset 24 --partition 0
 ```
 
 
@@ -34,7 +34,7 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list kafka:9092,kafka
 mytopic:0:27,19
 
 Si ponemos menos de 19 en offset:
-java -jar build/libs/kafka-my-tools-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic --offset 18 --partition 0
+java -jar build/libs/kafka-tool-offset-management-0.1.0-SNAPSHOT.jar --bootstrap-servers kafka:9092,kafka:9093,kafka:9094 --zookeeper kafka:2181 --group-id mygroup --input-topic mytopic --offset 18 --partition 0
 
 El consumidor al arrancar da este error:
 2017-03-01 09:54:33.800  INFO 11748 --- [afka-consumer-1] o.a.k.c.consumer.internals.Fetcher       : Fetch offset 18 is out of range for partition mytopic-0, resetting offset
