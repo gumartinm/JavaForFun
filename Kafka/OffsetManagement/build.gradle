@@ -4,7 +4,7 @@ description = theDescription
 
 project.ext {
     // FATJAR
-    mainClassName = 'de.example.kafka.tools.OffsetManagement'
+    mainClassName = 'de.example.kafka.tool.OffsetManagement'
 
     // LOG4J2 dependencies
     slf4jVersion = '2.7'
@@ -156,7 +156,7 @@ publishing {
 jar {
     manifest {
         attributes('Main-Class': "$mainClassName",
-            'Implementation-Title': 'Kafka: my tools',
+            'Implementation-Title': theDescription,
             'Implementation-Version': theVersion,
             'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             'Built-By': System.getProperty('user.name'),

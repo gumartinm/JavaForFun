@@ -1,4 +1,4 @@
-package de.example.kafka.tools;
+package de.example.kafka.tool;
 
 import java.io.IOException;
 import java.util.ArrayList;
