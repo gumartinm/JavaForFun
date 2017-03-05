@@ -57,7 +57,6 @@ dependencies {
     compile('org.apache.kafka:kafka_2.11:0.10.1.1') {
         exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     }
-    compile('javax.validation:validation-api:1.1.0.Final')
 
 
     // Unit tests
