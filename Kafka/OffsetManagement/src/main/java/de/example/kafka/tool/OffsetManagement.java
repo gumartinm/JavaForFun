@@ -29,7 +29,7 @@ import kafka.utils.ZkUtils;
  */
 public class OffsetManagement {
     private static final int EXIT_CODE_SUCCESS = 0;
-    private static final int EXIT_CODE_ERROR = 1;
+    private static final int EXIT_CODE_ERROR = -1;
 
     private static OptionSpec<String> bootstrapServerOption;
     private static OptionSpec<String> zookeeperOption;
@@ -51,9 +51,10 @@ public class OffsetManagement {
         try {
             parseArguments(args);
             manageOffsets();
+        } catch (OptionException ex) {
+            exitCode = EXIT_CODE_ERROR;
         } catch (final Throwable ex) {
             exitCode = EXIT_CODE_ERROR;
-            
             System.err.println("ERROR: ");
             ex.printStackTrace();
         }
