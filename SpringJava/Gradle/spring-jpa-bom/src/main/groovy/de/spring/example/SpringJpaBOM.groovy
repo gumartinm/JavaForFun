@@ -93,9 +93,9 @@ class SpringJpaBOM implements Plugin<Project> {
 					maven { url 'https://plugins.gradle.org/m2/' }
 				}
                 // This is useless (it only works from the main build.gradle script)  Anyhow I am leaving here this configuration.
-                dependencies {
-                    classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
-                }
+                // dependencies {
+                //     classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
+                // }
 			}
 			apply plugin: 'java'
 			apply plugin: 'idea'
@@ -145,7 +145,8 @@ class SpringJpaBOM implements Plugin<Project> {
 						// By default, Maven scope will be runtime. We want scope compile :/
 						pom.withXml {
 							asNode().dependencies.'*'.findAll() {
-								it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+                                it.scope.text() == 'runtime' && project.configurations.hasProperty('compile')
+                                                             && project.configurations.compile.allDependencies.find { dep ->
 									dep.name == it.artifactId.text()
 								}
 							}.each() {
