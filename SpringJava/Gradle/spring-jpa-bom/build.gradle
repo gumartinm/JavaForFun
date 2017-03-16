@@ -1,0 +1,93 @@
+group = theGroup
+version = theVersion
+
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven-publish'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+// Required for using the install task (for local installation of this plugin)
+apply plugin: 'maven'
+
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
+
+
+// *****************   COMMON REPOSITORIES FOR DEPENDENCIES   *****************
+repositories {
+	mavenCentral()
+}
+
+// *****************   COMMON PLUGINS   *****************
+buildscript {
+	repositories {
+    	mavenCentral()
+        	maven { url 'https://plugins.gradle.org/m2/' }
+    }
+}
+
+// *****************   PUBLISH TO REPOSITORY   *****************
+// Calls javadoc plugin and creates jar with the generated docs
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier 'javadoc'
+}
+
+// Calls java plugin and creates jar with the sources
+task sourceJar(type: Jar) {
+    from sourceSets.main.java
+    classifier 'sources'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // Publishes war or jar file depending on whether we are using the war plugin.
+            if (plugins.withType(WarPlugin)) {
+                from components.web
+            } else {
+                from components.java
+            }
+
+            // Publishes jar with sources
+            artifact sourceJar {
+                classifier 'sources'
+            }
+            // Publishes jar with javadoc
+            artifact javadocJar {
+                classifier 'javadoc'
+            }
+
+            // By default, Maven scope will be runtime. We want scope compile :/
+            pom.withXml {
+                asNode().dependencies.'*'.findAll() {
+                    it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+                        dep.name == it.artifactId.text()
+                    }
+                }.each() {
+                    it.scope*.value = 'compile'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username project.artifactory_username
+                password project.artifactory_password
+            }
+
+            if(project.version.endsWith('-SNAPSHOT')) {
+                url 'http://artifactory/artifactory/libs-snapshot-local'
+            } else {
+                url 'http://artifactory/artifactory/libs-release-local'
+            }
+        }
+    }
+}
+
+
+// *****************   JAVADOC   *****************
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}

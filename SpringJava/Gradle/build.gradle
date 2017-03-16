@@ -1,5 +1,17 @@
-allprojects {
 
+buildscript {
+    repositories {
+         mavenLocal()
+         mavenCentral()
+         maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath group: "de.spring.jpa", name: "spring-jpa-bom", version: "1.0-SNAPSHOT"
+    }
+}
+
+
+allprojects {
 
     group = theGroup
     version = theVersion
@@ -8,5 +20,7 @@ allprojects {
     // You could use your gradle 'BOM' file in this way:
     // apply from: 'http://artifactory/artifactory/libs-snapshot-local/build-BOM-1.0-SNAPSHOT.gradle
 
-    apply from: "$rootProject.projectDir/build-BOM-1.0-SNAPSHOT.gradle"
+    // apply from: "$rootProject.projectDir/build-BOM-1.0-SNAPSHOT.gradle"
+    // See: http://stackoverflow.com/questions/9539986/how-to-share-a-common-build-gradle-via-a-repository
+    apply plugin: 'de.spring.example.springJpaBOM'
 }
