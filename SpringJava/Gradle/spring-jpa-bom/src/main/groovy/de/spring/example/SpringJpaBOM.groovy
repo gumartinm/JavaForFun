@@ -75,6 +75,25 @@ class SpringJpaBOM implements Plugin<Project> {
 		
 		// Be aware: I am not using allprojects because the main build.gradle should not create a jar file but it does :(
 		project.subprojects { closure -> 
+					
+			// *****************   COMMON REPOSITORIES FOR DEPENDENCIES   *****************
+			repositories {
+				mavenCentral()
+				maven { url 'https://dl.bintray.com/palantir/releases' }
+			}
+		
+
+		
+		    // *****************   COMMON PLUGINS   *****************
+			closure.buildscript {
+				repositories {
+					mavenCentral()
+					maven { url 'https://plugins.gradle.org/m2/' }
+				}
+				dependencies {
+					classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
+				}
+			}
 			apply plugin: 'java'
 			apply plugin: 'idea'
 			apply plugin: 'jacoco'
@@ -84,17 +103,9 @@ class SpringJpaBOM implements Plugin<Project> {
 		
 			targetCompatibility = 1.8
 			sourceCompatibility = 1.8
+
 			
-		
-			// *****************   COMMON REPOSITORIES FOR DEPENDENCIES   *****************
-			repositories {
-				mavenCentral()
-				maven { url 'https://dl.bintray.com/palantir/releases' }
-			}
-		
-		
-		
-						
+			
 			// *****************   PUBLISH TO REPOSITORY   *****************
 			// Calls javadoc plugin and creates jar with the generated docs
 			closure.task("javadocJar", type: Jar) {
@@ -155,6 +166,7 @@ class SpringJpaBOM implements Plugin<Project> {
 				}
 			}
 		
+
 		
 			// *****************   COMMON DEPENDENCIES   *****************
 			closure.dependencies {
@@ -181,17 +193,7 @@ class SpringJpaBOM implements Plugin<Project> {
 			}
 		
 		
-			// *****************   COMMON PLUGINS   *****************
-			closure.buildscript {
-				repositories {
-					mavenCentral()
-					maven { url 'https://plugins.gradle.org/m2/' }
-				}
-				dependencies {
-					classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
-				}
-			}
-		
+	
 			// *****************   MANIFEST FILE   *****************
 			jar {
 				manifest {
@@ -204,7 +206,7 @@ class SpringJpaBOM implements Plugin<Project> {
 				}
 			}
 		
-		
+
 		
 			// *****************   UNIT TESTS, COMMON CONFIGURATION   *****************
 			test {
@@ -223,6 +225,7 @@ class SpringJpaBOM implements Plugin<Project> {
 				}
 			}
 		
+
 		
 			// *****************   INTEGRATION TESTS, COMMON CONFIGURATION   *****************
 			// Using another directory for integration tests enable me to run all the unit tests quickly from my IDE (InteliJ or Eclipse)
@@ -296,6 +299,7 @@ class SpringJpaBOM implements Plugin<Project> {
 				}
 			}
 		
+
 		
 			// *****************   JAVADOC   *****************
 			javadoc {
