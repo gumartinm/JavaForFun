@@ -50,16 +50,7 @@ project.ext {
 
 // Be aware: I am not using allprojects because the main build.gradle should not create a jar file but it does :(
 subprojects {
-    apply plugin: 'java'
-    apply plugin: 'idea'
-    apply plugin: 'jacoco'
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
-    apply plugin: 'maven-publish'
-
-    targetCompatibility = 1.8
-    sourceCompatibility = 1.8
-    
+   
 
     // *****************   COMMON REPOSITORIES FOR DEPENDENCIES   *****************
     repositories {
@@ -68,6 +59,30 @@ subprojects {
     }
 
 
+    // *****************   COMMON PLUGINS   *****************
+    buildscript {
+        repositories {
+            mavenCentral()
+            maven { url 'https://plugins.gradle.org/m2/' }
+        }
+        // This is useless (it only works from the main build.gradle script)  Anyhow I am leaving here this configuration.
+        dependencies {
+            classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
+        }
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'jacoco'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
+    apply plugin: 'info.solidsoft.pitest'
+
+
+    targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+ 
 
     // *****************   PUBLISH TO REPOSITORY   *****************
     // Calls javadoc plugin and creates jar with the generated docs
@@ -154,17 +169,6 @@ subprojects {
         testCompile("org.mockito:mockito-core:${mockitoVersion}")
     }
 
-
-    // *****************   COMMON PLUGINS   *****************
-    buildscript {
-        repositories {
-            mavenCentral()
-            maven { url 'https://plugins.gradle.org/m2/' }
-        }
-        dependencies {
-            classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
-        }
-    }
 
     // *****************   MANIFEST FILE   *****************
     jar {

@@ -6,6 +6,10 @@ buildscript {
          maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
+        // Gradle sucks: I need to declare here plugins which are defined and applied from my BOM.
+        classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.11"
+
+
         classpath group: "de.spring.jpa", name: "spring-jpa-bom", version: "1.0-SNAPSHOT"
     }
 }
@@ -19,8 +23,10 @@ allprojects {
 
     // You could use your gradle 'BOM' file in this way:
     // apply from: 'http://artifactory/artifactory/libs-snapshot-local/build-BOM-1.0-SNAPSHOT.gradle
+    //apply from: "$rootProject.projectDir/build-BOM-1.0-SNAPSHOT.gradle"
 
-    // apply from: "$rootProject.projectDir/build-BOM-1.0-SNAPSHOT.gradle"
+    // Or by means of a Gradle plugin. Both ways behave in the same way but the plugin can be uploaded to artifactory repositories
+    // which use https and authentication. apply from does not allow to use https :(
     // See: http://stackoverflow.com/questions/9539986/how-to-share-a-common-build-gradle-via-a-repository
     apply plugin: 'de.spring.example.springJpaBOM'
 }

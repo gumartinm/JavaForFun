@@ -73,33 +73,37 @@ class SpringJpaBOM implements Plugin<Project> {
 		}
 		
 		
+
+		
 		// Be aware: I am not using allprojects because the main build.gradle should not create a jar file but it does :(
-		project.subprojects { closure -> 
-					
+		project.subprojects {
+			
 			// *****************   COMMON REPOSITORIES FOR DEPENDENCIES   *****************
 			repositories {
 				mavenCentral()
 				maven { url 'https://dl.bintray.com/palantir/releases' }
 			}
 		
-
+	
 		
-		    // *****************   COMMON PLUGINS   *****************
-			closure.buildscript {
+			// *****************   COMMON PLUGINS   *****************
+			buildscript {
 				repositories {
 					mavenCentral()
 					maven { url 'https://plugins.gradle.org/m2/' }
 				}
-				dependencies {
-					classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
-				}
+                // This is useless (it only works from the main build.gradle script)  Anyhow I am leaving here this configuration.
+                dependencies {
+                    classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
+                }
 			}
 			apply plugin: 'java'
 			apply plugin: 'idea'
 			apply plugin: 'jacoco'
-			apply plugin: 'eclipse'
-			apply plugin: 'idea'
+	        apply plugin: 'eclipse'
 			apply plugin: 'maven-publish'
+			apply plugin: 'info.solidsoft.pitest'
+
 		
 			targetCompatibility = 1.8
 			sourceCompatibility = 1.8
@@ -108,13 +112,13 @@ class SpringJpaBOM implements Plugin<Project> {
 			
 			// *****************   PUBLISH TO REPOSITORY   *****************
 			// Calls javadoc plugin and creates jar with the generated docs
-			closure.task("javadocJar", type: Jar) {
+			task("javadocJar", type: Jar) {
 				from javadoc
 				classifier 'javadoc'
 			}
 		
 			// Calls java plugin and creates jar with the sources
-			closure.task("sourceJar", type: Jar) {
+			task("sourceJar", type: Jar) {
 				from sourceSets.main.java
 				classifier 'sources'
 			}
@@ -169,7 +173,7 @@ class SpringJpaBOM implements Plugin<Project> {
 
 		
 			// *****************   COMMON DEPENDENCIES   *****************
-			closure.dependencies {
+			dependencies {
 				// 1/3 Required dependency for log4j 2 with slf4j: binding between log4j2 and slf4j
 				compile("org.apache.logging.log4j:log4j-slf4j-impl:${slf4jVersion}")
 				// 2/3 Required dependency for log4j 2 with slf4j: log4j 2 maven plugin (it is the log4j 2 implementation)
@@ -248,7 +252,7 @@ class SpringJpaBOM implements Plugin<Project> {
 			}
 			
 			
-			closure.task("integTest", type: Test) {
+			task("integTest", type: Test) {
 				// dependsOn startApp
 				// finalizedBy stopApp
 				description = 'Runs integration tests';
@@ -279,7 +283,7 @@ class SpringJpaBOM implements Plugin<Project> {
 				// mustRunAfter test
 			}
 			
-			closure.tasks.check.dependsOn(integTest)
+			tasks.check.dependsOn(integTest)
 		
 		
 		
