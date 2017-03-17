@@ -145,10 +145,7 @@ class SpringJpaBOM implements Plugin<Project> {
 						// By default, Maven scope will be runtime. We want scope compile :/
 						pom.withXml {
 							asNode().dependencies.'*'.findAll() {
-                                it.scope.text() == 'runtime' && project.configurations.hasProperty('compile')
-                                                             && project.configurations.compile.allDependencies.find { dep ->
-									dep.name == it.artifactId.text()
-								}
+								it.scope.text() == 'runtime'
 							}.each() {
 								it.scope*.value = 'compile'
 							}
