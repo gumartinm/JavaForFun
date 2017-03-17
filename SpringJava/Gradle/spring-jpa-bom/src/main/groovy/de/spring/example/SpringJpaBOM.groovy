@@ -92,7 +92,9 @@ class SpringJpaBOM implements Plugin<Project> {
 					mavenCentral()
 					maven { url 'https://plugins.gradle.org/m2/' }
 				}
-                // This is useless (it only works from the main build.gradle script)  Anyhow I am leaving here this configuration.
+				// No way of loading plugins inside another plugin. They must be loaded in classpath of the parent project.
+				// Because of that, I am commenting out this configuration :(
+				// Maven has something called pluginsManagement. Gradle lacks of this USEFUL feature.
                 // dependencies {
                 //     classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
                 // }
@@ -102,6 +104,7 @@ class SpringJpaBOM implements Plugin<Project> {
 			apply plugin: 'jacoco'
 	        apply plugin: 'eclipse'
 			apply plugin: 'maven-publish'
+			// Plugin must be loaded in the classpath of the parent project (no way of doing it inside a plugin)
 			apply plugin: 'info.solidsoft.pitest'
 
 		
