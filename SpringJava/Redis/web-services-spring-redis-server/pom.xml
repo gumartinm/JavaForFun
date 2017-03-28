@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>web-services-spring-redis-bom</artifactId>
+		<groupId>de.spring.webservices</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>web-services-spring-redis-server</artifactId>
+	<name>web-services-spring-redis-server</name>
+	<url>http://gumartinm.name</url>
+	<dependencies>
+        <dependency>
+            <groupId>de.spring.webservices</groupId>
+            <artifactId>web-services-spring-redis-global</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+	    <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Health check service with user and password -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        
+        <!-- REDIS HTTP SESSION -->
+        <dependency>
+        	<groupId>org.springframework.session</groupId>
+            <artifactId>spring-session</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-redis</artifactId>
+        	<version>1.4.5.RELEASE</version>
+        </dependency>
+		<dependency>
+		    <groupId>biz.paluch.redis</groupId>
+		    <artifactId>lettuce</artifactId>
+		    <version>4.3.1.Final</version>
+		</dependency>
+
+
+        <!--
+             Jackson dependency required for serializing and deserializing LocalDateTime,
+             LocalDate, etc, etc objects.
+        -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+
+		<!-- Unitary and integration tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+		<!-- Creates WADL from Spring REST annotations -->
+		<dependency>
+			<groupId>org.jvnet.ws.wadl</groupId>
+			<artifactId>wadl-core</artifactId>
+			<version>1.1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.ws.wadl</groupId>
+			<artifactId>wadl-client-plugin</artifactId>
+			<version>1.1.6</version>
+		</dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+		
+
+		<!-- API documentation -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		
+	</dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+             </plugin>
+             <plugin>
+            	<groupId>pl.project13.maven</groupId>
+            	<artifactId>git-commit-id-plugin</artifactId>
+        	</plugin>
+        </plugins>
+    </build>
+
+</project>
