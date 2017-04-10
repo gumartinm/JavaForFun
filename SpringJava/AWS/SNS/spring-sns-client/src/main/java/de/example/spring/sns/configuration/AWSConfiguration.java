@@ -13,12 +13,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.example.spring.sns.service.SenderNotificationServiceImpl;
 
 @Configuration
+//Using instance metadata: http://cloud.spring.io/spring-cloud-aws/spring-cloud-aws.html#_using_instance_metadata
 @EnableContextInstanceData
 public class AWSConfiguration {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AWSConfiguration.class);
-	
-	// Using instance metadata: http://cloud.spring.io/spring-cloud-aws/spring-cloud-aws.html#_using_instance_metadata
-	
+		
     @Value("${ami-id:N/A}")
     private String amiId;
 

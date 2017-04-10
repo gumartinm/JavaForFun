@@ -1,4 +1,4 @@
-package de.spring.webservices.rest.controller;
+package de.example.spring.sns.controller;
 
 import java.io.IOException;
 

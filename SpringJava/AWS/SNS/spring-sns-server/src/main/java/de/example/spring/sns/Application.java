@@ -1,4 +1,4 @@
-package de.spring.webservices.rest;
+package de.example.spring.sns;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
