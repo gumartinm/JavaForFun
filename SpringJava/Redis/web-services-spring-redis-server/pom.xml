@@ -40,13 +40,13 @@
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-starter-redis</artifactId>
         	<version>1.4.5.RELEASE</version>
+        	<exclusions>
+	        	<exclusion>
+	            	<groupId>org.springframework.boot</groupId>
+	            	<artifactId>spring-boot-starter-logging</artifactId>
+	        	</exclusion>
+	    	</exclusions>
         </dependency>
-		<dependency>
-		    <groupId>biz.paluch.redis</groupId>
-		    <artifactId>lettuce</artifactId>
-		    <version>4.3.1.Final</version>
-		</dependency>
-
 
         <!--
              Jackson dependency required for serializing and deserializing LocalDateTime,
@@ -64,37 +64,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-
-		<!-- Creates WADL from Spring REST annotations -->
-		<dependency>
-			<groupId>org.jvnet.ws.wadl</groupId>
-			<artifactId>wadl-core</artifactId>
-			<version>1.1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.ws.wadl</groupId>
-			<artifactId>wadl-client-plugin</artifactId>
-			<version>1.1.6</version>
-		</dependency>
-		<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-oxm</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-		
-
-		<!-- API documentation -->
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.6.1</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.6.1</version>
-		</dependency>
 		
 	</dependencies>
 

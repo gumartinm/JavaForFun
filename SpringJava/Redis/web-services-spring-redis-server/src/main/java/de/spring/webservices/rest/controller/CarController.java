@@ -28,11 +28,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.spring.webservices.domain.Car;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.ResponseHeader;
 
 @RestController
 @RequestMapping("/api/cars/")
@@ -44,11 +39,7 @@ public class CarController {
     @NotNull
     private final AtomicLong counter = new AtomicLong();
 
-	@ApiOperation(value = "Get all available cars", nickname = "getAllCars", responseContainer="List", response = Car.class)
-    @ApiResponses({
-        @ApiResponse(code =  404, message ="Specific getCars not found"),
-        @ApiResponse(code =  400, message ="Specific getCars invalid input")
-    })
+
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_UTF8_VALUE })
     @ResponseStatus(HttpStatus.OK)
     public List<Car> cars() {
@@ -60,15 +51,11 @@ public class CarController {
         return cars;
     }
 
-	@ApiOperation(value = "Get one car", nickname = "getOneCar", response = Car.class)
-    @ApiResponses({
-        @ApiResponse(code =  404, message ="Specific getCar not found"),
-        @ApiResponse(code =  400, message ="Specific getCar invalid input")
-    })
+
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public Car car(@RequestHeader(value = "MY_HEADER", required = false) String specialHeader,
-    		@ApiParam(name = "id", value = "Car id", required = true) @PathVariable("id") long id,
+    		@PathVariable("id") long id,
     		@RequestParam Map<String, String> params,
     		@RequestParam(value = "wheel", required = false) String[] wheelParams,
     		HttpServletRequest request) {
@@ -108,23 +95,16 @@ public class CarController {
     		}
     	}
     	
-        try {
-            Thread.sleep(10000);                 //1000 milliseconds is one second.
-        } catch(InterruptedException ex) {
-            Thread.currentThread().interrupt();
-        }
+//        try {
+//            Thread.sleep(10000);                 //1000 milliseconds is one second.
+//        } catch(InterruptedException ex) {
+//            Thread.currentThread().interrupt();
+//        }
 
 
         return new Car(counter.incrementAndGet(), String.format(TEMPLATE, id));
     }
     
-	@ApiOperation(code =  201, value = "Create one new car", nickname = "createNewCar")
-    @ApiResponses({
-    	@ApiResponse(code =  201, message ="Specific createCar with header",
-    			responseHeaders = { @ResponseHeader(name = HttpHeaders.LOCATION) }, response = Car.class),
-        @ApiResponse(code =  404, message ="Specific createCar not found"),
-        @ApiResponse(code =  400, message ="Specific createCar invalid input")
-    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Car> create(@RequestBody @Valid Car car) {

@@ -51,8 +51,6 @@ security:
     name: admin
     password: admin
 
-springfox.documentation.swagger.v2.path: /schema
-
 # By default Spring Boot uses logback.
 # logging:
 #   level:

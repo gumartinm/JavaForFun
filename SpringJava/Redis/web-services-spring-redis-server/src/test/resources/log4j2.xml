@@ -85,7 +85,9 @@
 
 
 		<Async name="Async">
+		<!--
             <AppenderRef ref="REMOTE" />
+		-->
         </Async>
     </Appenders>
 
