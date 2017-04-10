@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+    <display-name>Spring REST Services: example</display-name>
+
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+
+    <context-param>
+        <param-name>spring.profiles.active</param-name>
+        <param-value>${environment.profile}</param-value>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:spring-configuration/*.xml
+        </param-value>
+    </context-param>
+    
+    <!-- Spring REST support -->
+    <servlet>
+        <servlet-name>spring-rest</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+        <init-param>
+           <param-name>contextConfigLocation</param-name>
+           <param-value>classpath*:spring-configuration/mvc/rest/*.xml</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>spring-rest</servlet-name>
+        <!-- REQUIRED PATTERN BY swagger-ui. IT DOESN'T WORK WITH ANY OTHER o.O -->
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>

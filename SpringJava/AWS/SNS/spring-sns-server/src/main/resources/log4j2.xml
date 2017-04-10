@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+    status: The level of internal Log4j events that should be logged to the console.
+    Valid values for this attribute are "trace", "debug", "info", "warn", "error" and "fatal".
+    
+    monitorInterval: The minimum amount of time, in seconds, that must elapse before the file configuration is checked for changes.
+    
+    
+    see https://logging.apache.org/log4j/2.x/manual/configuration.html
+ -->
+<Configuration status="error" strict="true" monitorInterval="30"
+                name="XMLConfigTest" packages="org.apache.logging.log4j.test">
+
+    <!--
+        ALL > TRACE > DEBUG > INFO > WARN > ERROR > OFF
+        
+        ERROR by default.
+    -->
+
+
+    <Properties>
+        <Property name="REMOTE_HOST">172.30.4.2</Property>
+        <Property name="APP_NAME">rest-server</Property>
+    </Properties>
+
+
+    <Appenders>
+        <!--
+        If one of the layouts is configured with a location-related attribute like HTML locationInfo, or one of the
+        patterns %C or %class, %F or %file, %l or %location, %L or %line, %M or %method, Log4j will take a snapshot of
+        the stack, and walk the stack trace to find the location information.
+
+        This is an expensive operation: 1.3 - 5 times slower for synchronous loggers. Synchronous loggers wait as long as
+        possible before they take this stack snapshot. If no location is required, the snapshot will never be taken.
+
+        However, asynchronous loggers need to make this decision before passing the log message to another thread;
+        the location information will be lost after that point. The performance impact of taking a stack trace snapshot is
+        even higher for asynchronous loggers: logging with location is 30-100 times slower than without location.
+        For this reason, asynchronous loggers and asynchronous appenders do not include location information by default.
+
+        You can override the default behaviour in your logger or asynchronous appender configuration by specifying includeLocation="true".
+        -->
+        <Console name="STDOUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%X{UUID}] %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+
+
+
+
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- 
+            Specific log level for Spring WEBMVC.
+         -->
+        <Logger name="org.springframework.web" level="INFO" additivity="false">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+
+
+        <!-- 
+            General logging Spring.
+         -->
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+
+        <!-- 
+            Anything else will be using TRACE logging level.
+         -->
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>
