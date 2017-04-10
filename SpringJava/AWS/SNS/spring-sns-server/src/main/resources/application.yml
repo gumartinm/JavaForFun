@@ -8,44 +8,6 @@ spring:
 server:
   port: 8080
 
-management:
-  security:
-    enabled: true
-    roles: SUPERUSER
-  health:
-    # In this way we can enable just the health checks that we want.
-    defaults:
-      enabled: false
-    # Just enable my custom health check
-    custom:
-      enabled: true
-  info:
-    # In this way we can enable just the information that we want.
-    defaults:
-      enabled: false
-    # Enabling git information
-    git:
-      enabled: true
-      mode: FULL
-    # Enabling build information
-    build:
-      enabled: true
-    # Enabling my custom information
-    custom:
-      enabled: true
-  # Removing usless X-Application-Context HTTP header.
-  # It contains the application's name (I do not need it right now)
-  add-application-context-header: false
-endpoints:
-  sensitive: true
-  health:
-    sensitive: false
-    time-to-live: 2000
-security:
-  user:
-    name: admin
-    password: admin
-
 # By default Spring Boot uses logback.
 # logging:
 #   level:
@@ -63,8 +25,8 @@ logging:
 cloud:
   aws:
     credentials:
-      accessKey:
-      secretKey:
+      accessKey: ${AWS_ACCES_KEY}
+      secretKey: ${AWS_SECRET_KEY}
     region:
       auto: false
       static: eu-west-1
@@ -73,5 +35,5 @@ cloud:
 app:
   aws:
     sns:
-      topic-arn: arn:aws:sns:eu-west-1:269641089515:gus-sns-topic
+      topic-arn: ${AWS_SNS_ARN}
 

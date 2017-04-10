@@ -33,5 +33,4 @@ cloud:
 app:
   aws:
     sns:
-      # example: arn:aws:sns:eu-west-1:269641089515:gus-sns-topic
       topic-arn: ${AWS_SNS_ARN}
