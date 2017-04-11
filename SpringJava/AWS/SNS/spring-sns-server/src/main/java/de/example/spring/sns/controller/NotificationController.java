@@ -27,11 +27,12 @@ public class NotificationController {
 	}
 
 	@NotificationMessageMapping
-	public void handleNotificationMessage(@NotificationSubject String subject, @NotificationMessage String message) {
+	public void handleNotificationMessage(@NotificationSubject String subject, @NotificationMessage String payload) {
+		// TODO: Spring should convert String payload to NotificationDTO :(	
 		
 		LOGGER.info("Receiving data");
 		LOGGER.info("Subject: " + subject);
-		LOGGER.info("Message: " + message);
+		LOGGER.info("Message message: " + payload);
 		LOGGER.info("End receiving data");
 
 	}

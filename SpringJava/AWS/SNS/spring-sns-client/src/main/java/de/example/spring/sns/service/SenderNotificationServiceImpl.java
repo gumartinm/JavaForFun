@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
 import org.springframework.cloud.aws.messaging.core.TopicMessageChannel;
-import org.springframework.messaging.support.MessageBuilder;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,10 +27,9 @@ public class SenderNotificationServiceImpl {
 
 	
 	public void send(String subject, NotificationDTO notificationDTO) throws JsonProcessingException {
-		String body = objectMapper.writeValueAsString(notificationDTO);
+		String payload = objectMapper.writeValueAsString(notificationDTO);
 
 		notificationMessagingTemplate
-		.convertAndSend(topic, MessageBuilder.withPayload(body).build(),
-				Collections.<String, Object>singletonMap(TopicMessageChannel.NOTIFICATION_SUBJECT_HEADER, subject));
+		.convertAndSend(topic, payload, Collections.<String, Object>singletonMap(TopicMessageChannel.NOTIFICATION_SUBJECT_HEADER, subject));
 	}
 }
