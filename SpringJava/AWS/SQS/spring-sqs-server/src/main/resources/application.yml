@@ -1,0 +1,37 @@
+# Spring Boot configuration properties
+spring:
+  application:
+    name: spring-sns-server
+  main:
+    banner-mode: "LOG"
+
+server:
+  port: 8080
+
+# By default Spring Boot uses logback.
+# logging:
+#   level:
+#     org:
+#       springframework: info
+#     ROOT: info
+   
+# Using log4j2 (just for fun) It requires exclusions in spring-boot-starter because by default
+# Spring Boot will pick up the logback dependency :/
+logging:
+  config: classpath:log4j2.xml
+ 
+
+# AWS
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCES_KEY}
+      secretKey: ${AWS_SECRET_KEY}
+    region:
+      auto: false
+      static: eu-west-1
+      
+app:
+  aws:
+    sqs:
+      queue-name: ${AWS_SQS_QUEUE_NAME}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+	status: The level of internal Log4j events that should be logged to the console.
+	Valid values for this attribute are "trace", "debug", "info", "warn", "error" and "fatal".
+	
+	monitorInterval: The minimum amount of time, in seconds, that must elapse before the file configuration is checked for changes.
+	
+	
+	see https://logging.apache.org/log4j/2.x/manual/configuration.html
+ -->
+<Configuration status="error" strict="true" monitorInterval="30"
+                name="XMLConfigTest" packages="org.apache.logging.log4j.test">
+                
+	<!--
+		ALL > TRACE > DEBUG > INFO > WARN > ERROR > OFF
+		
+		ERROR by default.
+	-->
+                
+    <Appenders>
+        <Appender type="Console" name="STDOUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Appender>
+    </Appenders>
+    <Loggers>
+    
+        <!-- 
+    		Specific log level for Spring WEBMVC.
+    	 -->
+        <Logger name="org.springframework.web" level="INFO" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+    
+    
+       	<!-- 
+    		General logging Spring.
+    	 -->
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+    
+
+		<!-- 
+			Anything else will be using TRACE logging level.
+		 -->        
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+        
+    </Loggers>
+</Configuration>

@@ -1,0 +1,1 @@
+java -jar target/web-services-spring-rest-server-1.0-SNAPSHOT.jar
