@@ -30,6 +30,9 @@ public class AWSConfiguration {
     @Value("${services/domain:N/A}")
     private String serviceDomain;
     
+    @Value("${placement/availability-zone:N/A}")
+    private String region;
+    
 	@Value("${app.aws.sqs.queue-url}")
 	private String queueUrl;
 	
@@ -39,6 +42,7 @@ public class AWSConfiguration {
     	LOGGER.info("hostname: " + hostname);
     	LOGGER.info("instanceType: " + instanceType);
     	LOGGER.info("serviceDomain: " + serviceDomain);
+    	LOGGER.info("region: " + region);
     	LOGGER.info("queueUrl: " + queueUrl);
     	
 		return new SenderNotificationServiceImpl(amazonSqsAsync, queueUrl, objectMapper);

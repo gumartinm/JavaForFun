@@ -28,6 +28,7 @@ cloud:
       accessKey: ${AWS_ACCES_KEY}
       secretKey: ${AWS_SECRET_KEY}
     region:
+      # When no running in AWS environment automatic region detection crashes application
       auto: false
       static: eu-west-1
       

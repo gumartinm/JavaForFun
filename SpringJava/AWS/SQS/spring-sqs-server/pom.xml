@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>spring-sqs-bom</artifactId>
-		<groupId>de.spring.webservices</groupId>
+		<groupId>de.example.spring.sqs</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>spring-sqs-server</artifactId>
