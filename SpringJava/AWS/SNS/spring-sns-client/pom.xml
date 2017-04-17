@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>spring-sns-bom</artifactId>
-		<groupId>de.spring.webservices</groupId>
+		<groupId>de.example.spring.sns</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>spring-sns-client</artifactId>
