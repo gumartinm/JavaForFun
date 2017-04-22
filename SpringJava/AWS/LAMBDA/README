@@ -1,3 +1,9 @@
+mvn clean install assembly:single
+mvn dependency:sources
+mvn dependency:resolve -Dclassifier=javadoc
+
+
+
 CloudWatch logging output:
 
 START RequestId: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX Version: 2
