@@ -18,13 +18,6 @@
         ERROR by default.
     -->
 
-
-    <Properties>
-        <Property name="REMOTE_HOST">172.30.4.2</Property>
-        <Property name="APP_NAME">rest-server</Property>
-    </Properties>
-
-
     <Appenders>
         <!--
         If one of the layouts is configured with a location-related attribute like HTML locationInfo, or one of the
@@ -42,7 +35,7 @@
         You can override the default behaviour in your logger or asynchronous appender configuration by specifying includeLocation="true".
         -->
         <Console name="STDOUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%X{UUID}] %class{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level [%X{UUID}] %tn %class{36} %L %M - %msg%xEx%n"/>
         </Console>
 
 

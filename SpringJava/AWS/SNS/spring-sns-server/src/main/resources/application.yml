@@ -31,10 +31,3 @@ cloud:
       # When no running in AWS environment automatic region detection crashes application
       auto: false
       static: eu-west-1
-      
-# Application properties
-app:
-  aws:
-    sns:
-      topic-arn: ${AWS_SNS_ARN}
-

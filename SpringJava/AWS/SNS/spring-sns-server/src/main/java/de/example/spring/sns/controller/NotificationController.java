@@ -23,6 +23,9 @@ public class NotificationController {
 	public void handleSubscriptionMessage(NotificationStatus status) throws IOException {
 		LOGGER.info("We subscribe to start receive the message");
 		
+		
+		// Connects to the SubscribeURL given by the SNS Topic when the SNS Topic is trying to Subscribe to
+		// this SNS listener.
 		status.confirmSubscription();
 	}
 
