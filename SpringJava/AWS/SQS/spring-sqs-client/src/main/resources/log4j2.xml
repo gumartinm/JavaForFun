@@ -20,10 +20,17 @@
                 
     <Appenders>
         <Appender type="Console" name="STDOUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %tn %class{36} %L %M - %msg%xEx%n"/>
         </Appender>
     </Appenders>
     <Loggers>
+
+
+       <!-- Trace SQS messages -->
+       <Logger name="com.amazonaws.request" level="DEBUG" additivity="false">
+            <AppenderRef ref="STDOUT" />
+        </Logger>
+
     
         <!-- 
     		Specific log level for Spring WEBMVC.
