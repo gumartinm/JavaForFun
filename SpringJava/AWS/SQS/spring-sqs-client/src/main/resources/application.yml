@@ -1,7 +1,7 @@
 # Spring Boot configuration properties
 spring:
   application:
-    name: spring-sns-client
+    name: spring-sqs-client
   main:
     banner-mode: "LOG"
     # We do not need Tomcat running (this application runs from console)
@@ -23,8 +23,13 @@ logging:
 cloud:
   aws:
     credentials:
+      # Two options:
+      # 1- Declaring keys:
       accessKey: ${AWS_ACCES_KEY}
       secretKey: ${AWS_SECRET_KEY}
+      # 2- Given some IAM role to the AWS instance where this app will be running.
+      # AWS SDK used by Spring will retrieve the credentials from http://169.254.169.254/latest/meta-data/iam/security-credentials/
+      # cloud.aws.credentials.instanceProfile: true
     region:
       auto: false
       static: eu-west-1
