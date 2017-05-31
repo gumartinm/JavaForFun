@@ -26,11 +26,13 @@ cloud:
   aws:
     credentials:
       # Two options:
-      # 1- Declaring keys:
+      # 1- Running from our computer.
+      # Declaring keys:
       accessKey: ${AWS_ACCES_KEY}
       secretKey: ${AWS_SECRET_KEY}
       
-      # 2- Given some IAM role to the AWS instance where this app will be running (it only works when running inside EC2 instances)
+      # 2- Running from EC2 instances: 
+      # Given some IAM role to the AWS instance where this app will be running (it only works when running inside EC2 instances)
       # AWS SDK used by Spring will retrieve the credentials from http://169.254.169.254/latest/meta-data/iam/security-credentials/
       # Because of this line: https://github.com/spring-cloud/spring-cloud-aws/blob/1f54f4bc96e162c41af9bcd6db6dc3bc49aa7cf7/spring-cloud-aws-autoconfigure/src/main/java/org/springframework/cloud/aws/autoconfigure/context/ContextCredentialsAutoConfiguration.java#L54
       # if you want to use instanceProfile, accesKey must be commented out :/  IMHO it sucks!!!!
@@ -38,9 +40,12 @@ cloud:
       # So, this configuration just works inside EC2 instances!!!
       # instanceProfile: true
     region:
+      # 1- Running from our computer.
       # For development environments:
       auto: false
       static: eu-west-1
+      
+      # 2- Running from EC2 instances:
       # Anywhere else (inside EC2 instances)
       # auto: true
       
