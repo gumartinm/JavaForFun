@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-parent</artifactId>
-        <version>Camden.SR5</version>
+        <version>Dalston.SR1</version>
     </parent>
 
     <groupId>de.example.spring.kafka</groupId>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <version>1.1.2.RELEASE</version>
+            <version>1.2.1.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.integration</groupId>
@@ -187,7 +187,7 @@
                  <plugin>
                      <groupId>org.springframework.boot</groupId>
                      <artifactId>spring-boot-maven-plugin</artifactId>
-                     <version>1.4.4.RELEASE</version>
+                     <version>1.5.3.RELEASE</version>
                  </plugin>
             </plugins>
          </pluginManagement>
