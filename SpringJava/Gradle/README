@@ -8,4 +8,4 @@ Required by docker-compose-gradle-plugin
 export PATH="/mnt/docker:${PATH}"
 
 How to see the task list through less command and keeping the colors:
-gradle --console rich tasks 2>&1 | less -R
+./gradlew --console rich tasks 2>&1 | less -R
