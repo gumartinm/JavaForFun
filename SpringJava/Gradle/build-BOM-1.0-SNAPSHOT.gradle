@@ -73,7 +73,7 @@ subprojects {
         // }
     }
 
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'idea'
     apply plugin: 'jacoco'
     apply plugin: 'eclipse'
@@ -198,7 +198,7 @@ subprojects {
         jacoco {
             append = false
             destinationFile = file("$buildDir/jacoco/jacoco.exec")
-            classDumpFile = file("$buildDir/jacoco/classpathdumps")
+            classDumpDir = file("$buildDir/jacoco/classpathdumps")
         }
     }
 
@@ -249,7 +249,7 @@ subprojects {
         jacoco {
             append = false
             destinationFile = file("$buildDir/jacoco/jacoco-it.exec")
-            classDumpFile = file("$buildDir/jacoco/classpathIntegdumps")
+            classDumpDir = file("$buildDir/jacoco/classpathIntegdumps")
         }
     
         // mustRunAfter test
