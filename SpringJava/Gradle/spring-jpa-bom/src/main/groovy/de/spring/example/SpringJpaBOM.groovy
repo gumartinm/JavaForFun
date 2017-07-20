@@ -226,7 +226,7 @@ class SpringJpaBOM implements Plugin<Project> {
 				jacoco {
 					append = false
 					destinationFile = file("$buildDir/jacoco/jacoco.exec")
-					classDumpFile = file("$buildDir/jacoco/classpathdumps")
+					classDumpDir = file("$buildDir/jacoco/classpathdumps")
 				}
 			}
 		
@@ -278,7 +278,7 @@ class SpringJpaBOM implements Plugin<Project> {
 				jacoco {
 					append = false
 					destinationFile = file("$buildDir/jacoco/jacoco-it.exec")
-					classDumpFile = file("$buildDir/jacoco/classpathIntegdumps")
+					classDumpDir = file("$buildDir/jacoco/classpathIntegdumps")
 				}
 			
 				// mustRunAfter test
