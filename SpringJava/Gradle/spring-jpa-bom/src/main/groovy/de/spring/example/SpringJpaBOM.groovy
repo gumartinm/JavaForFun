@@ -99,7 +99,7 @@ class SpringJpaBOM implements Plugin<Project> {
                 //     classpath group: "info.solidsoft.gradle.pitest", name: "gradle-pitest-plugin", version: "1.1.4"
                 // }
 			}
-			apply plugin: 'java'
+			apply plugin: 'java-library'
 			apply plugin: 'idea'
 			apply plugin: 'jacoco'
 	        apply plugin: 'eclipse'
