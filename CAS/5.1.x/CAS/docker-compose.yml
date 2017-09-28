@@ -1,0 +1,29 @@
+version: '3'
+services:
+    cas:
+        build: .
+        container_name: "cas"
+        privileged: true
+        logging:
+            driver: syslog
+            options:
+                syslog-address: unixgram:///run/systemd/journal/syslog
+                syslog-facility: local7
+                tag: cas
+                syslog-format: rfc5424
+        depends_on:
+            - mongo
+    mongo:
+        image: mongo:3.4.9
+        container_name: "mongo"
+        privileged: true
+        logging:
+            driver: syslog
+            options:
+                syslog-address: unixgram:///run/systemd/journal/syslog
+                syslog-facility: local7
+                tag: mongodb
+                syslog-format: rfc5424
+        ports:
+            - 27017:27017
+        command: mongod --smallfiles --storageEngine wiredTiger --traceExceptions
