@@ -25,16 +25,14 @@
             <scope>runtime</scope>
         </dependency>
 
-	<!-- Zipkin -->
-	<dependency>
-     	    <groupId>org.apereo.cas</groupId>
-     	    <artifactId>cas-server-support-sleuth</artifactId>
-     	    <version>${cas.version}</version>
-	</dependency>
-
 	<dependency>
      	    <groupId>org.apereo.cas</groupId>
      	    <artifactId>cas-server-support-mongo-service-registry</artifactId>
+     	    <version>${cas.version}</version>
+	</dependency>
+	<dependency>
+     	    <groupId>org.apereo.cas</groupId>
+     	    <artifactId>cas-server-support-mongo-ticket-registry</artifactId>
      	    <version>${cas.version}</version>
 	</dependency>
     </dependencies>

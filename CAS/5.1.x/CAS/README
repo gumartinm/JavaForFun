@@ -1,5 +1,9 @@
 mvn clean package -DskipTests=true
 mvn clean package spring-boot:run
 mvn dependency:sources && mvn dependency:resolve -Dclassifier=javadoc
+
 java -jar -Dcas.log.dir=/home/gustavo/GIT/JavaForFun/CAS/5.1.x/CAS/logs/ target/gumartinm-cas-management-2.0-SNAPSHOT.war
 java -jar -Dcas.log.dir=/home/gustavo/GIT/JavaForFun/CAS/5.1.x/CAS/logs/ -Djaxp.debug=1 -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y target/gumartinm-cas-2.0-SNAPSHOT.war
+
+
+docker-compose run cas
