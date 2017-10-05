@@ -7,3 +7,70 @@ java -jar -Dcas.standalone.config=/home/gustavo/GIT/JavaForFun/CAS/5.1.x/CAS/con
 
 
 docker-compose run cas
+
+
+
+##################################################### Service Registry configuration #####################################################
+
+{
+    "id" : 10000001,
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^http://liferaygus.gusad.com",
+    "name" : "LIFERAYGUS",
+    "description" : "LiferayGUS application",
+    "proxyPolicy" : {
+        "@class" : "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
+    },
+    "evaluationOrder" : 0,
+    "usernameAttributeProvider" : {
+        "@class" : "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider",
+        "canonicalizationMode" : "NONE",
+        "encryptUsername" : false
+    },
+
+
+    # https://apereo.github.io/cas/5.1.x/installation/Logout-Single-Signout.html#back-channel
+    # Podemos hacer logout usando el back channel (lo que ya conoces) o también puede hacerlo el navegador del
+    # usuario mediante JSONP 😮. Esto se conseguiría con el valor logoutType=FRONT_CHANNEL
+    "logoutType" : "BACK_CHANNEL",
+
+
+    # https://apereo.github.io/cas/5.1.x/installation/Logout-Single-Signout.html#service-endpoint-for-logout-requests
+    # By default, logout requests are submitted to the original service id collected at the time of authentication.
+    # CAS has the option to submit such requests to a specific service endpoint that is different from the original service id,
+    # and of course can be configured on a per-service level. This is useful in cases where the application that is integrated with CAS
+    # does not exactly use a CAS client that supports intercepting such requests and instead, exposes a different endpoint for its logout operations.
+    # Por defecto llama al servicio original. No usar este campo si no es necesario.
+    # "logoutUrl" : "https://web.application.net/logout"
+
+
+    "requiredHandlers" : [],
+    "attributeReleasePolicy" : {
+        "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+        "allowedAttributes" : [],
+        "principalAttributesRepository" : {
+            "@class" : "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository",
+            "expiration" : 2,
+            "timeUnit" : "HOURS"
+        },
+        "authorizedToReleaseCredentialPassword" : false,
+        "authorizedToReleaseProxyGrantingTicket" : false,
+        "excludeDefaultAttributes" : false
+    },
+    "multifactorPolicy" : {
+        "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+        "multifactorAuthenticationProviders" : [],
+        "failureMode" : "CLOSED",
+        "bypassEnabled" : false
+    },
+    "accessStrategy" : {
+        "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+        "enabled" : true,
+        "ssoEnabled" : true,
+        "requireAllAttributes" : true,
+        "requiredAttributes" : {},
+        "rejectedAttributes" : {},
+        "caseInsensitive" : false
+    },
+    "properties" : {}
+}
