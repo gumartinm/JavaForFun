@@ -25,16 +25,31 @@
             <scope>runtime</scope>
         </dependency>
 
+	<!-- Service Registry -->
 	<dependency>
      	    <groupId>org.apereo.cas</groupId>
      	    <artifactId>cas-server-support-mongo-service-registry</artifactId>
      	    <version>${cas.version}</version>
 	</dependency>
+
+	<!-- Ticket Registry -->
 	<dependency>
      	    <groupId>org.apereo.cas</groupId>
      	    <artifactId>cas-server-support-mongo-ticket-registry</artifactId>
      	    <version>${cas.version}</version>
 	</dependency>
+
+	<!-- Throttling Authentication Attempts -->
+	<dependency>
+    	    <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-support-throttle-jdbc</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+	<dependency>
+   	     <groupId>mysql</groupId>
+             <artifactId>mysql-connector-java</artifactId>
+             <version>5.1.44</version>
+        </dependency>
     </dependencies>
 
     <build>

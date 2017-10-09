@@ -13,6 +13,7 @@ services:
                 syslog-format: rfc5424
         depends_on:
             - mongo
+            - mysql
     mongo:
         image: mongo:3.4.9
         container_name: "mongo"
@@ -27,3 +28,20 @@ services:
         ports:
             - 27017:27017
         command: mongod --smallfiles --storageEngine wiredTiger --traceExceptions
+    mysql:
+        image: mysql-server:5.7
+        container_name: "mysql"
+        privileged: true
+        logging:
+            driver: syslog
+            options:
+                syslog-address: unixgram:///run/systemd/journal/syslog
+                syslog-facility: local7
+                tag: mysql
+                syslog-format: rfc5424
+        ports:
+            - 3306:3306
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_USER=cas
+            - MYSQL_PASSWORD=
