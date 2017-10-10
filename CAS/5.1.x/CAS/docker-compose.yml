@@ -29,7 +29,7 @@ services:
             - 27017:27017
         command: mongod --smallfiles --storageEngine wiredTiger --traceExceptions
     mysql:
-        image: mysql-server:5.7
+        image: mysql/mysql-server:5.7
         container_name: "mysql"
         privileged: true
         logging:
@@ -45,3 +45,6 @@ services:
             - MYSQL_ROOT_PASSWORD=root
             - MYSQL_USER=cas
             - MYSQL_PASSWORD=
+# See: https://github.com/mysql/mysql-docker/blob/mysql-server/5.5/docker-entrypoint.sh#L150
+        volumes:
+            - ./database/data:/docker-entrypoint-initdb.d

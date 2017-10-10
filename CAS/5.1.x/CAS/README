@@ -7,6 +7,7 @@ java -jar -Dcas.standalone.config=/home/gustavo/GIT/JavaForFun/CAS/5.1.x/CAS/con
 
 
 docker-compose run cas
+To rebuild cas image you must use: `docker-compose build` or `docker-compose up --build`.
 
 
 
