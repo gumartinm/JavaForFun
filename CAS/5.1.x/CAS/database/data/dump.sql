@@ -9,12 +9,16 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE SCHEMA IF NOT EXISTS `cas` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+CREATE DATABASE IF NOT EXISTS `cas` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
 
 USE `cas`;
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
+
+-- The JPA Entity related to this table is defined in this Java class: org.apereo.cas.audit.entity.AuditTrailEntity
+-- Instead of using this SQL script we could let Hibernate create this table for us.
+--     see: hibernate.hbm2ddl.auto property located in org.apereo.cas.configuration.support.LocalContainerEntityManagerFactoryBean
 
 CREATE TABLE IF NOT EXISTS `COM_AUDIT_TRAIL` (
   `AUD_USER`      VARCHAR(100) COLLATE utf8mb4_unicode_ci NOT NULL,

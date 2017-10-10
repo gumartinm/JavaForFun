@@ -40,6 +40,11 @@
 	</dependency>
 
 	<!-- Throttling Authentication Attempts -->
+        <dependency>
+      	    <groupId>org.apereo.cas</groupId>
+      	    <artifactId>cas-server-support-audit-jdbc</artifactId>
+      	    <version>${cas.version}</version>
+	</dependency>
 	<dependency>
     	    <groupId>org.apereo.cas</groupId>
             <artifactId>cas-server-support-throttle-jdbc</artifactId>

@@ -44,7 +44,8 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=root
             - MYSQL_USER=cas
-            - MYSQL_PASSWORD=
+            - MYSQL_DATABASE=cas
+            - MYSQL_PASSWORD=cas
 # See: https://github.com/mysql/mysql-docker/blob/mysql-server/5.5/docker-entrypoint.sh#L150
         volumes:
             - ./database/data:/docker-entrypoint-initdb.d
