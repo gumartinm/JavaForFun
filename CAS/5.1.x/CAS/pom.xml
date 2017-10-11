@@ -50,6 +50,14 @@
             <artifactId>cas-server-support-throttle-jdbc</artifactId>
             <version>${cas.version}</version>
         </dependency>
+
+	<!-- Events -->
+        <dependency>
+  	    <groupId>org.apereo.cas</groupId>
+  	    <artifactId>cas-server-support-events-mongo</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+
 	<dependency>
    	     <groupId>mysql</groupId>
              <artifactId>mysql-connector-java</artifactId>
