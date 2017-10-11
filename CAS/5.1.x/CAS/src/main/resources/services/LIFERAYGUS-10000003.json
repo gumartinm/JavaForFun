@@ -1,0 +1,14 @@
+{
+    "@class" : "org.apereo.cas.services.RegexRegisteredService",
+    "serviceId" : "^http://liferaygus.gusad.com",
+    "id" : 10000003,
+    "name" : "LIFERAYGUS",
+    "description" : "LiferayGUS application",
+    "evaluationOrder" : 0,
+    "logoutType" : "BACK_CHANNEL",
+    "accessStrategy" : {
+        "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+        "enabled" : true,
+        "ssoEnabled" : true
+    }
+}
