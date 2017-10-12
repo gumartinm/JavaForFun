@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="5">
     <Properties>
         <!-- 
         Default log directory is the current directory but that can be overridden with -Dcas.log.dir=<logdir>

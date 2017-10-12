@@ -14,15 +14,10 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="cas-management" fileName="${sys:cas.log.dir}/cas-management.log" append="true"
-                     filePattern="${sys:cas.log.dir}/cas-management-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="512 KB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
+
+        <File name="cas-management" append="true" bufferedIO="true" immediateFlush="true" locking="false" fileName="${sys:cas.log.dir}/cas-management.log">
+                <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+        </File>
     </Appenders>
     <Loggers>
         <AsyncLogger name="org.springframework" level="warn" />

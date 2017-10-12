@@ -25,7 +25,7 @@
             <scope>runtime</scope>
         </dependency>
 
-	<!-- Service Registry -->
+	<!-- Service Registry: the same as the one used by CAS-MANAGEMENT -->
 	<dependency>
      	    <groupId>org.apereo.cas</groupId>
      	    <artifactId>cas-server-support-mongo-service-registry</artifactId>
