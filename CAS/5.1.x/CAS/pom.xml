@@ -39,6 +39,13 @@
      	    <version>${cas.version}</version>
 	</dependency>
 
+	<!-- Webflow Session -->
+	<dependency>
+  	    <groupId>org.apereo.cas</groupId>
+            <artifactId>cas-server-webapp-session-redis</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+
 	<!-- Throttling Authentication Attempts -->
         <dependency>
       	    <groupId>org.apereo.cas</groupId>

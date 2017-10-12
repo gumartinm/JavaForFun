@@ -14,6 +14,9 @@ services:
         depends_on:
             - mongo
             - mysql
+            - redis
+
+# Service registry, ticket registry, events:
     mongo:
         image: mongo:3.4.9
         container_name: "mongo"
@@ -28,6 +31,8 @@ services:
         ports:
             - 27017:27017
         command: mongod --smallfiles --storageEngine wiredTiger --traceExceptions
+
+# Audit and throttling:
     mysql:
         image: mysql/mysql-server:5.7
         container_name: "mysql"
@@ -46,6 +51,22 @@ services:
             - MYSQL_USER=cas
             - MYSQL_DATABASE=cas
             - MYSQL_PASSWORD=cas
+
+# Webflow session:
+    redis:
+        image: redis:4.0.2
+        container_name: "redis"
+        privileged: true
+        logging:
+            driver: syslog
+            options:
+                syslog-address: unixgram:///run/systemd/journal/syslog
+                syslog-facility: local7
+                tag: mysql
+                syslog-format: rfc5424
+        ports:
+            - 6379:6379
+        command: redis-server --requirepass redis
 # See: https://github.com/mysql/mysql-docker/blob/mysql-server/5.5/docker-entrypoint.sh#L150
         volumes:
             - ./database/data:/docker-entrypoint-initdb.d
