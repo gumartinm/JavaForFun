@@ -51,6 +51,9 @@ services:
             - MYSQL_USER=cas
             - MYSQL_DATABASE=cas
             - MYSQL_PASSWORD=cas
+# See: https://github.com/mysql/mysql-docker/blob/mysql-server/5.5/docker-entrypoint.sh#L150
+        volumes:
+            - ./database/data:/docker-entrypoint-initdb.d
 
 # Webflow session:
     redis:
@@ -67,6 +70,3 @@ services:
         ports:
             - 6379:6379
         command: redis-server --requirepass redis
-# See: https://github.com/mysql/mysql-docker/blob/mysql-server/5.5/docker-entrypoint.sh#L150
-        volumes:
-            - ./database/data:/docker-entrypoint-initdb.d
