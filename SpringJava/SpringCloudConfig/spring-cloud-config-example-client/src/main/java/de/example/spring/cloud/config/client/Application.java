@@ -23,6 +23,6 @@ public class Application {
 
     @GetMapping("/username")
     public String findOne() {
-        return String.format("Cobra files. Name: %s / Surname: '%s'", name, surname);
+        return String.format("Cobra files. Name: %s / Surname: %s", name, surname);
     }
 }

@@ -1,0 +1,3 @@
+Build: ./mvnw clean install
+Run, development environment: ./mvnw spring-boot:run -Drun.profiles=development
+Run, production environment: ./mvnw spring-boot:run -Drun.profiles=production
