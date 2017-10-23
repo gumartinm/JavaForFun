@@ -2,9 +2,14 @@ server:
   port: 8888
 
 spring:
+  profiles:
+    active: native
   cloud:
     config:
       server:
-        git:
-          uri: https://github.com/gumartinm/JavaForFun/
-          clone-on-start: true
+        native:
+          searchLocations: file:///${user.home}/config-repo/{application}/{profile}/
+security:
+  user:
+    password: messwiththebest
+    name: root

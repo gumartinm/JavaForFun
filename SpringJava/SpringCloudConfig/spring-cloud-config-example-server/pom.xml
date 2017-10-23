@@ -137,26 +137,22 @@
                     </execution>
                 </executions>
             </plugin>
-      	</plugins>
 
-         <pluginManagement>
-            <plugins>
-                <!--
-                      It will create our running jar file.
-                      The main class must be located in: src/main/java/de/example/spring/cloud/config
-                      otherwise you need an explicit declaration using this property
-                      <start-class>de.exmaple.spring.cloud.config.Application</start-class>
+            <!--
+                  It will create our running jar file.
+                  The main class must be located in: src/main/java/de/example/spring/cloud/config
+                  otherwise you need an explicit declaration using this property
+                  <start-class>de.exmaple.spring.cloud.config.Application</start-class>
 
-                      The start-class property is automatically populated by spring-boot-maven-plugin and it is
-                      used in spring-boot-starter-parent.
-                    
-                      See: http://docs.spring.io/spring-boot/docs/1.0.1.RELEASE/reference/html/build-tool-plugins-maven-plugin.html#build-tool-plugins-maven-packaging-optional-params
-                 -->
-                 <plugin>
-                     <groupId>org.springframework.boot</groupId>
-                     <artifactId>spring-boot-maven-plugin</artifactId>
-                 </plugin>
-            </plugins>
-         </pluginManagement>
+                  The start-class property is automatically populated by spring-boot-maven-plugin and it is
+                  used in spring-boot-starter-parent.
+
+                  See: http://docs.spring.io/spring-boot/docs/1.0.1.RELEASE/reference/html/build-tool-plugins-maven-plugin.html#build-tool-plugins-maven-packaging-optional-params
+             -->
+             <plugin>
+                 <groupId>org.springframework.boot</groupId>
+                 <artifactId>spring-boot-maven-plugin</artifactId>
+             </plugin>
+        </plugins>
 	</build>
 </project>
