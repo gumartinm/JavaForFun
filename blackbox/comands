@@ -1,0 +1,15 @@
+blackbox_initialize
+
+git commit -m 'INITIALIZE BLACKBOX'
+
+vim ../keyrings/live/blackbox-admins.txt
+   gu.martinm@gmail.com
+
+vim ../keyrings/live/blackbox-files.txt
+   blackbox/file.txt
+
+blackbox_register_new_file file.txt
+
+blackbox_addadmin gu.martinm@gmail.com
+
+git commit -m'NEW ADMIN: gu.martinm@gmail.com' keyrings/live/pubring.kbx keyrings/live/trustdb.gpg keyrings/live/blackbox-admins.txt
