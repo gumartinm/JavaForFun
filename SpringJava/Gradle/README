@@ -9,3 +9,9 @@ export PATH="/mnt/docker:${PATH}"
 
 How to see the task list through less command and keeping the colors:
 ./gradlew --console rich tasks 2>&1 | less -R
+
+How to see dependencies
+./gradlew --console rich dependencies 2>&1 | less -R
+
+Force download SNAPSHOT dependencies
+./gradlew clean build  --refresh-dependencies
