@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+        <groupId>de.spring.jpa</groupId>
+        <artifactId>spring-webreactive-bom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+	
+	<artifactId>spring-webreactive-persistence</artifactId>
+	<name>SPRING WEB REACTIVE PERSISTENCE</name>
+	<url>https://gumartinm.name/</url>
+	<description>Web Reactive Spring Framework. Persistence.</description>
+
+	<dependencies>
+			
+		<!-- Required JPA dependencies with hibernate -->
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+		</dependency>
+				<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+
+		<!-- Auditory using Hibernate Envers -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-envers</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-envers</artifactId>
+		</dependency>
+
+		<!--
+			Required by spring-context for using JSR-303. See LocalValidatorFactoryBean 
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		
+		
+		<!--
+			Jackson JSON Processor, required by spring-webmvc. See messageConverters 
+			in rest-config.xml
+		-->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<!-- Using Querydsl -->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+		</dependency>
+
+		<!-- Loading data base in run time -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
+		<!-- Unitary and integration tests -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+           	<groupId>com.h2database</groupId>
+           	<artifactId>h2</artifactId>
+           	<scope>test</scope>
+       	</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>			
+			<!-- Using Querydsl -->
+			<plugin>
+			  <groupId>com.mysema.maven</groupId>
+			  <artifactId>apt-maven-plugin</artifactId>
+			  <executions>
+			    <execution>
+			      <goals>
+			        <goal>process</goal>
+			      </goals>
+			      <configuration>
+			      	<outputDirectory>${project.build.directory}/generated-sources/querydsl</outputDirectory>
+			        <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+			      </configuration>
+			    </execution>
+			  </executions>
+			</plugin>
+			<!-- Required in order to work with m2e plugin for Eclipse  -->
+	        <plugin>
+	            <groupId>org.codehaus.mojo</groupId>
+	            <artifactId>build-helper-maven-plugin</artifactId>
+	            <executions>
+	                <execution>
+	                    <id>add-source</id>
+	                    <phase>generate-sources</phase>
+	                    <goals>
+	                        <goal>add-source</goal>
+	                    </goals>
+	                    <configuration>
+	                        <sources>
+	                            <source>${project.build.directory}/generated-sources/querydsl</source>
+	                        </sources>
+	                    </configuration>
+	                </execution>
+	            </executions>
+	        </plugin>
+		</plugins>
+	</build>
+</project>

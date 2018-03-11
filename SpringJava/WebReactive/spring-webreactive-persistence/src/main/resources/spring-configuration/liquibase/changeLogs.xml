@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+	<!--
+		We do not need this configuration because our driver take cares of creating
+		mybatis_example if it does not exist because we are using these options:
+		
+		MYSQL: createDatabaseIfNotExist
+		H2: INIT=create schema if not exists mybatis_example
+		
+		:)
+		
+	<changeset author="gustavo" id="1">
+		<sql>
+			create schema if not exists mybatis_example
+		</sql>
+	</changeset>
+	-->
+
+    <!-- DDL -->
+    <include file="spring-configuration/liquibase/ddlChangelog.xml" />
+
+    <!--
+    <changeSet author="gustavo" id="2">
+    	Instead of using liquibase for loading data (dmlChangelog.xml), we could be using SQL statements.
+    	
+        <sqlFile path="liquibase/dml.sql" stripComments="true"/>
+    </changeSet>
+    -->
+
+    
+    <!-- DML -->
+    <include file="spring-configuration/liquibase/dmlChangelog.xml" />
+
+</databaseChangeLog>

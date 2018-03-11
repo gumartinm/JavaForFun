@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+   
+   	<!--
+   		I am declaring my beans without the automatic annotation. :/
+   		Better because we are saving memory but it requires more configuration.
+   		
+   		See: org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser
+   		<mvc:annotation-driven/>
+   	 -->
+   	 
+   
+	<context:annotation-config />
+   
+	<context:component-scan base-package="de.spring.example.rest, org.resthub"/>
+	
+	<!--
+		Required beans for generating XML responses from Java objects using JAXB annotations
+		Jackson also works but it doesn't generate XML with namespaces... O.o
+		
+		This implementation will be slower than the one using Jackson :( but I am going to use it just for WADL generation :)
+	-->    
+    <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="packagesToScan" value="org.jvnet.ws.wadl"/>
+    </bean>
+	<bean id="jaxbConverter" class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+      	<constructor-arg ref="jaxbMarshaller" />
+   	</bean>
+    
+	<!-- Required beans for generating JSON responses from Java objects -->
+    <bean id="jsonObjectMapperFactory" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"
+    	p:indentOutput="true" p:failOnEmptyBeans="false">
+        <property name="featuresToDisable">
+            <array>
+                <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES"/>
+                
+                <!-- Useful when using Java 8 objects like OffsetDateTime.
+                	 I want to keep the offset in time zone if it exists.
+                	 
+                	 LIKE THIS ONE: 2014-07-03 23:27:36+0100
+                -->
+                <util:constant static-field="com.fasterxml.jackson.databind.DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE"/>
+                
+                <util:constant static-field="com.fasterxml.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION"/>
+            </array>
+        </property>
+        <property name="modulesToInstall" ref="customJacksonModules"/>
+    </bean>
+    
+    <util:list id="messageConverters">
+        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" p:objectMapper-ref="jsonObjectMapperFactory"/>
+		<ref bean="jaxbConverter" />
+        <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+    </util:list>
+
+
+	<bean name="handlerAdapter"
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer">
+			<bean
+				class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+				<!-- It enables us to use JSR-303 -->
+				<property name="validator">
+					<bean class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+				</property>
+			</bean>
+		</property>
+		<property name="messageConverters" ref="messageConverters" />
+		
+		
+		<property name="requestBodyAdvice">
+			<util:list>
+				<bean id="requestBodyAdvice" class="org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice"/>
+			</util:list>
+		</property>
+		
+		
+		<property name="responseBodyAdvice">
+			<util:list>
+				<bean id="responseBodyAdvice" class="org.springframework.web.servlet.mvc.method.annotation.JsonViewResponseBodyAdvice"/>
+			</util:list>
+		</property>
+	</bean>
+    
+	<bean id="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+
+
+	<util:list id="customJacksonModules">
+		<array>
+			<value type="java.lang.Class">de.spring.example.rest.resource.modules.SpringJpaModule</value>
+		</array>		
+	</util:list>
+	
+	<mvc:default-servlet-handler />
+	
+	
+	<mvc:interceptors>
+		<bean class="de.spring.example.rest.handler.UsernameHandler"/>
+	</mvc:interceptors>
+	
+</beans>

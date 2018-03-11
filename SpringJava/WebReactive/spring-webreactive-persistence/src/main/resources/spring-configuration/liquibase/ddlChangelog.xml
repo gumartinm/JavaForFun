@@ -1,0 +1,184 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <!--
+        Liquibase update database with new change sets. Examples.
+
+    <changeSet author="gustavo test" id="1" labels="VERSIONA">
+        <sql>
+            CREATE TABLE VERSIONA (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci
+        </sql>
+    </changeSet>
+
+    <changeSet author="gustavo test" id="2" labels="VERSIONB">
+        <sql>
+            CREATE TABLE VERSIONB (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci
+        </sql>
+    </changeSet>
+
+    <changeSet author="gustavo test" id="3" labels="VERSIONC">
+        <sql>
+            CREATE TABLE VERSIONC (id SERIAL, company_id BIGINT, company_categ_id BIGINT, ad_gps BLOB, ad_mobile_image varchar(255), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY (id)) ENGINE=InnoDB, DEFAULT CHARSET=utf8mb4, COLLATE=utf8mb4_unicode_ci
+        </sql>
+    </changeSet>
+    -->
+
+    <changeSet author="gustavo (generated)" id="1469119656864-1" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="AD">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="COMPANY_ID" type="BIGINT"/>
+            <column name="COMPANY_CATEG_ID" type="BIGINT"/>
+            <column name="AD_GPS" type="BLOB"/>
+            <column name="AD_MOBILE_IMAGE" type="VARCHAR(255)"/>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="CREATED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="1971-01-01 00:00:01" name="UPDATED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-2" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="AD_AUDITED">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVISION" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVISION_TYPE" type="TINYINT(3)"/>
+            <column name="REVISION_END" type="BIGINT"/>
+            <column name="REVISION_END_TIMESTAMP" type="datetime"/>
+            <column name="AD_MOBILE_IMAGE" type="VARCHAR(255)"/>
+            <column name="adMobileImage_MODIFIED" type="BIT(1)"/>
+            <column name="COMPANY_CATEG_ID" type="BIGINT"/>
+            <column name="companyCategId_MODIFIED" type="BIT(1)"/>
+            <column name="COMPANY_ID" type="BIGINT"/>
+            <column name="companyId_MODIFIED" type="BIT(1)"/>
+            <column name="CREATED_AT" type="datetime"/>
+            <column name="createdAt_MODIFIED" type="BIT(1)"/>
+            <column name="UPDATED_AT" type="datetime"/>
+            <column name="updatedAt_MODIFIED" type="BIT(1)"/>
+            <column name="adDescriptions_MODIFIED" type="BIT(1)"/>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-3" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="AD_DESCRIPTION">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="LANGUAGE_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AD_ID" type="BIGINT"/>
+            <column name="AD_NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AD_DESCRIPTION" type="LONGTEXT"/>
+            <column name="AD_MOBILE_TEXT" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AD_LINK" type="VARCHAR(3000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-4" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="AD_DESCRIPTION_AUDITED">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVISION" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVISION_TYPE" type="TINYINT(3)"/>
+            <column name="REVISION_END" type="BIGINT"/>
+            <column name="REVISION_END_TIMESTAMP" type="datetime"/>
+            <column name="AD_DESCRIPTION" type="VARCHAR(255)"/>
+            <column name="AD_LINK" type="VARCHAR(255)"/>
+            <column name="AD_MOBILE_TEXT" type="VARCHAR(255)"/>
+            <column name="AD_NAME" type="VARCHAR(255)"/>
+            <column name="LANGUAGE_ID" type="BIGINT"/>
+            <column name="AD_ID" type="BIGINT"/>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-5" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="CUSTOM_REVISION">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="REVISION_DATE" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USERNAME" type="VARCHAR(255)"/>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-6" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createTable tableName="con_test">
+            <column name="a" type="CHAR(1)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-7" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addPrimaryKey columnNames="ID, REVISION" constraintName="PK_AD_AUDITED" tableName="AD_AUDITED"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-8" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addPrimaryKey columnNames="ID, REVISION" constraintName="PK_AD_DESCRIPTION_AUDITED" tableName="AD_DESCRIPTION_AUDITED"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-10" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createIndex indexName="IND_01_AD_DESCRIPTION" tableName="AD_DESCRIPTION">
+            <column name="AD_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-11" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createIndex indexName="IND_01_AD_DESCRIPTION_AUDITED" tableName="AD_DESCRIPTION_AUDITED">
+            <column name="REVISION"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-12" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createIndex indexName="IND_01_AD_AUDITED" tableName="AD_AUDITED">
+            <column name="REVISION"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-13" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createIndex indexName="IND_02_AD_AUDITED" tableName="AD_AUDITED">
+            <column name="REVISION_END"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-14" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <createIndex indexName="IND_02_AD_DESCRIPTION_AUDITED" tableName="AD_DESCRIPTION_AUDITED">
+            <column name="REVISION_END"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-15" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="AD_ID" baseTableName="AD_DESCRIPTION" constraintName="FK_01_AD_DESCRIPTION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="AD"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-16" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="REVISION" baseTableName="AD_DESCRIPTION_AUDITED" constraintName="FK_01_AD_DESCRIPTION_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-17" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="REVISION" baseTableName="AD_AUDITED" constraintName="FK_01_AD_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-18" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="REVISION_END" baseTableName="AD_AUDITED" constraintName="FK_02_AD_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1469119656864-19" objectQuotingStrategy="QUOTE_ALL_OBJECTS">
+        <addForeignKeyConstraint baseColumnNames="REVISION_END" baseTableName="AD_DESCRIPTION_AUDITED" constraintName="FK_02_AD_DESCRIPTION_AUDITED" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CUSTOM_REVISION"/>
+    </changeSet>
+</databaseChangeLog>

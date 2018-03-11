@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+	
+	<!-- 
+		In this way we can not use all the available options for H2.
+		
+		Because of that I will be using the dataSource bean where I can choose as many options
+		as I want for H2.
+    <jdbc:embedded-database id="dataSource" type="H2" />
+	-->
+	
+	<!-- 
+		1. There are two beans with the same id "dataSource"
+		   One declared in datasource-configuration.xml
+		   Another one declared in datasource-test-configuration.xml
+		2. Both beans are declared in different XML files.
+		3. Because there are in different XML files Spring does not complain about having duplicate beans.
+		4. Because files in src/test will be loaded in class path after files in src/main this bean will
+		   override the one declared in datasource-configuration.xml when running JUnit Tests :)
+	 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.h2.Driver" />
+
+        <!-- For debugging H2 use TRACE_LEVEL_SYSTEM_OUT=3 option :)
+        <property name="url" value="jdbc:h2:mem:mybatis_example;INIT=create schema if not exists mybatis_example\;SET SCHEMA mybatis_example;TRACE_LEVEL_SYSTEM_OUT=3;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
+        -->
+		<property name="url" value="jdbc:h2:mem:mybatis_example;INIT=create schema if not exists mybatis_example\;SET SCHEMA mybatis_example;MODE=DB2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
+		<property name="username" value="mybatis" />
+		<property name="password" value="" />
+	</bean>
+	
+</beans>

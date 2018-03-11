@@ -1,0 +1,100 @@
+mvn clean install
+mvn clean install -Dmaven.test.skip=true
+mvn clean install -Pintegration
+mvn clean install site -Pintegration
+mvn dependency:sources
+mvn dependency:resolve -Dclassifier=javadoc
+mvn site
+mvn sonar:sonar -Dsonar.host.url=http://172.17.0.3:9091/sonarqube
+
+
+POST /spring-jpa-resources-1.0-SNAPSHOT/ads/ HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 4f41770f-9250-9ecf-4bf3-07ea8ad2b8d5
+
+{
+    "companyId" : 2,
+    "companyCategId" : 40,
+    "adMobileImage" : "bild.jpg",
+    "createdAt" : "2016-07-10 23:27:36+0100",
+    "updatedAt" : "2014-07-10 23:27:36+0100",
+    "adDescriptions": [{
+        "languageId": 20,
+        "adName": "babuchas",
+        "adDescription": "anuncio sobre babuchas",
+        "adMobileText": "babuchas en oferta muy buenas",
+        "adLink": "http://gumartinm.name"
+    },
+    {
+        "languageId": 20,
+        "adName": "zapatillas",
+        "adDescription": "anuncio sobre zapatillas",
+        "adMobileText": "zapatillas en oferta muy buenas",
+        "adLink": "http://gumartinm.name"
+    }]
+}
+
+
+
+GET /spring-jpa-resources-1.0-SNAPSHOT/ads/213 HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+
+
+
+GET /spring-jpa-resources-1.0-SNAPSHOT/ad-descriptions/23 HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+
+
+
+PUT /spring-jpa-resources-1.0-SNAPSHOT/ads/217 HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 003b0d68-bdae-4a1f-748a-c4156745dedb
+
+{
+    "id" : 217,
+    "companyId" : 2,
+    "companyCategId" : 14,
+    "adMobileImage" : "bild.jpg",
+    "createdAt" : "2016-07-30 23:27:36+0100",
+    "updatedAt" : "2014-07-30 23:27:36+0100"
+}
+
+
+GET /spring-jpa-resources-1.0-SNAPSHOT/ads/217/revisions/ HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: e097029b-70c6-9ca1-c22b-0915d0a92be1
+
+
+
+GET /spring-jpa-resources-1.0-SNAPSHOT/ad-descriptions/40/revisions/ HTTP/1.1
+Host: 127.0.0.1:8080
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: 62441d69-daab-b4d2-e73a-efca92d93aeb
+
+
+
+# Useful commands for liquibase that I used in order to create the changelog files from an existing schema.
+# Changelog from DDL. Creates DDL changelog from current database (if schema was previously created without liquibase as above)
+/opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/ddlChangelog.xml --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root generateChangeLog
+
+# Changelog for DML. Creates DML changelog from current database (if there are data)
+/opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/dmlChangelog.xml --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root --diffTypes="data" generateChangeLog
+
+# Update changelog DDL with new changeSets.
+/opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/ddlChangelog.xml --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root update
+
+# Update changelog DDL with selected changeSets (based on label expressions)
+/opt/liquibase/liquibase3.5.1/liquibase --driver=com.mysql.jdbc.Driver --classpath=$HOME/.m2/repository/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar --logLevel=debug --changeLogFile=src/main/resources/spring-configuration/liquibase/ddlChangelog.xml --labels='!VERSIONC' --url="jdbc:mysql://localhost/mybatis_example" --username=root --password=root update
+
+

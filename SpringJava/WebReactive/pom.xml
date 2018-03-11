@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.spring.jpa</groupId>
+	<artifactId>spring-webreactive</artifactId>
+	<version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+	<name>SPRING WEB REACTIVE</name>
+	<url>https://gumartinm.name/</url>
+	<description>Web Rective Spring Framework</description>
+	<organization>
+		<name>Gustavo Martin Morcuende</name>
+		<url>https://gumartinm.name/</url>
+	</organization>
+	<scm>
+		<developerConnection>scm:git:https://git.gumartinm.name/Spring/WebReactive</developerConnection>
+		<url>https://git.gumartinm.name/Spring/WebReactive</url>
+	</scm>
+
+    <modules>
+        <module>spring-webreactive-bom</module>
+        <module>spring-webreactive-persistence</module>
+        <module>spring-webreactive-services</module>
+        <module>spring-webreactive-resources</module>
+    </modules>
+
+</project>

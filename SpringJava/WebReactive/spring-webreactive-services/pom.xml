@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>de.spring.jpa</groupId>
+        <artifactId>spring-webreactive-bom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>spring-webreactive-services</artifactId>
+    <name>SPRING WEB REACTIVE SERVICES</name>
+	<url>https://gumartinm.name/</url>
+	<description>Web Reactive Spring Framework. Services.</description>
+
+
+	<dependencies>
+		<dependency>
+				<groupId>de.spring.jpa</groupId>
+				<artifactId>spring-webreactive-persistence</artifactId>
+				<version>1.0-SNAPSHOT</version>
+		</dependency>
+	
+		<!-- Unitary and integration tests -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
