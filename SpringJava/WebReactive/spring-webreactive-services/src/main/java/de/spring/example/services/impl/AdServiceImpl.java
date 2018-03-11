@@ -1,7 +1,5 @@
 package de.spring.example.services.impl;
 
-import static org.springframework.data.jpa.domain.Specifications.where;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -10,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import de.spring.example.persistence.domain.Ad;
-import de.spring.example.persistence.domain.specifications.AdSpectifications;
 import de.spring.example.persistence.repository.AdRepository;
 import de.spring.example.services.AdService;
 
@@ -35,9 +32,8 @@ public class AdServiceImpl
 	 */
 	@Override
 	public Page<Ad> queryCriteriaExample(Pageable pageRequest) {
-		return repository.findAll(
-				where(AdSpectifications.createdToday()).and(AdSpectifications.mobileImage("picasso")),
-				pageRequest);		
+		// TODO: to be implemented with Querydsl. We can not use Specifications with MonogoDB :(
+		return null;
 	}
 
 }

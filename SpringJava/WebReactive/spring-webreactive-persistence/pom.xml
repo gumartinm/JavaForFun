@@ -30,20 +30,25 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 		</dependency>
-				<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
 
-		<!-- Auditory using Hibernate Envers -->
-		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-envers</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-envers</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-reactivestreams</artifactId>
+        </dependency>
+        <!-- Using Querydsl -->
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-apt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.querydsl</groupId>
+            <artifactId>querydsl-mongodb</artifactId>
+        </dependency>
+
 
 		<!--
 			Required by spring-context for using JSR-303. See LocalValidatorFactoryBean 
@@ -68,15 +73,6 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-		<!-- Using Querydsl -->
-		<dependency>
-			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-apt</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-jpa</artifactId>
-		</dependency>
 
 		<!-- Loading data base in run time -->
 		<dependency>
@@ -110,7 +106,7 @@
 			      </goals>
 			      <configuration>
 			      	<outputDirectory>${project.build.directory}/generated-sources/querydsl</outputDirectory>
-			        <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+			        <processor>org.springframework.data.mongodb.repository.support.MongoAnnotationProcessor</processor>
 			      </configuration>
 			    </execution>
 			  </executions>
