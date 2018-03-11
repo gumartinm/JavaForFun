@@ -5,13 +5,14 @@ import java.util.Set;
 
 import org.resthub.common.exception.NotFoundException;
 import org.resthub.common.service.CrudService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Abstract REST controller using a service implementation
@@ -83,7 +84,7 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      * {@inheritDoc}
      */
     @Override
-    public Iterable<T> findAll() {
+    public Flux<T> findAll() {
         return service.findAll();
     }
 
@@ -91,17 +92,14 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      * {@inheritDoc}
      */
     @Override
-    public Page<T> findPaginated(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-                                 @RequestParam(value = "direction", required = false, defaultValue = "") String direction,
+    public Flux<T> findPaginated(@RequestParam(value = "direction", required = false, defaultValue = "") String direction,
                                  @RequestParam(value = "properties", required = false) String properties) {
-        Assert.isTrue(page > 0, "Page index must be greater than 0");
         Assert.isTrue(direction.isEmpty() || direction.equalsIgnoreCase(Sort.Direction.ASC.toString()) || direction.equalsIgnoreCase(Sort.Direction.DESC.toString()), "Direction should be ASC or DESC");
         if (direction.isEmpty()) {
-            return this.service.findAll(new PageRequest(page - 1, size));
+            return this.service.findAll(Sort.unsorted());
         } else {
             Assert.notNull(properties);
-            return this.service.findAll(new PageRequest(page - 1, size, new Sort(Sort.Direction.fromString(direction.toUpperCase()), properties.split(","))));
+            return this.service.findAll(new Sort(Sort.Direction.fromString(direction.toUpperCase()), properties.split(",")));
         }
     }
 
@@ -122,7 +120,7 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      * {@inheritDoc}
      */
     @Override
-    public Iterable<T> findByIds(@RequestParam(value = "ids[]") Set<ID> ids) {
+    public Flux<T> findByIds(@RequestParam(value = "ids[]") Set<ID> ids) {
         Assert.notNull(ids, "ids list cannot be null");
         return this.service.findByIds(ids);
     }
@@ -132,17 +130,17 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      * {@inheritDoc}
      */
     @Override
-    public void delete() {
-        this.service.deleteAllWithCascade();
+    public Mono<Void> delete() {
+        return this.service.deleteAllWithCascade();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void delete(@PathVariable ID id) {
+    public Mono<Void> delete(@PathVariable ID id) {
         T resource = this.findById(id);
-        this.service.delete(resource);
+        return this.service.delete(resource);
     }
 }
 

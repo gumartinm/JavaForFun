@@ -14,7 +14,13 @@
 	<description>Web Reactive Spring Framework. Persistence.</description>
 
 	<dependencies>
-			
+
+		<!-- Using Web Reactive -->
+		<dependency>
+		    <groupId>io.projectreactor</groupId>
+		    <artifactId>reactor-core</artifactId>
+		</dependency>
+
 		<!-- Required JPA dependencies with hibernate -->
 		<dependency>
     		<groupId>org.springframework</groupId>

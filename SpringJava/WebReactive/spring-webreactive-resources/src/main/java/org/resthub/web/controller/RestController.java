@@ -1,9 +1,19 @@
 package org.resthub.web.controller;
 
 import org.resthub.common.exception.NotFoundException;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -23,7 +33,7 @@ public interface RestController<T, ID extends Serializable> {
      * @param resource The resource to create
      * @return CREATED http status code if the request has been correctly processed, with updated resource enclosed in the body, usually with and additional identifier automatically created by the database
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     T create(@RequestBody T resource);
@@ -37,7 +47,7 @@ public interface RestController<T, ID extends Serializable> {
      * @return OK http status code if the request has been correctly processed, with the updated resource enclosed in the body
      * @throws NotFoundException when resource <code>id</code> does not exist.
      */
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "{id}")
     @ResponseBody
     T update(@PathVariable ID id, @RequestBody T resource);
 
@@ -48,9 +58,9 @@ public interface RestController<T, ID extends Serializable> {
      * @return OK http status code if the request has been correctly processed, with the list of all resource enclosed in the body.
      * Be careful, this list should be big since it will return ALL resources. In this case, consider using paginated findAll method instead.
      */
-    @RequestMapping(method = RequestMethod.GET, params = "page=no")
+    @GetMapping(params = "page=no")
     @ResponseBody
-    Iterable<T> findAll();
+    Flux<T> findAll();
 
     /**
      * Find all resources, and return a paginated and optionaly sorted collection<br>
@@ -62,11 +72,9 @@ public interface RestController<T, ID extends Serializable> {
      * @param properties Ordered list of comma separeted properies used for sorting resulats. At least one property should be provided if direction is specified
      * @return OK http status code if the request has been correctly processed, with the a paginated collection of all resource enclosed in the body.
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     @ResponseBody
-    Page<T> findPaginated(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                          @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-                          @RequestParam(value = "direction", required = false, defaultValue = "ASC") String direction,
+    Flux<T> findPaginated(@RequestParam(value = "direction", required = false, defaultValue = "ASC") String direction,
                           @RequestParam(value = "properties", required = false) String properties);
 
     /**
@@ -77,7 +85,7 @@ public interface RestController<T, ID extends Serializable> {
      * @return OK http status code if the request has been correctly processed, with resource found enclosed in the body
      * @throws NotFoundException when resource <code>id</code> does not exist.
      */
-    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @GetMapping(value = "{id}")
     @ResponseBody
     T findById(@PathVariable ID id);
 
@@ -92,18 +100,18 @@ public interface RestController<T, ID extends Serializable> {
      * @return OK http status code with list of retrieved resources. Not found resources are ignored:
      * no Exception thrown. List is empty if no resource found with any of the given ids.
      */
-    @RequestMapping(method = RequestMethod.GET, params = "ids[]")
+    @GetMapping(params = "ids[]")
     @ResponseBody
-    Iterable<T> findByIds(@RequestParam(value = "ids[]") Set<ID> ids);
+    Flux<T> findByIds(@RequestParam(value = "ids[]") Set<ID> ids);
 
     /**
      * Delete all resources<br>
      * REST webservice published : <code>DELETE /</code><br>
      * Return <code>No Content</code> http status code if the request has been correctly processed
      */
-    @RequestMapping(method = RequestMethod.DELETE)
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete();
+    Mono<Void> delete();
 
     /**
      * Delete a resource by its identifier<br>
@@ -113,8 +121,8 @@ public interface RestController<T, ID extends Serializable> {
      * @param id The identifier of the resource to delete
      * @throws NotFoundException when resource <code>id</code> does not exist.
      */
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable ID id);
+    Mono<Void> delete(@PathVariable ID id);
 
 }

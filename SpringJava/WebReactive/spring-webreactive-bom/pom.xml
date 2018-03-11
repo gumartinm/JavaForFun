@@ -181,6 +181,13 @@
 				<scope>provided</scope>
 			</dependency>
 
+			<!-- Using Web Reactive -->
+			<dependency>
+			    <groupId>io.projectreactor</groupId>
+			    <artifactId>reactor-core</artifactId>
+			    <version>3.1.5.RELEASE</version>
+			</dependency>
+
 			<!--
 				Jackson JSON Processor, required by spring-webmvc. See messageConverters 
 				in rest-config.xml

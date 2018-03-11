@@ -2,8 +2,8 @@ package de.spring.example.persistence.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
+import org.springframework.data.repository.reactive.ReactiveSortingRepository;
 
 import de.spring.example.persistence.domain.Ad;
 import de.spring.example.persistence.domain.AdDescription;
@@ -16,7 +16,7 @@ import de.spring.example.persistence.domain.AdDescription;
  *
  */
 public interface AdDescriptionRepository extends
-		PagingAndSortingRepository<AdDescription, Long>,
+		ReactiveSortingRepository<AdDescription, Long>,
 		/** https://github.com/spring-projects/spring-data-envers/pull/45 QueryDslPredicateExecutor<AdDescription>, **/
 		RevisionRepository<AdDescription, Long, Integer> {
 

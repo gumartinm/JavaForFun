@@ -1,26 +1,25 @@
 package org.resthub.common.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.reactive.ReactiveSortingRepository;
+import org.springframework.util.Assert;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 /**
- * CRUD service that uses a {@link org.springframework.data.repository.PagingAndSortingRepository} Spring Data repository implementation
+ * CRUD service that uses a {@link org.springframework.data.repository.reactive.ReactiveSortingRepository} Spring Data repository implementation
  *
- * You should extend it and inject your Repository bean by overriding {@link #setRepository(org.springframework.data.repository.PagingAndSortingRepository)}
+ * You should extend it and inject your Repository bean by overriding {@link #setRepository(org.springframework.data.repository.reactive.ReactiveSortingRepository)}
  *
  * @param <T> Your resource class to manage, usually an entity class
  * @param <ID> Resource id type, usually Long or String
  * @param <R> The repository class
  */
-@Transactional(readOnly = true)
-public class CrudServiceImpl<T, ID extends Serializable, R extends PagingAndSortingRepository<T, ID>> implements
+public class CrudServiceImpl<T, ID extends Serializable, R extends ReactiveSortingRepository<T, ID>> implements
         CrudService<T, ID> {
 
     protected R repository;
@@ -36,8 +35,7 @@ public class CrudServiceImpl<T, ID extends Serializable, R extends PagingAndSort
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public T create(T resource) {
+    public Mono<T> create(T resource) {
         Assert.notNull(resource, "Resource can't be null");
         return repository.save(resource);
     }
@@ -46,8 +44,7 @@ public class CrudServiceImpl<T, ID extends Serializable, R extends PagingAndSort
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public T update(T resource) {
+    public Mono<T> update(T resource) {
         Assert.notNull(resource, "Resource can't be null");
         return repository.save(resource);
     }
@@ -56,48 +53,43 @@ public class CrudServiceImpl<T, ID extends Serializable, R extends PagingAndSort
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public void delete(T resource) {
+    public Mono<Void> delete(T resource) {
         Assert.notNull(resource, "Resource can't be null");
-        repository.delete(resource);
+        return repository.delete(resource);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public void delete(ID id) {
+    public Mono<Void> delete(ID id) {
         Assert.notNull(id, "Resource ID can't be null");
-        repository.deleteById(id);
+        return repository.deleteById(id);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public void deleteAll() {
-        repository.deleteAll();
+    public Mono<Void> deleteAll() {
+        return repository.deleteAll();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public void deleteAllWithCascade() {
-        Iterable<T> list = repository.findAll();
-        for (T entity : list) {
-            repository.delete(entity);
-        }
+    public Mono<Void> deleteAllWithCascade() {
+        Flux<T> list = repository.findAll();
+        list.toStream().map(entity -> repository.delete(entity));
+        return Mono.empty();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<T> findById(ID id) {
+    public Mono<T> findById(ID id) {
         Assert.notNull(id, "Resource ID can't be null");
         return repository.findById(id);
     }
@@ -106,7 +98,7 @@ public class CrudServiceImpl<T, ID extends Serializable, R extends PagingAndSort
      * {@inheritDoc}
      */
     @Override
-    public Iterable<T> findByIds(Set<ID> ids) {
+    public Flux<T> findByIds(Set<ID> ids) {
         Assert.notNull(ids, "Resource ids can't be null");
         return repository.findAllById(ids);
     }
@@ -115,7 +107,7 @@ public class CrudServiceImpl<T, ID extends Serializable, R extends PagingAndSort
      * {@inheritDoc}
      */
     @Override
-    public Iterable<T> findAll() {
+    public Flux<T> findAll() {
         return repository.findAll();
     }
 
@@ -123,17 +115,16 @@ public class CrudServiceImpl<T, ID extends Serializable, R extends PagingAndSort
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public Page<T> findAll(Pageable pageRequest) {
-        Assert.notNull(pageRequest, "page request can't be null");
-        return repository.findAll(pageRequest);
+    public Flux<T> findAll(Sort sortRequest) {
+        Assert.notNull(sortRequest, "sort request can't be null");
+        return repository.findAll(sortRequest);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Long count() {
+    public Mono<Long> count() {
         return repository.count();
     }
 }

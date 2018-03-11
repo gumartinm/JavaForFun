@@ -1,19 +1,20 @@
 package org.resthub.web.controller;
 
+import java.io.Serializable;
+import java.util.Set;
+
 import org.resthub.common.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.reactive.ReactiveSortingRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.Serializable;
-import java.util.Set;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Abstract REST controller using a repository implementation
@@ -45,7 +46,7 @@ import java.util.Set;
  * @param <R>  The repository class
  * @see ServiceBasedRestController
  */
-public abstract class RepositoryBasedRestController<T, ID extends Serializable, R extends PagingAndSortingRepository>
+public abstract class RepositoryBasedRestController<T, ID extends Serializable, R extends ReactiveSortingRepository>
         implements RestController<T, ID> {
 
     protected R repository;
@@ -88,7 +89,7 @@ public abstract class RepositoryBasedRestController<T, ID extends Serializable, 
      * {@inheritDoc}
      */
     @Override
-    public Iterable<T> findAll() {
+    public Flux<T> findAll() {
         return repository.findAll();
     }
 
@@ -96,17 +97,14 @@ public abstract class RepositoryBasedRestController<T, ID extends Serializable, 
      * {@inheritDoc}
      */
     @Override
-    public Page<T> findPaginated(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                 @RequestParam(value = "size", required = false, defaultValue = "10") Integer size,
-                                 @RequestParam(value = "direction", required = false, defaultValue = "") String direction,
+    public Flux<T> findPaginated(@RequestParam(value = "direction", required = false, defaultValue = "") String direction,
                                  @RequestParam(value = "properties", required = false) String properties) {
-        Assert.isTrue(page > 0, "Page index must be greater than 0");
         Assert.isTrue(direction.isEmpty() || direction.equalsIgnoreCase(Sort.Direction.ASC.toString()) || direction.equalsIgnoreCase(Sort.Direction.DESC.toString()), "Direction should be ASC or DESC");
         if(direction.isEmpty()) {
-            return this.repository.findAll(new PageRequest(page - 1, size));
+            return this.repository.findAll(Sort.unsorted());
         } else {
             Assert.notNull(properties);
-            return this.repository.findAll(new PageRequest(page - 1, size, new Sort(Sort.Direction.fromString(direction.toUpperCase()), properties.split(","))));
+            return this.repository.findAll(new Sort(Sort.Direction.fromString(direction.toUpperCase()), properties.split(",")));
         }
     }
 
@@ -127,7 +125,7 @@ public abstract class RepositoryBasedRestController<T, ID extends Serializable, 
      * {@inheritDoc}
      */
     @Override
-    public Iterable<T> findByIds(@RequestParam(value="ids[]") Set<ID> ids){
+    public Flux<T> findByIds(@RequestParam(value="ids[]") Set<ID> ids){
         Assert.notNull(ids, "ids list cannot be null");
         return this.repository.findAllById(ids);
     }
@@ -136,20 +134,19 @@ public abstract class RepositoryBasedRestController<T, ID extends Serializable, 
      * {@inheritDoc}
      */
     @Override
-    public void delete() {
-        Iterable<T> list = repository.findAll();
-        for (T entity : list) {
-            repository.delete(entity);
-        }
+    public Mono<Void> delete() {
+    	Flux<T> list = repository.findAll();
+    	list.toStream().map(entity -> repository.delete(entity));
+        return Mono.empty();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void delete(@PathVariable ID id) {
+    public Mono<Void> delete(@PathVariable ID id) {
         T resource = this.findById(id);
-        this.repository.delete(resource);
+        return this.repository.delete(resource);
     }
 
 }

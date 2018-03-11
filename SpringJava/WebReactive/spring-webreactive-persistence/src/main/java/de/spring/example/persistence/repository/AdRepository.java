@@ -2,9 +2,9 @@ package de.spring.example.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.reactive.ReactiveSortingRepository;
 
 import de.spring.example.persistence.domain.Ad;
 
@@ -16,7 +16,7 @@ import de.spring.example.persistence.domain.Ad;
  *
  */
 public interface AdRepository extends
-		PagingAndSortingRepository<Ad, Long>,
+		ReactiveSortingRepository<Ad, Long>,
 		JpaSpecificationExecutor<Ad>,
 		RevisionRepository<Ad, Long, Integer> {
 	

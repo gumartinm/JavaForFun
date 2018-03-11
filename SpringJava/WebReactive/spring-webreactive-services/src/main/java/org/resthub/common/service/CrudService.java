@@ -2,9 +2,12 @@ package org.resthub.common.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -21,7 +24,7 @@ public interface CrudService<T, ID extends Serializable> {
      * @param resource Resource to create
      * @return new resource
      */
-    T create(T resource);
+    Mono<T> create(T resource);
 
     /**
      * Update existing resource.
@@ -29,31 +32,31 @@ public interface CrudService<T, ID extends Serializable> {
      * @param resource Resource to update
      * @return resource updated
      */
-    T update(T resource);
+    Mono<T> update(T resource);
 
     /**
      * Delete existing resource.
      *
      * @param resource Resource to delete
      */
-    void delete(T resource);
+    Mono<Void> delete(T resource);
 
     /**
      * Delete existing resource.
      *
      * @param id Resource id
      */
-    void delete(ID id);
+    Mono<Void> delete(ID id);
 
     /**
      * Delete all existing resource. Do not use cascade remove (not a choice -&gt; JPA specs)
      */
-    void deleteAll();
+    Mono<Void> deleteAll();
 
     /**
      * Delete all existing resource, including linked entities with cascade delete
      */
-    void deleteAllWithCascade();
+    Mono<Void> deleteAllWithCascade();
 
     /**
      * Find resource by id.
@@ -61,7 +64,7 @@ public interface CrudService<T, ID extends Serializable> {
      * @param id Resource id
      * @return resource
      */
-    Optional<T> findById(ID id);
+    Mono<T> findById(ID id);
 
     /**
      * Find resources by their ids.
@@ -69,27 +72,27 @@ public interface CrudService<T, ID extends Serializable> {
      * @param ids Resource ids
      * @return a list of retrieved resources, empty if no resource found
      */
-    Iterable<T> findByIds(Set<ID> ids);
+    Flux<T> findByIds(Set<ID> ids);
 
     /**
      * Find all resources.
      *
      * @return a list of all resources.
      */
-    Iterable<T> findAll();
+    Flux<T> findAll();
 
     /**
-     * Find all resources (pageable).
+	 * Returns all entities sorted by the given options.
      *
-     * @param pageRequest page request.
-	 * @return a new {@link Page} with the content of the current one mapped by the given {@link Pageable}.
+     * @param sortRequest sort request.
+	 * @return a list of retrieved resources, empty if no resource found
      */
-    Page<T> findAll(Pageable pageRequest);
+    Flux<T> findAll(Sort sortRequest);
 
     /**
      * Count all resources.
      *
      * @return number of resources
      */
-    Long count();
+    Mono<Long> count();
 }
