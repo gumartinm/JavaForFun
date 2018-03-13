@@ -36,7 +36,7 @@ public interface RestController<T, ID extends Serializable> {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    T create(@RequestBody T resource);
+    Mono<T> create(@RequestBody T resource);
 
     /**
      * Update an existing resource<br>
@@ -49,7 +49,7 @@ public interface RestController<T, ID extends Serializable> {
      */
     @PutMapping(value = "{id}")
     @ResponseBody
-    T update(@PathVariable ID id, @RequestBody T resource);
+    Mono<T> update(@PathVariable ID id, @RequestBody T resource);
 
     /**
      * Find all resources, and return the full collection (plain list not paginated)<br>
@@ -87,7 +87,7 @@ public interface RestController<T, ID extends Serializable> {
      */
     @GetMapping(value = "{id}")
     @ResponseBody
-    T findById(@PathVariable ID id);
+    Mono<T> findById(@PathVariable ID id);
 
     /**
      * Find multiple resources by their identifiers<br>

@@ -61,23 +61,23 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      * {@inheritDoc}
      */
     @Override
-    public T create(@RequestBody T resource) {
-        return (T) this.service.create(resource);
+    public Mono<T> create(@RequestBody T resource) {
+        return (Mono<T>) this.service.create(resource);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public T update(@PathVariable ID id, @RequestBody T resource) {
+    public Mono<T> update(@PathVariable ID id, @RequestBody T resource) {
         Assert.notNull(id, "id cannot be null");
 
-        T retreivedResource = this.findById(id);
+        Mono<T> retreivedResource = this.findById(id);
         if (retreivedResource == null) {
             throw new NotFoundException();
         }
 
-        return (T) this.service.update(resource);
+        return (Mono<T>) this.service.update(resource);
     }
 
     /**
@@ -107,8 +107,8 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      * {@inheritDoc}
      */
     @Override
-    public T findById(@PathVariable ID id) {
-        T resource = (T) this.service.findById(id);
+    public Mono<T> findById(@PathVariable ID id) {
+    	Mono<T> resource = (Mono<T>) this.service.findById(id);
         if (resource == null) {
             throw new NotFoundException();
         }
@@ -139,7 +139,7 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      */
     @Override
     public Mono<Void> delete(@PathVariable ID id) {
-        T resource = this.findById(id);
+    	Mono<T> resource = this.findById(id);
         return this.service.delete(resource);
     }
 }
