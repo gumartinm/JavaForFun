@@ -11,7 +11,5 @@
     <context:annotation-config />
     
 	<context:component-scan base-package="de.spring.example.context"/>
-	
-	<context:property-placeholder location="classpath:jpa.properties" />
-	
+		
 </beans>
