@@ -147,19 +147,20 @@
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
-			
-			<!-- REST API -->
+
+
+		    <!-- Using Web Reactive -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webflux</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-webmvc</artifactId>
-				<version>${spring.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>commons-logging</groupId>
-						<artifactId>commons-logging</artifactId>
-					</exclusion>
-				</exclusions>
+			    <groupId>io.projectreactor</groupId>
+			    <artifactId>reactor-core</artifactId>
+			    <version>3.1.5.RELEASE</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-oxm</artifactId>
@@ -173,7 +174,7 @@
 			</dependency>
 			
 			
-			<!-- Required by spring-webmvc -->
+			<!-- Required by spring-webflux -->
 			<dependency>
 				<groupId>javax.servlet</groupId>
 				<artifactId>javax.servlet-api</artifactId>
@@ -181,72 +182,17 @@
 				<scope>provided</scope>
 			</dependency>
 
-			<!-- Using Web Reactive -->
-			<dependency>
-			    <groupId>io.projectreactor</groupId>
-			    <artifactId>reactor-core</artifactId>
-			    <version>3.1.5.RELEASE</version>
-			</dependency>
 
 			<!--
-				Jackson JSON Processor, required by spring-webmvc. See messageConverters 
+				Jackson JSON Processor, required by spring-webflux. See messageConverters 
 				in rest-config.xml
 			-->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.8.1</version>
+				<version>2.9.4</version>
 			</dependency>
 
-
-		<!-- Required JPA dependencies with hibernate -->
-		<dependency>
-    		<groupId>org.springframework</groupId>
-    		<artifactId>spring-orm</artifactId>
-    		<version>${spring.version}</version>
-    		<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>2.0.5.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-jdbc</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-orm</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
         <dependency>
             <groupId>org.springframework.data</groupId>
@@ -272,7 +218,7 @@
         </dependency>
 
 		<!--
-			Jackson JSON Processor, required by spring-webmvc. See messageConverters
+			Jackson JSON Processor, required by spring-webflux. See messageConverters
 			in rest-config.xml
 		
 			Non required dependency. It is already declared in jackson-datatype-jsr310
@@ -289,7 +235,7 @@
 		<dependency>
     		<groupId>com.fasterxml.jackson.datatype</groupId>
     		<artifactId>jackson-datatype-jsr310</artifactId>
-    		<version>2.8.1</version>
+    		<version>2.9.4</version>
 		</dependency>
 		<!-- 
 			Jackson dependency required for serializing and deserializing org.joda.time.DateTime objects.
@@ -298,7 +244,7 @@
 		<dependency>
     		<groupId>com.fasterxml.jackson.datatype</groupId>
     		<artifactId>jackson-datatype-joda</artifactId>
-    		<version>2.8.1</version>
+    		<version>2.9.4</version>
 		</dependency>
 
 
@@ -342,12 +288,6 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-			<dependency>
-            	<groupId>com.h2database</groupId>
-            	<artifactId>h2</artifactId>
-            	<version>1.4.196</version>
-            	<scope>test</scope>
-        	</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<build>

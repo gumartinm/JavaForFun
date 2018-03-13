@@ -32,27 +32,6 @@
 	<Logger name="org.springframework" level="INFO" additivity="false">
 		<AppenderRef ref="STDOUT" />
 	</Logger>
-    
-    <!--
-    	How to log Hibernate QUERIES by means of LOG4J/SLF4J:
-    		
-    	See: org.hibernate.engine.jdbc.spi.SqlStatementLogger
-    		
-    	1. With hibernate.show_sql=false we stop Hibernate logging to STDOUT.
-    	2. DEBUG level (see SqlStatementLogger) is the only way of logging QUERIES using LOG4J.
-    		SqlStatementLogger uses log.DEBUG and no other level :(
-    	3. JVM requires the following system property: -Dorg.jboss.logging.provider=slf4j for using LOG4J.
-    -->
-	<Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
-		<AppenderRef ref="STDOUT" />
-	</Logger>
-
-	<!--
-		Logging Hibernate QUERY PARAMETERS requires TRACE level.
-	 -->
-	<Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
-		<AppenderRef ref="STDOUT" />
-	</Logger>
 
 
 	<!-- 

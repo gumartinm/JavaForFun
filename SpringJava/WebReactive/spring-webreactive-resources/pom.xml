@@ -21,12 +21,13 @@
 			<artifactId>spring-webreactive-services</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+        <!-- Using Web Reactive -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+        </dependency>
 		
-		<!-- REST API -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
