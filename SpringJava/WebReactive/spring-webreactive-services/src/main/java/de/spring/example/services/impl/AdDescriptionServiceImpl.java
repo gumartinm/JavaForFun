@@ -55,6 +55,6 @@ public class AdDescriptionServiceImpl
 
 	@Override
 	public Page<Revision<Integer, AdDescription>> findRevisions(Long id, Pageable pageable) {
-		return this.repository.findRevisions(id, pageable);
+		return null;
 	}
 }

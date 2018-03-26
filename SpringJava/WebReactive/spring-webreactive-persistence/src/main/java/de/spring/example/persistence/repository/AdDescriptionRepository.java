@@ -1,25 +1,19 @@
 package de.spring.example.persistence.repository;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.history.RevisionRepository;
-import org.springframework.data.repository.reactive.ReactiveSortingRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import de.spring.example.persistence.domain.Ad;
 import de.spring.example.persistence.domain.AdDescription;
+import reactor.core.publisher.Flux;
 
 /**
- * By default <code>org.springframework.data.jpa.repository.support.SimpleJpaRepository</code>
  * will be the implementation for this interface.
- * 
- * Be careful with <code>@Transactional</code>. SimpleJpaRepository has annotated methods.
  *
  */
-public interface AdDescriptionRepository extends
-		ReactiveSortingRepository<AdDescription, Long>,
-		/** https://github.com/spring-projects/spring-data-envers/pull/45 QueryDslPredicateExecutor<AdDescription>, **/
-		RevisionRepository<AdDescription, Long, Integer> {
+public interface AdDescriptionRepository extends ReactiveMongoRepository<AdDescription, Long>
+		/** https://github.com/spring-projects/spring-data-envers/pull/45 QueryDslPredicateExecutor<AdDescription>, **/ {
 
 	// Custom Query method (useful when the offered methods by PagingAndSortingRepository are not enough)
-	Page<AdDescription> findByAd(Ad ad, Pageable pageable);
+	Flux<AdDescription> findByAd(Ad ad, Pageable pageable);
 }

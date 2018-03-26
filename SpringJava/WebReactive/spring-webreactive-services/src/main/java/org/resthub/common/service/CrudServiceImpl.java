@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.reactive.ReactiveSortingRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.util.Assert;
 
 import reactor.core.publisher.Flux;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
  * @param <ID> Resource id type, usually Long or String
  * @param <R> The repository class
  */
-public class CrudServiceImpl<T, ID extends Serializable, R extends ReactiveSortingRepository<T, ID>> implements
+public class CrudServiceImpl<T, ID extends Serializable, R extends ReactiveMongoRepository<T, ID>> implements
         CrudService<T, ID> {
 
     protected R repository;

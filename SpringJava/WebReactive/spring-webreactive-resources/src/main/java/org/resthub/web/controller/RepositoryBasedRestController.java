@@ -7,7 +7,7 @@ import org.resthub.common.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.reactive.ReactiveSortingRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +46,7 @@ import reactor.core.publisher.Mono;
  * @param <R>  The repository class
  * @see ServiceBasedRestController
  */
-public abstract class RepositoryBasedRestController<T, ID extends Serializable, R extends ReactiveSortingRepository>
+public abstract class RepositoryBasedRestController<T, ID extends Serializable, R extends ReactiveMongoRepository>
         implements RestController<T, ID> {
 
     protected R repository;
