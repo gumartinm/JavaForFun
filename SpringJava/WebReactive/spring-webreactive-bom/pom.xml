@@ -194,16 +194,28 @@
 			</dependency>
 
 
+		<dependency>
+		    <groupId>org.hibernate.javax.persistence</groupId>
+		    <artifactId>hibernate-jpa-2.0-api</artifactId>
+		    <version>1.0.0.Final</version>
+		</dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>2.0.5.RELEASE</version>
         </dependency>
+        
+        <dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>jsr250-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
         <!-- Required for using mongondb with reactive pattern -->
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-reactivestreams</artifactId>
-            <version>1.7.1</version>
+            <version>1.6.0</version>
         </dependency>
         <!-- Using Querydsl -->
         <dependency>
