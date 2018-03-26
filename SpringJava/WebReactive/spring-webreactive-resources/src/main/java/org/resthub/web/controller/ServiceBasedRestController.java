@@ -1,6 +1,7 @@
 package org.resthub.web.controller;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 import org.resthub.common.exception.NotFoundException;
@@ -43,7 +44,7 @@ import reactor.core.publisher.Mono;
  * @param <S>  The service class
  * @see RepositoryBasedRestController
  */
-public abstract class ServiceBasedRestController<T, ID extends Serializable, S extends CrudService> implements
+public abstract class ServiceBasedRestController<T, ID extends Serializable, S extends CrudService<T, ID>> implements
         RestController<T, ID> {
 
     protected S service;
@@ -98,7 +99,7 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
         if (direction.isEmpty()) {
             return this.service.findAll(Sort.unsorted());
         } else {
-            Assert.notNull(properties);
+        	Objects.requireNonNull(properties, "properties param, required value");
             return this.service.findAll(new Sort(Sort.Direction.fromString(direction.toUpperCase()), properties.split(",")));
         }
     }
@@ -139,8 +140,7 @@ public abstract class ServiceBasedRestController<T, ID extends Serializable, S e
      */
     @Override
     public Mono<Void> delete(@PathVariable ID id) {
-    	Mono<T> resource = this.findById(id);
-        return this.service.delete(resource);
+        return this.service.delete(id);
     }
 }
 

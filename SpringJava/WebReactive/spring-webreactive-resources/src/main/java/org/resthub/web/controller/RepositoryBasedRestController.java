@@ -1,6 +1,7 @@
 package org.resthub.web.controller;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 import org.resthub.common.exception.NotFoundException;
@@ -46,7 +47,7 @@ import reactor.core.publisher.Mono;
  * @param <R>  The repository class
  * @see ServiceBasedRestController
  */
-public abstract class RepositoryBasedRestController<T, ID extends Serializable, R extends ReactiveMongoRepository>
+public abstract class RepositoryBasedRestController<T, ID extends Serializable, R extends ReactiveMongoRepository<T, ID>>
         implements RestController<T, ID> {
 
     protected R repository;
@@ -103,7 +104,7 @@ public abstract class RepositoryBasedRestController<T, ID extends Serializable, 
         if(direction.isEmpty()) {
             return this.repository.findAll(Sort.unsorted());
         } else {
-            Assert.notNull(properties);
+        	Objects.requireNonNull(properties, "properties param, required value");
             return this.repository.findAll(new Sort(Sort.Direction.fromString(direction.toUpperCase()), properties.split(",")));
         }
     }
@@ -145,8 +146,7 @@ public abstract class RepositoryBasedRestController<T, ID extends Serializable, 
      */
     @Override
     public Mono<Void> delete(@PathVariable ID id) {
-    	Mono<T> resource = this.findById(id);
-        return this.repository.delete(resource);
+        return this.repository.deleteById(id);
     }
 
 }
