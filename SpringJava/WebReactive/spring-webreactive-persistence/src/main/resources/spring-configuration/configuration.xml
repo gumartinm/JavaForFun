@@ -10,6 +10,8 @@
         
     <context:annotation-config />
     
-	<context:component-scan base-package="de.spring.example.context"/>
-		
+	<context:component-scan base-package="de.spring.example.persistence, de.spring.example.persistence" />
+
+	<context:property-placeholder location="classpath:mongo.properties" />
+
 </beans>
