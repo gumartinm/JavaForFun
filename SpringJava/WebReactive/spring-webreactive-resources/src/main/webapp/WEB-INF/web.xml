@@ -1,61 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-         version="2.4">
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         metadata-complete="false"
+         version="4.0">
 
-    <display-name>Spring JPA: example JPA</display-name>
-
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
-
-    <context-param>
-        <param-name>spring.profiles.default</param-name>
-        <param-value>${environment.profile}</param-value>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath*:spring-configuration/*.xml
-        </param-value>
-    </context-param>
-    
-    <!-- Spring REST support -->
-    <servlet>
-        <servlet-name>spring-rest</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-        <async-supported>true</async-supported>
-        <init-param>
-           <param-name>contextConfigLocation</param-name>
-           <param-value>classpath*:spring-configuration/mvc/rest/*.xml</param-value>
-        </init-param>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>spring-rest</servlet-name>
-        <!-- REQUIRED PATTERN BY swagger-ui. IT DOESN'T WORK WITH ANY OTHER o.O -->
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-    
-    
-    <!--
-    	Se serializan objetos Entity al vuelo.
-    	
-    	1. JACKSON irá accediendo a todas las propiedades de un objeto Entity.
-    	2. Según vaya accediendo se irán haciendo queries a base de datos. NO ANTES porque se hace en
-    	modo lazy, lo que quiere decir que tenemos el objeto Entity pero sus datos (lo que se obtiene
-    	después de hacer las queries) están vacíos. Hasta que no se accede a una propiedad determinada
-    	del objeto Entity no se hará realmente la query en base de datos. 
-     -->
-    <filter>
-        <filter-name>OpenEntityManagerInViewFilter</filter-name>
-        <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>OpenEntityManagerInViewFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    
+    <display-name>Spring Reactive: example webflux</display-name>
 
 </web-app>

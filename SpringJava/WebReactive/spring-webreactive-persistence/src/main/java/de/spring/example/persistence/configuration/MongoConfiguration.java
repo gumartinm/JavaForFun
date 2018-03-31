@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -22,6 +23,7 @@ import com.mongodb.reactivestreams.client.MongoClients;
 
 // Reactive Mongo configuration does not work with XML configuration (Spring developers forgot to implement XML configuration, only Java configuration is available :( )
 @Configuration
+@PropertySource("classpath:mongo.properties")
 @EnableReactiveMongoRepositories(basePackages = "de.spring.example.persistence.repository")
 @EnableMongoAuditing
 public class MongoConfiguration extends AbstractReactiveMongoConfiguration {
