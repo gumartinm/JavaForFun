@@ -48,8 +48,10 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 //)
 @Document
 public class Ad implements Serializable {
+	// https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo-template.id-handling
+	// So, no way of using Long :(
 	@Id
-	private Long id;
+	private String id;
 	
 	@JsonManagedReference
 	private Set<AdDescription> adDescriptions;
@@ -77,7 +79,7 @@ public class Ad implements Serializable {
 	}
 
 	// It will be used by my code (for example by Unit Tests)
-	public Ad(Long id, Set<AdDescription> adDescriptions, Long companyId, Long companyCategId, String adMobileImage,
+	public Ad(String id, Set<AdDescription> adDescriptions, Long companyId, Long companyCategId, String adMobileImage,
 			OffsetDateTime createdAt, OffsetDateTime updatedAt) {
 		this.id = id;
 		this.adDescriptions = adDescriptions;
@@ -92,7 +94,7 @@ public class Ad implements Serializable {
 	 * WARNING: JPA REQUIRES GETTERS!!!
 	 */
 	
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 

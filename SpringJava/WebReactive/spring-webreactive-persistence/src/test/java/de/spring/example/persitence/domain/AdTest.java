@@ -14,7 +14,7 @@ import de.spring.example.persistence.domain.AdDescription;
 
 public class AdTest {
 	// Ad
-	public static final Long AD_ID = 66L;
+	public static final String AD_ID = "66";
 	public static final Long COMPANY_ID = 2L;
 	public static final Long COMPANY_CATEG_ID = 3L;
 	public static final String AD_MOBILE_IMAGE = "slippers.jpg";
@@ -22,7 +22,7 @@ public class AdTest {
 	public static final OffsetDateTime UPDATED_AT = OffsetDateTime.now();
 
 	// AdDescription
-	public static final Long AD_DESCRIPTION_ID = 99L;
+	public static final String AD_DESCRIPTION_ID = "99";
 	public static final Long LANGUAGE_ID = 3L;
 	public static final String AD_NAME = "Slippers";
 	public static final String AD_DESCRIPTION = "Slippers";
