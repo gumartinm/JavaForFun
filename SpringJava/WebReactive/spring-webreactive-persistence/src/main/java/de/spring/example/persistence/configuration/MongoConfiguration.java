@@ -1,15 +1,20 @@
 package de.spring.example.persistence.configuration;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.CustomConversions;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 import com.mongodb.ServerAddress;
@@ -20,6 +25,9 @@ import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.connection.SocketSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
+
+import de.spring.example.persistence.converters.DateToOffsetDateTimeConverter;
+import de.spring.example.persistence.converters.OffsetDateTimeToDateConverter;
 
 // Reactive Mongo configuration does not work with XML configuration (Spring developers forgot to implement XML configuration, only Java configuration is available :( )
 @Configuration
@@ -74,5 +82,17 @@ public class MongoConfiguration extends AbstractReactiveMongoConfiguration {
 	@Override
 	protected String getDatabaseName() {
 		return databaseName;
+	}
+
+	// IT DOES NOT WORK!!!
+	// I THINK THERE IS A BUG BECAUSE MappingMongoConverter.this.conversionService never includes my custom converters!!!!
+	@Bean
+	@Override
+	public CustomConversions customConversions() {
+	    List<Converter<?, ?>> converterList = new ArrayList<>();
+	    converterList.add(new OffsetDateTimeToDateConverter());
+	    converterList.add(new DateToOffsetDateTimeConverter());
+
+	    return new MongoCustomConversions(converterList);
 	}
 }
