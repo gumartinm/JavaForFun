@@ -3,7 +3,8 @@ package de.spring.example.persitence.domain;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.time.OffsetDateTime;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,8 +19,8 @@ public class AdTest {
 	public static final Long COMPANY_ID = 2L;
 	public static final Long COMPANY_CATEG_ID = 3L;
 	public static final String AD_MOBILE_IMAGE = "slippers.jpg";
-	public static final OffsetDateTime CREATED_AT = OffsetDateTime.now().minusDays(1);
-	public static final OffsetDateTime UPDATED_AT = OffsetDateTime.now();
+	public static final Date CREATED_AT = Date.valueOf(LocalDate.now().minusDays(1));
+	public static final Date UPDATED_AT = Date.valueOf(LocalDate.now());
 
 	// AdDescription
 	public static final String AD_DESCRIPTION_ID = "99";

@@ -1,7 +1,7 @@
 package de.spring.example.persistence.domain;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Id;
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="jsonId")
+@JsonIdentityInfo(generator=ObjectIdGenerators.StringIdGenerator.class, property="jsonId")
 // 1. Named query is JPL. It is portable.
 // 2. Instead of annotating the domain class we should be using @Query annotation at the query method
 //    because it should be cleaner :)
@@ -67,11 +67,17 @@ public class Ad implements Serializable {
 
 	@NotNull
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ssZ")
-	private OffsetDateTime createdAt;
+	// IT DOES NOT WORK. I THINK THERE IS A BUG BECAUSE MappingMongoConverter.this.conversionService never includes my custom converters!!!!
+	// ALL THIS STUFF SUCKS A LOT!!!
+	//private OffsetDateTime createdAt;
+	private Date createdAt;
 	
 	@NotNull
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ssZ")
-	private OffsetDateTime updatedAt;
+	// IT DOES NOT WORK. I THINK THERE IS A BUG BECAUSE MappingMongoConverter.this.conversionService never includes my custom converters!!!!
+	// ALL THIS STUFF SUCKS A LOT!!!
+	//private OffsetDateTime updatedAt;
+	private Date updatedAt;
 
 	// It will be used by JPA when filling the property fields with data coming from data base.
 	protected Ad() {
@@ -80,7 +86,7 @@ public class Ad implements Serializable {
 
 	// It will be used by my code (for example by Unit Tests)
 	public Ad(String id, Set<AdDescription> adDescriptions, Long companyId, Long companyCategId, String adMobileImage,
-			OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+			Date createdAt, Date updatedAt) {
 		this.id = id;
 		this.adDescriptions = adDescriptions;
 		this.companyId = companyId;
@@ -114,11 +120,11 @@ public class Ad implements Serializable {
 		return adMobileImage;
 	}
 
-	public OffsetDateTime getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public OffsetDateTime getUpdatedAt() {
+	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 }

@@ -9,7 +9,7 @@ import de.spring.example.rest.configuration.ResourcesConfig;
 import de.spring.example.services.configuration.ServicesConfig;
 
 /**
- * Instead of using {@code web.xml}, web applications are loaded in this way (it is the only way available for Spring Web Reactive)
+ * Instead of using {@code web.xml}, web applications can be also loaded in this way (it is the only way available for Spring Web Reactive)
  *
  * <h2>Steps when loading applications using the programmatically way: </h2>
  *

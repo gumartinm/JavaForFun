@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="jsonId")
+@JsonIdentityInfo(generator=ObjectIdGenerators.StringIdGenerator.class, property="jsonId")
 @Document
 public class AdDescription implements Serializable {
 	// https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo-template.id-handling
