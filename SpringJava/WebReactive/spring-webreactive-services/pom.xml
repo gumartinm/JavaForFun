@@ -15,6 +15,19 @@
 
 
 	<dependencies>
+
+        <!-- Using Web Reactive -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+        </dependency>
+
+        <!-- Required by WebClient -->
+        <dependency>
+            <groupId>io.projectreactor.ipc</groupId>
+            <artifactId>reactor-netty</artifactId>
+        </dependency>
+
 		<dependency>
 				<groupId>de.spring.jpa</groupId>
 				<artifactId>spring-webreactive-persistence</artifactId>
