@@ -41,7 +41,7 @@ public class UsernameFilter implements WebFilter, Ordered {
 		ServerHttpRequest request = exchange.getRequest();
 		
 		if (!request.getHeaders().containsKey(UsernameThreadContext.USERNAME_HEADER)) {
-			return null;
+			return Mono.empty();
 		}
 		
 		String username = request.getHeaders().get(UsernameThreadContext.USERNAME_HEADER).get(0);
@@ -70,32 +70,25 @@ public class UsernameFilter implements WebFilter, Ordered {
 							} else {
 								continuation = Mono.empty();
 							}
-							Object attribute = exchange
-									.getAttribute(HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE);
 							return continuation;
 						})
-						.subscriberContext(c -> {
+						.subscriberContext(context -> {
 							UsernameContext span = null;
-							if (c.hasKey(UsernameContext.class)) {
-								UsernameContext parent = c.get(UsernameContext.class);
-								if (LOGGER.isDebugEnabled()) {
-									LOGGER.debug("Found span in reactor context" + span);
-								}
-							} else {
+							if (!context.hasKey(UsernameContext.class)) {
 								if (spanFromAttribute != null) {
 									span = spanFromAttribute;
 									if (LOGGER.isDebugEnabled()) {
 										LOGGER.debug("Found span in attribute " + span);
 									}
 								} else {
-
+									span = new UsernameContext(username);
 									if (LOGGER.isDebugEnabled()) {
 										LOGGER.debug("Not found span " + span);
 									}
 								}
 								exchange.getAttributes().put(UsernameThreadContext.USERNAME_HEADER, span);
 							}
-							return c.put(UsernameContext.class, span);
+							return context.put(UsernameContext.class, span);
 						}));
 	}
 
