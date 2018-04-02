@@ -11,10 +11,7 @@ import de.spring.example.context.UsernameThreadContext;
 import reactor.core.publisher.Mono;
 import reactor.util.context.Context;
 
-/**
- * Based on https://github.com/spring-cloud/spring-cloud-sleuth/blob/c159949484c580182631845cabe705a880215159/spring-cloud-sleuth-core/src/main/java/org/springframework/cloud/sleuth/instrument/web/TraceWebFilter.java
- *
- */
+
 public class UsernameFilter implements WebFilter {
 
 	@Override
@@ -30,11 +27,20 @@ public class UsernameFilter implements WebFilter {
 				.filter(exchange)
                 .compose(function -> function
                         .then(Mono.subscriberContext())
+                        .doOnSubscribe(onSubscribe -> {
+                            MDC.put(UsernameThreadContext.USERNAME_HEADER, username);
+                        })
+                        .doOnError(throwable -> {
+                            MDC.put(UsernameThreadContext.USERNAME_HEADER, username);
+                        })
+                        .onErrorMap(throwable -> {
+                            MDC.put(UsernameThreadContext.USERNAME_HEADER, username);
+                            return throwable;
+                        })
                         .doFinally(onFinally -> {
                             MDC.remove(UsernameThreadContext.USERNAME_HEADER);
                         })
                         .flatMap(context -> {
-                            MDC.put(UsernameThreadContext.USERNAME_HEADER, context.get(UsernameContext.class).getUsername());
                             Mono<Void> continuation = Mono.empty();
                             return continuation;
                         })
@@ -45,6 +51,7 @@ public class UsernameFilter implements WebFilter {
 							}
 
                             return updatedContext;
-						}));
+						})
+					);
 	}
 }
