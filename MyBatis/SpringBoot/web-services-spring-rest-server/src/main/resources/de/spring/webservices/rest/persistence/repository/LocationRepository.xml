@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="de.spring.webservices.rest.persistence.repository.LocationRepository" >
+      
+    <resultMap id="locationResultMap" type="de.spring.webservices.domain.Location">
+        <id column="ID" property="id" />
+        <result column="DESCRIPTION" property="description" />
+        <result column="LEVEL_ID" property="levelId" />
+        <result column="PARENT_ID" property="parentId" />
+    </resultMap>
+    
+    
+   <select id="findAll" resultMap="locationResultMap">
+		SELECT
+			LOCATION.ID,
+		    LOCATION.DESCRIPTION,
+		    LOC_HIERARCHY.LEVEL_ID,
+		    LOCATION.PARENT_ID
+		FROM LOCATION_HIERARCHY LOC_HIERARCHY
+		INNER JOIN LOCATION LOCATION ON (LOC_HIERARCHY.CHILD_ID = LOCATION.ID)
+		WHERE
+		    LOC_HIERARCHY.PARENT_ID = 1
+		    AND LOC_HIERARCHY.LEVEL_ID != 0
+		    ORDER BY LOC_HIERARCHY.LEVEL_ID ASC;
+  </select>
+
+</mapper>

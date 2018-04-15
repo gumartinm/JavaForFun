@@ -1,0 +1,56 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="gustavo (generated)" id="1523818933515-1">
+        <createTable tableName="LOCATION">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="PARENT_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1523818933515-2">
+        <createTable tableName="LOCATION_HIERARCHY">
+            <column autoIncrement="true" name="MAPPING_ID" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="PARENT_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHILD_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LEVEL_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1523818933515-3">
+        <createIndex indexName="LOCATION_HIERARCHY_IND_01" tableName="LOCATION_HIERARCHY">
+            <column name="PARENT_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1523818933515-4">
+        <createIndex indexName="LOCATION_HIERARCHY_IND_02" tableName="LOCATION_HIERARCHY">
+            <column name="CHILD_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1523818933515-5">
+        <createIndex indexName="LOCATION_IND_01" tableName="LOCATION">
+            <column name="PARENT_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1523818933515-6">
+        <addForeignKeyConstraint baseColumnNames="PARENT_ID" baseTableName="LOCATION" constraintName="LOCATION_FK_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="LOCATION"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1523818933515-7">
+        <addForeignKeyConstraint baseColumnNames="PARENT_ID" baseTableName="LOCATION_HIERARCHY" constraintName="LOCATION_HIERARCHY_FK_01" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="LOCATION"/>
+    </changeSet>
+    <changeSet author="gustavo (generated)" id="1523818933515-8">
+        <addForeignKeyConstraint baseColumnNames="CHILD_ID" baseTableName="LOCATION_HIERARCHY" constraintName="LOCATION_HIERARCHY_FK_02" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="LOCATION"/>
+    </changeSet>
+</databaseChangeLog>

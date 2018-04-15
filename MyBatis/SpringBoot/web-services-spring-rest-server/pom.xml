@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>web-services-spring-rest-bom</artifactId>
+		<groupId>de.spring.webservices</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>web-services-spring-rest-server</artifactId>
+	<name>web-services-spring-rest-server</name>
+	<url>http://gumartinm.name</url>
+	<dependencies>
+		<dependency>
+			<groupId>de.spring.webservices</groupId>
+			<artifactId>web-services-spring-rest-global</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		
+	    <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- Required dependency for using org.springframework.data.domain.Page -->
+	    <dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis-spring</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.mybatis</groupId>
+		    <artifactId>mybatis</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+
+        <!-- Health check service with user and password -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+
+        <!--
+             Jackson dependency required for serializing and deserializing LocalDateTime,
+             LocalDate, etc, etc objects.
+        -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+		<dependency>
+		    <groupId>biz.paluch.logging</groupId>
+		    <artifactId>logstash-gelf</artifactId>
+		    <version>1.11.1</version>
+		</dependency>
+		
+		
+		<dependency>
+	      <groupId>org.liquibase</groupId>
+	      <artifactId>liquibase-core</artifactId>
+	    </dependency>
+		
+		<dependency>
+			<groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		    
+		<!-- Unitary and integration tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+		    <groupId>org.mybatis.spring.boot</groupId>
+		    <artifactId>mybatis-spring-boot-starter-test</artifactId>
+		    <version>1.3.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		
+
+		<!-- API documentation -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		
+	</dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+             </plugin>
+             <plugin>
+            	<groupId>pl.project13.maven</groupId>
+            	<artifactId>git-commit-id-plugin</artifactId>
+        	</plugin>
+        </plugins>
+    </build>
+
+</project>

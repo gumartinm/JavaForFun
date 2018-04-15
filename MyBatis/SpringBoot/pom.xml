@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.example.spring.kafka</groupId>
+    <artifactId>web-services-spring-rest</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>web-services-spring-rest</name>
+    <url>https://gumartinm.name/</url>
+    <description>Web Services Spring REST</description>
+    <organization>
+        <name>gumartinm</name>
+        <url>https://gumartinm.name/</url>
+    </organization>
+    <scm>
+        <developerConnection>scm:git:https://git.gumartinm.name/SpringWebServicesForFun</developerConnection>
+        <url>https://git.gumartinm.name/SpringWebServicesForFun</url>
+    </scm>
+
+    <modules>
+        <module>web-services-spring-rest-bom</module>
+        <module>web-services-spring-rest-global</module>
+        <module>web-services-spring-rest-server</module>
+    </modules>
+
+</project>
+
