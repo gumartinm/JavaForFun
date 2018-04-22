@@ -2,11 +2,10 @@ package de.spring.webservices.rest.configuration;
 
 import javax.sql.DataSource;
 
+import org.flywaydb.core.Flyway;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import liquibase.integration.spring.SpringLiquibase;
 
 @Configuration
 @MapperScan(basePackages = "de.spring.webservices.rest.persistence.repository",
@@ -14,10 +13,13 @@ import liquibase.integration.spring.SpringLiquibase;
 public class DatabaseConfiguration {
 
     @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
-        SpringLiquibase springLiquibase = new SpringLiquibase();
-        springLiquibase.setDataSource(dataSource);
-        springLiquibase.setChangeLog("classpath:/liquibase/changeLogs.xml");
-        return springLiquibase;
+    public Flyway flyway(DataSource dataSource) {
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(dataSource);
+        flyway.setLocations("classpath:/flyway/");
+        flyway.setBaselineOnMigrate(true);
+        flyway.migrate();
+
+        return flyway;
     }
 }

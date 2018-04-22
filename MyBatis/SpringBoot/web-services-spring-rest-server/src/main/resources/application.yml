@@ -5,10 +5,10 @@ spring:
   main:
     banner-mode: "LOG"
   datasource:
-    url: jdbc:mysql://localhost:3306/mybatis_example?createDatabaseIfNotExist=true&allowMultiQueries=true&autoReconnect=true&characterEncoding=UTF-8
+    url: jdbc:postgresql://localhost:5432/locationclosure
     username: root
     password: root
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     max-wait: 10000
     max-active: 50
     test-on-borrow: true
