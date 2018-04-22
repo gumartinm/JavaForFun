@@ -16,8 +16,8 @@ public class DatabaseConfiguration {
     public Flyway flyway(DataSource dataSource) {
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSource);
-        flyway.setLocations("classpath:/flyway/");
-        flyway.setBaselineOnMigrate(true);
+        flyway.setLocations("classpath:/db/migration/flyway/");
+        flyway.baseline();
         flyway.migrate();
 
         return flyway;

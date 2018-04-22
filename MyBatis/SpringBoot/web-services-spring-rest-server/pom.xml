@@ -9,6 +9,17 @@
 	<artifactId>web-services-spring-rest-server</artifactId>
 	<name>web-services-spring-rest-server</name>
 	<url>http://gumartinm.name</url>
+	
+    <properties>
+        <docker.keepContainer>false</docker.keepContainer>
+        <docker.keepRunning>false</docker.keepRunning>
+        <docker.removeVolumes>true</docker.removeVolumes>
+        <!-- When runnin on your PC  
+        <database.port>5432</database.port>
+        -->
+    </properties>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>de.spring.webservices</groupId>
@@ -60,12 +71,6 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-
-		<dependency>
-		    <groupId>biz.paluch.logging</groupId>
-		    <artifactId>logstash-gelf</artifactId>
-		    <version>1.11.1</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -75,6 +80,10 @@
 		<dependency>
 		    <groupId>org.postgresql</groupId>
 		    <artifactId>postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.postgis</groupId>
+			<artifactId>postgis-jdbc</artifactId>
 		</dependency>
 		    
 		<!-- Unitary and integration tests -->
@@ -121,6 +130,60 @@
             	<groupId>pl.project13.maven</groupId>
             	<artifactId>git-commit-id-plugin</artifactId>
         	</plugin>
+        	
+        	<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<images>
+						<image>
+							<name>kartoza/postgis:9.5-2.2</name>
+			                  <!--  
+							<external>
+								<type>compose</type>
+								<basedir>src/test/resources/docker</basedir>
+								<composeFile>docker-compose.yml</composeFile>
+							</external>
+							-->
+							<run>
+								<privileged>true</privileged>
+								<ports>
+								    <port>database.port:5432</port>
+								 </ports>
+								 <env>
+								 	<POSTGRES_USER>locationclosure</POSTGRES_USER>
+								 	<POSTGRES_PASS>locationclosure</POSTGRES_PASS>
+								 	<POSTGRES_DBNAME>locationclosure</POSTGRES_DBNAME>
+								 	<ALLOW_IP_RANGE>0.0.0.0/0</ALLOW_IP_RANGE>
+								 </env>
+								<wait>
+									<time>5000</time>
+								</wait>
+								<log>
+									<color>GREEN</color>
+									<prefix>Docket integration test</prefix>
+								</log>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
     </build>
 

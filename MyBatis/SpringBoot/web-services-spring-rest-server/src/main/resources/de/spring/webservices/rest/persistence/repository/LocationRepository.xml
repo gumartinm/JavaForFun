@@ -7,6 +7,7 @@
         <result column="DESCRIPTION" property="description" />
         <result column="LEVEL_ID" property="levelId" />
         <result column="PARENT_ID" property="parentId" />
+        <result column="GPS" property="point" typeHandler="de.spring.webservices.rest.persistence.handler.PointTypeHandler" />
     </resultMap>
     
     
@@ -15,7 +16,8 @@
 			LOCATION.ID,
 		    LOCATION.DESCRIPTION,
 		    LOC_HIERARCHY.LEVEL_ID,
-		    LOCATION.PARENT_ID
+		    LOCATION.PARENT_ID,
+		    LOCATION.GPS
 		FROM LOCATION_HIERARCHY LOC_HIERARCHY
 		INNER JOIN LOCATION LOCATION ON (LOC_HIERARCHY.CHILD_ID = LOCATION.ID)
 		WHERE
@@ -23,5 +25,25 @@
 		    AND LOC_HIERARCHY.LEVEL_ID != 0
 		    ORDER BY LOC_HIERARCHY.LEVEL_ID ASC;
   </select>
+  
+  <insert id="insert" parameterType="de.spring.webservices.domain.Location">    
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE">
+            SELECT nextval('SEQ_LOCATION_ID')
+        </selectKey>
+        
+  		INSERT INTO LOCATION (
+  			ID,
+  			DESCRIPTION,
+			PARENT_ID,
+			GPS
+		)
+		VALUES (
+			#{id},
+			#{description},
+			#{parentId}
+			#{point, typeHandler=de.spring.webservices.rest.persistence.handler.PointTypeHandler}
+		)
+  </insert>
+  
 
 </mapper>

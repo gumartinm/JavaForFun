@@ -9,4 +9,9 @@
 	    <setting name="defaultExecutorType" value="SIMPLE"/>
 	    <setting name="mapUnderscoreToCamelCase" value="false"/>
   </settings>
+
+    <typeHandlers>
+          <package name="de.spring.webservices.rest.persistence.handler"/>
+    </typeHandlers>
+
 </configuration>

@@ -16,7 +16,7 @@ alter table location add constraint location_pk primary key ( id );
 alter table location add constraint location_fk_01 foreign key ( parent_id ) references location ( id ) on delete no action on update no action;
 alter table location alter column gps type geography(point,4326) using geography(ST_SetSRID(geometry(gps),4326));
 
-create sequence seq_location_id  start with 0 increment by 1 cache 1;
+create sequence seq_location_id  start with 1 increment by 1 cache 1;
 
 
 
@@ -40,4 +40,4 @@ alter table location_hierarchy add constraint location_hierarchy_pk primary key 
 alter table location_hierarchy add constraint location_hierarchy_fk_01 foreign key ( parent_id ) references location ( id ) on delete no action on update no action;
 alter table location_hierarchy add constraint location_hierarchy_fk_02 foreign key ( child_id ) references location ( id ) on delete no action on update no action;
 
-create sequence seq_location_hierarchy_id  start with 0 increment by 1 cache 1;
+create sequence seq_location_hierarchy_id  start with 1 increment by 1 cache 1;

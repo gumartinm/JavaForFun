@@ -29,22 +29,6 @@
     <Loggers>
 
         <!-- 
-            Specific log level for Spring WEBMVC.
-         -->
-        <Logger name="org.springframework.web" level="OFF" additivity="false">
-            <AppenderRef ref="STDOUT" />
-        </Logger>
-
-
-        <!-- 
-            General logging Spring.
-         -->
-        <Logger name="org.springframework" level="OFF" additivity="false">
-            <AppenderRef ref="STDOUT"/>
-        </Logger>
-
-
-        <!-- 
             Anything else will be using TRACE logging level.
          -->
         <Root level="INFO">

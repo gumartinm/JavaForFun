@@ -8,4 +8,6 @@ public interface LocationRepository extends BaseRepository {
 
     List<Location> findAll();
 
+    long save(Location location);
+
 }

@@ -101,6 +101,7 @@
 			    <artifactId>mybatis</artifactId>
 			    <version>${mybatis.version}</version>
 			</dependency>
+			
 			<dependency>
 			    <groupId>org.flywaydb</groupId>
 			    <artifactId>flyway-core</artifactId>
@@ -111,6 +112,12 @@
 			    <artifactId>postgresql</artifactId>
 			    <version>42.2.2</version>
 			</dependency>
+			<dependency>
+			    <groupId>net.postgis</groupId>
+			    <artifactId>postgis-jdbc</artifactId>
+			    <version>2.2.1</version>
+			</dependency>
+			
 			<dependency>
 			    <groupId>org.apache.commons</groupId>
 			    <artifactId>commons-lang3</artifactId>
@@ -135,6 +142,10 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <delimiters>
+						<delimiter>@</delimiter>
+					</delimiters>
+					<useDefaultDelimiters>false</useDefaultDelimiters>
                 </configuration>
             </plugin>
             <plugin>
@@ -187,6 +198,11 @@
                                 <include>**/*IT.java</include>
                                 <include>**/*IntegrationTest.java</include>
                             </includes>
+                            
+                            <!-- IN BOM FILE... :(  IT SUCKS :( )-->
+		                    <systemPropertyVariables>
+		                        <database.port>${database.port}</database.port>
+		                    </systemPropertyVariables>
                         </configuration>
                     </execution>
                 </executions>
@@ -211,6 +227,12 @@
                      <artifactId>spring-boot-maven-plugin</artifactId>
                      <version>2.0.1.RELEASE</version>
                  </plugin>
+                 
+                 <plugin>
+				    <groupId>io.fabric8</groupId>
+				    <artifactId>docker-maven-plugin</artifactId>
+				    <version>0.25.2</version>
+				 </plugin>
             </plugins>
          </pluginManagement>
 	</build>

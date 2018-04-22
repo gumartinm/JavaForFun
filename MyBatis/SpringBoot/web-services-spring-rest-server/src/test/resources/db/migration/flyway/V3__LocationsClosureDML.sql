@@ -1,4 +1,4 @@
-insert INTO location (description, gps, parent_id) values
+insert INTO location (id, description, gps, parent_id) values
 (nextval('seq_location_id'), 'Root', ST_GeographyFromText('SRID=4326;POINT(0.0 0.0)'), 1)
 ,(nextval('seq_location_id'), 'Spain', ST_GeographyFromText('SRID=4326;POINT(-3.7492 40.4637)'), 1)
 ,(nextval('seq_location_id'), 'Barcelona', ST_GeographyFromText('SRID=4326;POINT(2.1734 41.3851)'), 2)
@@ -16,29 +16,30 @@ insert INTO location (description, gps, parent_id) values
 ,(nextval('seq_location_id'), 'Moreira', ST_GeographyFromText('SRID=4326;POINT(-8.654604 41.242565)'), 14);
 
 
-insert INTO location_hierarchy (parent_id, child_id, level_id) values
-('1', '1', '0')
-,('2', '2', '0')
-,('3', '3', '0')
-,('4', '4', '0')
-,('5', '5', '0')
-,('6', '6', '0')
-,('7', '7', '0')
-,('8', '8', '0')
-,('9', '9', '0')
-,('10', '10', '0')
-,('11', '11', '0')
-,('12', '12', '0')
-,('13', '13', '0')
-,('14', '14', '0')
-,('15', '15', '0');
+insert INTO location_hierarchy (id, parent_id, child_id, level_id) values
+(nextval('seq_location_hierarchy_id'), '1', '1', '0')
+,(nextval('seq_location_hierarchy_id'), '2', '2', '0')
+,(nextval('seq_location_hierarchy_id'), '3', '3', '0')
+,(nextval('seq_location_hierarchy_id'), '4', '4', '0')
+,(nextval('seq_location_hierarchy_id'), '5', '5', '0')
+,(nextval('seq_location_hierarchy_id'), '6', '6', '0')
+,(nextval('seq_location_hierarchy_id'), '7', '7', '0')
+,(nextval('seq_location_hierarchy_id'), '8', '8', '0')
+,(nextval('seq_location_hierarchy_id'), '9', '9', '0')
+,(nextval('seq_location_hierarchy_id'), '10', '10', '0')
+,(nextval('seq_location_hierarchy_id'), '11', '11', '0')
+,(nextval('seq_location_hierarchy_id'), '12', '12', '0')
+,(nextval('seq_location_hierarchy_id'), '13', '13', '0')
+,(nextval('seq_location_hierarchy_id'), '14', '14', '0')
+,(nextval('seq_location_hierarchy_id'), '15', '15', '0');
 
 
 -- Spain belongs to Root
 -- Spain LOCATION: 2
 -- Root LOCATION: 1
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -46,13 +47,14 @@ FROM location_hierarchy CF, location_hierarchy CS
 WHERE
     CF.child_id = 1
     AND CS.parent_id = 2;
-
-
+    
+    
 -- Portugal belongs to Root
 -- Portugal LOCATION: 12
 -- Root LOCATION: 1
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -65,8 +67,9 @@ WHERE
 -- Barcelona belongs to Spain
 -- Barcelona LOCATION: 3
 -- Spain LOCATION: 2
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -79,8 +82,9 @@ WHERE
 -- Avila belongs to Spain
 -- Avila LOCATION: 4
 -- Spain LOCATION: 2
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -93,8 +97,9 @@ WHERE
 -- Making Sant Cugat a child of Barcelona and grand child of Spain
 -- Sant Cugat LOCATION: 6
 -- Barcelona LOCATION: 3
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -107,8 +112,9 @@ WHERE
 -- Making Candeleda a child of Avila and grand child of Spain
 -- Candeleda LOCATION: 8
 -- Avila LOCATION: 4
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -121,8 +127,9 @@ WHERE
 -- Making Home a child of Sant Cugat and grand child of Barcelona and grand grand child of Spain
 -- Sant Cugat LOCATION: 6
 -- Home LOCATION: 10
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -135,8 +142,9 @@ WHERE
 -- Making Second Home a child of Candeleda and grand child of Avila and grand grand child of Spain
 -- Candeleda LOCATION: 8
 -- Second Home LOCATION: 11
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -149,8 +157,9 @@ WHERE
 -- Oporto belongs to Portugal
 -- Oporto LOCATION: 13
 -- Portugal LOCATION: 12
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -163,8 +172,9 @@ WHERE
 -- Lisboa belongs to Portugal
 -- Lisboa LOCATION: 14
 -- Portugal LOCATION: 12
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))
@@ -177,8 +187,9 @@ WHERE
 -- Making Moreira a child of Oporto and grand child of Portugal
 -- Moreria LOCATION: 15
 -- Oporto LOCATION: 13
-insert INTO location_hierarchy (parent_id, child_id, level_id)
+insert INTO location_hierarchy (id, parent_id, child_id, level_id)
 select
+	nextval('seq_location_hierarchy_id'),
     CF.parent_id,
     CS.child_id,
     (CF.level_id + (CS.level_id + 1))

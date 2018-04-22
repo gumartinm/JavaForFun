@@ -1,0 +1,12 @@
+version: '2'
+services:
+  web-services-spring-rest-server:
+    image: kartoza/postgis:9.5-2.2
+    container_name: "postgis"
+    ports:
+      - "5432"
+    privileged: true
+    environment:
+      POSTGRES_USER: "locationclosure"
+      POSTGRES_PASSWORD: "locationclosure"
+      POSTGRES_DBNAME: "locationclosure"
