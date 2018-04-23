@@ -23,7 +23,7 @@
 		WHERE
 		    LOC_HIERARCHY.PARENT_ID = 1
 		    AND LOC_HIERARCHY.LEVEL_ID != 0
-		    ORDER BY LOC_HIERARCHY.LEVEL_ID ASC;
+		    ORDER BY LOC_HIERARCHY.LEVEL_ID ASC, LOCATION.ID ASC;
   </select>
   
   <insert id="insert" parameterType="de.spring.webservices.domain.Location">    

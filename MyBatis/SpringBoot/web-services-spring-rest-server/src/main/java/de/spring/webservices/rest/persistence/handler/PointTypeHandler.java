@@ -7,7 +7,9 @@ import java.sql.SQLException;
 
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
+import org.postgis.Geometry;
 import org.postgis.PGgeometry;
+import org.postgresql.util.PGobject;
 
 import de.spring.webservices.domain.Location.Point;
 
@@ -21,30 +23,32 @@ public class PointTypeHandler implements TypeHandler<Point> {
 
     @Override
     public Point getResult(ResultSet resultSet, String columnName) throws SQLException {
-        PGgeometry pGgeometry = (PGgeometry) resultSet.getObject(columnName);
-        return convert(pGgeometry);
+        PGobject pGobject = (PGobject) resultSet.getObject(columnName);
+        return convert(pGobject);
     }
 
     @Override
     public Point getResult(ResultSet resultSet, int columnIndex) throws SQLException {
-        PGgeometry pGgeometry = (PGgeometry) resultSet.getObject(columnIndex);
-        return convert(pGgeometry);
+        PGobject pGobject = (PGobject) resultSet.getObject(columnIndex);
+        return convert(pGobject);
     }
 
     @Override
     public Point getResult(CallableStatement callableStatement, int columnIndex) throws SQLException {
-        Object object = callableStatement.getObject(columnIndex);
-        PGgeometry pGgeometry = (PGgeometry) object;
-        return convert(pGgeometry);
+        PGobject pGobject = (PGobject) callableStatement.getObject(columnIndex);
+        return convert(pGobject);
     }
 
-    private de.spring.webservices.domain.Location.Point convert(final PGgeometry pGgeometry) {
-        if (pGgeometry == null) {
+    private de.spring.webservices.domain.Location.Point convert(final PGobject pGobject) throws SQLException {
+        if (pGobject == null) {
             return null;
         }
 
-        org.postgis.Point point = (org.postgis.Point) pGgeometry.getGeometry();
-        return new de.spring.webservices.domain.Location.Point(point.getX(), point.getY());
+        String value = pGobject.getValue();
+        Geometry geometry = PGgeometry.geomFromString(value);
+        org.postgis.Point postgisPoint = (org.postgis.Point) geometry;
+
+        return new de.spring.webservices.domain.Location.Point(postgisPoint.getX(), postgisPoint.getY());
     }
 
     private PGgeometry convert(final Point point) {
