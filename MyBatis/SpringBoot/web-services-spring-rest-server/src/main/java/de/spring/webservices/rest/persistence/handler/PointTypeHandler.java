@@ -9,7 +9,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.postgis.Geometry;
 import org.postgis.PGgeometry;
-import org.postgresql.util.PGobject;
 
 import de.spring.webservices.domain.Location.Point;
 
@@ -23,29 +22,28 @@ public class PointTypeHandler implements TypeHandler<Point> {
 
     @Override
     public Point getResult(ResultSet resultSet, String columnName) throws SQLException {
-        PGobject pGobject = (PGobject) resultSet.getObject(columnName);
-        return convert(pGobject);
+        String point = (String) resultSet.getObject(columnName);
+        return convert(point);
     }
 
     @Override
     public Point getResult(ResultSet resultSet, int columnIndex) throws SQLException {
-        PGobject pGobject = (PGobject) resultSet.getObject(columnIndex);
+        String pGobject = (String) resultSet.getObject(columnIndex);
         return convert(pGobject);
     }
 
     @Override
     public Point getResult(CallableStatement callableStatement, int columnIndex) throws SQLException {
-        PGobject pGobject = (PGobject) callableStatement.getObject(columnIndex);
+        String pGobject = (String) callableStatement.getObject(columnIndex);
         return convert(pGobject);
     }
 
-    private de.spring.webservices.domain.Location.Point convert(final PGobject pGobject) throws SQLException {
-        if (pGobject == null) {
+    private de.spring.webservices.domain.Location.Point convert(final String point) throws SQLException {
+        if (point == null) {
             return null;
         }
 
-        String value = pGobject.getValue();
-        Geometry geometry = PGgeometry.geomFromString(value);
+        Geometry geometry = PGgeometry.geomFromString(point);
         org.postgis.Point postgisPoint = (org.postgis.Point) geometry;
 
         return new de.spring.webservices.domain.Location.Point(postgisPoint.getX(), postgisPoint.getY());

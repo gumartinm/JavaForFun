@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class Location {
     private Long id;
     private Long parentId;
-    private Integer levelId;
     private String description;
     private Point point;
 
@@ -73,7 +72,6 @@ public class Location {
     public Location(Long id, Long parentId, Integer levelId, String description, Point point) {
         this.id = id;
         this.parentId = parentId;
-        this.levelId = levelId;
         this.description = description;
         this.point = point;
     }
@@ -84,10 +82,6 @@ public class Location {
 
     public Long getParentId() {
         return parentId;
-    }
-
-    public Integer getLevelId() {
-        return levelId;
     }
 
     public String getDescription() {

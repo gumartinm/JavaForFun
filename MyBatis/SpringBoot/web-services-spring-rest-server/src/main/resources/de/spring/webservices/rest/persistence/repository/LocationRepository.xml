@@ -5,27 +5,45 @@
     <resultMap id="locationResultMap" type="de.spring.webservices.domain.Location">
         <id column="ID" property="id" />
         <result column="DESCRIPTION" property="description" />
-        <result column="LEVEL_ID" property="levelId" />
         <result column="PARENT_ID" property="parentId" />
         <result column="GPS" property="point" typeHandler="de.spring.webservices.rest.persistence.handler.PointTypeHandler" />
     </resultMap>
     
     
    <select id="findAll" resultMap="locationResultMap">
-		SELECT
-			LOCATION.ID,
-		    LOCATION.DESCRIPTION,
-		    LOC_HIERARCHY.LEVEL_ID,
-		    LOCATION.PARENT_ID,
-		    LOCATION.GPS
-		FROM LOCATION_HIERARCHY LOC_HIERARCHY
-		INNER JOIN LOCATION LOCATION ON (LOC_HIERARCHY.CHILD_ID = LOCATION.ID)
-		WHERE
-		    LOC_HIERARCHY.PARENT_ID = 1
-		    AND LOC_HIERARCHY.LEVEL_ID != 0
-		    ORDER BY LOC_HIERARCHY.LEVEL_ID ASC, LOCATION.ID ASC;
+
+		 WITH RECURSIVE CTE AS (
+
+			SELECT
+				LOCATION.ID,
+				LOCATION.PARENT_ID,
+				LOCATION.DESCRIPTION,
+				LOCATION.GPS::text,
+				LOCATION_TYPE.NAME
+			FROM
+				LOCATION
+			INNER JOIN LOCATION_TYPE on LOCATION_TYPE.id = LOCATION.location_type_id
+			WHERE
+				LOCATION_TYPE.name = 'ROOT'
+
+		UNION
+
+			SELECT
+				LOCATION_RECURSIVE.ID,
+				LOCATION_RECURSIVE.PARENT_ID,
+				LOCATION_RECURSIVE.DESCRIPTION,
+				LOCATION_RECURSIVE.GPS::text,
+				LOCATION_TYPE.NAME
+			FROM
+				LOCATION LOCATION_RECURSIVE
+			INNER JOIN CTE C ON C.id = LOCATION_RECURSIVE.parent_id
+			INNER JOIN location_type LOCATION_TYPE on LOCATION_TYPE.id = LOCATION_RECURSIVE.location_type_id
+
+		) SELECT * FROM CTE;
+
   </select>
-  
+
+
   <insert id="insert" parameterType="de.spring.webservices.domain.Location">    
         <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE">
             SELECT nextval('SEQ_LOCATION_ID')

@@ -45,7 +45,7 @@ public class LocationRepositoryIntegrationTest {
         List<Location> locations = locationRepository.findAll();
         Location location = locations.get(0);
 
-        assertThat(location.getDescription(), is("Spain"));
+        assertThat(location.getDescription(), is("ROOT"));
     }
 
 }
