@@ -44,7 +44,7 @@
   </select>
 
 
-  <insert id="insert" parameterType="de.spring.webservices.domain.Location">    
+  <insert id="save" parameterType="de.spring.webservices.domain.Location">    
         <selectKey resultType="java.lang.Long" keyProperty="id" order="BEFORE">
             SELECT nextval('SEQ_LOCATION_ID')
         </selectKey>
@@ -53,15 +53,33 @@
   			ID,
   			DESCRIPTION,
 			PARENT_ID,
-			GPS
+			GPS,
+			LOCATION_TYPE_ID
 		)
 		VALUES (
 			#{id},
 			#{description},
-			#{parentId}
-			#{point, typeHandler=de.spring.webservices.rest.persistence.handler.PointTypeHandler}
+			#{parentId},
+			#{point, typeHandler=de.spring.webservices.rest.persistence.handler.PointTypeHandler},
+			1
 		)
   </insert>
   
+
+  <select id="findAllByPointAndRadius" parameterType="map" resultMap="locationResultMap">
+
+		SELECT
+			LOCATION.ID,
+			LOCATION.PARENT_ID,
+			LOCATION.DESCRIPTION,
+			LOCATION.GPS::text,
+			LOCATION_TYPE.NAME
+		FROM
+			LOCATION
+		INNER JOIN LOCATION_TYPE on LOCATION_TYPE.ID = LOCATION.LOCATION_TYPE_ID
+		WHERE
+			ST_DWithin(LOCATION.GPS, #{param1, typeHandler=de.spring.webservices.rest.persistence.handler.PointTypeHandler}, #{param2})
+
+  </select>
 
 </mapper>

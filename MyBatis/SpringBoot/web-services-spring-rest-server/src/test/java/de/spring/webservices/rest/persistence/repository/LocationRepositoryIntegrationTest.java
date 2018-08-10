@@ -1,6 +1,7 @@
 package de.spring.webservices.rest.persistence.repository;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.spring.webservices.domain.Location;
+import de.spring.webservices.domain.Location.Point;
 import de.spring.webservices.rest.configuration.DatabaseConfiguration;
 import de.spring.webservices.rest.configuration.DatabaseIntegrationTestConfiguration;
 
@@ -46,6 +48,14 @@ public class LocationRepositoryIntegrationTest {
         Location location = locations.get(0);
 
         assertThat(location.getDescription(), is("ROOT"));
+    }
+
+    @Test
+    public void findAllByPointAndRadius() {
+        Point point = new Point(-4.0273, 39.8628);
+
+    	List<Location> foundLocations = locationRepository.findAllByPointAndRadius(point, 10000);
+    	assertFalse(foundLocations.isEmpty());
     }
 
 }
