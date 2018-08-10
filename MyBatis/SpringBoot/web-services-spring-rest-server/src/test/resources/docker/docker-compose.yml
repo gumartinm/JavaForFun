@@ -1,13 +1,27 @@
 version: '2'
 services:
-  web-services-spring-rest-server:
-    image: kartoza/postgis:9.5-2.2
+  locations:
+    image: kartoza/postgis:10.0-2.4
     container_name: "postgis"
     ports:
       - "5432"
     privileged: true
     environment:
-      POSTGRES_USER: "locationclosure"
-      POSTGRES_PASS: "locationclosure"
-      POSTGRES_DBNAME: "locationclosure"
+      POSTGRES_USER: "locations"
+      POSTGRES_PASS: "locations"
+      POSTGRES_DB: "locations"
+      ALLOW_IP_RANGE: "0.0.0.0/0"
+    depends_on:
+        - conciliation
+
+  conciliation:
+    image: postgres:10.4
+    container_name: "conciliation"
+    ports:
+      - "5432"
+    privileged: true
+    environment:
+      POSTGRES_USER: "conciliation"
+      POSTGRES_PASS: "conciliation"
+      POSTGRES_DB: "conciliation"
       ALLOW_IP_RANGE: "0.0.0.0/0"

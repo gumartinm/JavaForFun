@@ -4,18 +4,28 @@ spring:
     name: web-services-spring-rest-server
   main:
     banner-mode: "LOG"
-  datasource:
-    url: jdbc:postgresql://localhost:5432/locationclosure
-    username: locationclosure
-    password: locationclosure
+
+datasources:
+  locations:
+    jdbcUrl: jdbc:postgresql://localhost:5432/locations
+    username: locations
+    password: locations
     driver-class-name: org.postgresql.Driver
     max-wait: 10000
     max-active: 50
     test-on-borrow: true
     test-while-idle: true
     validation-query: SELECT 1
-  flyway:
-    locations: db/migration/flyway/
+  conciliation:
+    jdbcUrl: jdbc:postgresql://localhost:5433/conciliation
+    username: conciliation
+    password: conciliation
+    driver-class-name: org.postgresql.Driver
+    max-wait: 10000
+    max-active: 50
+    test-on-borrow: true
+    test-while-idle: true
+    validation-query: SELECT 1
 
 mybatis:
   config-location: classpath:mybatis/mybatis-config.xml

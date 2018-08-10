@@ -14,7 +14,7 @@
         <docker.keepContainer>false</docker.keepContainer>
         <docker.keepRunning>false</docker.keepRunning>
         <docker.removeVolumes>true</docker.removeVolumes>
-        <!-- When runnin on your PC  
+        <!-- When running on your PC
         <database.port>5432</database.port>
         -->
     </properties>
@@ -137,7 +137,7 @@
 				<configuration>
 					<images>
 						<image>
-							<name>kartoza/postgis:9.5-2.2</name>
+							<name>kartoza/postgis:10.0-2.4</name>
 			                  <!--  
 							<external>
 								<type>compose</type>
@@ -148,12 +148,12 @@
 							<run>
 								<privileged>true</privileged>
 								<ports>
-								    <port>database.port:5432</port>
+								    <port>database-locations.port:5432</port>
 								 </ports>
 								 <env>
-								 	<POSTGRES_USER>locationclosure</POSTGRES_USER>
-								 	<POSTGRES_PASS>locationclosure</POSTGRES_PASS>
-								 	<POSTGRES_DBNAME>locationclosure</POSTGRES_DBNAME>
+								 	<POSTGRES_USER>locations</POSTGRES_USER>
+								 	<POSTGRES_PASS>locations</POSTGRES_PASS>
+								 	<POSTGRES_DB>locations</POSTGRES_DB>
 								 	<ALLOW_IP_RANGE>0.0.0.0/0</ALLOW_IP_RANGE>
 								 </env>
 								<wait>
@@ -165,6 +165,36 @@
 								</log>
 							</run>
 						</image>
+						<image>
+							<name>postgres:10.4</name>
+			                  <!--
+							<external>
+								<type>compose</type>
+								<basedir>src/test/resources/docker</basedir>
+								<composeFile>docker-compose.yml</composeFile>
+							</external>
+							-->
+							<run>
+								<privileged>true</privileged>
+								<ports>
+								    <port>database-conciliation.port:5432</port>
+								 </ports>
+								 <env>
+								 	<POSTGRES_USER>conciliation</POSTGRES_USER>
+								 	<POSTGRES_PASS>conciliation</POSTGRES_PASS>
+								 	<POSTGRES_DB>conciliation</POSTGRES_DB>
+								 	<ALLOW_IP_RANGE>0.0.0.0/0</ALLOW_IP_RANGE>
+								 </env>
+								<wait>
+									<time>5000</time>
+								</wait>
+								<log>
+									<color>GREEN</color>
+									<prefix>Docket integration test</prefix>
+								</log>
+							</run>
+						</image>
+
 					</images>
 				</configuration>
 				<executions>
