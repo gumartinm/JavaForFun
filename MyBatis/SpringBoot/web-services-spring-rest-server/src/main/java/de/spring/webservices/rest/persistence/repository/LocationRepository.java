@@ -5,7 +5,7 @@ import java.util.List;
 import de.spring.webservices.domain.Location;
 import de.spring.webservices.domain.Location.Point;
 
-public interface LocationRepository extends BaseRepository {
+public interface LocationRepository extends LocationsBaseRepository {
 
     List<Location> findAll();
 

@@ -27,9 +27,6 @@ datasources:
     test-while-idle: true
     validation-query: SELECT 1
 
-mybatis:
-  config-location: classpath:mybatis/mybatis-config.xml
-
 
 server:
   port: 8080
