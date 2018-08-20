@@ -13,6 +13,7 @@ import org.postgis.PGgeometry;
 import de.spring.webservices.domain.Location.Point;
 
 public class PointTypeHandler implements TypeHandler<Point> {
+    private static final int SRID_4326 = 4326;
 
     @Override
     public void setParameter(PreparedStatement preparedStatement, int paramNumber, Point paramValue, JdbcType jdbcType)
@@ -55,7 +56,9 @@ public class PointTypeHandler implements TypeHandler<Point> {
         }
 
         PGgeometry geometry = new PGgeometry();
-        geometry.setGeometry(new org.postgis.Point(point.getLongitude(), point.getLatitude()));
+        org.postgis.Point pointPostGIS = new org.postgis.Point(point.getLongitude(), point.getLatitude());
+        pointPostGIS.setSrid(SRID_4326);
+        geometry.setGeometry(pointPostGIS);
         return geometry;
     }
 }
