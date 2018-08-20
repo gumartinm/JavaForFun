@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class DatabaseIntegrationTestConfiguration {
-	@Value("${database-locations.port}")
+    @Value("${database-locations.port:5432}")
     private int locationsPort;
 
-	@Value("${database-conciliation.port}")
+    @Value("${database-conciliation.port:5433}")
     private int conciliationPort;
 
 	@Bean(name = DatabaseConfiguration.DATA_SOURCE_LOCATIONS)

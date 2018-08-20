@@ -201,7 +201,8 @@
                             
                             <!-- IN BOM FILE... :(  IT SUCKS :( )-->
 		                    <systemPropertyVariables>
-		                        <database.port>${database.port}</database.port>
+                                <database-locations.port>${database-locations.port}</database-locations.port>
+                                <database-conciliation.port>${database-conciliation.port}</database-conciliation.port>
 		                    </systemPropertyVariables>
                         </configuration>
                     </execution>

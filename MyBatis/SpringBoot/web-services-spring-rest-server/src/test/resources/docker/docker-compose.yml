@@ -4,7 +4,7 @@ services:
     image: kartoza/postgis:10.0-2.4
     container_name: "postgis"
     ports:
-      - "5432"
+      - "5432:5432"
     privileged: true
     environment:
       POSTGRES_USER: "locations"
@@ -18,7 +18,7 @@ services:
     image: postgres:10.4
     container_name: "conciliation"
     ports:
-      - "5432"
+      - "5433:5432"
     privileged: true
     environment:
       POSTGRES_USER: "conciliation"

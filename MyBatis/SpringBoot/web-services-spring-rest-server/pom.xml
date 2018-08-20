@@ -15,7 +15,8 @@
         <docker.keepRunning>false</docker.keepRunning>
         <docker.removeVolumes>true</docker.removeVolumes>
         <!-- When running on your PC
-        <database.port>5432</database.port>
+        <database-locations.port>5432</database-locations.port>
+        <database-conciliation.port>5433</database-conciliation.port>
         -->
     </properties>
 
@@ -161,7 +162,7 @@
 								</wait>
 								<log>
 									<color>GREEN</color>
-									<prefix>Docket integration test</prefix>
+									<prefix>Docket integration test: locations</prefix>
 								</log>
 							</run>
 						</image>
@@ -190,7 +191,7 @@
 								</wait>
 								<log>
 									<color>GREEN</color>
-									<prefix>Docket integration test</prefix>
+									<prefix>Docket integration test: conciliation</prefix>
 								</log>
 							</run>
 						</image>
