@@ -10,7 +10,7 @@ comment on column location_type.name                 is 'Location type name';
 
 
 alter table location_type add constraint location_type_pk primary key ( id );
-create sequence seq_location_type_id  start with 1 increment by 1 cache 1;
+create sequence seq_location_type_id as integer start with 1 increment by 1 cache 1;
 
 
 
@@ -33,4 +33,5 @@ alter table location add constraint location_pk primary key ( id );
 alter table location add constraint location_fk_01 foreign key ( parent_id ) references location ( id ) on delete no action on update no action;
 alter table location add constraint location_fk_02 foreign key ( location_type_id ) references location_type ( id ) on delete no action on update no action;
 alter table location alter column gps type geography(point,4326) using geography(ST_SetSRID(geometry(gps),4326));
-create sequence seq_location_id  start with 1 increment by 1 cache 1;
+create index location_ind_01 on location using GIST (gps);
+create sequence seq_location_id as bigint start with 1 increment by 1 cache 1;
