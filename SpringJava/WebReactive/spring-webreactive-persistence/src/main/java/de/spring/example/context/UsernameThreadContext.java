@@ -1,6 +1,6 @@
 package de.spring.example.context;
 
-import org.springframework.util.Assert;
+import java.util.Objects;
 
 /**
  * I had to implement this class in a static way because JPA Entity objects do not allow you
@@ -13,7 +13,7 @@ public class UsernameThreadContext {
 	private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
 	
 	public static final void setUsername(String username) {
-		Assert.notNull(username);
+        Objects.requireNonNull(username);
 		
 		contextHolder.set(username);
 	}
