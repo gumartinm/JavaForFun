@@ -3,6 +3,8 @@ package de.spring.example.rest.controllers;
 import javax.inject.Inject;
 
 import org.resthub.web.controller.RepositoryBasedRestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +17,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/ads/")
 public class AdController extends RepositoryBasedRestController<Ad, Long, AdRepository> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdController.class);
 
     @Override
     @Inject
@@ -24,14 +27,15 @@ public class AdController extends RepositoryBasedRestController<Ad, Long, AdRepo
     
     @Override
     public Flux<Ad> findAll() {
-        Flux<Ad> entities = repository.findAll();
+		Flux<Ad> entities = repository.findAll();
         return entities.flatMap(ad -> {
-            return Mono.subscriberContext().map(context -> {
-                UsernameContext usernameContext = context.get(UsernameContext.class);
-                UsernameContext lol = usernameContext;
-                return ad;
-            });
-        });
+			// throw new RuntimeException("Some horrible error");
+			return Mono.subscriberContext().map(context -> {
+				UsernameContext usernameContext = context.get(UsernameContext.class);
+				LOGGER.info("IT WORKS {}", usernameContext.getUsername());
+				return ad;
+			});
+			});
     }
 	// I do not have to do anything here because all I need is implemented by RepositoryBasedRestController :)
 
