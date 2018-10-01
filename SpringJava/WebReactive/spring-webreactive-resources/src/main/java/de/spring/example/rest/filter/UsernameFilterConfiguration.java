@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import reactor.core.publisher.Hooks;
+import reactor.core.publisher.Operators;
 import reactor.core.scheduler.Schedulers;
 
 @Configuration
@@ -51,9 +52,8 @@ class HookRegisteringBeanDefinitionRegistryPostProcessor implements BeanDefiniti
 
 	void setupHooks(BeanFactory beanFactory) {
 		Hooks.onEachOperator(UsernameFilterConfiguration.TraceReactorConfiguration.TRACE_REACTOR_KEY,
-				ReactorSleuth.scopePassingSpanOperator(beanFactory));
+		        Operators.lift((sc, sub) -> new ThreadContextCoreSubscriber<Object>(sub, sub.currentContext())));
 		Schedulers.setFactory(factoryInstance(beanFactory));
-
 	}
 
 	private Schedulers.Factory factoryInstance(final BeanFactory beanFactory) {

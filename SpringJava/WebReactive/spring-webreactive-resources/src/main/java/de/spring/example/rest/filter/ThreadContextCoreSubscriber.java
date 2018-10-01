@@ -7,20 +7,22 @@ import org.reactivestreams.Subscription;
 
 import de.spring.example.context.UsernameContext;
 import de.spring.example.context.UsernameThreadContext;
+import reactor.core.CoreSubscriber;
 import reactor.util.context.Context;
 
-public class ScopePassingSpanSubscriber<T> implements SpanSubscription<T> {
+public class ThreadContextCoreSubscriber<T> implements Subscription, CoreSubscriber<T> {
 	private final UsernameContext usernameContext;
-	private final Subscriber<? super T> subscriber;
 	private final Context context;
+	private final Subscriber<? super T> subscriber;
 
 	private Subscription subscription;
 
-	public ScopePassingSpanSubscriber(Subscriber<? super T> subscriber, Context ctx) {
+	public ThreadContextCoreSubscriber(Subscriber<? super T> subscriber, Context ctx) {
 		UsernameContext userNameContextParent = ctx != null ? ctx.getOrDefault(UsernameContext.class, null) : null;
 		this.usernameContext = userNameContextParent;
-		this.context = ctx != null && userNameContextParent != null ? ctx.put(UsernameContext.class, userNameContextParent)
-				: ctx != null ? ctx : Context.empty();
+		this.context = ctx != null && userNameContextParent != null
+		        ? ctx.put(UsernameContext.class, userNameContextParent)
+		        : ctx != null ? ctx : Context.empty();
 		this.subscriber = subscriber;
 	}
 
