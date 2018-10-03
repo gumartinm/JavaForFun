@@ -9,7 +9,6 @@ import org.springframework.web.server.WebFilterChain;
 import de.spring.example.context.UsernameContext;
 import de.spring.example.context.UsernameThreadContext;
 import reactor.core.publisher.Mono;
-import reactor.util.context.Context;
 
 @Configuration
 public class UsernameFilter implements WebFilter {
@@ -23,24 +22,12 @@ public class UsernameFilter implements WebFilter {
 		}
 
 		String username = request.getHeaders().get(UsernameThreadContext.USERNAME_HEADER).get(0);
-		return chain
-				.filter(exchange)
-				.compose(function -> function
-						.then(Mono.subscriberContext())
-						.flatMap(context -> {
-							Mono<Void> continuation = Mono.empty();
-							return continuation;
-						})
-						.subscriberContext(context -> {
-							Context updatedContext = context;
-							if (!context.hasKey(UsernameContext.class)) {
-								updatedContext = context.put(UsernameContext.class, new UsernameContext(username));
-							}
 
-							return updatedContext;
-						})
-					);
-
+		return SubscriberContext
+				.contextSubscriber(
+						context -> context.put(UsernameContext.class, new UsernameContext(username)),
+						exchange,
+						chain);
 	}
 
 }
