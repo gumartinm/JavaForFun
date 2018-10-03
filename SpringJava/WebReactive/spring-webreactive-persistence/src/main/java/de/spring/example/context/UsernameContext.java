@@ -2,7 +2,9 @@ package de.spring.example.context;
 
 import java.util.Objects;
 
-public class UsernameContext {
+public class UsernameContext implements ThreadContext {
+	private final String userNameHeader = "USERNAME";
+
 	private final String username;
 
 	public UsernameContext(String username) {
@@ -10,7 +12,13 @@ public class UsernameContext {
 		this.username = username;
 	}
 
-	public String getUsername() {
+	@Override
+	public String getValue() {
 		return username;
+	}
+
+	@Override
+	public String getHeader() {
+		return userNameHeader;
 	}
 }

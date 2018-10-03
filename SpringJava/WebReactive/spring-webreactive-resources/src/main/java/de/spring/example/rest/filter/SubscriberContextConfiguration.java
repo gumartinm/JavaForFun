@@ -18,7 +18,7 @@ import reactor.core.publisher.Operators;
 import reactor.core.scheduler.Schedulers;
 
 @Configuration
-public class UsernameFilterConfiguration {
+public class SubscriberContextConfiguration {
 
 	@Configuration
 	static class TraceReactorConfiguration {
@@ -51,7 +51,7 @@ class HookRegisteringBeanDefinitionRegistryPostProcessor implements BeanDefiniti
 	}
 
 	void setupHooks(BeanFactory beanFactory) {
-		Hooks.onEachOperator(UsernameFilterConfiguration.TraceReactorConfiguration.TRACE_REACTOR_KEY,
+		Hooks.onEachOperator(SubscriberContextConfiguration.TraceReactorConfiguration.TRACE_REACTOR_KEY,
 		        Operators.lift((sc, sub) -> new ThreadContextCoreSubscriber<Object>(sub, sub.currentContext())));
 		Schedulers.setFactory(factoryInstance(beanFactory));
 	}

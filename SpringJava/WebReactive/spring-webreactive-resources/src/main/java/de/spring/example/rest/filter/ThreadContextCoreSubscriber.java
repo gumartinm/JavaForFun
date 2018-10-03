@@ -4,14 +4,14 @@ import java.util.function.Consumer;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import org.slf4j.MDC;
 
+import de.spring.example.context.ThreadContext;
 import de.spring.example.context.UsernameContext;
-import de.spring.example.context.UsernameThreadContext;
 import reactor.core.CoreSubscriber;
 import reactor.util.context.Context;
 
 public class ThreadContextCoreSubscriber<T> implements Subscription, CoreSubscriber<T> {
-	private final UsernameContext usernameContext;
 	private final Context context;
 	private final Subscriber<? super T> subscriber;
 
@@ -19,65 +19,78 @@ public class ThreadContextCoreSubscriber<T> implements Subscription, CoreSubscri
 
 	public ThreadContextCoreSubscriber(Subscriber<? super T> subscriber, Context ctx) {
 		UsernameContext userNameContextParent = ctx != null ? ctx.getOrDefault(UsernameContext.class, null) : null;
-		this.usernameContext = userNameContextParent;
 		this.context = ctx != null && userNameContextParent != null
 		        ? ctx.put(UsernameContext.class, userNameContextParent)
 		        : ctx != null ? ctx : Context.empty();
+
 		this.subscriber = subscriber;
 	}
 
 	@Override
 	public void onSubscribe(Subscription subscription) {
 		this.subscription = subscription;
-		fillContext(subscriber -> subscriber.onSubscribe(this));
+		fillSubscriberMDC(subscriber -> subscriber.onSubscribe(this));
 	}
 
 	@Override
 	public void request(long n) {
-		try {
-			UsernameThreadContext.setUsernameContext(usernameContext);
-			this.subscription.request(n);
-		} finally {
-			UsernameThreadContext.clearUsernameContext();
-		}
+		fillSubscriptionMDC(subscription -> subscription.request(n));
 	}
 
 	@Override
 	public void cancel() {
-		try {
-			UsernameThreadContext.setUsernameContext(usernameContext);
-			this.subscription.cancel();
-		} finally {
-			UsernameThreadContext.clearUsernameContext();
-		}
+		fillSubscriptionMDC(subscription -> subscription.cancel());
 	}
 
 	@Override
 	public void onNext(T o) {
-		fillContext(subscriber -> subscriber.onNext(o));
+		fillSubscriberMDC(subscriber -> subscriber.onNext(o));
 	}
 
 	@Override
 	public void onError(Throwable throwable) {
-		fillContext(subscriber -> subscriber.onError(throwable));
+		fillSubscriberMDC(subscriber -> subscriber.onError(throwable));
 	}
 
 	@Override
 	public void onComplete() {
-		fillContext(subscriber -> subscriber.onComplete());
-	}
-
-	private void fillContext(Consumer<Subscriber<? super T>> fillContextFunction) {
-		try {
-			UsernameThreadContext.setUsernameContext(usernameContext);
-			fillContextFunction.accept(this.subscriber);
-		} finally {
-			UsernameThreadContext.clearUsernameContext();
-		}
+		fillSubscriberMDC(subscriber -> subscriber.onComplete());
 	}
 
 	@Override
 	public Context currentContext() {
 		return this.context;
+	}
+
+	private void fillSubscriberMDC(Consumer<Subscriber<? super T>> function) {
+		try {
+			this.context.stream().forEach(entry -> {
+				ThreadContext threadContext = (ThreadContext) entry.getValue();
+				MDC.put(threadContext.getHeader(), threadContext.getValue());
+			});
+
+			function.accept(this.subscriber);
+		} finally {
+			this.context.stream().forEach(entry -> {
+				ThreadContext threadContext = (ThreadContext) entry.getValue();
+				MDC.remove(threadContext.getHeader());
+			});
+		}
+	}
+
+	private void fillSubscriptionMDC(Consumer<Subscription> function) {
+		try {
+			this.context.stream().forEach(entry -> {
+				ThreadContext threadContext = (ThreadContext) entry.getValue();
+				MDC.put(threadContext.getHeader(), threadContext.getValue());
+			});
+
+			function.accept(this.subscription);
+		} finally {
+			this.context.stream().forEach(entry -> {
+				ThreadContext threadContext = (ThreadContext) entry.getValue();
+				MDC.remove(threadContext.getHeader());
+			});
+		}
 	}
 }
