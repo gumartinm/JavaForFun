@@ -2,7 +2,7 @@ package de.spring.example.context;
 
 import java.util.Objects;
 
-public class UsernameContext extends ThreadContext {
+public class UsernameContext implements ObjectContext {
 	public static final String USERNAME_HEADER = "USERNAME";
 
 	private final String username;

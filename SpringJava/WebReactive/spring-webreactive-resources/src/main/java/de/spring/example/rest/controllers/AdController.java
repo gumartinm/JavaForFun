@@ -32,7 +32,7 @@ public class AdController extends RepositoryBasedRestController<Ad, Long, AdRepo
 			// throw new RuntimeException("Some horrible error");
 			return Mono.subscriberContext().map(context -> {
 				UsernameContext usernameContext = context.get(UsernameContext.class);
-				LOGGER.info("IT WORKS {}", usernameContext.getUsername());
+				LOGGER.info("IT WORKS {}", usernameContext.getValue());
 				return ad;
 			});
 			});

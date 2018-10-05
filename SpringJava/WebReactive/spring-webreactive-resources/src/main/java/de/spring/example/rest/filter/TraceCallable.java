@@ -1,25 +1,26 @@
 package de.spring.example.rest.filter;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
-import de.spring.example.context.UsernameContext;
-import de.spring.example.context.UsernameThreadContext;
+import de.spring.example.context.ObjectContext;
+import de.spring.example.context.ThreadContext;
 
 public class TraceCallable<V> implements Callable<V> {
 	private final Callable<V> delegate;
-	private final UsernameContext userNameParentContext;
+	private final Map<String, ObjectContext> contexts;
 
     public TraceCallable(Callable<V> delegate) {
 		this.delegate = delegate;
-		userNameParentContext = UsernameThreadContext.getUsernameContext();
+		contexts = ThreadContext.getContexts();
 	}
 
 	@Override public V call() throws Exception {
-		UsernameThreadContext.setUsernameContext(userNameParentContext);
+		ThreadContext.setContexts(contexts);
 		try {
 			return this.delegate.call();
 		} finally {
-			UsernameThreadContext.clearUsernameContext();
+			ThreadContext.clearContexts();
 		}
 	}
 }

@@ -52,16 +52,16 @@ class HookRegisteringBeanDefinitionRegistryPostProcessor implements BeanDefiniti
 
 	void setupHooks(BeanFactory beanFactory) {
 		Hooks.onEachOperator(SubscriberContextConfiguration.TraceReactorConfiguration.TRACE_REACTOR_KEY,
-		        Operators.lift((sc, sub) -> new ThreadContextCoreSubscriber<Object>(sub, sub.currentContext())));
+		        Operators.lift((sc, sub) -> new ContextCoreSubscriber<Object>(sub, sub.currentContext())));
 		Schedulers.setFactory(factoryInstance(beanFactory));
 	}
 
 	private Schedulers.Factory factoryInstance(final BeanFactory beanFactory) {
 		return new Schedulers.Factory() {
-            @Override
-            public ScheduledExecutorService decorateExecutorService(String schedulerType,
-					Supplier<? extends ScheduledExecutorService> actual) {
-                return new TraceableScheduledExecutorService(beanFactory, actual.get());
+			@Override
+			public ScheduledExecutorService decorateExecutorService(String schedulerType,
+			        Supplier<? extends ScheduledExecutorService> actual) {
+				return new TraceableScheduledExecutorService(beanFactory, actual.get());
 			}
 		};
 	}

@@ -1,24 +1,26 @@
 package de.spring.example.rest.filter;
 
-import de.spring.example.context.UsernameContext;
-import de.spring.example.context.UsernameThreadContext;
+import java.util.Map;
+
+import de.spring.example.context.ObjectContext;
+import de.spring.example.context.ThreadContext;
 
 public class TraceRunnable implements Runnable {
     private final Runnable delegate;
-	private final UsernameContext userNameParentContext;
+	private final Map<String, ObjectContext> contexts;
 
     public TraceRunnable(Runnable delegate) {
 		this.delegate = delegate;
-		userNameParentContext = UsernameThreadContext.getUsernameContext();
+		contexts = ThreadContext.getContexts();
 	}
 
 	@Override
 	public void run() {
-		UsernameThreadContext.setUsernameContext(userNameParentContext);
+		ThreadContext.setContexts(contexts);
 		try {
 			this.delegate.run();
 		} finally {
-			UsernameThreadContext.clearUsernameContext();
+			ThreadContext.clearContexts();
 		}
 	}
 }

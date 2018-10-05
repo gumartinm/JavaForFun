@@ -23,17 +23,15 @@ public class UsernameFilter implements WebFilter {
 
 		String username = request.getHeaders().get(UsernameContext.USERNAME_HEADER).get(0);
 
-		return SubscriberContext
-				.contextSubscriber(
-						context -> {
-							Context updatedContext = context;
-							if (!context.hasKey(UsernameContext.class)) {
-								updatedContext = context.put(UsernameContext.class, new UsernameContext(username));
-							}
-							return updatedContext;
-		                },
-						exchange,
-						chain);
+
+		return SubscriberContext.contextSubscriber(context -> {
+
+			Context updatedContext = context;
+			if (!context.hasKey(UsernameContext.class)) {
+				updatedContext = context.put(UsernameContext.class, new UsernameContext(username));
+			}
+			return updatedContext;
+		}, exchange, chain);
 	}
 
 }
