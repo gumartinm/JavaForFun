@@ -1,5 +1,7 @@
 package de.spring.example.rest.filter;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.reactivestreams.Subscriber;
@@ -7,7 +9,6 @@ import org.reactivestreams.Subscription;
 import org.slf4j.MDC;
 
 import de.spring.example.context.ThreadContext;
-import de.spring.example.context.UsernameContext;
 import reactor.core.CoreSubscriber;
 import reactor.util.context.Context;
 
@@ -17,12 +18,8 @@ public class ThreadContextCoreSubscriber<T> implements Subscription, CoreSubscri
 
 	private Subscription subscription;
 
-	public ThreadContextCoreSubscriber(Subscriber<? super T> subscriber, Context ctx) {
-		UsernameContext userNameContextParent = ctx != null ? ctx.getOrDefault(UsernameContext.class, null) : null;
-		this.context = ctx != null && userNameContextParent != null
-		        ? ctx.put(UsernameContext.class, userNameContextParent)
-		        : ctx != null ? ctx : Context.empty();
-
+	public ThreadContextCoreSubscriber(Subscriber<? super T> subscriber, Context parentContext) {
+		this.context = parentContext != null ? fillNewContext(parentContext) : Context.empty();
 		this.subscriber = subscriber;
 	}
 
@@ -92,5 +89,18 @@ public class ThreadContextCoreSubscriber<T> implements Subscription, CoreSubscri
 				MDC.remove(threadContext.getHeader());
 			});
 		}
+	}
+
+	private Context fillNewContext(Context parentContext) {
+		Context newContext = Context.empty();
+
+		Iterator<Map.Entry<Object, Object>> iterator = parentContext.stream().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<Object, Object> entry = iterator.next();
+			ThreadContext threadContext = (ThreadContext) entry.getValue();
+			newContext = newContext.put(threadContext.getClass(), threadContext);
+		}
+
+		return newContext;
 	}
 }

@@ -2,8 +2,8 @@ package de.spring.example.context;
 
 import java.util.Objects;
 
-public class UsernameContext implements ThreadContext {
-	private final String userNameHeader = "USERNAME";
+public class UsernameContext extends ThreadContext {
+	public static final String USERNAME_HEADER = "USERNAME";
 
 	private final String username;
 
@@ -19,6 +19,6 @@ public class UsernameContext implements ThreadContext {
 
 	@Override
 	public String getHeader() {
-		return userNameHeader;
+		return USERNAME_HEADER;
 	}
 }
