@@ -5,6 +5,7 @@ import org.springframework.web.reactive.config.DelegatingWebFluxConfiguration;
 import org.springframework.web.server.adapter.AbstractReactiveWebInitializer;
 
 import de.spring.example.persistence.configuration.PersistenceConfig;
+import de.spring.example.reactor.thread.context.enrichment.configuration.ThreadContextEnrichmentAutoConfiguration;
 import de.spring.example.rest.configuration.ResourcesConfig;
 import de.spring.example.services.configuration.ServicesConfig;
 
@@ -50,7 +51,8 @@ public class ExampleReactiveWebInitializer extends AbstractReactiveWebInitialize
 		return new Class<?>[] { DelegatingWebFluxConfiguration.class,
 								ResourcesConfig.class,
 								ServicesConfig.class,
-								PersistenceConfig.class};
+								PersistenceConfig.class,
+								ThreadContextEnrichmentAutoConfiguration.class};
 	}
 	
 	@Override

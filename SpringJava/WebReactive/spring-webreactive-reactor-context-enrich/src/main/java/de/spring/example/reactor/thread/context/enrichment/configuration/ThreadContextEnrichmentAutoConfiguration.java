@@ -1,4 +1,4 @@
-package de.spring.example.rest.filter;
+package de.spring.example.reactor.thread.context.enrichment.configuration;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
@@ -12,13 +12,19 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
+import de.spring.example.reactor.thread.context.enrichment.scheduler.TraceableScheduledExecutorService;
+import de.spring.example.reactor.thread.context.enrichment.subscriber.ContextCoreSubscriber;
 import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Operators;
 import reactor.core.scheduler.Schedulers;
 
 @Configuration
-public class SubscriberContextConfiguration {
+@Order(Ordered.HIGHEST_PRECEDENCE)
+// When using Spring Boot @EnableConfigurationProperties
+public class ThreadContextEnrichmentAutoConfiguration {
 
 	@Configuration
 	static class TraceReactorConfiguration {
@@ -40,18 +46,18 @@ public class SubscriberContextConfiguration {
 
 class HookRegisteringBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
-    @Override
-    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+	@Override
+	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 	}
 
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	@Override
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		setupHooks(beanFactory);
 
 	}
 
 	void setupHooks(BeanFactory beanFactory) {
-		Hooks.onEachOperator(SubscriberContextConfiguration.TraceReactorConfiguration.TRACE_REACTOR_KEY,
+		Hooks.onEachOperator(ThreadContextEnrichmentAutoConfiguration.TraceReactorConfiguration.TRACE_REACTOR_KEY,
 		        Operators.lift((sc, sub) -> new ContextCoreSubscriber<Object>(sub, sub.currentContext())));
 		Schedulers.setFactory(factoryInstance(beanFactory));
 	}

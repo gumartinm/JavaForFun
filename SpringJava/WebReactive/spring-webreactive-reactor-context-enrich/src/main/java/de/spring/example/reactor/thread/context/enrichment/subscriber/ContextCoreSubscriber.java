@@ -1,4 +1,4 @@
-package de.spring.example.rest.filter;
+package de.spring.example.reactor.thread.context.enrichment.subscriber;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.MDC;
 
-import de.spring.example.context.ObjectContext;
+import de.spring.example.reactor.thread.context.enrichment.ObjectContext;
 import reactor.core.CoreSubscriber;
 import reactor.util.context.Context;
 
@@ -62,15 +62,14 @@ public class ContextCoreSubscriber<T> implements Subscription, CoreSubscriber<T>
 	private void fillSubscriberMDC(Consumer<Subscriber<? super T>> function) {
 		try {
 			this.context.stream().forEach(entry -> {
-				ObjectContext threadContext = (ObjectContext) entry.getValue();
-				MDC.put(threadContext.getHeader(), threadContext.getValue());
+				safeObjectContextCast(entry.getValue(),
+				        threadContext -> MDC.put(threadContext.getHeader(), threadContext.getValue()));
 			});
 
 			function.accept(this.subscriber);
 		} finally {
 			this.context.stream().forEach(entry -> {
-				ObjectContext threadContext = (ObjectContext) entry.getValue();
-				MDC.remove(threadContext.getHeader());
+				safeObjectContextCast(entry.getValue(), threadContext -> MDC.remove(threadContext.getHeader()));
 			});
 		}
 	}
@@ -78,15 +77,14 @@ public class ContextCoreSubscriber<T> implements Subscription, CoreSubscriber<T>
 	private void fillSubscriptionMDC(Consumer<Subscription> function) {
 		try {
 			this.context.stream().forEach(entry -> {
-				ObjectContext threadContext = (ObjectContext) entry.getValue();
-				MDC.put(threadContext.getHeader(), threadContext.getValue());
+				safeObjectContextCast(entry.getValue(),
+				        threadContext -> MDC.put(threadContext.getHeader(), threadContext.getValue()));
 			});
 
 			function.accept(this.subscription);
 		} finally {
 			this.context.stream().forEach(entry -> {
-				ObjectContext threadContext = (ObjectContext) entry.getValue();
-				MDC.remove(threadContext.getHeader());
+				safeObjectContextCast(entry.getValue(), threadContext -> MDC.remove(threadContext.getHeader()));
 			});
 		}
 	}
@@ -97,10 +95,19 @@ public class ContextCoreSubscriber<T> implements Subscription, CoreSubscriber<T>
 		Iterator<Map.Entry<Object, Object>> iterator = parentContext.stream().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<Object, Object> entry = iterator.next();
-			ObjectContext threadContext = (ObjectContext) entry.getValue();
-			newContext = newContext.put(threadContext.getClass(), threadContext);
+			Object object = entry.getValue();
+			if (object instanceof ObjectContext) {
+				ObjectContext threadContext = (ObjectContext) object;
+				newContext = newContext.put(threadContext.getClass(), (ObjectContext) object);
+			}
 		}
 
 		return newContext;
+	}
+
+	private void safeObjectContextCast(Object object, Consumer<ObjectContext> function) {
+		if (object instanceof ObjectContext) {
+			function.accept((ObjectContext) object);
+		}
 	}
 }

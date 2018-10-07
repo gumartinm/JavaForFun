@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+    de.spring.example.reactor.thread.context.enrichment.ThreadContextEnrichmentAutoConfiguration

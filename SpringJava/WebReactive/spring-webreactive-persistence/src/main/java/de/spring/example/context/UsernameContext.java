@@ -2,6 +2,8 @@ package de.spring.example.context;
 
 import java.util.Objects;
 
+import de.spring.example.reactor.thread.context.enrichment.ObjectContext;
+
 public class UsernameContext implements ObjectContext {
 	public static final String USERNAME_HEADER = "USERNAME";
 

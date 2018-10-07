@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+        <groupId>de.spring.jpa</groupId>
+        <artifactId>spring-webreactive-bom</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+	
+	<artifactId>spring-webreactive-reactor-context-enrich</artifactId>
+	<name>SPRING WEB REACTIVE: REACTOR THREAD CONTEXT ENRICHMENT LIBRARY</name>
+	<url>https://gumartinm.name/</url>
+	<description>Web Reactive Spring Framework. REactor Thread Context enrichment.</description>
+
+	<dependencies>
+
+        <!-- Using Web Reactive -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+        </dependency>
+		<dependency>
+		    <groupId>io.projectreactor</groupId>
+		    <artifactId>reactor-core</artifactId>
+		</dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-reactivestreams</artifactId>
+        </dependency>
+	</dependencies>
+</project>

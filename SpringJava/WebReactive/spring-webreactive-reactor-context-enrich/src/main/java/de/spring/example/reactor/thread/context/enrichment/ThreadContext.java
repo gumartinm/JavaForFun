@@ -1,4 +1,4 @@
-package de.spring.example.context;
+package de.spring.example.reactor.thread.context.enrichment;
 
 import java.util.HashMap;
 import java.util.Map;

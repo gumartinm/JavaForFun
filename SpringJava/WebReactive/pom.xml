@@ -22,6 +22,7 @@
         <module>spring-webreactive-persistence</module>
         <module>spring-webreactive-services</module>
         <module>spring-webreactive-resources</module>
+        <module>spring-webreactive-reactor-context-enrich</module>
     </modules>
 
 </project>

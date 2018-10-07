@@ -1,4 +1,4 @@
-package de.spring.example.rest.filter;
+package de.spring.example.reactor.thread.context.enrichment.subscriber;
 
 import java.util.function.Function;
 

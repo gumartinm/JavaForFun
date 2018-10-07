@@ -16,10 +16,13 @@
 	<dependencies>
 
 		<!-- Using Web Reactive -->
-		<dependency>
-		    <groupId>io.projectreactor</groupId>
-		    <artifactId>reactor-core</artifactId>
-		</dependency>
+        <!-- Thread Context enrichment -->
+        <dependency>
+            <groupId>de.spring.jpa</groupId>
+            <artifactId>spring-webreactive-reactor-context-enrich</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
 
 		<dependency>
 		    <groupId>org.hibernate.javax.persistence</groupId>

@@ -1,9 +1,9 @@
-package de.spring.example.rest.filter;
+package de.spring.example.reactor.thread.context.enrichment.scheduler;
 
 import java.util.Map;
 
-import de.spring.example.context.ObjectContext;
-import de.spring.example.context.ThreadContext;
+import de.spring.example.reactor.thread.context.enrichment.ObjectContext;
+import de.spring.example.reactor.thread.context.enrichment.ThreadContext;
 
 public class TraceRunnable implements Runnable {
     private final Runnable delegate;

@@ -1,4 +1,4 @@
-package de.spring.example.rest.filter;
+package de.spring.example.reactor.thread.context.enrichment.scheduler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.springframework.beans.factory.BeanFactory;
+
+import de.spring.example.reactor.thread.context.enrichment.scheduler.TraceCallable;
+import de.spring.example.reactor.thread.context.enrichment.scheduler.TraceRunnable;
 
 
 public class TraceableExecutorService implements ExecutorService {
