@@ -28,7 +28,7 @@ public class AdController extends RepositoryBasedRestController<Ad, Long, AdRepo
     @Override
     public Flux<Ad> findAll() {
 		Flux<Ad> entities = repository.findAll();
-        return entities.flatMap(ad -> {
+		return entities.flatMap(ad -> {
 			// throw new RuntimeException("Some horrible error");
 			return Mono.subscriberContext().map(context -> {
 				UsernameContext usernameContext = context.get(UsernameContext.class);

@@ -12,6 +12,8 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 //import org.springframework.web.reactive.function.client.ExchangeFilterFunctions;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import de.spring.example.context.UsernameContext;
+import de.spring.example.reactor.thread.context.enrichment.client.ClientExchangeFilterFunctions;
 import de.spring.example.services.AdClientService;
 import de.spring.example.services.impl.AdClientServiceImpl;
 import io.netty.channel.ChannelOption;
@@ -53,8 +55,7 @@ public class ServicesConfig {
 
 		WebClient.Builder webClientBuilder = WebClient.builder();
 		return webClientBuilder
-				// Interceptors are injected in this way :/
-				//.filter(ExchangeFilterFunctions.basicAuthentication())
+		        .filter(ClientExchangeFilterFunctions.filter(UsernameContext.class))
 				.clientConnector(connector);
 	}
 }
