@@ -1,6 +1,6 @@
 spring:
   application:
-    name: spring-cloud-config-example-client
+    name: springcloudconfigexampleclient
   cloud:
     config:
       uri: http://localhost:8888

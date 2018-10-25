@@ -1,0 +1,110 @@
+spring:
+  main:
+    banner-mode: "off"
+  cloud:
+    stream:
+
+      # We will have 3 brokers and 1 partition. The partition will be replicated/copied in every broker. Just one broker will be the leader.
+      # Zookeeper is in charge of choosing the leader.
+      # If you want to consume data in order you need one consumer per partition (consumer could be a process or a thread in some Java process,
+      # so one Java process could be implementing multiple consumers by means of multiple threads)
+      # Consuming data in order: 1 partition + 1 consumer
+      # 
+      # See: https://kafka.apache.org/documentation/#intro_consumers
+      # However, if you require a total order over records this can be achieved with a topic that has only one partition, though
+      # this will mean only one consumer process per consumer group.
+      instanceCount: 1
+      # This is the binder with index 0 (only one consumer/Java process)
+      instanceIndex: 0
+
+      bindings:
+        input:
+          binder: kafka
+
+          # Topic
+          destination: configtopic
+          group: configtopic-client
+
+          # Using Apache Avro with Schema Registry
+          # contentType: application/*+avro
+          contentType: application/json
+
+          consumer:
+            # In my case I have: 1 thread per consumer -> 1 partition per consumer
+            # Concurrenty is the number of threads. Usually one thread/process per partition.
+            concurrency: 1
+
+            # Whether the consumer receives data from a partitioned producer.
+            partitioned: true
+            # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
+            headerMode: embeddedHeaders
+            maxAttempts: 5
+
+            # Reconect time to Kafka servers.
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2.0
+
+            # When set to a negative value, it will default to spring.cloud.stream.instanceCount
+            instanceCount: -1
+            # When set to a negative value, it will default to spring.cloud.stream.instanceIndex
+            instanceIndex: -1
+
+
+
+      kafka:
+        binder:
+          # Kafka cluster with 3 brokers
+          brokers: "kafka"
+          # Zookeeper (I think, it is not required in Kafka v0.10.1.1
+          zkNodes: "zookeeper"
+
+          # I THINK THIS CONFIGURATION IS WORTHLESS... IT IS NEVER USED...
+          # see: https://github.com/spring-cloud/spring-cloud-stream-binder-kafka/commit/8362cc35691ff64ce5ad401f43ca141910255b76
+          # JUST IN CASE I AM GOING TO SKIP IT, JUST IN CASE THERE COULD BE SOME CONFLICT WITH autoCommitOnError :/
+          offsetUpdateTimeWindow: 0
+
+          # This means the leader will wait for the full set of in-sync replicas to acknowledge the record. This guarantees that
+          # the record will not be lost as long as at least one in-sync replica remains alive. This is the strongest available guarantee.
+          # This is equivalent to the acks=-1 setting.
+          # I DO NOT THINK THIS CONFIGURATION APPLIES TO consumers... IT IS ONLY FOR PRODUCERS...
+          requiredAcks: 1
+
+
+          # It applies when using autoCreateTopics and autoAddPartitions.
+          # minPartitionCount: 1
+
+          # I have 3 brokers and 1 partition. This partition must be replicated/copied in the 3 brokers.
+          # This option is only useful when using autoCreateTopics (Kafka will create our topics based on this
+          # configuration) Because I do not like creating stuff in run time I will be using autoCreateTopics: false
+          # and this option does not apply :)
+          # replicationFactor: 3
+
+          # Topics will be created by me on the Kafka cluster/servers
+          autoCreateTopics: true
+          # Partitions will be created by me on the Kafka cluster/servers
+          autoAddPartitions: true
+
+        bindings:
+          input:
+            consumer:
+              resetOffsets: true
+              startOffset: latest
+              autoCommitOffset: true
+              # offsetUpdateTimeWindow could be a problem... It does not matter if there is error, every 3secs. offsets are saved :/
+              autoCommitOnError: false
+
+
+
+# Health indicator for binders.
+management:
+  health:
+    binders:
+      enabled: true
+
+
+logging:
+  level:
+    org:
+      springframework: info
+    ROOT: info
