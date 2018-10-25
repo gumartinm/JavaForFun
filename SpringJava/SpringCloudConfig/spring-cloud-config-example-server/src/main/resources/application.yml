@@ -15,6 +15,14 @@ spring:
         monitor:
           fixedDelay: 2000
 
+    bus:
+      destination: configtopic
+      ack: 1
+      trace:
+        enabled: true
+    
+
+ # Spring Cloud Connectors (probably easier with Spring Boot conventions...)
     stream:
 
       # We will have 3 brokers and 1 partition. The partition will be replicated/copied in every broker. Just one broker will be the leader.
@@ -34,13 +42,9 @@ spring:
         output:
           binder: kafka
 
-          # Topic
-          destination: configtopic
-
           # Using Apache Avro with Schema Registry
           # contentType: application/*+avro
           contentType: application/json
-
 
           producer:
             # We have 3 brokers and 1 partition. This one partition will replicated/copied in every broker.
@@ -48,7 +52,6 @@ spring:
 
             # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
             headerMode: embeddedHeaders
-
 
 
       kafka:

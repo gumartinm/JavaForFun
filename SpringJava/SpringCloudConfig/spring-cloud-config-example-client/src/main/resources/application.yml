@@ -2,6 +2,14 @@ spring:
   main:
     banner-mode: "off"
   cloud:
+
+    bus:
+      destination: configtopic
+      ack: 1
+      trace:
+        enabled: true
+
+# Spring Cloud Connectors (probably easier with Spring Boot conventions...)
     stream:
 
       # We will have 3 brokers and 1 partition. The partition will be replicated/copied in every broker. Just one broker will be the leader.
@@ -20,10 +28,6 @@ spring:
       bindings:
         input:
           binder: kafka
-
-          # Topic
-          destination: configtopic
-          group: configtopic-client
 
           # Using Apache Avro with Schema Registry
           # contentType: application/*+avro
