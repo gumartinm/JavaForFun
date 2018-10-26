@@ -5,22 +5,27 @@ spring:
   main:
     banner-mode: "off"
   profiles:
-    active: native
+    active: git
   cloud:
     config:
       server:
-        native:
-          searchLocations: file:///${user.home}/config-repo/
-
+        git:
+          uri: https://github.com/gumartinm/spring-cloud-config-repo
+          cloneOnStart: true
+          skipSslValidation: true
+          searchPaths: '{application}/{profile}'
+          timeout: 10
+          force-pull: false
         monitor:
           fixedDelay: 2000
 
     bus:
       destination: configtopic
-      ack: 1
+      ack:
+        enabled: true
       trace:
         enabled: true
-    
+
 
  # Spring Cloud Connectors (probably easier with Spring Boot conventions...)
     stream:
@@ -39,7 +44,7 @@ spring:
       instanceIndex: 0
 
       bindings:
-        output:
+        springCloudBusOutput:
           binder: kafka
 
           # Using Apache Avro with Schema Registry
@@ -52,6 +57,39 @@ spring:
 
             # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
             headerMode: embeddedHeaders
+
+        springCloudBusInput:
+          binder: kafka
+
+          # Topic
+          destination: configtopic
+          group: configgroup-server
+
+
+          # Using Apache Avro with Schema Registry
+          # contentType: application/*+avro
+          contentType: application/json
+
+          consumer:
+            # In my case I have: 1 thread per consumer -> 1 partition per consumer
+            # Concurrenty is the number of threads. Usually one thread/process per partition.
+            concurrency: 1
+
+            # Whether the consumer receives data from a partitioned producer.
+            partitioned: true
+            # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
+            headerMode: embeddedHeaders
+            maxAttempts: 5
+
+            # Reconect time to Kafka servers.
+            backOffInitialInterval: 1000
+            backOffMaxInterval: 10000
+            backOffMultiplier: 2.0
+
+            # When set to a negative value, it will default to spring.cloud.stream.instanceCount
+            instanceCount: -1
+            # When set to a negative value, it will default to spring.cloud.stream.instanceIndex
+            instanceIndex: -1
 
 
       kafka:
@@ -87,7 +125,7 @@ spring:
           autoAddPartitions: true
 
         bindings:
-          output:
+          springCloudBusOutput:
             producer:
               sync: true
               # No batch mode.
@@ -96,14 +134,14 @@ spring:
 
 # Health indicator for binders.
 management:
-  health:
-    binders:
-      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
-security:
-  user:
-    password: messwiththebest
-    name: root
 
 logging:
   level:

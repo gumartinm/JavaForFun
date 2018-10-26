@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-parent</artifactId>
-        <version>Edgware.SR5</version>
+        <version>Finchley.SR2</version>
     </parent>
 
 
