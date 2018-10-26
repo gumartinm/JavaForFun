@@ -5,9 +5,11 @@ spring:
 
     bus:
       destination: configtopic
-      ack: 1
+      ack:
+        enabled: true
       trace:
         enabled: true
+
 
 # Spring Cloud Connectors (probably easier with Spring Boot conventions...)
     stream:
@@ -26,8 +28,27 @@ spring:
       instanceIndex: 0
 
       bindings:
-        input:
+        springCloudBusOutput:
           binder: kafka
+
+          # Using Apache Avro with Schema Registry
+          # contentType: application/*+avro
+          contentType: application/json
+
+          producer:
+            # We have 3 brokers and 1 partition. This one partition will replicated/copied in every broker.
+            partitionCount: 1
+
+            # Consumer (input) and producer (output) are Spring Cloud Stream applications :)
+            headerMode: embeddedHeaders
+
+        springCloudBusInput:
+          binder: kafka
+
+          # Topic
+          destination: configtopic
+          group: configgroup-client
+
 
           # Using Apache Avro with Schema Registry
           # contentType: application/*+avro
@@ -84,13 +105,11 @@ spring:
           # and this option does not apply :)
           # replicationFactor: 3
 
-          # Topics will be created by me on the Kafka cluster/servers
           autoCreateTopics: true
-          # Partitions will be created by me on the Kafka cluster/servers
           autoAddPartitions: true
 
         bindings:
-          input:
+          springCloudBusInput:
             consumer:
               resetOffsets: true
               startOffset: latest
@@ -100,11 +119,14 @@ spring:
 
 
 
-# Health indicator for binders.
 management:
-  health:
-    binders:
-      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 
 logging:
