@@ -34,7 +34,7 @@
 
         <dependency>
             <groupId>de.example.spring.kafka</groupId>
-            <artifactId>spring-cloud-stream-kafka-common-example</artifactId>
+            <artifactId>spring-stream-kafka-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
