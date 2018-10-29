@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-parent</artifactId>
-        <version>Dalston.SR1</version>
+        <version>Finchley.SR2</version>
     </parent>
 
     <groupId>de.example.spring.kafka</groupId>
@@ -39,29 +39,6 @@
             <artifactId>spring-cloud-starter-stream-kafka</artifactId>
         </dependency>
 
-        <!-- Required for using Kafka 0.10.1.1 -->
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-            <version>1.2.1.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.integration</groupId>
-            <artifactId>spring-integration-kafka</artifactId>
-            <version>2.1.0.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>0.10.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- Required for using Apache Avro -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -70,7 +47,7 @@
         <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
-            <version>1.8.1</version>
+            <version>1.8.2</version>
         </dependency>
         
         <!-- Tests -->
@@ -169,10 +146,10 @@
                     </execution>
                 </executions>
             </plugin>
-      	</plugins>
+            </plugins>
 
-         <pluginManagement>
-            <plugins>
+             <pluginManagement>
+                <plugins>
                 <!--
                       It will create our running jar file.
                       The main class must be located in: src/main/java/de/example/spring/kafka
@@ -187,9 +164,9 @@
                  <plugin>
                      <groupId>org.springframework.boot</groupId>
                      <artifactId>spring-boot-maven-plugin</artifactId>
-                     <version>1.5.3.RELEASE</version>
+                     <version>2.0.6.RELEASE</version>
                  </plugin>
             </plugins>
-         </pluginManagement>
+            </pluginManagement>
 	</build>
 </project>
