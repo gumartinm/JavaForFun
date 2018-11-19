@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="de.spring.webservices.rest.persistence.repository.LocationTypeRepository" >
+
+    <resultMap id="locationTypeResultMap" type="de.spring.webservices.domain.LocationType">
+        <id column="ID" property="id" />
+        <result column="NAME" property="name" />
+    </resultMap>
+    
+  <select id="findAll" resultMap="locationTypeResultMap">
+		SELECT
+			ID,
+			NAME
+		FROM
+			LOCATION_TYPE
+  </select>
+  
+  
+  <insert id="save" parameterType="de.spring.webservices.domain.LocationType">    
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE">
+            SELECT nextval('SEQ_LOCATION_TYPE_ID')
+        </selectKey>
+        
+  		INSERT INTO LOCATION_TYPE (
+  			ID,
+  			NAME
+		)
+		VALUES (
+			#{id},
+			#{name}
+		)
+  </insert>
+  
+</mapper>

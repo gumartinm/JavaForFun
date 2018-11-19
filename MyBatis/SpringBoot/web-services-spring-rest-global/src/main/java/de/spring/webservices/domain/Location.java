@@ -69,7 +69,7 @@ public class Location {
 
     }
 
-    public Location(Long id, Long parentId, Integer levelId, String description, Point point) {
+	public Location(Long id, Long parentId, String description, Point point) {
         this.id = id;
         this.parentId = parentId;
         this.description = description;
