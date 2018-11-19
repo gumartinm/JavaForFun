@@ -1,3 +1,11 @@
+-- When using postgis, postgis functions must be created in the same schema as the
+-- one that we want to use. Otherwise, you will not be able to use postgis :(
+-- So, if you want to work on some schema that is not the 'public' one and use
+-- in your jdbc connection the option '?defaultschema=locations' you will need to
+-- create the postgis extensions in the schema where you want to work :(
+-- create schema if not exists locations;
+
+
 create table location_type
 (
     id integer not null,

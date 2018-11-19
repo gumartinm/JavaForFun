@@ -15,7 +15,7 @@ services:
         - conciliation
 
   conciliation:
-    image: postgres:10.4
+    image: kartoza/postgis:10.0-2.4
     container_name: "conciliation"
     ports:
       - "5433:5432"
