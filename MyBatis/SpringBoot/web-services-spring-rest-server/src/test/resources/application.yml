@@ -1,0 +1,5 @@
+# Required after upgrading to spring-boot-starter-parent 2.1.0.RELEASE :/
+# DatabaseIntegrationTestConfiguration & DatabaseConfiguration declaring same beans :/
+spring:
+  main:
+    allow-bean-definition-overriding: true
