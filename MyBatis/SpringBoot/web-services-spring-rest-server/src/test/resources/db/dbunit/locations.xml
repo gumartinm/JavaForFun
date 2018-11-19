@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <location id="1" parent_id="1" description="ROOT" gps="0101000020E610000000000000000000000000000000000000" location_type_id="1" />
+    <location id="2" parent_id="1" description="World" gps="0101000020E610000000000000000000000000000000000000" location_type_id="2" />
+    <location id="3" parent_id="2" description="Europe" gps="0101000020E610000000000000000000000000000000000000" location_type_id="3" />
+    <location id="4" parent_id="3" description="Spain" gps="0101000020E61000003C4ED1915CFE0DC0DE9387855A3B4440" location_type_id="4" />
+    <location id="5" parent_id="4" description="Barcelona" gps="0101000020E6100000DE02098A1F63014045D8F0F44AB14440" location_type_id="5" />
+    <location id="6" parent_id="4" description="Avila" gps="0101000020E61000000B24287E8CB912C040A4DFBE0E544440" location_type_id="5" />
+    <location id="7" parent_id="4" description="Toledo" gps="0101000020E610000024B9FC87F41B10C0917EFB3A70EE4340" location_type_id="5" />
+    <location id="8" parent_id="5" description="Sant Cugat" gps="0101000020E6100000787AA52C439C00C0B515FBCBEEB94440" location_type_id="6" />
+    <location id="9" parent_id="6" description="Alcorcon" gps="0101000020E6100000C8073D9B559F0EC05C2041F1632C4440" location_type_id="6" />
+    <location id="10" parent_id="6" description="Candeleda" gps="0101000020E6100000EF38454772F914C024B9FC87F4134440" location_type_id="6" />
+    <location id="11" parent_id="6" description="Arenas de San Pedro" gps="0101000020E6100000F7065F984C5514C0A52C431CEB1A4440" location_type_id="6" />
+    <location id="12" parent_id="3" description="Portugal" gps="0101000020E61000006DE7FBA9F17220C0D0D556EC2FB34340" location_type_id="4" />
+    <location id="13" parent_id="12" description="Oporto" gps="0101000020E6100000C3D32B65194221C0EA04341136944440" location_type_id="6" />
+    <location id="14" parent_id="12" description="Lisboa" gps="0101000020E610000065AA6054524722C04DF38E53745C4340" location_type_id="6" />
+    <location id="15" parent_id="14" description="Moreira" gps="0101000020E61000005DA96741284F21C0BE13B35E0C9F4440" location_type_id="6" />
+    <location id="16" parent_id="4" description="Murcia" gps="0101000020E61000002C6519E25817F2BFAC8BDB6800FF4240" location_type_id="5" />
+    <location id="17" parent_id="16" description="Lorca" gps="0101000020E610000012A5BDC11726FBBFF54A598638D64240" location_type_id="6" />
+    <location id="18" parent_id="17" description="Aguaderas" gps="0101000020E610000012A5BDC11726FBBFF54A598638D64240" location_type_id="8" />
+    <location id="19" parent_id="18" description="Barrio de Aguaderas" gps="0101000020E610000012A5BDC11726FBBFF54A598638D64240" location_type_id="7" />
+    <location id="20" parent_id="8" description="Barrio Sant Cugat" gps="0101000020E6100000787AA52C439C00C0B515FBCBEEB94440" location_type_id="7" />
+    <location id="21" parent_id="1" description="Heat Map Mordor" gps="0101000020E6100000787AA52C439C00C0B515FBCBEEB94440" location_type_id="9" />
+</dataset>

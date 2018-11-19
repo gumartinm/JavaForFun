@@ -27,7 +27,7 @@ create table location
     id bigint not null,
     parent_id bigint not null,
     description varchar(255) not null,
-    gps bytea not null,
+    gps geometry(point, 4326),
     location_type_id integer not null
 );
 
@@ -40,6 +40,5 @@ comment on column location.gps                      is 'Location geography type'
 alter table location add constraint location_pk primary key ( id );
 alter table location add constraint location_fk_01 foreign key ( parent_id ) references location ( id ) on delete no action on update no action;
 alter table location add constraint location_fk_02 foreign key ( location_type_id ) references location_type ( id ) on delete no action on update no action;
-alter table location alter column gps type geography(point,4326) using geography(ST_SetSRID(geometry(gps),4326));
 create index location_ind_01 on location using GIST (gps);
 create sequence seq_location_id as bigint start with 1 increment by 1 cache 1;

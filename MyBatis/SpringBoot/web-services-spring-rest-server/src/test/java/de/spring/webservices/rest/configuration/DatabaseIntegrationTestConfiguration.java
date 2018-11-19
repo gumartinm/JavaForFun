@@ -1,13 +1,18 @@
 package de.spring.webservices.rest.configuration;
 
+import javax.inject.Named;
 import javax.sql.DataSource;
 
+import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+
+import com.github.springtestdbunit.bean.DatabaseConfigBean;
+import com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean;
 
 @Configuration
 public class DatabaseIntegrationTestConfiguration {
@@ -36,4 +41,46 @@ public class DatabaseIntegrationTestConfiguration {
                 .driverClassName("org.postgresql.Driver").build();
 	}
 
+	@Bean
+	public DatabaseConfigBean databaseConfigBean() {
+		DatabaseConfigBean databaseConfigBean = new DatabaseConfigBean();
+		databaseConfigBean.setDatatypeFactory(new PostgresqlDataTypeFactory());
+
+		return databaseConfigBean;
+	}
+
+	@Bean(name = "dbUnitLocations")
+	public DatabaseDataSourceConnectionFactoryBean dbUnitLocations(
+	        @Named(DatabaseConfiguration.DATA_SOURCE_LOCATIONS) DataSource dataSourceLocations,
+	        DatabaseConfigBean databaseConfigBean) {
+		DatabaseDataSourceConnectionFactoryBean factoryBean = new DatabaseDataSourceConnectionFactoryBean();
+		factoryBean.setDatabaseConfig(databaseConfigBean);
+		factoryBean.setDataSource(dataSourceLocations);
+
+		return factoryBean;
+	}
+
+	@Bean(name = "dbUnitConciliationConciliationSchema")
+	public DatabaseDataSourceConnectionFactoryBean dbUnitConciliationConciliationSchema(
+	        @Named(DatabaseConfiguration.DATA_SOURCE_CONCILIATION) DataSource dataSourceConciliation,
+	        DatabaseConfigBean databaseConfigBean) {
+		DatabaseDataSourceConnectionFactoryBean factoryBean = new DatabaseDataSourceConnectionFactoryBean();
+		factoryBean.setDatabaseConfig(databaseConfigBean);
+		factoryBean.setDataSource(dataSourceConciliation);
+		factoryBean.setSchema("conciliation");
+
+		return factoryBean;
+	}
+
+	@Bean(name = "dbUnitConciliationApplicationSchema")
+	public DatabaseDataSourceConnectionFactoryBean dbUnitConciliationApplicationSchema(
+	        @Named(DatabaseConfiguration.DATA_SOURCE_CONCILIATION) DataSource dataSourceConciliation,
+	        DatabaseConfigBean databaseConfigBean) {
+		DatabaseDataSourceConnectionFactoryBean factoryBean = new DatabaseDataSourceConnectionFactoryBean();
+		factoryBean.setDatabaseConfig(databaseConfigBean);
+		factoryBean.setDataSource(dataSourceConciliation);
+		factoryBean.setSchema("application");
+
+		return factoryBean;
+	}
 }
