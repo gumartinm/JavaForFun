@@ -1,4 +1,7 @@
-package de.spring.webservices.rest.persistence.repository;
+package de.spring.webservices.rest.persistence.repository.conciliation;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
@@ -13,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTestContextBootstrapper;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,10 +27,11 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 
-import de.spring.webservices.domain.LocationType;
+import de.spring.webservices.domain.conciliation.Layer;
 import de.spring.webservices.rest.configuration.DatabaseConfiguration;
 import de.spring.webservices.rest.configuration.DatabaseIntegrationTestConfiguration;
 import de.spring.webservices.rest.configuration.MyBatisConfiguration;
+import de.spring.webservices.rest.persistence.repository.conciliation.ConciliationRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DatabaseConfiguration.class,
@@ -45,19 +48,22 @@ import de.spring.webservices.rest.configuration.MyBatisConfiguration;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
                           DirtiesContextTestExecutionListener.class,
                           TransactionDbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection = { "dbUnitLocations" })
-public class LocationTypeRepositoryIntegrationTest {
+@DbUnitConfiguration(databaseConnection = { "dbUnitConciliationConciliationSchema",
+                                            "dbUnitConciliationApplicationSchema" })
+public class ConciliationRepositoryIntegrationTest {
 
     @Inject
-	LocationTypeRepository locationTypeRepository;
+	ConciliationRepository conciliationRepository;
 
-	@Test(expected = DuplicateKeyException.class)
-	@DatabaseSetup(connection = "dbUnitLocations",
-	               value = { "/db/dbunit/locations/location_types.xml", "/db/dbunit/locations/locations.xml" })
-	public void save() {
-		LocationType locationType = new LocationType(3, "CONTINENT");
-		locationTypeRepository.save(locationType);
+    @Test
+	@DatabaseSetup(connection = "dbUnitConciliationApplicationSchema",
+	               value = { "/db/dbunit/conciliation/application/countries.xml" })
+	@DatabaseSetup(connection = "dbUnitConciliationConciliationSchema",
+    			   value = { "/db/dbunit/conciliation/conciliation/conciliation.xml" })
+    public void findAll() {
+		List<Layer> layers = conciliationRepository.findAll();
+		Layer layer = layers.get(0);
 
-		List<LocationType> locationTypes = locationTypeRepository.findAll();
+		assertThat(layer.getName(), is("Spain"));
     }
 }
