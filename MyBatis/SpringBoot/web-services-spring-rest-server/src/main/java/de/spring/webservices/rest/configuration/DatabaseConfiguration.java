@@ -23,9 +23,6 @@ public class DatabaseConfiguration {
 	public static final String TRX_MANAGER_LOCATIONS = "trxManagerLocations";
 	public static final String TRX_MANAGER_CONCILIATION = "trxManagerConciliation";
 
-	public static final String FLYWAY_LOCATIONS = "flywayLocations";
-	public static final String FLYWAY_CONCILIATION = "flywayConciliation";
-
 	@Bean(DATA_SOURCE_LOCATIONS)
 	@ConfigurationProperties(prefix = "datasources.locations")
 	@Primary
@@ -38,8 +35,8 @@ public class DatabaseConfiguration {
 	    return new DataSourceTransactionManager(dataSourceLocations);
 	}
 
-	@Bean(FLYWAY_LOCATIONS)
-    public Flyway flywayLocations(@Named(DATA_SOURCE_LOCATIONS) DataSource dataSourceLocations) {
+	@Bean
+	public Flyway flyway(@Named(DATA_SOURCE_LOCATIONS) DataSource dataSourceLocations) {
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSourceLocations);
         flyway.setLocations("classpath:/db/migration/locations/flyway/");
@@ -63,7 +60,7 @@ public class DatabaseConfiguration {
 		return new DataSourceTransactionManager(dataSourceConciliation);
 	}
 
-	@Bean(FLYWAY_CONCILIATION)
+	@Bean
     public Flyway flywayConciliation(@Named(DATA_SOURCE_CONCILIATION) DataSource dataSourceConciliation) {
         Flyway flyway = new Flyway();
         flyway.setDataSource(dataSourceConciliation);

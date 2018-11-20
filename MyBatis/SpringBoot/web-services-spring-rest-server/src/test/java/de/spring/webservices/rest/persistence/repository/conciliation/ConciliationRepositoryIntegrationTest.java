@@ -31,7 +31,6 @@ import de.spring.webservices.domain.conciliation.Layer;
 import de.spring.webservices.rest.configuration.DatabaseConfiguration;
 import de.spring.webservices.rest.configuration.DatabaseIntegrationTestConfiguration;
 import de.spring.webservices.rest.configuration.MyBatisConfiguration;
-import de.spring.webservices.rest.persistence.repository.conciliation.ConciliationRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DatabaseConfiguration.class,
@@ -40,7 +39,7 @@ import de.spring.webservices.rest.persistence.repository.conciliation.Conciliati
                             MyBatisConfiguration.class })
 @BootstrapWith(SpringBootTestContextBootstrapper.class)
 @OverrideAutoConfiguration(enabled = false)
-@Transactional(DatabaseConfiguration.TRX_MANAGER_LOCATIONS)
+@Transactional(DatabaseConfiguration.TRX_MANAGER_CONCILIATION)
 @AutoConfigureCache
 //@AutoConfigureMybatis
 @ImportAutoConfiguration

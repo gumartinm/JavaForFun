@@ -185,7 +185,7 @@
 							</run>
 						</image>
 						<image>
-							<name>postgres:10.4</name>
+							<name>kartoza/postgis:10.0-2.4</name>
 			                  <!--
 							<external>
 								<type>compose</type>

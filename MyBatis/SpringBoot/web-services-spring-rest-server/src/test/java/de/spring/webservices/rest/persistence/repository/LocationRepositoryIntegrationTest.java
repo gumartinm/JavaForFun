@@ -57,7 +57,7 @@ public class LocationRepositoryIntegrationTest {
 
     @Test
 	@DatabaseSetup(connection = "dbUnitLocations",
-				   value = { "/db/dbunit/location_types.xml", "/db/dbunit/locations.xml" })
+				   value = { "/db/dbunit/locations/location_types.xml", "/db/dbunit/locations/locations.xml" })
     public void findAll() {
         List<Location> locations = locationRepository.findAll();
         Location location = locations.get(0);
@@ -67,7 +67,7 @@ public class LocationRepositoryIntegrationTest {
 
     @Test
 	@DatabaseSetup(connection = "dbUnitLocations",
-				   value = { "/db/dbunit/location_types.xml", "/db/dbunit/locations.xml" })
+				   value = { "/db/dbunit/locations/location_types.xml", "/db/dbunit/locations/locations.xml" })
     public void findAllByPointAndRadius() {
         Point point = new Point(-4.0273, 39.8628);
 
