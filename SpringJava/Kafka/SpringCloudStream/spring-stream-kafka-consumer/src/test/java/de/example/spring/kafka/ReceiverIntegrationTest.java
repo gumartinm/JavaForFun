@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doNothing;
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { Receiver.class, TestSupportBinderAutoConfiguration.class })
 @DirtiesContext
+@Ignore
 public class ReceiverIntegrationTest {
 
 	@Inject
