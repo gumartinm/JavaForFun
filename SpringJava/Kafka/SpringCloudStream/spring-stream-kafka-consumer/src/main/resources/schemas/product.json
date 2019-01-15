@@ -5,8 +5,8 @@
       "type" : "string"
     },
     "description" : {
-      "type" : "string",
-      "required": true
+      "type" : "string"
     }
-  }
+  },  
+  "required": [ "description" ]
 }
