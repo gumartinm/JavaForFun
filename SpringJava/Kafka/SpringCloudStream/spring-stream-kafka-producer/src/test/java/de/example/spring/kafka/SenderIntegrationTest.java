@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { Sender.class, TestSupportBinderAutoConfiguration.class })
 @DirtiesContext
+@Ignore
 public class SenderIntegrationTest {
 
 	@Inject
