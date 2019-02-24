@@ -31,6 +31,9 @@ proguard/
 .classpath
 .project
 .settings
+# mapstruct
+# <m2e.apt.activation>jdt_apt</m2e.apt.activation>
+.factorypath
 
 # Maven
 target
