@@ -2,12 +2,12 @@ package de.example.debezium.transformer;
 
 public class Customer {
 	private final Base base;
-	private final Long customerId;
+	private final Integer customerId;
 	private final String firstName;
 	private final String lastName;
 	private final String email;
 
-	public Customer(Base base, Long customerId, String firstName, String lastName, String email) {
+	public Customer(Base base, Integer customerId, String firstName, String lastName, String email) {
 		this.base = base;
 		this.customerId = customerId;
 		this.firstName = firstName;
@@ -23,7 +23,7 @@ public class Customer {
 		return base;
 	}
 
-	public Long getCustomerId() {
+	public Integer getCustomerId() {
 		return customerId;
 	}
 
@@ -41,7 +41,7 @@ public class Customer {
 
 	public static class Builder {
 		private Base base;
-		private Long customerId;
+		private Integer customerId;
 		private String firstName;
 		private String lastName;
 		private String email;
@@ -51,7 +51,7 @@ public class Customer {
 			return this;
 		}
 
-		public Builder withCustomerId(Long customerId) {
+		public Builder withCustomerId(Integer customerId) {
 			this.customerId = customerId;
 			return this;
 		}
