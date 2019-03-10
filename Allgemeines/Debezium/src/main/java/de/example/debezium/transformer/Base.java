@@ -17,8 +17,8 @@ public class Base {
 		return type;
 	}
 
-	public OffsetDateTime getPublished() {
-		return published;
+	public String getPublished() {
+		return published.toString();
 	}
 
 	public String getSchema() {
