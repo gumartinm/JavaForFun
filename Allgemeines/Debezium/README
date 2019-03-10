@@ -1,0 +1,21 @@
+
+Database (PostgreSQL):
+rootdatabase=> CREATE TABLE customers (id SERIAL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, PRIMARY KEY(id));
+rootdatabase=> insert into customers values(default, 'fatih2', 'kose2', 'fatih1.kose@gusgusyes.com');
+INSERT 0 1
+
+
+
+Topic ends up with this data:
+
+{
+  "base": {
+    "type": "Customer",
+    "published": "2019-03-10T18:59:18.165Z",
+    "schema": "https://gumartinm.name/events/customers/Customer.json/1.json"
+  },
+  "customerId": 11,
+  "firstName": "fatih2",
+  "lastName": "kose2",
+  "email": "fatih1.kose@gusgusyes.com"
+}
