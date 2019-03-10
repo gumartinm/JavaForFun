@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+    }
+}
+
+plugins {
+    id 'application'
+    id 'idea'
+    id 'java'
+    id 'jacoco'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+group = theGroup
+version = theVersion
+description = theDescription
+
+targetCompatibility = 1.8
+
+mainClassName = 'de.example.debezium.transformer.CustomTransformer'
+
+
+dependencies {
+	implementation("org.apache.kafka:connect-transforms:2.0.0")
+	implementation("org.apache.kafka:connect-json:2.0.0")
+	
+    testImplementation("junit:junit")
+    testImplementation("org.mockito:mockito-core:2.8.47")
+    testImplementation("org.assertj:assertj-core:3.6.1")
+}
+
+jacocoTestReport {
+    executionData tasks.withType(Test)
+}
