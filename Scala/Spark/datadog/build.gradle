@@ -56,7 +56,12 @@ dependencies {
   }
 
   // Datadog reporter for com.codahale.metrics.MetricRegistry
-  implementation group: 'org.coursera', name: 'dropwizard-metrics-datadog', version: '1.1.14'
+  implementation('org.coursera:dropwizard-metrics-datadog:1.1.14')
+  constraints {
+      implementation('io.dropwizard.metrics:metrics-core:3.1.5') {
+          because 'Spark is using it. Otherwise we would end up having two different libraries at the same time.'
+      }
+  }
   
   // Test
   // Spark
