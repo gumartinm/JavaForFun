@@ -1,6 +1,7 @@
 // Author: Gustavo Martin Morcuende
 package org.apache.spark.metrics.sink
 
+import java.util
 import java.util.EnumSet
 import java.util.Properties
 import java.util.concurrent.TimeUnit
@@ -45,7 +46,7 @@ private[spark] class CustomStatsDSink(val property: Properties,
                                 .withPort(CustomStatsDSink.STATSD_DEFAULT_PORT)
                                 .withStatsdHost(CustomStatsDSink.STATSD_DEFAULT_HOST)
                                 .build()
-  private val expansions = EnumSet.of(COUNT)
+  private val expansions = util.EnumSet.of(COUNT)
   private val reporter = DatadogReporter
                             .forRegistry(registry)
                             .withHost("customhost")
