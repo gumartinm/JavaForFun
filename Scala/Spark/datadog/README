@@ -1,2 +1,2 @@
 
-./gradlew clean reportScoverage build scalaStyle -xtest
+./gradlew clean reportScoverage build scalaStyle checkScalafmtAll -xtest

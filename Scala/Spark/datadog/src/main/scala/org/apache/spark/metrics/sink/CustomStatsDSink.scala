@@ -1,18 +1,14 @@
 // Author: Gustavo Martin Morcuende
 package org.apache.spark.metrics.sink
 
-import java.util
-import java.util.EnumSet
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 
 import com.codahale.metrics.MetricRegistry
-import com.typesafe.scalalogging.Logger
 import org.apache.spark.SecurityManager
-import org.coursera.metrics.datadog.DatadogReporter
-import org.coursera.metrics.datadog.DatadogReporter.Expansion.COUNT
-import org.coursera.metrics.datadog.transport.UdpTransport
-import org.slf4j.LoggerFactory
+import org.apache.spark.internal.Logging
+import org.apache.spark.metrics.MetricsSystem
+import CustomStatsDSink._
 
 // Taken from:
 // https://github.com/apache/spark/blob/master/core/src/main/scala/org/apache/spark/metrics/sink/StatsdSink.scala
@@ -24,45 +20,40 @@ private[spark] object CustomStatsDSink {
   val STATSD_KEY_PREFIX = "prefix"
 
   val STATSD_DEFAULT_HOST = "127.0.0.1"
-  val STATSD_DEFAULT_PORT = 8125
+  val STATSD_DEFAULT_PORT = "8125"
   val STATSD_DEFAULT_PERIOD = "10"
   val STATSD_DEFAULT_UNIT = "SECONDS"
   val STATSD_DEFAULT_PREFIX = "defaultcustomsparkprefix"
 }
 
 private[spark] class CustomStatsDSink(val property: Properties,
-                       val registry: MetricRegistry,
-                       securityMgr: SecurityManager) extends Sink {
-  private val logger: Logger = Logger(LoggerFactory.getLogger(getClass.getName))
+                                      val registry: MetricRegistry,
+                                      securityMgr: SecurityManager)
+    extends Sink
+    with Logging {
 
-  private val prefix = property.getProperty(CustomStatsDSink.STATSD_KEY_PREFIX,
-                                            CustomStatsDSink.STATSD_DEFAULT_PREFIX)
-  private val pollPeriod = property.getProperty(CustomStatsDSink.STATSD_KEY_PERIOD,
-                                                CustomStatsDSink.STATSD_DEFAULT_PERIOD).toInt
-  private val pollUnit = TimeUnit.valueOf(property.getProperty(CustomStatsDSink.STATSD_KEY_UNIT,
-                                                               CustomStatsDSink.STATSD_DEFAULT_UNIT).toUpperCase)
+  val host = property.getProperty(STATSD_KEY_HOST, STATSD_DEFAULT_HOST)
+  val port = property.getProperty(STATSD_KEY_PORT, STATSD_DEFAULT_PORT).toInt
 
-  private val udpTransport = new UdpTransport.Builder()
-                                .withPort(CustomStatsDSink.STATSD_DEFAULT_PORT)
-                                .withStatsdHost(CustomStatsDSink.STATSD_DEFAULT_HOST)
-                                .build()
-  private val expansions = util.EnumSet.of(COUNT)
-  private val reporter = DatadogReporter
-                            .forRegistry(registry)
-                            .withHost("customhost")
-                            .withTransport(udpTransport)
-                            .withExpansions(expansions)
-                            .withPrefix(prefix)
-                            .build()
+  val pollPeriod = property.getProperty(STATSD_KEY_PERIOD, STATSD_DEFAULT_PERIOD).toInt
+  val pollUnit =
+    TimeUnit.valueOf(property.getProperty(STATSD_KEY_UNIT, STATSD_DEFAULT_UNIT).toUpperCase)
+
+  val prefix = property.getProperty(STATSD_KEY_PREFIX, STATSD_DEFAULT_PREFIX)
+
+  MetricsSystem.checkMinimalPollingPeriod(pollUnit, pollPeriod)
+
+  val reporter = new DatadogReporter(registry, host, port, prefix)
 
   override def start(): Unit = {
     reporter.start(pollPeriod, pollUnit)
-    logger.info(s"CustomStatsDSink started with prefix: '$prefix'")
-
+    logInfo(s"StatsdSink started with prefix: '$prefix'")
   }
+
   override def stop(): Unit = {
     reporter.stop()
-    logger.info("CustomStatsDSink stopped.")
+    logInfo("StatsdSink stopped.")
   }
+
   override def report(): Unit = reporter.report()
 }
