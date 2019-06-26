@@ -1,0 +1,29 @@
+### Gradle template
+.gradle
+build/
+out/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+.idea
+*.iml
+
+# Jenv
+.version
+.java-version
+
+#eclipse
+.classpath
+.project
+.settings/
+bin/
+
+derby.log
+metastore_db/
+
+.cache-main
+.cache-tests

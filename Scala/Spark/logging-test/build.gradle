@@ -1,0 +1,87 @@
+buildscript {
+    repositories {
+        maven { url "https://dl.bintray.com/ngbinh/maven" }
+    }
+
+    dependencies {
+        classpath "org.github.ngbinh.scalastyle:gradle-scalastyle-plugin_2.11:1.0.1"
+    }
+}
+
+plugins {
+    id 'idea'
+    id 'eclipse'
+    id 'scala'
+    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "org.scoverage" version "3.0.0"
+    id 'cz.alenkacz.gradle.scalafmt' version '1.3.4'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+group theGroup
+version theVersion
+description theDescription
+
+project.ext {
+  scalaCompatVersion = '2.11'
+  scalaVersion = '2.11.8'
+  sparkVersion = '2.4.0'
+}
+
+apply plugin: 'scalaStyle'
+
+dependencies {
+
+  // Spark
+  compileOnly("org.apache.spark:spark-sql_${scalaCompatVersion}:${sparkVersion}") {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+  }
+
+  // Scala
+  implementation("org.scala-lang:scala-library:${scalaVersion}")
+
+  // Logging
+  implementation("com.typesafe.scala-logging:scala-logging_${scalaCompatVersion}:3.9.0") {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    exclude group: 'org.slf4j', module: 'slf4j-api'
+  }
+
+  // Test
+  // Spark
+  testCompileOnly("org.apache.spark:spark-core_${scalaCompatVersion}:${sparkVersion}")
+  testCompileOnly("org.apache.spark:spark-sql_${scalaCompatVersion}:${sparkVersion}") {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+  }
+  // Scala
+  testCompileOnly("org.apache.spark:spark-hive_${scalaCompatVersion}:${sparkVersion}")
+  testCompileOnly("org.scalatest:scalatest_${scalaCompatVersion}:3.0.4")
+  testCompileOnly "org.skyscreamer:jsonassert:1.5.0"
+  testCompileOnly('org.pegdown:pegdown:1.6.0')
+  testCompileOnly("org.mockito:mockito-scala_${scalaCompatVersion}:1.0.4")
+}
+
+scalafmt {
+    configFilePath = '.scalafmt.conf'
+}
+
+scalaStyle {
+    source = 'src/main/scala'
+    failOnViolation = false
+    failOnWarning = false
+    includeTestSourceDirectory = true
+    outputFile = project.buildDir.absolutePath + "/reports/scalastyle.xml"
+    configLocation = "scalastyle_config.xml"
+}
+
+scoverage {
+    scoverageScalaVersion = "2.11"
+    coverageOutputCobertura = true
+}
+
+shadowJar {
+  classifier null
+}
