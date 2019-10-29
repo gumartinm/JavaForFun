@@ -27,12 +27,6 @@ trait SharedSparkSessionHelper
     .master("local[2]")
     .appName("test-sql-context")
     .config(sparkConf)
-    .config("spark.unsafe.exceptionOnMemoryLeak", "true")
-    .config("spark.ui.enabled", "false")
-    .config("spark.sql.sources.partitionOverwriteMode", "dynamic")
-    .config("hive.stats.jdbc.timeout", "80")
-    .config("spark.hadoop.hive.metastore.uris", "thrift://localhost:9083")
-    .config("spark.sql.warehouse.dir", "/apps/hive/warehouse")
     .enableHiveSupport()
     .getOrCreate()
 
@@ -47,7 +41,7 @@ trait SharedSparkSessionHelper
       .set("spark.ui.enabled", "false")
       .set("spark.sql.sources.partitionOverwriteMode", "dynamic")
       .set("hive.stats.jdbc.timeout", "80")
-      .set("spark.hadoop.hive.metastore.uris", "thrift://localhost:9083")
+      .set("spark.hadoop.hive.metastore.uris", "thrift://localhost:9083") // Comment this line out for using embedded
       .set("spark.sql.warehouse.dir", "/apps/hive/warehouse")
 
   }

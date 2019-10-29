@@ -7,16 +7,18 @@ class ExampleIntegrationTest extends SharedSparkSessionHelper {
     val dbName = "gustavo"
     val tableName = "example"
     val schema = "gustavo string, years bigint"
+    val createDatabaseStatement = s"CREATE DATABASE IF NOT EXISTS $dbName"
     val createTableStatement =
       s"CREATE TABLE IF NOT EXISTS $dbName.$tableName " +
         s"($schema) " +
         s"USING HIVE " +
         s"OPTIONS " +
         s"( " +
-        s"'serde' 'org.apache.hadoop.hive.serde2.JsonSerDe', " +
-        s"'path' 'file://home/gustavo/git/GITHOME/JavaForFun2/Scala/Spark/integration-tests/testOutput' " +
+        s"'serde' 'org.apache.hive.hcatalog.data.JsonSerDe', " +
+        s"'path' 'file:/home/gustavo/git/GITHOME/JavaForFun2/Scala/Spark/integration-tests/testOutput' " +
         s" ) "
 
+    spark.sql(createDatabaseStatement)
     spark.sql(createTableStatement)
 
   }
