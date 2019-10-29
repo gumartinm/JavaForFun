@@ -1,0 +1,9 @@
+## Comandos
+
+docker build -t debian-hortonworks .
+
+docker run --privileged --hostname debian-hortonworks --name debian-hortonworks -p5432:5432 -p9083:9083 -it debian-hortonworks
+
+docker start debian-hortonworks
+
+docker exec -it debian-hortonworks /bin/bash
