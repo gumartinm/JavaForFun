@@ -24,7 +24,8 @@ lazy val playGroundSparkHiveProject = (project in file(playGroundSparkHiveProjec
     organization := "de.example.playground.spark.hive"
   )
   .dependsOn(
-    playgroundCommonsProject
+    playgroundCommonsProject,
+    playgroundCommonsProject % "compile->compile;test->test"
   )
 
 
