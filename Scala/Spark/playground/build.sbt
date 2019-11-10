@@ -8,9 +8,9 @@ lazy val playgroundCommonsProject = (project in file(playGroundCommonsProjectNam
   .withId(playGroundCommonsProjectName)
   .settings(
     name := playGroundCommonsProjectName,
+    organization := "de.example.playground.commons",
     settings,
     libraryDependencies ++= commonDependencies,
-    organization := "de.example.playground.commons",
     publishArtifact in Test := true
   )
 
@@ -19,15 +19,30 @@ lazy val playGroundSparkHiveProject = (project in file(playGroundSparkHiveProjec
   .withId(playGroundSparkHiveProjectName)
   .settings(
     name := playGroundSparkHiveProjectName,
+    organization := "de.example.playground.spark.hive",
     settings,
-    libraryDependencies ++= commonDependencies,
-    organization := "de.example.playground.spark.hive"
+    libraryDependencies ++= commonDependencies
   )
   .dependsOn(
     playgroundCommonsProject,
     playgroundCommonsProject % "compile->compile;test->test"
   )
 
+val playGroundSparkKafkaProjectName = "playground-spark-kafka"
+lazy val playGroundSparkKafkaProject = (project in file(playGroundSparkKafkaProjectName))
+  .withId(playGroundSparkKafkaProjectName)
+  .settings(
+    name := playGroundSparkKafkaProjectName,
+    organization := "de.example.playground.spark.kafka",
+    settings,
+    libraryDependencies ++= commonDependencies ++ Seq(
+        dependencies.sparkSqlKafka
+    )
+  )
+  .dependsOn(
+    playgroundCommonsProject,
+    playgroundCommonsProject % "compile->compile;test->test"
+  )
 
 lazy val dependencies =
   new {
@@ -45,6 +60,9 @@ lazy val dependencies =
     val jacksonCore = "com.fasterxml.jackson.core" % "jackson-core" % "2.6.7"
     val jacksonDataBind = "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7"
     val jacksonAnnotations = "com.fasterxml.jackson.core" % "jackson-annotations" % "2.6.7"
+
+    // Spark Kafka
+    val sparkSqlKafka = "org.apache.spark" % "spark-sql-kafka-0-10_2.11" % sparkVersion
 
     // Hive
     val hiveCatalogCore = "org.apache.hive.hcatalog" % "hive-hcatalog-core" % "1.2.1"
