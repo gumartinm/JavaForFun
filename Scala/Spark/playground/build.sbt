@@ -44,6 +44,28 @@ lazy val playGroundSparkKafkaProject = (project in file(playGroundSparkKafkaProj
     playgroundCommonsProject % "compile->compile;test->test"
   )
 
+val playGroundSparkAtlasProjectName = "playground-spark-atlas"
+lazy val playGroundSparkAtlasProject = (project in file(playGroundSparkAtlasProjectName))
+  .withId(playGroundSparkAtlasProjectName)
+  .settings(
+    name := playGroundSparkAtlasProjectName,
+    organization := "de.example.playground.spark.atlas",
+    settings,
+    libraryDependencies ++= commonDependencies ++ Seq(
+        dependencies.atlasConnectorLocaBuild,
+        dependencies.atlasClient,
+        dependencies.atlasIntg,
+        dependencies.atlasClientCommon,
+        dependencies.jerseyMultipart,
+        dependencies.jacksonJsonProvider
+    )
+  )
+  .dependsOn(
+    playgroundCommonsProject,
+    playgroundCommonsProject % "compile->compile;test->test"
+  )
+
+
 lazy val dependencies =
   new {
     val sparkVersion = "2.4.0"
@@ -72,6 +94,15 @@ lazy val dependencies =
     val mockitoScala = "org.mockito" %% "mockito-scala" % "1.0.4" % Test
     val junit = "junit" % "junit" % "4.12" % Test
     val scalacheck = "org.scalacheck" %% "scalacheck" % "1.14.2" % Test
+
+    // Atlas Connector (local build)
+    val atlasConnectorLocaBuild = "com.hortonworks.spark" %% "spark-atlas-connector" % "0.1.0-SNAPSHOT" intransitive()
+    val atlasClient = "org.apache.atlas" % "atlas-client-v2" % "2.0.0" intransitive()
+    val atlasIntg = "org.apache.atlas" % "atlas-intg" % "2.0.0" intransitive()
+    val atlasClientCommon = "org.apache.atlas" % "atlas-client-common" % "2.0.0" intransitive()
+    val jerseyMultipart = "com.sun.jersey.contribs" % "jersey-multipart" % "1.19"
+    val jacksonJsonProvider = "com.fasterxml.jackson.jaxrs" % "jackson-jaxrs-json-provider" % "2.6.7"
+
   }
 
 lazy val commonDependencies = Seq(
@@ -88,7 +119,7 @@ lazy val commonDependencies = Seq(
   dependencies.scalacheck
 )
 
-lazy val settings = scalaStyleSettings
+lazy val settings = scalaStyleSettings ++ commonSettings
 
 lazy val scalaStyleSettings =
   Seq(
@@ -97,3 +128,7 @@ lazy val scalaStyleSettings =
     (scalastyleFailOnError in Test) := true,
     (scalastyleFailOnWarning in Test) := true
   )
+
+lazy val commonSettings = Seq(
+  resolvers += Resolver.mavenLocal
+)
